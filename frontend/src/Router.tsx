@@ -99,7 +99,7 @@ const Router = createBrowserRouter([
         path: '/accountinfo',
         element: <Accountinfo />,
       },
-      
+
     ],
   },
   {

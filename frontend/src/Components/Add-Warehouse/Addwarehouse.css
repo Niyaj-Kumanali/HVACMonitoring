@@ -33,6 +33,10 @@
     box-sizing: border-box;
 }
 
+.warehouse .sub-btn {
+    margin-top: 30px !important;
+}
+
 .submit-button {
     padding: 10px 20px;
     border: none;
@@ -65,54 +69,66 @@
 .reset-button:hover {
     background-color: #1976D2;
 }
-.warehouse{
+
+.warehouse {
     width: 50%;
-    height:auto;
-    padding:20px;
+    height: auto;
+    padding: 20px;
     background-color: white;
     margin: 20px;
 }
-.warehouse .textfieldss{
-    background-color:#ebebeb;
-}
-.warehouse-form{
-    width: 100%;
-}
-.form-group{
-    /* border: 1px solid black; */
-    height:90px
-}
-.form-group{
-    height: max-content;
-}
-#cooling_units{
-    height:50px;
+
+.warehouse .textfieldss {
     background-color: #ebebeb;
 }
+
+.warehouse-form {
+    width: 100%;
+}
+
+.form-group {
+    /* border: 1px solid black; */
+    height: 90px
+}
+
+.form-group {
+    height: max-content;
+}
+
+#cooling_units {
+    height: 50px;
+    background-color: #ebebeb;
+}
+
 #cooling_units .select__control {
     height: 40px !important;
     padding: 0;
     box-sizing: border-box;
 }
-.css-13cymwt-control{
+
+.css-13cymwt-control {
     height: 60px;
     background-color: #ebebeb !important;
 }
-.css-t3ipsp-control{
+
+.css-t3ipsp-control {
     height: 60px;
     background-color: #ebebeb !important;
 }
-.form-group-coolents{
+
+.form-group-coolents {
     height: max-content;
     display: flex;
     flex-direction: column;
-    justify-content:space-between;
+    justify-content: space-between;
     gap: 20px;
     margin-top: 10px;
 }
-.form-group select{
+
+.form-group select {
     background-color: #ebebeb;
 }
-.sensors-coolent{
-    margin-top:15px !important;
+
+.sensors-coolent {
+    margin-top: 15px !important;
 }
