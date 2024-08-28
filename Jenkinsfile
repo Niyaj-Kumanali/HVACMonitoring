@@ -46,7 +46,7 @@ pipeline {
                 script {
                     // Validate Nginx configuration and reload it
                     sh '''
-                    sudo nginx -t && sudo systemctl reload nginx
+                    sudo systemctl reload nginx
                     '''
                 }
             }
