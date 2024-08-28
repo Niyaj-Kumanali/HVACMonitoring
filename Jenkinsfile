@@ -23,6 +23,7 @@ pipeline {
                     // Build the project in the frontend directory
                     sh '''
                     cd frontend
+                    ls
                     npm run build
                     '''
                 }
@@ -35,6 +36,7 @@ pipeline {
                     // Copy built files to the Nginx directory
                     sh '''
                     cd frontend
+                    ls
                     sudo cp -r dist/* /var/www/hvac/
                     '''
                 }
