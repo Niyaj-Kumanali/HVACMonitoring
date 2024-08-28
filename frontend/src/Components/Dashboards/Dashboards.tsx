@@ -8,11 +8,32 @@ import './Dashboards.css';
 import { useEffect, useState } from 'react';
 import { DashboardQueryParams, DashboardType, PageData } from '../../types/thingsboardTypes';
 import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
+import Warehouse from '../Warehouse/Warehouse';
+import { useDispatch } from 'react-redux';
+import { set_warehouse_count } from '../../Redux/Action/Action';
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [loadingDashboards, setLoadingDashboards] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
+  const warecountdispatch = useDispatch();
+
+  const fetchAllWarehouses = async () => {
+
+    try {
+      const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data: Warehouse[] = await response.json();
+      const length = data.length;
+      warecountdispatch(set_warehouse_count(length))
+
+    } catch (error) {
+      console.error("Failed to fetch warehouses:", error);
+    }
+  };
 
   const fetchDashboards = async (page: number) => {
     try {
@@ -57,6 +78,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboards(0);
+    fetchAllWarehouses()
   }, []);
 
   return (

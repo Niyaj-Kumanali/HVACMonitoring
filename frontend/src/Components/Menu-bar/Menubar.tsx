@@ -1,6 +1,6 @@
 import "./Menubar.css"
 import SpeedIcon from '@mui/icons-material/Speed';
-import PieChartIcon from '@mui/icons-material/PieChart'; 
+import PieChartIcon from '@mui/icons-material/PieChart';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import CableIcon from '@mui/icons-material/Cable';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -12,13 +12,14 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const Menubar = () => {
 
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
     const userCount = useSelector((state: any) => state.user.userCount);
+    const warehousecount = useSelector((state: any) => state.user.warehouseCount);
 
     useEffect(() => {
         document.body.style.overflowX = 'hidden';
@@ -51,7 +52,7 @@ const Menubar = () => {
                         <li><LocationOnIcon className="speedicon" />Locations <span className="count">3</span></li>
                     </Link>
                     <Link to="/warehouses" className="link">
-                        <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">10</span></li>
+                        <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span></li>
                     </Link>
                     <Link to="/vehicles" className="link">
                         <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">3</span></li>

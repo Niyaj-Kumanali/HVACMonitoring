@@ -18,11 +18,11 @@ interface LocationInfo {
 const Warehouse = () => {
     const [allWarehouses, setAllWarehouses] = useState<Warehouse[]>([]);
     const [locationInfo, setLocationInfo] = useState<{ [key: string]: LocationInfo | null }>({});
-    const [error, setError] = useState<{ [key: string]: string | null }>({});
+    // const [error, setError] = useState<{ [key: string]: string | null }>({});
 
     const fetchAllWarehouses = async () => {
         try {
-            const response = await fetch('http://localhost:2000/warehouse/getallwarehouse');
+            const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
@@ -48,9 +48,9 @@ const Warehouse = () => {
 
                 const data: LocationInfo = await response.json();
                 setLocationInfo(prevState => ({ ...prevState, [warehouseId]: data }));
-            } catch (err) {
-                // setError(prevState => ({ ...prevState, [warehouseId]: err?.message }));
-                setError({})
+            } catch (err: any) {
+                // setError(prevState => ({ ...prevState, [warehouseId]: err.message }));
+                console.log(err)
             }
         };
 
@@ -60,8 +60,6 @@ const Warehouse = () => {
             }
         });
     }, [allWarehouses]);
-
-    console.log(allWarehouses);
 
     return (
         <div className="menu-data">
@@ -76,7 +74,6 @@ const Warehouse = () => {
                                 <p className="username">{warehouse.warehouse_name}</p>
                                 <p>{warehouse.warehouse_id}</p>
                                 <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
-                                {error[warehouse._id] && <p className="error">Error: {error[warehouse._id]}</p>}
                             </div>
                         </div>
                     </div>
