@@ -6,11 +6,11 @@ import Devices from './Components/Devices/Devices';
 import Locations from './Components/Locations/Locations';
 import Users from './Components/Users/Users';
 import AddDevice from './Components/Add-Devices/AddDevice';
-// import Warehouse from './Components/Warehouse/Warehouse';
+import Warehouse from './Components/Warehouse/Warehouse';
 import Vehicles from './Components/Vehicles/Vehicles';
 import AddAction from './Components/Add-Action/AddAction';
 import AddLocation from './Components/Add-Location/AddLocation';
-// import Addwarehouse from './Components/Add-Warehouse/Addwarehouse';
+import Addwarehouse from './Components/Add-Warehouse/Addwarehouse';
 import Adduser from './Components/Add-User/Adduser';
 import Addvehicle from './Components/Add-Vehicle/Addvehicle';
 import MyComponent from './Components/MyComponent/MyComponent';
@@ -20,7 +20,7 @@ import Accountinfo from './Components/AccountInfo/Accountinfo';
 import Dashboard from './Components/Dashboard/Dashboard';
 
 import App from './App';
-import PageNotFound from './Components/PageNotFound/PageNotFound';
+// import PageNotFound from './Components/PageNotFound/PageNotFound';
 
 const Router = createBrowserRouter([
   {
@@ -63,10 +63,10 @@ const Router = createBrowserRouter([
         path: '/addDevice',
         element: <AddDevice />,
       },
-      // {
-      //   path: '/warehouses',
-      //   element: <Warehouse />,
-      // },
+      {
+        path: '/warehouses',
+        element: <Warehouse />,
+      },
       {
         path: '/vehicles',
         element: <Vehicles />,
@@ -79,10 +79,10 @@ const Router = createBrowserRouter([
         path: '/addLocation',
         element: <AddLocation />,
       },
-      // {
-      //   path: '/addWarehouse',
-      //   element: <Addwarehouse />,
-      // },
+      {
+        path: '/addWarehouse',
+        element: <Addwarehouse />,
+      },
       {
         path: '/addUser',
         element: <Adduser />,
@@ -102,10 +102,10 @@ const Router = createBrowserRouter([
       
     ],
   },
-  {
-    path: '*', // Catch-all route
-    element: <PageNotFound />, // Define this component to show a 404 page
-  },
+  // {
+  //   path: '*', // Catch-all route
+  //   element: <PageNotFound />, // Define this component to show a 404 page
+  // },
 ]);
 
 export default Router;
