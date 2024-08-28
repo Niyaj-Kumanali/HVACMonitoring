@@ -20,7 +20,7 @@ import Accountinfo from './Components/AccountInfo/Accountinfo';
 import Dashboard from './Components/Dashboard/Dashboard';
 
 import App from './App';
-// import PageNotFound from './Components/PageNotFound/PageNotFound';
+import PageNotFound from './Components/PageNotFound/PageNotFound';
 
 const Router = createBrowserRouter([
   {
@@ -102,10 +102,10 @@ const Router = createBrowserRouter([
       
     ],
   },
-  // {
-  //   path: '*', // Catch-all route
-  //   element: <PageNotFound />, // Define this component to show a 404 page
-  // },
+  {
+    path: '*', // Catch-all route
+    element: <PageNotFound />, // Define this component to show a 404 page
+  },
 ]);
 
 export default Router;
