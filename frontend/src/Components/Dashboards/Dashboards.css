@@ -1,0 +1,7 @@
+.dashboard{
+    border:1px solid black;
+    position: absolute;
+    left: 275px !important;
+    width: 78.5%; 
+    top: 0 !important;
+}

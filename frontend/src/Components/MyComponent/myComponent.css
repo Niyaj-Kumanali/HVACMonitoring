@@ -1,0 +1,38 @@
+.mycomponent {
+    padding: 20px;
+}
+.mycomponent div{
+    margin: 20px 0;
+}
+.mycomponent label{
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    gap: 10px;
+}
+
+.mycomponent input{
+    padding: 10px 20px;
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    margin: 2px;
+}
+
+
+
+.mycomponent button{
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background-color: #fff;
+}
+
+.mycomponent button:hover{
+    background-color: #eee;
+}
+
+.mycomponent form{
+    display: flex;
+    flex-direction: column;
+}

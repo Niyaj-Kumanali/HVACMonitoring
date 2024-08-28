@@ -1,0 +1,35 @@
+.devices{
+    padding : 20px;
+}
+.devices h2{
+    margin-bottom : 20px;
+}
+.devices ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    gap: 10px;
+}
+
+.devices ul li {
+    width: 49%;
+    box-sizing: border-box;
+    padding: 18px;
+    border-radius: 5px;
+    display:flex;
+    align-items: center;
+    justify-content:space-between;
+}
+.delete-icon{
+    color: rgb(213, 13, 13);
+}
+.edit-icon{
+    color: green;
+}
+.deletemsg{
+    background-color:red;
+    color: white;
+}

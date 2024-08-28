@@ -1,0 +1,58 @@
+.user{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 25px;
+    padding: 25px;
+    border-radius: 10px;
+}
+.userinfo{
+    width: 32%;
+    height: 180px;
+    background-color: white ;
+    border-radius: 10px;
+}
+.user-img-info{
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.user-img-info .img{
+    width: 30%;
+    height: 90%;
+    border-radius: 50%;
+    position: relative;
+    z-index: 10;
+}
+.status{
+    width: 60%;
+    height:90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.personicon{
+    width: 80% !important;
+    height: 80% !important;
+    position: absolute !important;
+    border-radius: 50%;
+    color: rgba(0, 0, 0, 0.776) !important;
+}
+.status p{
+    width: 100%;
+    height:20%;
+    display: flex;
+    align-items: center;
+}
+.username{
+    font-size: 20px;
+}
+

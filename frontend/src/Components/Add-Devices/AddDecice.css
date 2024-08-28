@@ -1,0 +1,40 @@
+.add-device {
+    width: 50%;
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+}
+
+.add-device .label {
+    font-size: 20px !important;
+    margin-bottom: 10px !important;
+    display: inline-block;
+}
+.add-device .text-field-box {
+    width: 100%;
+    background-color: #ebebeb;
+    margin-bottom: 20px;
+}
+
+.add-device .form-control {
+    margin-bottom: 20px;
+    display: block;
+    width: 100%;
+    background-color: #ebebeb;
+}
+.form-control-inner{
+    width: 100%;
+}
+
+.add-device .accountinfo-savebtn {
+    text-align: start !important;
+    margin-top: 30px !important;
+    padding: 10px 0 10px ;
+}
+.accountinfo-savebtn .btn-save{
+    width: 150px;
+    height: 50px;
+}
+.add-device form{
+    width: 100%;
+}

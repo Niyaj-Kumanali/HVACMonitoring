@@ -1,0 +1,54 @@
+.side-bar {
+    height: calc(100vh - 65px);
+    width: 275px;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: width 0.3s ease, transform 0.3s ease;
+    z-index: 100;
+    position: relative;
+}
+
+.Menu{
+    width: 100%;
+    text-align: center;
+    padding: 10px 0px;
+    background-color:#2BC790;
+    color: white;
+    font-size:18px
+}
+ul li{
+    padding: 14px 14px 14px 12px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 10;
+    background-color: #fff;
+}
+.speedicon{
+    font-size:28px !important;
+}
+.link{
+    color:black !important;
+    text-decoration: none;
+    list-style-type: none;
+}
+.quick-action{
+    font-size:17px;
+    font-weight: 500;
+}
+.count{
+    padding: 0px 8px;
+    border-radius: 10px;
+    position: absolute;
+    right: 35px;
+    background-color: #2BC790;
+    color: white;
+    font-size: 15px;
+}
+html {
+    scroll-behavior: smooth;
+}

@@ -1,0 +1,23 @@
+#wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+}
+
+#wrapper img{
+    width: 500px;
+    object-fit: cover;
+    border-radius: 30px;
+
+}
+
+#wrapper div{
+    width: 500px;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+}
