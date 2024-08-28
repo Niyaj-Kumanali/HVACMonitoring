@@ -35,7 +35,7 @@ pipeline {
                     // Copy built files to the Nginx directory
                     sh '''
                     cd frontend
-                    sudo cp -r dist/* /var/www/HVAC/
+                    sudo cp -r dist/* /var/www/hvac/
                     '''
                 }
             }
