@@ -1,3 +1,4 @@
+import { TelemetryQueryParams } from '../types/thingsboardTypes';
 import thingsboardAPI from './thingsboardAPI'; // Adjust the path as necessary
 
 // Save device attributes
@@ -155,18 +156,7 @@ export const getAttributesByScope = async (
 export const getTimeseries = async (
   entityType: string,
   entityId: string,
-  params: {
-    keys?: string[];
-    startTs?: number;
-    endTs?: number;
-    intervalType?: string;
-    interval?: number;
-    timeZone?: string;
-    limit?: number;
-    agg?: string;
-    orderBy?: string;
-    useStrictDataTypes?: boolean;
-  }
+  params: TelemetryQueryParams
 ): Promise<Record<string, any>> => {
   const response = await thingsboardAPI.get<Record<string, any>>(
     `/plugins/telemetry/${entityType}/${entityId}/values/timeseries`,

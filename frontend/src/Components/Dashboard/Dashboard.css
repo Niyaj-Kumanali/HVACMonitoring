@@ -1,0 +1,7 @@
+.recharts-legend-wrapper {
+    font-size: 10px; /* Adjust the font size as needed */
+  }
+  
+  .recharts-legend-item {
+    font-size: 10px; /* Ensure font size is consistent for each legend item */
+  }

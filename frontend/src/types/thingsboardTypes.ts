@@ -99,6 +99,7 @@ export interface DeviceQueryParams {
 
 // Page Data
 export interface PageData<T> {
+  [x: string]: any;
   data?: T[];
   totalPages?: number;
   totalElements?: number;
@@ -153,4 +154,17 @@ export interface Tenant {
   id?: {id: string, entityType: string};
   title: string;
   additionalInfo?: Object;
+}
+
+export interface TelemetryQueryParams {
+  keys: string,
+  startTs: number,
+  endTs: number,
+  intervalType?: 'MILISECONDS' | 'WEEK' | 'WEEK_ISO' | 'MONTH' | 'QUARTER',
+  interval?: number,
+  timeZone?: string,
+  limit?: number,
+  agg?: 'MIN' | 'MAX' | 'SUM' | 'AVG' | 'COUNT' | 'NONE',
+  orderBy?: 'ASC' | 'DESC',
+  useStrictDataTypes?: boolean
 }

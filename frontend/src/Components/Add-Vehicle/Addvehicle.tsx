@@ -154,6 +154,7 @@ const AddVehicle: React.FC = () => {
     };
 
     const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+        event
         if (reason === 'clickaway') return;
         setOpen(false);
     };

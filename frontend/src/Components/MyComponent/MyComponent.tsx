@@ -9,7 +9,9 @@ import {
   DashboardQueryParams,
   Customer,
 } from '../../types/thingsboardTypes';
-import { getCurrentUser, requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
+import { getCurrentUser } from '../../api/loginApi';
+// import {  requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
+
 import { getTenantDevices } from '../../api/deviceApi';
 import { getTenantDashboards, saveDashboard } from '../../api/dashboardApi';
 import { getActivationLink, getUsers, saveUser } from '../../api/userApi';
@@ -230,17 +232,20 @@ const MyComponent: React.FC = () => {
     fetchAllWidgetBundles();
     fetchWidgetBundles(currentWidgetPage);
     fetchDeviceProfileNames(false);
-    const response = await getCurrentUser();
-    console.log('Current User: \n', response);
+    const currentuser = await getCurrentUser();
+    console.log('Current User: \n', currentuser);
     fetchCustomers(0);
 
-    const response1 = await requestResetPasswordByEmail("www.niyazkumanali@gmail.com")
-    console.log("sent", response1)
+    // const response1 = await requestResetPasswordByEmail("www.niyazkumanali@gmail.com")
+    // console.log("sent", response1)
+
 
     // const token = localStorage.getItem('token') || ""
     // console.log("Token",token)
     // const response2 = await resetPassword(token, "admin1234")
     // console.log("reset", response2)
+
+    // const telemetry = await getAttributeKeys("DEVICE")
 
   };
 
