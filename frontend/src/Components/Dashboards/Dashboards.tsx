@@ -12,7 +12,6 @@ import { useDispatch } from 'react-redux';
 import { set_DeviceCount, set_usersCount, set_warehouse_count } from '../../Redux/Action/Action';
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
-import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -22,6 +21,7 @@ const Dashboard = () => {
   const warecountdispatch = useDispatch();
   const usercountdispatch = useDispatch();
   const deviceCountDispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,9 +36,6 @@ const Dashboard = () => {
         console.error('Failed to fetch user data', error);
       }
     };
-  const navigate = useNavigate()
-
-  const fetchAllWarehouses = async () => {
 
     const fetchDevices = async (page: number): Promise<void> => {
       try {
@@ -59,9 +56,13 @@ const Dashboard = () => {
       }
     };
 
+
     fetchUserData();
     fetchDevices(0);
   }, [usercountdispatch, deviceCountDispatch]);
+
+
+    
 
   const fetchAllWarehouses = async () => {
     try {
@@ -111,6 +112,7 @@ const Dashboard = () => {
     reason?: SnackbarCloseReason
   ) => {
     if (reason === 'clickaway') {
+      event
       return;
     }
     setOpen(false);

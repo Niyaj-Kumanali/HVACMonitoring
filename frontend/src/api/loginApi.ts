@@ -83,7 +83,7 @@ export const requestResetPasswordByEmail = async (
   email: string
 ) => {
   const response = await thingsboardAPI.post('/noauth/resetPasswordByEmail', { email });
-  return response;
+  return response.status;
 };
 
 // Get User Password Policy

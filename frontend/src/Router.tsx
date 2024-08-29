@@ -114,7 +114,6 @@ const Router = createBrowserRouter([
         path: '/addSupervisor',
         element: <AddSupervisor/>,
       }
-      }
     ],
   },
   {
