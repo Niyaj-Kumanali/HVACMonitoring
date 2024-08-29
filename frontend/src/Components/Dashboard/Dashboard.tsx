@@ -17,7 +17,6 @@ const Dashboard: React.FC = () => {
   console.log(dashboardId);
   return (
     <div className="menu-data">
-      <p>{dashboardId}</p>
       <ResponsiveContainer width={700} height="80%">
         <LineChart
           data={data}

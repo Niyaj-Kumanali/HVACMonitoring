@@ -92,7 +92,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="menu-data">
+      <div className="menu-data dashboard">
         <div className="devices">
           {loadingDashboards ? (
             <Loader />
@@ -101,8 +101,8 @@ const Dashboard = () => {
               <h2>Dashboards</h2>
               <ul>
                 {dashboards.map((dashboard, index) => (
-                  <li key={index} onClick={()=> handleDashboardClick(dashboard.id?.id)}>
-                    {dashboard.title}
+                  <li key={index} >
+                    <span onClick={()=> handleDashboardClick(dashboard.id?.id)}>{dashboard.title}</span>
                     <div>
                       <IconButton aria-label="edit">
                         <EditIcon className="edit-icon" />
