@@ -11,12 +11,15 @@ import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
 import Warehouse from '../Warehouse/Warehouse';
 import { useDispatch } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [loadingDashboards, setLoadingDashboards] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const warecountdispatch = useDispatch();
+
+  const navigate = useNavigate()
 
   const fetchAllWarehouses = async () => {
 
@@ -76,6 +79,12 @@ const Dashboard = () => {
     setOpen(false);
   };
 
+  const handleDashboardClick = (dashboardId: string = 'defaultId') => {
+    if (dashboardId) {
+      navigate(`/dashboard/${dashboardId}`);
+    }
+  };
+
   useEffect(() => {
     fetchDashboards(0);
     fetchAllWarehouses()
@@ -92,7 +101,7 @@ const Dashboard = () => {
               <h2>Dashboards</h2>
               <ul>
                 {dashboards.map((dashboard, index) => (
-                  <li key={index}>
+                  <li key={index} onClick={()=> handleDashboardClick(dashboard.id?.id)}>
                     {dashboard.title}
                     <div>
                       <IconButton aria-label="edit">

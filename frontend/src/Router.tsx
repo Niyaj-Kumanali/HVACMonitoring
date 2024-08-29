@@ -32,7 +32,7 @@ const Router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/dashboard',
+        path: '/dashboard/:dashboardId',
         element: <Dashboard />,
       },
       {
@@ -99,7 +99,6 @@ const Router = createBrowserRouter([
         path: '/accountinfo',
         element: <Accountinfo />,
       },
-
     ],
   },
   {

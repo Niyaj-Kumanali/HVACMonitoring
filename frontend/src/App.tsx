@@ -20,12 +20,12 @@ const App = () => {
 
       if (!token || token !== accesstoken) {
         navigate('/login');
-      } else {
-        navigate('/dashboards');
+      } 
+      // else {
+      //   navigate('/dashboards');
+      // }
 
-        setLoading(false); 
-
-      }
+      setLoading(false);
     };
 
     validateToken();
@@ -35,7 +35,7 @@ const App = () => {
     let lastActivity = Date.now();
     const checkActivity = () => {
       const now = Date.now();
-      if (now - lastActivity > 600000) { 
+      if (now - lastActivity > 600000) {
         localStorage.clear();
         navigate('/login');
       }
@@ -77,7 +77,7 @@ const App = () => {
           timeout={500}
           nodeRef={nodeRef}
         >
-          <Outlet />
+          <Outlet/>
         </CSSTransition>
       </TransitionGroup>
     </>
