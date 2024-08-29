@@ -23,33 +23,7 @@ const Devices: React.FC = () => {
 
     const navigate = useNavigate()
 
-    const fetchDevices = async (page: number): Promise<void> => {
-        try {
-            setLoadingDevices(true);
 
-            const params = {
-                pageSize: 10,
-                page: page,
-                type: 'default',
-                textSearch: '',
-                sortProperty: 'name',
-                sortOrder: 'ASC',
-            };
-
-            const response: PageData<Device> = await getTenantDeviceInfos(params);
-            setDevices(response.data || []);
-
-            deviceCountDispatch(set_DeviceCount(response.totalElements || 0));
-
-            setTimeout(() => {
-                setLoadingDevices(false);
-            }, 1000);
-
-        } catch (error) {
-            console.error('Failed to fetch devices', error);
-            setLoadingDevices(false); 
-        }
-    };
 
     const handleDelete = async(id: string = ''): Promise<void> =>{
         await deleteDevice(id);
@@ -95,9 +69,38 @@ const Devices: React.FC = () => {
         // fetchDeviceProfileNames();
     }, []);
 
-    useEffect(() => {
-        deviceCountDispatch(set_DeviceCount(devices.length));
-    }, [devices]);
+    // useEffect(() => {
+    //     deviceCountDispatch(set_DeviceCount(devices.length));
+    // }, [devices]);
+
+
+    const fetchDevices = async (page: number): Promise<void> => {
+        try {
+            setLoadingDevices(true);
+
+            const params = {
+                pageSize: 10,
+                page: page,
+                type: 'default',
+                textSearch: '',
+                sortProperty: 'name',
+                sortOrder: 'ASC',
+            };
+
+            const response: PageData<Device> = await getTenantDeviceInfos(params);
+            setDevices(response.data || []);
+
+            deviceCountDispatch(set_DeviceCount(response.totalElements));
+
+            setTimeout(() => {
+                setLoadingDevices(false);
+            }, 1000);
+
+        } catch (error) {
+            console.error('Failed to fetch devices', error);
+            setLoadingDevices(false); 
+        }
+    };
 
     return (
         <div className="menu-data">
