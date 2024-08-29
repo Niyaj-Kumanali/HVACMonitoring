@@ -242,7 +242,7 @@ const Login: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <a href="#" onClick={handleClickOpen}>Forgot Password?</a> {/* Link to open the dialog */}
+                        <p className="forgotPassword" onClick={handleClickOpen}>Forgot Password?</p> {/* Link to open the dialog */}
                         <LoadingButton
                             type="submit"
                             size="small"

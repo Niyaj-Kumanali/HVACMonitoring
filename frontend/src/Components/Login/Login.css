@@ -149,16 +149,17 @@ form {
     margin-bottom: 4px;
 }
 
-a {
+.forgotPassword {
     display: block;
     text-align: right;
     text-decoration: none;
     color: #999;
     font-size: 0.9rem;
     transition: .3s;
+    cursor: pointer;
 }
 
-a:hover {
+.forgotPassword:hover {
     color: #38d39f;
 }
 

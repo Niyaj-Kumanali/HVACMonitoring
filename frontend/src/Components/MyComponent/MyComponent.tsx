@@ -237,10 +237,10 @@ const MyComponent: React.FC = () => {
     const response1 = await requestResetPasswordByEmail("www.niyazkumanali@gmail.com")
     console.log("sent", response1)
 
-    const token = localStorage.getItem('token') || ""
-    console.log("Token",token)
-    const response2 = await resetPassword(token, "admin1234")
-    console.log("reset", response2)
+    // const token = localStorage.getItem('token') || ""
+    // console.log("Token",token)
+    // const response2 = await resetPassword(token, "admin1234")
+    // console.log("reset", response2)
 
   };
 
