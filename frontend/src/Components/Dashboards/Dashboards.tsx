@@ -11,7 +11,7 @@ import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
 import Warehouse from '../Warehouse/Warehouse';
 import { useDispatch } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);

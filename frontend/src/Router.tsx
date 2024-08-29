@@ -21,6 +21,8 @@ import Dashboard from './Components/Dashboard/Dashboard';
 
 import App from './App';
 import PageNotFound from './Components/PageNotFound/PageNotFound';
+import TelemetryApiTester from './Components/TelemetryApiTester/TelemetryApiTester';
+import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
 
 const Router = createBrowserRouter([
   {
@@ -50,6 +52,10 @@ const Router = createBrowserRouter([
       {
         path: '/devices',
         element: <Devices />,
+      },
+      {
+        path: '/device/:deviceId',
+        element: <DeviceInfo />,
       },
       {
         path: '/locations',
@@ -99,6 +105,10 @@ const Router = createBrowserRouter([
         path: '/accountinfo',
         element: <Accountinfo />,
       },
+      {
+        path: '/telemetry',
+        element: <TelemetryApiTester />
+      }
     ],
   },
   {
