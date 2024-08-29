@@ -2,14 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-
+import dotenv from 'dotenv'; // Import dotenv
+dotenv.config(); 
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 
-const mongoUri = 'mongodb+srv://sainaath4763:sainaath4763@cluster0.e0to7dq.mongodb.net/IoT_Test';
+const mongoUri = process.env.MONGODB_URI
 
 mongoose.connect(mongoUri)
 .then(()=>{
