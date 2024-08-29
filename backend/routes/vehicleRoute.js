@@ -6,6 +6,19 @@ const router = express.Router();
 // create a new vehicle
 router.post('/addvehicle', async(req, res) => {
     try {
+
+        // Check if vehicle_id already exists
+        const existingVehicle = await vehicle.findOne({
+            $or: [
+                { vehicle_id: req.body.vehicle_id },
+                { vehicle_number: req.body.vehicle_number }
+            ]
+        });
+
+        if (existingVehicle) {
+            return res.status(409).send({ message: 'Vehicle already exists' });
+        }
+
         const newvehicle = new vehicle(req.body);
         await newvehicle.save();
         res.status(201).send(newvehicle);
@@ -61,6 +74,22 @@ router.get('/getbyvehicleid/:vehicle_id', async(req, res) => {
         console.error("Error fetching vehicle:", error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
-})
+});
+
+// delete a vehicle by id
+router.delete('/deletevehicle/:vehicle_id', async(req, res) => {
+    try {
+        const { vehicle_id } = req.params;
+        
+        const result = await vehicle.findOneAndDelete({ vehicle_id })
+
+        if(!result){
+            return res.status(404).send({ message: 'Vehicle not found' })
+        }
+        res.status(200).send({ message: 'Vehicle deleted successfully' });
+    } catch (error) {
+        res.status(400).send(error)
+    }
+});
 
 export default router
