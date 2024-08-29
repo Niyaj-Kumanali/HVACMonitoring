@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { requestResetPasswordEmail } from '../../api/loginApi';
+import { requestResetPasswordByEmail } from '../../api/loginApi';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -169,9 +169,10 @@ const Login: React.FC = () => {
         setOpen(false);
     };
 
-    const handleEmailsubmit = () => {
+    const handleEmailsubmit = async () => {
         console.log(forgetpasswordemail)
-        requestResetPasswordEmail(forgetpasswordemail)
+        const responce = await requestResetPasswordByEmail(forgetpasswordemail)
+        console.log(responce)
         handleDialogClose()
     }
 
