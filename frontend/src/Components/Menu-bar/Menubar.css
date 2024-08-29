@@ -15,9 +15,12 @@
     padding: 10px 0px;
     background-color:#2BC790;
     color: white;
-    font-size:18px
+    font-size:18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
-ul li{
+.side-bar ul li{
     padding: 14px 14px 14px 12px;
     font-weight: 400;
     display: flex;

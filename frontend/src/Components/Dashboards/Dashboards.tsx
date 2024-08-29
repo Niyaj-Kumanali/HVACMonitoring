@@ -12,6 +12,8 @@ import { useDispatch } from 'react-redux';
 import { set_DeviceCount, set_usersCount, set_warehouse_count } from '../../Redux/Action/Action';
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
+import { set_warehouse_count } from '../../Redux/Action/Action';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
@@ -34,6 +36,9 @@ const Dashboard = () => {
         console.error('Failed to fetch user data', error);
       }
     };
+  const navigate = useNavigate()
+
+  const fetchAllWarehouses = async () => {
 
     const fetchDevices = async (page: number): Promise<void> => {
       try {
@@ -111,6 +116,12 @@ const Dashboard = () => {
     setOpen(false);
   };
 
+  const handleDashboardClick = (dashboardId: string = 'defaultId') => {
+    if (dashboardId) {
+      navigate(`/dashboard/${dashboardId}`);
+    }
+  };
+
   useEffect(() => {
     fetchDashboards(0);
     fetchAllWarehouses();
@@ -118,7 +129,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="menu-data">
+      <div className="menu-data dashboard">
         <div className="devices">
           {loadingDashboards ? (
             <Loader />
@@ -127,8 +138,8 @@ const Dashboard = () => {
               <h2>Dashboards</h2>
               <ul>
                 {dashboards.map((dashboard, index) => (
-                  <li key={index}>
-                    {dashboard.title}
+                  <li key={index} >
+                    <span onClick={()=> handleDashboardClick(dashboard.id?.id)}>{dashboard.title}</span>
                     <div>
                       <IconButton aria-label="edit">
                         <EditIcon className="edit-icon" />

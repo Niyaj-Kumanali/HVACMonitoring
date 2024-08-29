@@ -111,7 +111,7 @@ export const saveDevice = async (
 };
 
 // Get Device by ID
-export const getDeviceById = async (deviceId: string): Promise<Device> => {
+export const getDeviceById = async (deviceId: string = ''): Promise<Device> => {
   const response = await thingsboardAPI.get<Device>(`/device/${deviceId}`);
   return response.data;
 };
@@ -141,7 +141,7 @@ export const processDevicesBulkImport = async (devices: any[]): Promise<void> =>
 };
 
 // Get Device Info by ID
-export const getDeviceInfoById = async (deviceId: string): Promise<any> => {
+export const getDeviceInfoById = async (deviceId: string = ''): Promise<any> => {
   const response = await thingsboardAPI.get(`/device/info/${deviceId}`);
   return response.data;
 };

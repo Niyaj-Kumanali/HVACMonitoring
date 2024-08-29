@@ -72,6 +72,7 @@ const Login: React.FC = () => {
             );
             const token = response.data.token;
             localStorage.setItem('token', token);
+            console.log(response.data)
             dispatch(set_Accesstoken(token));
             return token;
         } catch (error) {

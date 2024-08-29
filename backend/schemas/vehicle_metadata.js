@@ -1,8 +1,13 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 import { type } from 'os';
 
 const vehicleSchema = new mongoose.Schema({
-    vehicle_id : {type : String, required : true},
+    vehicle_id : {
+        type : String, 
+        required : true,
+        default: uuidv4
+    },
     vehicle_number : {type : String, required : true},
     vehicle_name : {type : String, required : true},
     vehicle_dimensions :{
@@ -15,14 +20,8 @@ const vehicleSchema = new mongoose.Schema({
         driver_contact_no : {type: Number, required:true},
         licence_id : {type: String, required:true},
     },
-    cooling_units :[{
-        coolant : {type:  mongoose.Schema.Types.ObjectId, ref:'coolant_metadata'},
-        coolant_used : {type: String, required:true}
-    }],
-    sensors :[{
-        sensor : {type: mongoose.Schema.Types.ObjectId, ref:'sensor_meatadata'},
-        
-    }]
+    cooling_units :{type: Number, required: true},
+    sensors :{type: Number, required: true}
 })
 
 

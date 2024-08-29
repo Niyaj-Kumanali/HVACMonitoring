@@ -17,11 +17,12 @@
 .devices ul li {
     width: 49%;
     box-sizing: border-box;
-    padding: 18px;
     border-radius: 5px;
     display:flex;
     align-items: center;
     justify-content:space-between;
+    padding: 0;
+    background-color: #fff;
 }
 .delete-icon{
     color: rgb(213, 13, 13);
@@ -32,4 +33,20 @@
 .deletemsg{
     background-color:red;
     color: white;
+}
+
+.devices ul li .deviceName{
+    width: 80%;
+    height: 100%;
+    padding: 18px;
+    overflow-x: hidden;
+}
+
+.devices ul li div{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 18px;
 }

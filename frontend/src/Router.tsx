@@ -23,6 +23,7 @@ import PageNotFound from './Components/PageNotFound/PageNotFound';
 import AddSupervisor from './Components/Add-User/AddSupervisor';
 import AddCustomer from './Components/Add-User/AddCustomer';
 import Signup from './Components/Login/Signup';
+import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
 
 const Router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const Router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/dashboard',
+        path: '/dashboard/:dashboardId',
         element: <Dashboard />,
       },
       {
@@ -56,6 +57,10 @@ const Router = createBrowserRouter([
       {
         path: '/devices',
         element: <Devices />,
+      },
+      {
+        path: '/device/:deviceId',
+        element: <DeviceInfo />,
       },
       {
         path: '/locations',
@@ -109,7 +114,7 @@ const Router = createBrowserRouter([
         path: '/addSupervisor',
         element: <AddSupervisor/>,
       }
-
+      }
     ],
   },
   {

@@ -1,7 +1,28 @@
-.dashboard{
-    border:1px solid black;
-    position: absolute;
-    left: 275px !important;
-    width: 78.5%; 
-    top: 0 !important;
+
+
+.dashboard ul li {
+    width: 49%;
+    box-sizing: border-box;
+    border-radius: 5px;
+    display:flex;
+    align-items: center;
+    justify-content:space-between;
+    padding: 0;
+    background-color: #fff;
+}
+
+.dashboard ul li span{
+    width: 80%;
+    height: 100%;
+    padding: 18px;
+    overflow-x: hidden;
+}
+
+.dashboard ul li div{
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 18px;
 }

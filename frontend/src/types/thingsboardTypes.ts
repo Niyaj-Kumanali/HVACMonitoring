@@ -9,6 +9,9 @@ export interface Device {
   tenantId?: {id: string, entityType: string};
   customerId?: {id: string, entityType: string};
   additionalInfo?: Object;
+  active?:boolean;
+  deviceProfileName?:string,
+  
 }
 
 // Device Profile types

@@ -1,7 +1,7 @@
 import "./Devices.css";
 import { useEffect, useState } from 'react';
-import { Device, DeviceQueryParams, PageData } from '../../types/thingsboardTypes';
-import { deleteDevice, getTenantDevices } from '../../api/deviceApi';
+import { Device, PageData } from '../../types/thingsboardTypes';
+import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
 import Loader from "../Loader/Loader";
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,7 @@ import React from "react";
 import SnackbarContent from '@mui/material/SnackbarContent';
 import { useDispatch } from "react-redux";
 import { set_DeviceCount } from "../../Redux/Action/Action";
+import { useNavigate } from "react-router-dom";
 // import { getDeviceProfileNames } from "../../api/deviceProfileAPIs";
 
 const Devices: React.FC = () => {
@@ -20,11 +21,13 @@ const Devices: React.FC = () => {
     const [open, setOpen] = React.useState(false);
     const deviceCountDispatch = useDispatch();
 
+    const navigate = useNavigate()
+
     const fetchDevices = async (page: number): Promise<void> => {
         try {
             setLoadingDevices(true);
 
-            const params: DeviceQueryParams = {
+            const params = {
                 pageSize: 10,
                 page: page,
                 type: 'default',
@@ -33,7 +36,7 @@ const Devices: React.FC = () => {
                 sortOrder: 'ASC',
             };
 
-            const response: PageData<Device> = await getTenantDevices(params);
+            const response: PageData<Device> = await getTenantDeviceInfos(params);
             setDevices(response.data || []);
 
             deviceCountDispatch(set_DeviceCount(response.totalElements || 0));
@@ -111,9 +114,9 @@ const Devices: React.FC = () => {
                                     {
                                         devices.map((device, index) => (
                                             <li key={index}>
-                                                {device.name}
+                                                <span className="deviceName" onClick={()=> navigate(`/device/${device.id?.id}`)}>{device.name}</span>
                                                 <div>
-                                                    <IconButton aria-label="edit">
+                                                    <IconButton aria-label="edit" onClick={()=> navigate(`/device/${device.id?.id}`)}>
                                                         <EditIcon className="edit-icon" />
                                                     </IconButton>
                                                     <IconButton
