@@ -8,13 +8,21 @@ import { getCurrentUser } from "../../api/loginApi";
 
 const Accountinfo = () => {
     const [username, setUsername] = useState<string>("");
-    const [loading, setLoading] = useState(false);
+    const [firstName, setFirstname] = useState<string>("");
+    const [lastName, setLastname] = useState<string>("");
+    const [phone, setPhone] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [authority, setAuthority] = useState<string>("");
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const userData = await getCurrentUser();
                 setUsername(userData.email || "");
+                setFirstname(userData.firstName || "");
+                setLastname(userData.lastName || "");
+                setPhone(userData.phone || "");
+                setAuthority(userData.authority || "")
             } catch (error) {
                 console.error('Failed to fetch user data', error);
             }
@@ -22,7 +30,6 @@ const Accountinfo = () => {
 
         fetchUserData();
     }, []);
-
 
     const handleClick = () => {
         setLoading(true);
@@ -48,13 +55,26 @@ const Accountinfo = () => {
                     </div>
                 </header>
                 <main className="accountinfo-main">
-                    {['Email', 'First Name', 'Last Name', 'Phone Number', 'Language', 'Home Dashboard'].map((label, index) => (
+                    {['Email', 'First Name', 'Last Name', 'Phone Number', 'Authority'].map((label, index) => (
                         <Box key={index} sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
                             <TextField
                                 fullWidth
                                 label={label}
-                                value={label === 'Email' ? username : ''}
-                                onChange={(e) => label === 'Email' && setUsername(e.target.value)}
+                                value={
+                                    label === 'Email' ? username :
+                                        label === 'First Name' ? firstName :
+                                            label === 'Last Name' ? lastName :
+                                                label === 'Phone Number' ? phone :
+                                                    label === 'Authority' ? authority :
+                                                    ''
+                                }
+                                onChange={(e) => {
+                                    if (label === 'Email') setUsername(e.target.value);
+                                    if (label === 'First Name') setFirstname(e.target.value);
+                                    if (label === 'Last Name') setLastname(e.target.value);
+                                    if (label === 'Phone Number') setPhone(e.target.value);
+                                    if (label == 'Authority') setAuthority(e.target.value);
+                                }}
                             />
                         </Box>
                     ))}

@@ -13,14 +13,6 @@ import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import thingsboardAPI from '../../api/thingsboardAPI';
 import Loader from '../Loader/Loader';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { requestResetPasswordEmail } from '../../api/loginApi';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -32,20 +24,19 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [snackbarStyle, setSnackbarStyle] = useState<React.CSSProperties>({});
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [open, setOpen] = useState<boolean>(false); // State for dialog open/close
+    const [isLoading, setIsLoading] = useState<boolean>(true); // Added loading state
     const navigate = useNavigate();
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
     const [usernameFocused, setUsernameFocused] = useState<boolean>(false);
     const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
-    const [forgetpasswordemail, setForgetpasswordeamil] = useState("");
 
     const handleFocus = (setter: React.Dispatch<React.SetStateAction<boolean>>) => () => {
         setter(true);
     };
 
+    // Handler for blur event
     const handleBlur = (setter: React.Dispatch<React.SetStateAction<boolean>>) => (e: any) => {
         if (e.target.value === '') {
             setter(false);
@@ -72,7 +63,6 @@ const Login: React.FC = () => {
             );
             const token = response.data.token;
             localStorage.setItem('token', token);
-            console.log(response.data)
             dispatch(set_Accesstoken(token));
             return token;
         } catch (error) {
@@ -88,12 +78,14 @@ const Login: React.FC = () => {
         try {
             await login(username, password);
 
+            // Set success message and show it after the button finishes loading
             setTimeout(() => {
                 setLoading(false);
                 setSnackbarMessage('Login successful!');
                 setSnackbarStyle({ backgroundColor: 'green' });
                 setState({ open: true, Transition: SlideTransition });
 
+                // Hide the success message after 1 second
                 setTimeout(() => {
                     setState(prevState => ({ ...prevState, open: false }));
                     navigate('/dashboards', { state: username });
@@ -106,13 +98,15 @@ const Login: React.FC = () => {
             setLoading(false);
             setState({ open: true, Transition: SlideTransition });
 
+            // Hide the error message after 1 second
             setTimeout(() => {
                 setState(prevState => ({ ...prevState, open: false }));
-            }, 1000);
+            }, 1000); // 1 second delay before hiding
         }
     };
 
 
+    // Focus username input on mount
     useEffect(() => {
         if (usernameRef.current) {
             setTimeout(() => {
@@ -161,20 +155,6 @@ const Login: React.FC = () => {
         setState(prevState => ({ ...prevState, open: false }));
     };
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDialogClose = () => {
-        setOpen(false);
-    };
-
-    const handleEmailsubmit = () => {
-        console.log(forgetpasswordemail)
-        requestResetPasswordEmail(forgetpasswordemail)
-        handleDialogClose()
-    }
-
     useEffect(() => {
         setTimeout(() => {
             setIsLoading(false);
@@ -206,7 +186,7 @@ const Login: React.FC = () => {
                 <div className="login-content">
                     <form onSubmit={handleLogin} autoComplete="on">
                         <img src={avatarImg} alt="avatar" />
-                        <h2 className="title">Welcome</h2>
+                        <h2 className="title">Sign Up</h2>
                         <div className={`input-div one ${usernameFocused ? 'focus' : ''}`}>
                             <div className="i">
                                 <i className="fas fa-user"></i>
@@ -241,7 +221,6 @@ const Login: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <a href="#" onClick={handleClickOpen}>Forgot Password?</a> {/* Link to open the dialog */}
                         <LoadingButton
                             type="submit"
                             size="small"
@@ -270,38 +249,12 @@ const Login: React.FC = () => {
                             }}
                         />
                         <div className='sign-in-toggle'>
-                            <p>Dont't have an account?</p>
-                            <Link to="/signup">
-                                <span>Sign Up</span>
-                            </Link>
+                            <p>Already have an account ? </p>
+                            <Link to={"/login"}>Login In</Link>
                         </div>
                     </form>
                 </div>
             </div>
-            <Dialog open={open} onClose={handleDialogClose}>
-                <DialogTitle>Reset Password</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To reset your password, please enter your email address here. We will send
-                        an email with instructions to reset your password.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                            value={forgetpasswordemail}
-                        onChange={(e) => setForgetpasswordeamil(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDialogClose}>Cancel</Button>
-                        <Button onClick={handleEmailsubmit} color="primary">Send</Button>
-                </DialogActions>
-            </Dialog>
         </div>
     );
 };

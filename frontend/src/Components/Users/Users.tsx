@@ -12,11 +12,11 @@ interface user {
     lastLoginTs : number
 }
 
-const Users: React.FC= () => {
+const AddCustomer: React.FC= () => {
 
     const [userdata, setUserdata] = useState<user[]>([]);
     const [loading, setLoader] = useState(true)
-    const devicecountdispatch = useDispatch();
+    const usercountdispatch = useDispatch();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -27,7 +27,7 @@ const Users: React.FC= () => {
                 }
                 const userData = await getUsers(params);
                 setUserdata(userData.data);
-                devicecountdispatch(set_usersCount(userData.data.length));
+                usercountdispatch(set_usersCount(userData.data.length));
                 setTimeout(() => {
                     setLoader(false);
                 }, 1000);
@@ -74,4 +74,4 @@ const Users: React.FC= () => {
     );
 }
 
-export default Users
+export default AddCustomer

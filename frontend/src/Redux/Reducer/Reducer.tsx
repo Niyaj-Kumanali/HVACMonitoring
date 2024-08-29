@@ -7,7 +7,8 @@ const initial_state: any = {
     // user: null ,
     accesstoken: null,
     usercount: 0,
-    warehousecount: 0
+    warehousecount: 0,
+    deviceCount :0
 }
 
 const userReducer = (state = initial_state, action: any): Userstate => {

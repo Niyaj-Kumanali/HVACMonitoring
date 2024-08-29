@@ -3,13 +3,15 @@ import Loader from '../Loader/Loader';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check'; // Import the CheckIcon
+import CheckIcon from '@mui/icons-material/Check';
 import './Dashboards.css';
 import { useEffect, useState } from 'react';
-import { DashboardQueryParams, DashboardType, PageData } from '../../types/thingsboardTypes';
+import { DashboardQueryParams, DashboardType, Device, DeviceQueryParams, PageData } from '../../types/thingsboardTypes';
 import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
-import Warehouse from '../Warehouse/Warehouse';
 import { useDispatch } from 'react-redux';
+import { set_DeviceCount, set_usersCount, set_warehouse_count } from '../../Redux/Action/Action';
+import { getUsers } from '../../api/userApi';
+import { getTenantDevices } from '../../api/deviceApi';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,42 +20,74 @@ const Dashboard = () => {
   const [loadingDashboards, setLoadingDashboards] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const warecountdispatch = useDispatch();
+  const usercountdispatch = useDispatch();
+  const deviceCountDispatch = useDispatch();
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const params = {
+          pageSize: 16,
+          page: 0,
+        };
+        const userData = await getUsers(params);
+        usercountdispatch(set_usersCount(userData.data.length));
+      } catch (error) {
+        console.error('Failed to fetch user data', error);
+      }
+    };
   const navigate = useNavigate()
 
   const fetchAllWarehouses = async () => {
 
+    const fetchDevices = async (page: number): Promise<void> => {
+      try {
+        const params: DeviceQueryParams = {
+          pageSize: 10,
+          page: page,
+          type: 'default',
+          textSearch: '',
+          sortProperty: 'name',
+          sortOrder: 'ASC',
+        };
+
+        const response: PageData<Device> = await getTenantDevices(params);
+        const devices = response.data || [];
+        deviceCountDispatch(set_DeviceCount(devices.length >= 1 ? devices.length : 0));
+      } catch (error) {
+        console.error('Failed to fetch devices', error);
+      }
+    };
+
+    fetchUserData();
+    fetchDevices(0);
+  }, [usercountdispatch, deviceCountDispatch]);
+
+  const fetchAllWarehouses = async () => {
     try {
       const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-
-      const data: Warehouse[] = await response.json();
+      const data = await response.json();
       const length = data.length;
-      warecountdispatch(set_warehouse_count(length))
-
+      warecountdispatch(set_warehouse_count(length));
     } catch (error) {
-      console.error("Failed to fetch warehouses:", error);
+      console.error('Failed to fetch warehouses:', error);
     }
   };
 
   const fetchDashboards = async (page: number) => {
     try {
       setLoadingDashboards(true);
-
       const params: DashboardQueryParams = {
-        pageSize: 10, // Adjust as needed
+        pageSize: 10,
         page: page,
-        textSearch: '', // Adjust as needed or remove if not searching
-        sortProperty: 'title', // Adjust as needed or remove if not sorting
-        sortOrder: 'ASC', // Adjust as needed or remove if not sorting
+        textSearch: '',
+        sortProperty: 'title',
+        sortOrder: 'ASC',
       };
-
-      const response: PageData<DashboardType> = await getTenantDashboards(
-        params
-      );
-
+      const response: PageData<DashboardType> = await getTenantDashboards(params);
       setDashboards(response.data ?? []);
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
@@ -63,16 +97,19 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (dashboardId: string = '') => {
-    await deleteDashboard(dashboardId)
-    setOpen(true);
-    fetchDashboards(0)
-  }
+    try {
+      await deleteDashboard(dashboardId);
+      setOpen(true);
+      fetchDashboards(0);
+    } catch (error) {
+      console.error('Failed to delete dashboard', error);
+    }
+  };
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
-    event
     if (reason === 'clickaway') {
       return;
     }
@@ -87,7 +124,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboards(0);
-    fetchAllWarehouses()
+    fetchAllWarehouses();
   }, []);
 
   return (
@@ -132,7 +169,7 @@ const Dashboard = () => {
             message={
               <span style={{ display: 'flex', alignItems: 'center' }}>
                 <CheckIcon style={{ marginRight: '8px' }} />
-                Device deleted successfully
+                Dashboard deleted successfully
               </span>
             }
           />
