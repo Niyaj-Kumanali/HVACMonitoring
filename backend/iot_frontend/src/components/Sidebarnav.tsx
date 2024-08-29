@@ -34,6 +34,8 @@ const Sidebarnav = () => {
         <MenuItem component={<Link to="/allwarehouses">Add Warehouse</Link>}>Warehouses</MenuItem>
         <MenuItem component={<Link to="/sensorform">Sensor Form</Link>}>SensorForm</MenuItem>
         <MenuItem component={<Link to="/coolantform">Coolant Form</Link>}>CoolantForm</MenuItem>
+        <MenuItem component={<Link to="/warehouseform">Warehouse Form</Link>}>WarehouseForm</MenuItem>
+        <MenuItem component={<Link to="/vehicleform">Vehicle Form</Link>}>VehicleForm</MenuItem>
         <MenuItem>Test</MenuItem>
         <MenuItem>Test</MenuItem>
         <MenuItem>Test</MenuItem>

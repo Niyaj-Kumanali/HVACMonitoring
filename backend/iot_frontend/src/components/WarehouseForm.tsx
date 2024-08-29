@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+import React, { useState } from 'react';
 import { mongoAPI } from '../api/MongoAPIInstance';
-
 
 interface WarehouseDimensions {
   length: number;
@@ -10,19 +8,17 @@ interface WarehouseDimensions {
 }
 
 interface WarehouseData {
-  warehouse_id: string;
   warehouse_name: string;
   latitude: number;
   longitude: number;
   warehouse_dimensions: WarehouseDimensions;
   energy_resource: string;
-  cooling_units: String;
-  sensors: String;
+  cooling_units: number;
+  sensors: number;
 }
 
-const AddWarehouse: React.FC = () => {
+const WarehouseForm: React.FC = () => {
   const [formData, setFormData] = useState<WarehouseData>({
-    warehouse_id: '',
     warehouse_name: '',
     latitude: 0,
     longitude: 0,
@@ -32,47 +28,14 @@ const AddWarehouse: React.FC = () => {
       height: 0,
     },
     energy_resource: '',
-    cooling_units: '',
-    sensors: '',
+    cooling_units: 0,
+    sensors: 0,
   });
-
 
   const [submitted, setSubmitted] = useState<boolean>(false);
 
-  const fetchAvailableCoolants = async () => {
-    try {
-      const response = await fetch('http://localhost:2000/coolant/getavaliablecoolants');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const availableCoolants = await response.json();
-
-      const options = availableCoolants.map((coolant: any) => ({
-        value: coolant._id,
-        label: coolant.coolant_id,
-      }));
-    } catch (error) {
-      console.error('Error fetching available coolants:', error);
-    }
-  };
-
-  const fetchAvailableSensors = async () => {
-    try {
-      const response = await mongoAPI.get('sensor/getavaliablesensors');
-      if (!response) {
-        throw new Error('Network response was not ok');
-      }
-      
-
-      
-    } catch (error) {
-      console.error('Error fetching available sensors:', error);
-    }
-  };
-
   const handleReset = () => {
     setFormData({
-      warehouse_id: '',
       warehouse_name: '',
       latitude: 0,
       longitude: 0,
@@ -82,8 +45,8 @@ const AddWarehouse: React.FC = () => {
         height: 0,
       },
       energy_resource: '',
-      cooling_units: '',
-      sensors: '',
+      cooling_units: 0,
+      sensors: 0,
     });
     setSubmitted(false);
   };
@@ -91,7 +54,7 @@ const AddWarehouse: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
   
-    if (name.startsWith('warehouse_dimensions.') || name === 'latitude' || name === 'longitude') {
+    if (name.startsWith('warehouse_dimensions.') || name === 'latitude' || name === 'longitude' || name === 'cooling_units' || name === 'sensors') {
       const parsedValue = parseFloat(value);
       if (!isNaN(parsedValue)) {
         if (name.startsWith('warehouse_dimensions.')) {
@@ -118,60 +81,11 @@ const AddWarehouse: React.FC = () => {
     }
   };
 
-
-  const handleSelectChange = (selectedOptions: any, actionMeta: any) => {
-    const name = actionMeta.name as keyof WarehouseData;
-
-    if (name === 'cooling_units') {
-      const formattedData = selectedOptions ? selectedOptions.map((option: { value: string; label: string }) => ({
-        coolant: option.value,
-        coolant_used: '', // Default empty, can be filled in the input fields
-        data: option.label
-      })) : [];
-      setFormData({
-        ...formData,
-        [name]: formattedData,
-      });
-    } else if (name === 'sensors') {
-      const formattedData = selectedOptions ? selectedOptions.map((option: { value: string; label: string }) => ({
-        sensor: option.value,
-        rack_id: 0, // Default value
-        shelf_id: 0, // Default value
-        data: option.label
-      })) : [];
-      setFormData({
-        ...formData,
-        [name]: formattedData,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: selectedOptions ? selectedOptions.map((option: { value: string }) => option.value) : [],
-      });
-    }
-  };
-
-  // console.log(formData)
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // const response = await fetch('http://localhost:2000/warehouse/addwarehouse', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-
-      const response = await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(formData))
-  
-      const result = response
-      console.log(response); // Log the result to see any error details
-  
-      // if (!response.ok) {
-      //   throw new Error(result.message || 'Failed to submit form');
-      // }
+      const response = await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(formData));
+      const result = response.data;
   
       console.log('Warehouse added:', result);
       setSubmitted(true);
@@ -179,8 +93,6 @@ const AddWarehouse: React.FC = () => {
       console.error('Error submitting form:', error);
     }
   };
-
- 
 
   return (
     <div className="form-container">
@@ -194,18 +106,6 @@ const AddWarehouse: React.FC = () => {
         </div>
       ) : (
         <form className="warehouse-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="warehouse_id">Warehouse ID:</label>
-            <input
-              type="text"
-              id="warehouse_id"
-              name="warehouse_id"
-              value={formData.warehouse_id}
-              onChange={handleChange}
-              disabled={submitted}
-            />
-          </div>
-
           <div className="form-group">
             <label htmlFor="warehouse_name">Warehouse Name:</label>
             <input
@@ -292,22 +192,25 @@ const AddWarehouse: React.FC = () => {
 
           <div className="form-group">
             <label htmlFor="cooling_units">Cooling Units:</label>
-            <Select
+            <input
+              type="number"
               id="cooling_units"
               name="cooling_units"
-              onChange={handleSelectChange}
-              isDisabled={submitted}
+              value={formData.cooling_units}
+              onChange={handleChange}
+              disabled={submitted}
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="sensors">Sensors:</label>
-            <Select
+            <input
+              type="number"
               id="sensors"
               name="sensors"
-              isMulti
-              onChange={handleSelectChange}
-              isDisabled={submitted}
+              value={formData.sensors}
+              onChange={handleChange}
+              disabled={submitted}
             />
           </div>
 
@@ -320,4 +223,4 @@ const AddWarehouse: React.FC = () => {
   );
 };
 
-export default AddWarehouse;
+export default WarehouseForm;

@@ -13,6 +13,8 @@ import AvaliableSensors from './AvaliableSensors';
 import AllWarehouses from './AllWarehouses';
 import SensorForm from './SensorForm';
 import CoolantForm from './CoolantForm';
+import WarehouseFrom from './WarehouseForm';
+import VehicleForm from './VehicleForm';
 
 const Home = () => <h1>Welcome to Home</h1>;
 
@@ -37,6 +39,8 @@ const RouterComponent = () => {
             <Route path="/allwarehouses" element={<AllWarehouses />} />
             <Route path="/sensorform" element={<SensorForm />} />
             <Route path="/coolantform" element={<CoolantForm />} />
+            <Route path='/warehouseform' element={<WarehouseFrom/>}/>
+            <Route path='/vehicleForm' element={<VehicleForm/>}/>
             
           </Routes>
         </div>
