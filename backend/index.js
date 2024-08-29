@@ -30,6 +30,7 @@ app.use('/sensor',sensorRouter)
 app.use('/vehicle',vehicleRouter)
 
 const port = process.env.PORT || 2000;
+console.log(port)
 app.listen(port, ()=>{
     console.log(`Server is running on port ${port}`)
 });
