@@ -29,7 +29,7 @@ app.use('/coolant', coolantRouter)
 app.use('/sensor',sensorRouter)
 app.use('/vehicle',vehicleRouter)
 
-
-app.listen(2000, ()=>{
-    console.log("port is running on 2000")
+const port = process.env.PORT || 2000;
+app.listen(port, ()=>{
+    console.log(`Server is running on port ${port}`)
 });
