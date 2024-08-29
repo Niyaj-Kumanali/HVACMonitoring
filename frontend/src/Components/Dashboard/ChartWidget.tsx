@@ -46,9 +46,8 @@ const ChartWidget: React.FC<ChartWidgetProps> = ({ data }) => {
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} />
       <YAxis />
-      <Tooltip cursor={false}/>
-      <Legend verticalAlign="top" height={36} />
-      {/* Render a Line for each key in seriesKeys */}
+      <Tooltip cursor={{ stroke: '#2BC790', strokeWidth: 2 }} />
+      <Legend verticalAlign="top" height={16} />
       {seriesKeys.map((key, index) => (
         <Line
           key={index}

@@ -50,6 +50,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         keys: keysString, // Pass the comma-separated string of keys
         startTs: 1672597800000,
         endTs: 1735583400000,
+        limit: 50,
       };
 
       const telemetryData = await getTimeseries('DEVICE', deviceId || '', params);
