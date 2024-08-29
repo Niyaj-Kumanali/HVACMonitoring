@@ -11,7 +11,6 @@ import Vehicles from './Components/Vehicles/Vehicles';
 import AddAction from './Components/Add-Action/AddAction';
 import AddLocation from './Components/Add-Location/AddLocation';
 import Addwarehouse from './Components/Add-Warehouse/Addwarehouse';
-import Adduser from './Components/Add-User/Adduser';
 import Addvehicle from './Components/Add-Vehicle/Addvehicle';
 import MyComponent from './Components/MyComponent/MyComponent';
 import Login from './Components/Login/Login';
@@ -21,11 +20,18 @@ import Dashboard from './Components/Dashboard/Dashboard';
 
 import App from './App';
 import PageNotFound from './Components/PageNotFound/PageNotFound';
+import AddSupervisor from './Components/Add-User/AddSupervisor';
+import AddCustomer from './Components/Add-User/AddCustomer';
+import Signup from './Components/Login/Signup';
 
 const Router = createBrowserRouter([
   {
     path: '/login',
-    element: <Login />,
+    element: <Login />
+  },
+  {
+    path: '/signup',
+    element: <Signup />
   },
   {
     path: '/',
@@ -84,8 +90,8 @@ const Router = createBrowserRouter([
         element: <Addwarehouse />,
       },
       {
-        path: '/addUser',
-        element: <Adduser />,
+        path: '/addCustomer',
+        element: <AddCustomer />,
       },
       {
         path: '/addVehicle',
@@ -99,6 +105,10 @@ const Router = createBrowserRouter([
         path: '/accountinfo',
         element: <Accountinfo />,
       },
+      {
+        path: '/addSupervisor',
+        element: <AddSupervisor/>,
+      }
 
     ],
   },

@@ -12,12 +12,16 @@ import { getActivationLink, saveUser } from "../../api/userApi";
 
 const Adduser = () => {
     const [email, setEmail] = useState("");
+    const [firstName, setFirstname] = useState("");
+    const [lastName, setLastname] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [title, setTitle] = useState("");
     const [IsSendActivationMail, setIsSendActivationMail] = useState<boolean>(false);
+    const [activationlink, setActivationlink] = useState("");
 
     const handleCustomerSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -39,9 +43,9 @@ const Adduser = () => {
             const newUser: User = {
                 authority: 'CUSTOMER_USER',
                 email: email,
-                firstName: '',
-                lastName: '',
-                phone: '',
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
                 additionalInfo: {},
                 customerId: {
                     id: customer.id?.id || '',
@@ -57,11 +61,15 @@ const Adduser = () => {
             console.log(user);
 
             const activationlink = await getActivationLink(user.id?.id);
-            console.log(activationlink);
+            setActivationlink(activationlink);;
 
             setMessage("User created successfully!");
             setSnackbarType('success');
             setOpen(true);
+            setFirstname("");
+            setLastname("");
+            setEmail("");
+            setPhone("");
             await minLoadingTime;
         } catch (error: any) {
             console.error('Failed to create customer: ' + error.message);
@@ -116,6 +124,39 @@ const Adduser = () => {
                             />
                         </Box>
                     </div>
+                    <div className="input-user">
+                        <label htmlFor="" className="label">First Name</label>
+                        <Box className="text-field-box">
+                            <TextField
+                                fullWidth
+                                label="First Name"
+                                onChange={(e) => setFirstname(e.target.value)}
+                                value={firstName}
+                            />
+                        </Box>
+                    </div>
+                    <div className="input-user">
+                        <label htmlFor="" className="label">Last Name</label>
+                        <Box className="text-field-box">
+                            <TextField
+                                fullWidth
+                                label="Last Name"
+                                onChange={(e) => setLastname(e.target.value)}
+                                value={lastName}
+                            />
+                        </Box>
+                    </div>
+                    <div className="input-user">
+                        <label htmlFor="" className="label">Phone</label>
+                        <Box className="text-field-box">
+                            <TextField
+                                fullWidth
+                                label="Phone"
+                                onChange={(e) => setPhone(e.target.value)}
+                                value={phone}
+                            />
+                        </Box>
+                    </div>
                     <div className="input-user-checkbox">
                         <Checkbox {...label} checked={IsSendActivationMail}
                             onChange={(e) => setIsSendActivationMail(e.target.checked)} /> Send Activation Mail
@@ -134,8 +175,15 @@ const Adduser = () => {
                         >
                             <span>Save</span>
                         </LoadingButton>
-
                     </div>
+                    {
+                        activationlink ? (
+                            <div className="activation-link">Activation Link :<a href={activationlink} className="activation-links" target="_blank" rel="noopener noreferrer">Follow</a></div>
+                        ) :
+                            (
+                                <div></div>
+                            )
+                    }
                 </form>
             </div>
             <Snackbar

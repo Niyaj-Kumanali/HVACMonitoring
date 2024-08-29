@@ -1,6 +1,7 @@
-.header{
+/* General Styles */
+.header {
     width: 100%;
-    padding: 20px 0px;
+    padding: 20px 40px;
     display: flex;
     gap: 25px;
     background-color: #2BC790;
@@ -9,23 +10,44 @@
     position: relative;
     height: 60px;
     align-items: center;
-    position: relative;
+    transition: all 0.3s ease;
+    /* Smooth transition */
 }
-.link2{
+
+.menu-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    display: none;
+    /* Hidden by default */
+}
+
+.menu-items .menuicon {
+    font-size: 35px;
+    cursor: pointer;
+    /* Indicates it's clickable */
+}
+
+.link2 {
     color: white !important;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.logo{
-    width: 275px;
+
+.logo {
+    width: 250px;
     color: white;
     font-size: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: width 0.3s ease;
+    /* Smooth transition */
 }
-.account{
+
+.account {
     height: max-content;
     display: flex;
     align-items: center;
@@ -37,7 +59,8 @@
     gap: 20px;
     height: 100%;
 }
-.account li{
+
+.account li {
     list-style-type: none;
     display: flex;
     align-items: center;
@@ -45,15 +68,18 @@
     height: 100%;
     gap: 6px;
 }
-.accounticon{
+
+.accounticon {
     font-size: 35px !important;
 }
-li{
-    font-size:18px
+
+li {
+    font-size: 18px;
 }
-.visible{
+
+.visible {
     position: absolute;
-    top:55px;
+    top: 55px;
     color: black;
     width: 250px;
     right: 1px;
@@ -63,8 +89,11 @@ li{
     background-color: white;
     border-radius: 5px;
     box-shadow: 0 5px 5px -3px #0003, 0 8px 10px 1px #00000024, 0 3px 14px 2px #0000001f;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Smooth transition */
 }
-.visible .link2{
+
+.visible .link2 {
     color: black !important;
     padding: 11px;
     font-size: 18px;
@@ -72,10 +101,11 @@ li{
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content:flex-start;
+    justify-content: flex-start;
 }
-.visible .link2:hover{
-    background-color:#ebebeb;
+
+.visible .link2:hover {
+    background-color: #ebebeb;
 }
 
 .visible .link2:first-child:hover {
@@ -88,6 +118,48 @@ li{
     border-bottom-right-radius: 5px;
 }
 
-.hidden{
+.hidden {
     display: none;
+}
+
+/* Media Queries */
+
+/* Tablets and small laptops */
+@media screen and (max-width: 1000px) {
+    .account .user-email {
+        display: none;
+        /* Hide email on smaller screens */
+    }
+}
+
+/* Small devices (phones) */
+@media screen and (max-width: 700px) {
+
+
+    .logo {
+        width: 140px;
+    }
+
+    .menu-items {
+        display: block;
+    }
+
+
+}
+
+@media screen and (max-width:500px){
+    .homelink{
+        display: none;
+    }
+}
+
+@media screen and (max-width:370px){
+    .menuu{
+        width: 50px;
+        border: 1px solid black;
+    }
+    .logo {
+        width: 140px;
+        border: 1px solid black;
+    }
 }

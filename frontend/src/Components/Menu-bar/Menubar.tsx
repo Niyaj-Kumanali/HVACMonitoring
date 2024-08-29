@@ -76,9 +76,13 @@ const Menubar = () => {
                     <Link to="/addVehicle" className="link">
                         <li><AddIcon className="speedicon" />Add Vehicle</li>
                     </Link>
-                    <Link to="/addUser" className="link">
+                    <span className="link add-user-link">
                         <li><PersonAddAlt1Icon className="speedicon" />Add User</li>
-                    </Link>
+                        <div className="user-selection">
+                            <Link to="/addSupervisor" className="user-selection-link">Add Supervisor</Link>
+                            <Link to="/addCustomer" className="user-selection-link">Add Customer</Link>
+                        </div>
+                    </span>
                     <Link to="/testComponent" className="link">
                         <li><PersonAddAlt1Icon className="speedicon" />My Component</li>
                     </Link>

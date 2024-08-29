@@ -4,8 +4,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import LogoutIcon from '@mui/icons-material/Logout';
 import "./Header.css";
-import "../Menu-bar/Menubar.css";
+// import "../Menu-bar/Menubar.css";
 import { getCurrentUser } from "../../api/loginApi";
+import MenuIcon from '@mui/icons-material/Menu';
 
 
 const Header: React.FC = () => {
@@ -54,19 +55,23 @@ const Header: React.FC = () => {
 
     return (
         <div className="header">
+            <div className="menu-items">
+                <MenuIcon className="menuicon"/>
+            </div>
             <div className="logo">Myoorja</div>
-            <Link to="/dashboard" className="link link2">
+            
+            <Link to="/dashboard" className="link link2 homelink">
                 <li>Home</li>
             </Link>
             <div className="account">
-                <li>
+                <li className="user-email">
                     <AccountCircleIcon className="accounticon" />
                     <span>{email}</span>
                 </li>
                 <li className="menuu" onClick={handleVisible}>
                     <MoreVertIcon />
                     <div className={`menu ${toggle}`} ref={menuRef}>
-                        <Link className="link2" to="/accountinfo">
+                        <Link className="link2"  to="/accountinfo">
                             <AccountCircleIcon />
                             <span>Account</span>
                         </Link>
