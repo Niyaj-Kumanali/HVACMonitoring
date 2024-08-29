@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { LineChart, Line, ResponsiveContainer, CartesianGrid, Legend, Tooltip } from 'recharts';
-import { BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { XAxis, YAxis } from 'recharts';
 
 const data = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
