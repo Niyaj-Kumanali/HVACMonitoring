@@ -1,37 +1,80 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { LineChart, Line, ResponsiveContainer, CartesianGrid, Legend, Tooltip } from 'recharts';
-import { XAxis, YAxis } from 'recharts';
+// // src/components/Dashboard.tsx
+// import React, { useState } from 'react';
+// import GridLayout, { Layout } from 'react-grid-layout';
+// import ChartWidget from './ChartWidget';
+// import Header from './Header';
 
-const data = [
-  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-  { name: 'Page A', uv: 300, pv: 2400, amt: 2400 },
-  { name: 'Page A', uv: 500, pv: 2400, amt: 2400 },
-  { name: 'Page A', uv: 100, pv: 2400, amt: 2400 },
-  { name: 'Page A', uv: 600, pv: 2400, amt: 2400 },
-];
+// interface DashboardProps {}
 
+// const Dashboard: React.FC<DashboardProps> = () => {
+//   const [layout, setLayout] = useState<Layout[]>([]);
+//   const [isEditable, setIsEditable] = useState<boolean>(false);
+//   const [selectedDevice, setSelectedDevice] = useState<string>('');
+//   const [devices, setDevices] = useState<{ id: string; name: string }[]>([
+//     { id: 'device1', name: 'Device 1' },
+//     { id: 'device2', name: 'Device 2' },
+//   ]);
 
-const Dashboard: React.FC = () => {
-  const { dashboardId } = useParams();
-  console.log(dashboardId);
+//   const onEdit = () => {
+//     setIsEditable(!isEditable);
+//   };
+
+//   const onSave = () => {
+//     alert('Layout saved!');
+//     setIsEditable(false);
+//   };
+
+//   const onAddChart = () => {
+//     setLayout((prevLayout) => [
+//       ...prevLayout,
+//       { i: `chart-${prevLayout.length}`, x: 0, y: Infinity, w: 4, h: 4 },
+//     ]);
+//   };
+
+//   const sampleData = [
+//     { name: 'Jan', value: 30 },
+//     { name: 'Feb', value: 20 },
+//     { name: 'Mar', value: 50 },
+//   ];
+
+//   return (
+//     <div>
+//       <Header
+//         devices={devices}
+//         selectedDevice={selectedDevice}
+//         onSelectDevice={setSelectedDevice}
+//         onEdit={onEdit}
+//         onSave={onSave}
+//       />
+//       <button onClick={onAddChart}>Add Chart</button>
+//       <GridLayout
+//         className="layout"
+//         layout={layout}
+//         cols={12}
+//         rowHeight={30}
+//         width={1200}
+//         isDraggable={isEditable}
+//         isResizable={isEditable}
+//         onLayoutChange={(layout) => setLayout(layout)}
+//       >
+//         {layout.map((item) => (
+//           <div key={item.i} data-grid={item}>
+//             <ChartWidget data={sampleData} />
+//           </div>
+//         ))}
+//       </GridLayout>
+//     </div>
+//   );
+// };
+
+// export default Dashboard;
+
+import React from 'react'
+
+const Dashboard = () => {
   return (
-    <div className="menu-data">
-      <ResponsiveContainer width={700} height="80%">
-        <LineChart
-          data={data}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip cursor={{ stroke: '#2BC790', strokeWidth: 1 }} />
-          <Legend />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
+    <div>Dashboard</div>
+  )
+}
 
-export default Dashboard;
+export default Dashboard

@@ -9,7 +9,7 @@ import {
   DashboardQueryParams,
   Customer,
 } from '../../types/thingsboardTypes';
-import { getCurrentUser } from '../../api/loginApi';
+import { getCurrentUser, requestResetPasswordEmail } from '../../api/loginApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { getTenantDashboards, saveDashboard } from '../../api/dashboardApi';
 import { getActivationLink, getUsers, saveUser } from '../../api/userApi';
@@ -233,6 +233,9 @@ const MyComponent: React.FC = () => {
     const response = await getCurrentUser();
     console.log('Current User: \n', response);
     fetchCustomers(0);
+
+    await requestResetPasswordEmail("iamniyazahmad777@gmail.com")
+    console.log("sent")
   };
 
   const handlePageChangeWidgets = (page: number) => {
