@@ -1,3 +1,4 @@
+// src/components/ChartWidget.tsx
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
@@ -12,7 +13,6 @@ const ChartWidget: React.FC<ChartWidgetProps> = ({ data }) => {
   const seriesKeys = Object.keys(data);
 
   // Format data for Recharts
-  // Check if data[key] is an array before mapping
   const formattedData = seriesKeys.flatMap((key) => {
     const seriesData = data[key];
     if (!Array.isArray(seriesData)) {
@@ -41,7 +41,6 @@ const ChartWidget: React.FC<ChartWidgetProps> = ({ data }) => {
       width={600}
       height={400}
       data={groupedData}
-    //   margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
     >
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} />

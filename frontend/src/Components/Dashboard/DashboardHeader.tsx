@@ -1,15 +1,13 @@
-// src/components/DashboardHeader.tsx
-import React, { useEffect, useState } from 'react';
-import { Select, MenuItem, Button, FormControl, InputLabel, Box } from '@mui/material';
-import { getTimeseriesKeys } from '../../api/deviceProfileAPIs';
+import React from 'react';
+import { Select, MenuItem, Button, FormControl, InputLabel, Box, Checkbox, ListItemText } from '@mui/material';
 
 interface HeaderProps {
   devices: { id: string; name: string }[];
-  sensors: string[]; // Added sensors prop
+  sensors: string[];
   selectedDevice: string;
-  selectedSensor: string; // Added selectedSensor prop
+  selectedSensors: string[];
   onSelectDevice: (deviceId: string) => void;
-  onSelectSensor: (sensorId: string) => void; // Added onSelectSensor prop
+  onSelectSensors: (sensors: string[]) => void;
   onEdit: () => void;
   onSave: () => void;
 }
@@ -18,13 +16,24 @@ const DashboardHeader: React.FC<HeaderProps> = ({
   devices,
   sensors,
   selectedDevice,
-  selectedSensor,
+  selectedSensors,
   onSelectDevice,
-  onSelectSensor,
+  onSelectSensors,
   onEdit,
   onSave,
 }) => {
-  
+
+  const renderSelectedSensors = (selected: string[]) => {
+    const displayLimit = 1; // Limit number of displayed selected items
+    if (selected.length === 0) return <em>Select Sensor</em>;
+
+    if (selected.length > displayLimit) {
+      return `${selected.slice(0, displayLimit).join(', ')} + ${selected.length - displayLimit} more`;
+    }
+
+    return selected.join(', ');
+  };
+
   return (
     <Box
       display="flex"
@@ -54,21 +63,23 @@ const DashboardHeader: React.FC<HeaderProps> = ({
           </Select>
         </FormControl>
 
-        {/* Sensors Dropdown */}
-        <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
+        {/* Sensors Dropdown with Multiple Selection */}
+        <FormControl variant="outlined" size="small" style={{ minWidth: 200, width: 250}}>
           <InputLabel id="sensor-select-label">Select Sensor</InputLabel>
           <Select
             labelId="sensor-select-label"
-            value={selectedSensor}
-            onChange={(e) => onSelectSensor(e.target.value)}
+            multiple
+            value={selectedSensors}
+            onChange={(e) => {
+              onSelectSensors(e.target.value as string[]);
+            }}
+            renderValue={(selected) => renderSelectedSensors(selected as string[])}
             label="Select Sensor"
           >
-            <MenuItem value="">
-              <em>Select Sensor</em>
-            </MenuItem>
             {sensors.map((sensor, index) => (
               <MenuItem key={index} value={sensor}>
-                {sensor}
+                <Checkbox checked={selectedSensors.includes(sensor)} />
+                <ListItemText primary={sensor} />
               </MenuItem>
             ))}
           </Select>
