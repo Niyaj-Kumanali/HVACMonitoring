@@ -30,12 +30,19 @@
     position: relative;
     z-index: 10;
     background-color: #fff;
+    cursor: pointer;
 }
 .user-selection{
     display: flex;
-    align-items: center;
     flex-direction: column;
 }
+
+.toggle-user{
+    display:none;
+}
+
+
+
 
 .user-selection-link{
     padding:20px;
@@ -55,9 +62,7 @@
     list-style-type: none;
     position: relative;
 }
-.add-user-link:hover .user-selection{
-    display: block;
-}
+
 .quick-action{
     font-size:17px;
     font-weight: 500;

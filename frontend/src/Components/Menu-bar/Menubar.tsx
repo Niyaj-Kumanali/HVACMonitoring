@@ -12,7 +12,7 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 const Menubar = () => {
@@ -20,6 +20,13 @@ const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
     const userCount = useSelector((state: any) => state.user.userCount);
     const warehousecount = useSelector((state: any) => state.user.warehouseCount);
+    const userSelectionRef = useRef(null);
+    const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(false);
+    
+
+    const handleUserSelectionOpen = () => {
+        setIsUserSelectionOpen(prevState => !prevState);
+    }
 
     useEffect(() => {
         document.body.style.overflowX = 'hidden';
@@ -76,9 +83,12 @@ const Menubar = () => {
                     <Link to="/addVehicle" className="link">
                         <li><AddIcon className="speedicon" />Add Vehicle</li>
                     </Link>
-                    <span className="link add-user-link">
+                    <span className="link add-user-link" onClick={handleUserSelectionOpen}>
                         <li><PersonAddAlt1Icon className="speedicon" />Add User</li>
-                        <div className="user-selection">
+                        <div
+                            className={`user-selection ${isUserSelectionOpen ? 'toggle-user-open' : 'toggle-user'}`}
+                            ref={userSelectionRef}
+                        >
                             <Link to="/addSupervisor" className="user-selection-link">Add Supervisor</Link>
                             <Link to="/addCustomer" className="user-selection-link">Add Customer</Link>
                         </div>

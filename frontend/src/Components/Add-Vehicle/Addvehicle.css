@@ -1,0 +1,16 @@
+.vehicle{
+    width: 50%;
+    padding: 20px;
+    margin:20px;
+    background-color: white;
+}
+.vehicle-form{
+    width: 100%;
+}
+.vehicle-form .textfieldss{
+    background-color:#ebebeb;
+}
+
+.vehicle-form .sub-btn{
+    margin-top:30px;
+}
