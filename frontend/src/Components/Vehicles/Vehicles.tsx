@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "../Warehouse/Warehouse.css";
 import CarIcon from '@mui/icons-material/DirectionsCar';
 import { mongoAPI } from "../../api/MongoAPIInstance";
+import { useDispatch } from "react-redux";
+import { set_vehicle_count } from "../../Redux/Action/Action";
 
 interface VehicleDimensions {
     length: string;
@@ -26,13 +28,16 @@ interface VehicleData {
 
 const Vehicles = () => {
     const [allVehicles, setAllVehicles] = useState<VehicleData[]>([]);
-    // const [error, setError] = useState<{ [key: string]: string | null }>({});
-    
+
+    const vehicleCountDispatch = useDispatch();
+
+   
 
     const fetchAllVehicles = async () => {
         try {
             const response = await mongoAPI.get("vehicle/getallvehicle");
             setAllVehicles(response.data);
+            vehicleCountDispatch(set_vehicle_count(response.data.length));
         } catch (error) {
             console.error("Failed to fetch vehicles:", error);
         }

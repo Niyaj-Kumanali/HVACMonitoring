@@ -21,6 +21,8 @@ const Menubar = () => {
     const userCount = useSelector((state: any) => state.user.userCount);
     const warehousecount = useSelector((state: any) => state.user.warehouseCount);
 
+    const vehicleCount = useSelector((state: any) => state.user.vehicleCount)
+
     const userSelectionRef = useRef(null);
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(false);
     
@@ -63,7 +65,7 @@ const Menubar = () => {
                         <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span></li>
                     </Link>
                     <Link to="/vehicles" className="link">
-                        <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">{vehiclecount}</span></li>
+                        <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">{vehicleCount}</span></li>
                     </Link>
                     <Link to="/users" className="link">
                         <li><GroupIcon className="speedicon" />Users <span className="count">{userCount}</span></li>

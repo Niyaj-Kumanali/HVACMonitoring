@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../Add-Warehouse/Addwarehouse.css";
 import { FormControl, Snackbar, SnackbarCloseReason, SnackbarContent, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -7,6 +7,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance'; 
 import "./Addvehicle.css"
+import { set_vehicle_count } from '../../Redux/Action/Action';
+import { useDispatch } from 'react-redux';
 
 interface VehicleDimensions {
     length: string;
@@ -30,6 +32,14 @@ interface VehicleData {
 }
 
 const AddVehicle: React.FC = () => {
+
+    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+    const [message, setMessage] = useState("");
+    const vehicleCountDispatch = useDispatch();
+
     const [formData, setFormData] = useState<VehicleData>({
         vehicle_number: '',
         vehicle_name: '',
@@ -47,11 +57,7 @@ const AddVehicle: React.FC = () => {
         sensors: null,
     });
 
-    const [submitted, setSubmitted] = useState<boolean>(false);
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-    const [message, setMessage] = useState("");
+    
 
     const handleReset = () => {
         setFormData({
@@ -143,6 +149,7 @@ const AddVehicle: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage('Vehicle Added Successfully');
+                fetchAllVehicles();
             }, 1000);
 
         } catch (error) {
@@ -155,6 +162,17 @@ const AddVehicle: React.FC = () => {
             }, 1000);
         }
     };
+
+
+    const fetchAllVehicles = async () => {
+        try {
+            const response = await mongoAPI.get("vehicle/getallvehicle");
+            vehicleCountDispatch(set_vehicle_count(response.data.length));
+        } catch (error) {
+            console.error("Failed to fetch vehicles:", error);
+        }
+    };
+
 
     const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
         event
