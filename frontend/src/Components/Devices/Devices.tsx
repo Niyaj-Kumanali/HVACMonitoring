@@ -93,7 +93,7 @@ const Devices: React.FC = () => {
 
             setTimeout(() => {
                 setLoadingDevices(false);
-            }, 1000);
+            }, 500);
 
         } catch (error) {
             console.error('Failed to fetch devices', error);

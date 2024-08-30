@@ -9,22 +9,30 @@ import { useEffect, useState } from 'react';
 import { DashboardQueryParams, DashboardType, Device, DeviceQueryParams, PageData } from '../../types/thingsboardTypes';
 import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
 import { useDispatch } from 'react-redux';
-import { set_DeviceCount, set_usersCount, set_vehicle_count, set_warehouse_count } from '../../Redux/Action/Action';
+import { set_Authority, set_DeviceCount, set_usersCount, set_vehicle_count, set_warehouse_count } from '../../Redux/Action/Action';
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
 import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getCurrentUser } from '../../api/loginApi';
 
+type User = {
+  authority: string;
+};
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
-  const [loadingDashboards, setLoadingDashboards] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const warecountdispatch = useDispatch();
   const usercountdispatch = useDispatch();
   const deviceCountDispatch = useDispatch();
   const vehicleCountDispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoader] = useState(true)
+  const [currentuser, setCurrentuser] = useState < User | any >("");
+  const authorityDispatch = useDispatch();
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -93,7 +101,6 @@ const Dashboard = () => {
 
   const fetchDashboards = async (page: number) => {
     try {
-      setLoadingDashboards(true);
       const params: DashboardQueryParams = {
         pageSize: 10,
         page: page,
@@ -103,10 +110,17 @@ const Dashboard = () => {
       };
       const response: PageData<DashboardType> = await getTenantDashboards(params);
       setDashboards(response.data ?? []);
+      setTimeout(() => {
+        setLoader(false);
+      }, 500);
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
+      setError('No Dashboard Found');
+      setShowError(true);
     } finally {
-      setLoadingDashboards(false);
+      setTimeout(() => {
+        setLoader(false);
+      }, 500);
     }
   };
 
@@ -137,24 +151,35 @@ const Dashboard = () => {
     }
   };
 
+
   useEffect(() => {
     fetchDashboards(0);
     fetchAllWarehouses();
+    const currentuser = async () => {
+      const user = await getCurrentUser();
+      setCurrentuser(user.authority)
+    }
+
+    currentuser()
   }, []);
+
+  authorityDispatch(set_Authority(currentuser));
 
   return (
     <>
       <div className="menu-data dashboard">
         <div className="devices">
-          {loadingDashboards ? (
+          {loading ? (
             <Loader />
+          ) : showError ? (
+              <div>{error}</div>
           ) : (
             <>
               <h2>Dashboards</h2>
               <ul>
                 {dashboards.map((dashboard, index) => (
-                  <li key={index} >
-                    <span onClick={()=> handleDashboardClick(dashboard.id?.id)}>{dashboard.title}</span>
+                  <li key={index}>
+                    <span onClick={() => handleDashboardClick(dashboard.id?.id)}>{dashboard.title}</span>
                     <div>
                       <IconButton aria-label="edit">
                         <EditIcon className="edit-icon" />
