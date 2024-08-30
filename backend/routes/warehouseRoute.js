@@ -54,25 +54,6 @@ router.get('/getallwarehouse', async(req, res) => {
     }
 });
 
-//  get all warehouses
-router.get('/getallwarehouse/:userId', async(req, res) => {
-    try {
-
-        const {userId} = req.params
-        let getallwarehouse = await warehouse.find();
-        getallwarehouse = getallwarehouse.filter(item => item.userId == userId)
-
-
-        if (!getallwarehouse) {
-            return res.status(404).json({ message: 'Warehouse not found' });
-        }
-        res.status(200).json(getallwarehouse);
-    } catch (error) {
-        
-        res.status(500).json({ message: 'Error retrieving warehouse data', error });
-    }
-});
-
 // get warehouse by warehouse_id
 router.get('/getwarehouse/:warehouse_id', async(req, res) => {
     try {

@@ -9,7 +9,6 @@ import { mongoAPI } from '../../api/MongoAPIInstance';
 import "./Addvehicle.css"
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import { useDispatch } from 'react-redux';
-import { getCurrentUser } from '../../api/loginApi';
 
 interface VehicleDimensions {
     length: string;
@@ -30,8 +29,6 @@ interface VehicleData {
     Driver_details: DriverDetails;
     cooling_units: string | null; // Set as string or null
     sensors: string | null; // Set as string or null
-    userId: string;
-    email: string
 }
 
 const AddVehicle: React.FC = () => {
@@ -58,8 +55,6 @@ const AddVehicle: React.FC = () => {
         },
         cooling_units: null,
         sensors: null,
-        userId: '',
-        email: ''
     });
 
     
@@ -80,8 +75,6 @@ const AddVehicle: React.FC = () => {
             },
             cooling_units: null,
             sensors: null,
-            userId: '',
-            email: ''
         });
         setSubmitted(false);
     };
@@ -130,8 +123,6 @@ const AddVehicle: React.FC = () => {
         e.preventDefault();
         setLoading(true);
 
-        const currentUser = await getCurrentUser()
-
         const convertedData = {
             ...formData,
             vehicle_dimensions: {
@@ -144,8 +135,6 @@ const AddVehicle: React.FC = () => {
             },
             cooling_units: Number(formData.cooling_units),
             sensors: Number(formData.sensors),
-            userId: currentUser.id.id,
-            email: currentUser.email
         };
 
         console.log(convertedData)
@@ -177,8 +166,7 @@ const AddVehicle: React.FC = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const currentUser = await getCurrentUser()
-            const response = await mongoAPI.get(`/vehicle/getallvehicle/${currentUser.id.id}`);
+            const response = await mongoAPI.get("vehicle/getallvehicle");
             vehicleCountDispatch(set_vehicle_count(response.data.length));
         } catch (error) {
             console.error("Failed to fetch vehicles:", error);
