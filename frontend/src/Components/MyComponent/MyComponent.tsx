@@ -9,7 +9,7 @@ import {
   DashboardQueryParams,
   Customer,
 } from '../../types/thingsboardTypes';
-import { changePassword, getCurrentUser, resetPassword } from '../../api/loginApi';
+import { getCurrentUser } from '../../api/loginApi';
 
 import { getTenantDevices } from '../../api/deviceApi';
 import { getTenantDashboards, saveDashboard } from '../../api/dashboardApi';
@@ -250,6 +250,7 @@ const MyComponent: React.FC = () => {
       pkgName: "string",
       appSecret: "string" // Optional depending on your setup
     };
+    console.log(userData)
   
     try {
       // const response = await signUp(userData);
@@ -278,7 +279,7 @@ const MyComponent: React.FC = () => {
     console.log('Current User: \n', currentuser);
     fetchCustomers(0);
 
-    // initializeRecaptcha()
+    initializeRecaptcha()
     registerNewUser()
 
 
