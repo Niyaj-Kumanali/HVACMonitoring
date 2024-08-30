@@ -29,7 +29,6 @@ const Devices: React.FC = () => {
         await deleteDevice(id);
         handleClick();
         fetchDevices(0);
-
     }
 
     const handleClick = () => {
