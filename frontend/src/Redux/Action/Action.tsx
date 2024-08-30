@@ -14,7 +14,7 @@ export const set_Accesstoken = (accesstoken: String) => {
     }
 }
 
-export const set_DeviceCount = (device: number) => {
+export const set_DeviceCount = (device: number = 0) => {
     return {
         type: "SET_DEVICE_COUNT",
         payload: device

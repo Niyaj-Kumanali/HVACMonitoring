@@ -6,6 +6,8 @@ import Header from './Components/Header/Header';
 import { useEffect, useState, useRef } from 'react';
 import Loader from './Components/Loader/Loader';
 import { useSelector } from 'react-redux';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
 const App = () => {
   const navigate = useNavigate();
