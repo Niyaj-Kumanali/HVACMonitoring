@@ -9,7 +9,7 @@ import {
   DashboardQueryParams,
   Customer,
 } from '../../types/thingsboardTypes';
-import { getCurrentUser } from '../../api/loginApi';
+import { changePassword, getCurrentUser, getUserPasswordPolicy, resetPassword } from '../../api/loginApi';
 // import {  requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
 
 import { getTenantDevices } from '../../api/deviceApi';
@@ -245,7 +245,10 @@ const MyComponent: React.FC = () => {
     // const response2 = await resetPassword(token, "admin1234")
     // console.log("reset", response2)
 
-    // const telemetry = await getAttributeKeys("DEVICE")
+    const passwrodPolicy = await changePassword("admin1234", 'admin123')
+    console.log(passwrodPolicy)
+
+
 
   };
 

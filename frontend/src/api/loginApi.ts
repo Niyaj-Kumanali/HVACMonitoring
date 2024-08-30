@@ -29,11 +29,13 @@ export const logout = async (): Promise<void> => {
 export const changePassword = async (
   currentPassword: string,
   newPassword: string
-): Promise<void> => {
-  await thingsboardAPI.post('/auth/changePassword', {
+): Promise<any> => {
+  const response = await thingsboardAPI.post('/auth/changePassword', {
     currentPassword,
     newPassword,
   });
+
+  return response
 };
 
 // Get Current User

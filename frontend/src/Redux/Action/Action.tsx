@@ -42,3 +42,10 @@ export const set_vehicle_count = (vehicle: number) => {
     }
 }
 
+export const set_Authority = (authority: String) => {
+    return {
+        type: "SET_Authority",
+        payload: authority
+    }
+}
+

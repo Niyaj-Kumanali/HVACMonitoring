@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "./Warehouse.css";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import { getCurrentUser } from "../../api/loginApi";
+import Loader from "../Loader/Loader";
+
 
 interface Warehouse {
     _id: string;
@@ -22,6 +24,8 @@ const Warehouse = () => {
     const [allWarehouses, setAllWarehouses] = useState<Warehouse[]>([]);
     const [locationInfo, setLocationInfo] = useState<{ [key: string]: LocationInfo | null }>({});
     // const [error, setError] = useState<{ [key: string]: string | null }>({});
+    const [loading, setLoader] = useState(true)
+
 
     const fetchAllWarehouses = async () => {
         try {
@@ -42,6 +46,9 @@ const Warehouse = () => {
             });
 
             setAllWarehouses(data);
+            setTimeout(() => {
+                setLoader(false);
+            }, 500);
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
         }
@@ -75,24 +82,30 @@ const Warehouse = () => {
     }, [allWarehouses]);
 
     return (
-        <div className="menu-data">
-            <div className="warehouses">
-                {allWarehouses.map((warehouse) => (
-                    <div className="userinfo" key={warehouse._id}>
-                        <div className="user-img-info">
-                            <div className="img">
-                                <WarehouseIcon className="personicon" />
+        loading ? (
+            <Loader/>
+        ) : (
+            <>
+                <div className="menu-data">
+                    <div className="warehouses">
+                        {allWarehouses.map((warehouse) => (
+                            <div className="userinfo" key={warehouse._id}>
+                                <div className="user-img-info">
+                                    <div className="img">
+                                        <WarehouseIcon className="personicon" />
+                                    </div>
+                                    <div className="status">
+                                        <p className="username">{warehouse.warehouse_name}</p>
+                                        <p>{warehouse.warehouse_id}</p>
+                                        <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="status">
-                                <p className="username">{warehouse.warehouse_name}</p>
-                                <p>{warehouse.warehouse_id}</p>
-                                <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-        </div>
+                </div>
+            </>
+        )
     );
 };
 

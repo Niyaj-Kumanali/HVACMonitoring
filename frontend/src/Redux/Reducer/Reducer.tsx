@@ -9,7 +9,8 @@ const initial_state: any = {
     usercount: 0,
     warehousecount: 0,
     deviceCount :0,
-    vehicle :0
+    vehicle :0,
+    authority: "CUSTOMER_USER"
 }
 
 const userReducer = (state = initial_state, action: any): Userstate => {
@@ -46,6 +47,11 @@ const userReducer = (state = initial_state, action: any): Userstate => {
             return {
                 ...state,
                 vehicleCount: action.payload
+            }
+        case "SET_Authority":
+            return {
+                ...state,
+                authority: action.payload
             }
         default:
             return state;
