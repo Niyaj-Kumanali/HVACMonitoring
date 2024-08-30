@@ -250,7 +250,7 @@ const MyComponent: React.FC = () => {
       pkgName: "string",
       appSecret: "string" // Optional depending on your setup
     };
-    console.log(userData)
+    userData
   
     try {
       // const response = await signUp(userData);
