@@ -5,6 +5,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";
 import { set_usersCount } from "../../Redux/Action/Action";
+import { Link } from "react-router-dom";
 
 interface user {
     email: string, 
@@ -55,7 +56,7 @@ const AddCustomer: React.FC= () => {
                 <div className="menu-data">
                     <div className="user">
                         {userdata.map((key, index) => (
-                            <div className="userinfo" key={index}>
+                            <Link to={`/user/${key.email}`} className="userinfo" key={index} state={key}>
                                 <div className="user-img-info">
                                     <div className="img">
                                         <PersonIcon className="personicon" />
@@ -65,7 +66,7 @@ const AddCustomer: React.FC= () => {
                                         <p>{key.additionalInfo.lastLoginTs ? formatDate(key.additionalInfo.lastLoginTs) : "No Login Found"}</p>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>

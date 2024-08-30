@@ -24,6 +24,7 @@ import AddSupervisor from './Components/Add-User/AddSupervisor';
 import AddCustomer from './Components/Add-User/AddCustomer';
 import Signup from './Components/Login/Signup';
 import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
+import User from './Components/Users/user';
 
 const Router = createBrowserRouter([
   {
@@ -113,6 +114,10 @@ const Router = createBrowserRouter([
       {
         path: '/addSupervisor',
         element: <AddSupervisor/>,
+      },
+      {
+        path: '/user/:email',
+        element: <User/>
       }
     ],
   },

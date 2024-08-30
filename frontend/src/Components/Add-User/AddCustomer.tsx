@@ -8,7 +8,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import { getCurrentUser } from "../../api/loginApi";
 import { createOrUpdateCustomer, getTenantCustomerByTitle } from "../../api/customerAPI";
-import { getActivationLink, saveUser } from "../../api/userApi";
+import { getActivationLink, getUsers, saveUser } from "../../api/userApi";
+import { set_usersCount } from "../../Redux/Action/Action";
+import { useDispatch } from "react-redux";
 
 const Adduser = () => {
     const [email, setEmail] = useState("");
@@ -22,10 +24,24 @@ const Adduser = () => {
     const [title, setTitle] = useState("");
     const [IsSendActivationMail, setIsSendActivationMail] = useState<boolean>(false);
     const [activationlink, setActivationlink] = useState("");
+    const devicecountdispatch = useDispatch();
+
+    const fetchUserData = async () => {
+        try {
+            const params = {
+                pageSize: 16,
+                page: 0
+            }
+            const userData = await getUsers(params);
+            devicecountdispatch(set_usersCount(userData.data.length));
+        } catch (error) {
+            console.error('Failed to fetch user data', error);
+        }
+    };
 
     const handleCustomerSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        setLoading(true); // Set the loading state to true when the form is submitted
+        setLoading(true); 
 
         const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -70,6 +86,7 @@ const Adduser = () => {
             setLastname("");
             setEmail("");
             setPhone("");
+            fetchUserData()
             await minLoadingTime;
         } catch (error: any) {
             console.error('Failed to create customer: ' + error.message);

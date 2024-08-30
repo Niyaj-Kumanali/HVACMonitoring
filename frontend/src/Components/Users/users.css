@@ -55,4 +55,8 @@
 .username{
     font-size: 20px;
 }
-
+.accountinfo-savebtn-delt-btn{
+    display:flex;
+    gap: 30px;
+    margin-top: 15px;
+}

@@ -13,6 +13,7 @@ const Accountinfo = () => {
     const [phone, setPhone] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [authority, setAuthority] = useState<string>("");
+    const [user, setUser] = useState<any>("");
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -23,6 +24,7 @@ const Accountinfo = () => {
                 setLastname(userData.lastName || "");
                 setPhone(userData.phone || "");
                 setAuthority(userData.authority || "")
+                setUser(userData)
             } catch (error) {
                 console.error('Failed to fetch user data', error);
             }
@@ -34,11 +36,15 @@ const Accountinfo = () => {
     const handleClick = () => {
         setLoading(true);
 
-        // Simulate a save operation (e.g., an API call)
         setTimeout(() => {
             console.log("Data saved!");
             setLoading(false);
-        }, 2000); // Simulate a 2-second operation
+        }, 2000);
+    };
+
+    const formatDate = (timestamp: number) => {
+        const date = new Date(timestamp);
+        return date.toLocaleString();
     };
 
     return (
@@ -51,7 +57,7 @@ const Accountinfo = () => {
                     </div>
                     <div className="accountinfo-lastlogin">
                         <p>Last Login</p>
-                        <p>2024-08-22 17:04:19</p> {/* Consider making this dynamic if possible */}
+                        <p>{formatDate(user.additionalInfo.lastLoginTs)}</p> {/* Consider making this dynamic if possible */}
                     </div>
                 </header>
                 <main className="accountinfo-main">
