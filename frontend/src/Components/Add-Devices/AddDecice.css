@@ -1,8 +1,9 @@
 .add-device {
-    width: 50%;
     margin: 20px;
     padding: 20px;
     background-color: white;
+    min-width: 400px;
+    max-width: 50%;
 }
 
 .add-device .label {

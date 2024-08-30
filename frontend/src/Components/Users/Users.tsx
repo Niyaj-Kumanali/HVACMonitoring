@@ -30,7 +30,7 @@ const AddCustomer: React.FC= () => {
                 usercountdispatch(set_usersCount(userData.data.length));
                 setTimeout(() => {
                     setLoader(false);
-                }, 1000);
+                }, 500);
             } catch (error) {
                 console.error('Failed to fetch user data', error);
             }

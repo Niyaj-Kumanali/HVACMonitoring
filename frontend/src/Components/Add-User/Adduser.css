@@ -1,5 +1,6 @@
 .users {
-    width: 50%;
+    min-width: 400px;
+    max-width: 50%;
     background-color: white;
     padding: 20px;
     margin: 20px;
