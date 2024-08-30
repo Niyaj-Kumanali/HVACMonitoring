@@ -42,20 +42,21 @@ router.get('/getallvehicle', async(req, res) => {
 });
 
 // get all vehicles by userId
-router.get('/getallvehicle/:userId', async(req, res) => {
+router.get('/getallvehicle/:userId', async (req, res) => {
     try {
-        const {userId} = req.params
-        let getallvehicle = await vehicle.find()
-        getallvehicle = getallvehicle.filter(item => item.userId == userId)
+        const { userId } = req.params;
+        const getallvehicle = await vehicle.find({ userId });
 
-        if (!getallvehicle) {
-            return res.status(404).json({ message: 'vehicle not found' });
+        if (getallvehicle.length === 0) {
+            return res.status(404).json({ message: 'Vehicle not found' });
         }
+
         res.status(200).json(getallvehicle);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving vehicle data', error });
     }
 });
+
 
 
 
