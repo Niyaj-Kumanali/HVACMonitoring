@@ -3,6 +3,7 @@ import "./Warehouse.css";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import { getCurrentUser } from "../../api/loginApi";
 import Loader from "../Loader/Loader";
+import { mongoAPI } from "../../api/MongoAPIInstance";
 
 
 interface Warehouse {
@@ -29,23 +30,12 @@ const Warehouse = () => {
 
     const fetchAllWarehouses = async () => {
         try {
-            const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
-
             const currentUser = await getCurrentUser()
             console.log(currentUser.id.id)
-            
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status} ${response.statusText}`);
-            }
 
-            const data: Warehouse[] = await response.json();
-            console.log(data)
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`)
 
-            data.forEach(details => {
-                console.log(`userID: ${details.userId}, Email: ${details.email}`);
-            });
-
-            setAllWarehouses(data);
+            setAllWarehouses(response.data);
             setTimeout(() => {
                 setLoader(false);
             }, 500);

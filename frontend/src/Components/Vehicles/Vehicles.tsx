@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import Loader from '../Loader/Loader';
+import { getCurrentUser } from "../../api/loginApi";
 
 interface VehicleDimensions {
     length: string;
@@ -35,7 +36,8 @@ const Vehicles = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const response = await mongoAPI.get("vehicle/getallvehicle");
+            const currentUser = await getCurrentUser()
+            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.id.id}`);
             setAllVehicles(response.data);
             vehicleCountDispatch(set_vehicle_count(response.data.length));
             setTimeout(() => {

@@ -31,15 +31,6 @@ router.post('/addvehicle', async(req, res) => {
 router.get('/getallvehicle', async(req, res) => {
     try {
         const getallvehicle = await vehicle.find()
-        .populate({
-            path: 'cooling_units.coolant',
-            select: 'coolant_id'  
-        })
-        .populate({
-            path: 'sensors.sensor',
-            select: 'sensor_id indoor_location Type date_of_installation' 
-        })
-        .exec();
 
         if (!getallvehicle) {
             return res.status(404).json({ message: 'vehicle not found' });
@@ -49,6 +40,24 @@ router.get('/getallvehicle', async(req, res) => {
         res.status(400).send(error)
     }
 });
+
+// get all vehicles by userId
+router.get('/getallvehicle/:userId', async(req, res) => {
+    try {
+        const {userId} = req.params
+        let getallvehicle = await vehicle.find()
+        getallvehicle = getallvehicle.filter(item => item.userId == userId)
+
+        if (!getallvehicle) {
+            return res.status(404).json({ message: 'vehicle not found' });
+        }
+        res.status(200).json(getallvehicle);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving vehicle data', error });
+    }
+});
+
+
 
 // get vehicle by vehicle_id
 router.get('/getbyvehicleid/:vehicle_id', async(req, res) => {
