@@ -6,6 +6,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance'; 
+import { useDispatch } from 'react-redux';
+import { set_vehicle_count } from '../../Redux/Action/Action';
 
 interface VehicleDimensions {
     length: string;
@@ -51,6 +53,7 @@ const AddVehicle: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState("");
+    const dispatch = useDispatch();
 
     const handleReset = () => {
         setFormData({
@@ -70,6 +73,15 @@ const AddVehicle: React.FC = () => {
             sensors: null,
         });
         setSubmitted(false);
+    };
+
+    const fetchAllVehicles = async () => {
+        try {
+            const response = await mongoAPI.get("vehicle/getallvehicle");
+            dispatch(set_vehicle_count(response.data.length))
+        } catch (error) {
+            console.error("Failed to fetch vehicles:", error);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,6 +152,7 @@ const AddVehicle: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage('Vehicle Added Successfully');
+                fetchAllVehicles();
             }, 1000);
 
         } catch (error) {

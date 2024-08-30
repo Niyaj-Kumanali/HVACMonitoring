@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./Warehouse.css";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
+import { useDispatch } from "react-redux";
+import { set_warehouse_count } from "../../Redux/Action/Action";
 
 interface Warehouse {
     _id: string;
@@ -20,6 +22,8 @@ const Warehouse = () => {
     const [locationInfo, setLocationInfo] = useState<{ [key: string]: LocationInfo | null }>({});
     // const [error, setError] = useState<{ [key: string]: string | null }>({});
 
+    const dispatch = useDispatch()
+
     const fetchAllWarehouses = async () => {
         try {
             const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
@@ -29,6 +33,8 @@ const Warehouse = () => {
 
             const data: Warehouse[] = await response.json();
             setAllWarehouses(data);
+            dispatch(set_warehouse_count(data.length))
+            
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
         }

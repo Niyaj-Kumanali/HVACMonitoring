@@ -8,7 +8,8 @@ const initial_state: any = {
     accesstoken: null,
     usercount: 0,
     warehousecount: 0,
-    deviceCount :0
+    deviceCount :0,
+    vehicleCount :0
 }
 
 const userReducer = (state = initial_state, action: any): Userstate => {
@@ -41,6 +42,13 @@ const userReducer = (state = initial_state, action: any): Userstate => {
                 ...state,
                 warehouseCount: action.payload
             }
+
+            case "SET_VEHICLE_COUNT":
+                return {
+                    ...state,
+                    vehicleCount: action.payload
+                }
+
         default:
             return state;
     }

@@ -20,6 +20,10 @@ const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
     const userCount = useSelector((state: any) => state.user.userCount);
     const warehousecount = useSelector((state: any) => state.user.warehouseCount);
+    const vehiclecount = useSelector((state:any) => state.user.vehicleCount);
+
+    console.log(warehousecount)
+    console.log(vehiclecount)
 
     useEffect(() => {
         document.body.style.overflowX = 'hidden';
@@ -55,7 +59,7 @@ const Menubar = () => {
                         <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span></li>
                     </Link>
                     <Link to="/vehicles" className="link">
-                        <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">3</span></li>
+                        <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">{vehiclecount}</span></li>
                     </Link>
                     <Link to="/users" className="link">
                         <li><GroupIcon className="speedicon" />Users <span className="count">{userCount}</span></li>

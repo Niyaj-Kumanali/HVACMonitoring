@@ -6,6 +6,9 @@ import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance';
+import { useDispatch } from 'react-redux';
+import { set_warehouse_count } from '../../Redux/Action/Action';
+import Warehouse from '../Warehouse/Warehouse';
 
 interface WarehouseDimensions {
     length: string;
@@ -44,6 +47,8 @@ const AddWarehouse: React.FC = () => {
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState("");
 
+    const dispatch = useDispatch()
+
     const handleReset = () => {
         setFormData({
             warehouse_name: '',
@@ -77,16 +82,34 @@ const AddWarehouse: React.FC = () => {
         } else {
             // Handle number inputs
             if (name === 'cooling_units' || name === 'sensors') {
+                const numericValue = parseInt(value, 10);
+            if (numericValue >= 0 || value === '') {
                 setFormData({
                     ...formData,
                     [name]: value === '' ? null : value,
                 });
+            }
             } else {
                 setFormData({
                     ...formData,
                     [name]: value,
                 });
             }
+        }
+    };
+
+    const fetchAllWarehouses = async () => {
+        try {
+            const response = await mongoAPI.get('warehouse/getallwarehouse');
+            // if (!response.ok) {
+            //     throw new Error(`Error: ${response.status} ${response.statusText}`);
+            // }
+
+            // const data: Warehouse[] = await response.json();
+            dispatch(set_warehouse_count(response.data.length))
+            
+        } catch (error) {
+            console.error("Failed to fetch warehouses:", error);
         }
     };
 
@@ -119,6 +142,7 @@ const AddWarehouse: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage('Warehouse Added Successfully');
+                fetchAllWarehouses()
             }, 1000);
 
         } catch (error) {
@@ -220,7 +244,7 @@ const AddWarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Cooling Units"
+                            label="No Of Cooling Units"
                             name="cooling_units"
                             type="number"
                             value={formData.cooling_units ?? ''}
@@ -231,7 +255,7 @@ const AddWarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Sensors"
+                            label="No Of Sensors"
                             name="sensors"
                             type="number"
                             value={formData.sensors ?? ''}
