@@ -59,7 +59,7 @@ export const getUserById = async (userId: string) => {
 // Delete User
 export const deleteUser = async (userId: string) => {
   const response = await thingsboardAPI.delete(`/user/${userId}`);
-  return response.data;
+  return response;
 };
 
 // Get Activation Link for User

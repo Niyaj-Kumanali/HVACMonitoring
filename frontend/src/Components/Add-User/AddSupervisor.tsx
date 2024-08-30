@@ -22,6 +22,7 @@ const AddSupervisor = () => {
     const [isSendActivationMail, setIsSendActivationMail] = useState<boolean>(false);
     const devicecountdispatch = useDispatch();
     const [activationlink, setActivationlink] = useState("");
+    
     const fetchUserData = async () => {
         try {
             const params = {
