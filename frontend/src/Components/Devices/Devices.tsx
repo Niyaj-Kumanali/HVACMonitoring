@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 const Devices: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);
     const [loadingDevices, setLoadingDevices] = useState<boolean>(false);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const deviceCountDispatch = useDispatch();
 
     const navigate = useNavigate()
