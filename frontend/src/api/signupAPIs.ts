@@ -1,12 +1,7 @@
 import axios from 'axios';
+import thingsboardAPI from './thingsboardAPI';
 
-// Create an Axios instance with base URL and headers
-const thingsboardAPI = axios.create({
-  baseURL: import.meta.env.VITE_THINGSBOARD_URL, // Use VITE_ prefixed variable
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+
 
 // Activate User by Email Code
 export const activateUserByEmailCode = async (

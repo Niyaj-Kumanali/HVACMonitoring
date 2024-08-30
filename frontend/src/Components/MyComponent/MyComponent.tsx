@@ -25,7 +25,7 @@ import {
   getTenantCustomerByTitle,
 } from '../../api/customerAPI';
 import { getTenantById } from '../../api/tenantAPI';
-import { getRecaptchaParams, privacyPolicyAccepted, signUp } from '../../api/signupAPIs';
+import { acceptPrivacyPolicy, getRecaptchaParams, getRecaptchaPublicKey, privacyPolicyAccepted, signUp } from '../../api/signupAPIs';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -225,6 +225,48 @@ const MyComponent: React.FC = () => {
       console.error('Failed to fetch users', error);
     }
   };
+
+  const initializeRecaptcha = async () => {
+    try {
+      // You can choose to use either recaptcha params or public key based on your implementation
+      const recaptchaParams = await getRecaptchaParams();
+      console.log('Recaptcha Params:', recaptchaParams);
+  
+      // or
+      const recaptchaPublicKey = await getRecaptchaPublicKey();
+      console.log('Recaptcha Public Key:', recaptchaPublicKey);
+    } catch (error) {
+      console.error('Error fetching Recaptcha details:', error);
+    }
+  };
+
+  const registerNewUser = async () => {
+    const userData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@company.com",
+      password: "secretPassword",
+      recaptchaResponse: "string", // Replace with actual response from Recaptcha widget
+      pkgName: "string",
+      appSecret: "string" // Optional depending on your setup
+    };
+  
+    try {
+      // const response = await signUp(userData);
+      // console.log('Sign up response:', response.data);
+  
+      // Step 3: Accept Privacy Policy (if required)
+      const policyAccepted = await privacyPolicyAccepted();
+      if (!policyAccepted) {
+        await acceptPrivacyPolicy();
+        console.log('Privacy Policy Accepted');
+      } else {
+        console.log('Privacy Policy already accepted');
+      }
+    } catch (error) {
+      console.error('Error during sign up:', error);
+    }
+  };
   const handleGetAll = async () => {
     fetchDevices(0);
     fetchDashboards(0);
@@ -236,38 +278,11 @@ const MyComponent: React.FC = () => {
     console.log('Current User: \n', currentuser);
     fetchCustomers(0);
 
-    // const response1 = await requestResetPasswordByEmail("www.niyazkumanali@gmail.com")
-    // console.log("sent", response1)
+    // initializeRecaptcha()
+    registerNewUser()
 
 
-    const token = localStorage.getItem('token') || ""
-    console.log("Token",token)
-    const response2 = await resetPassword(token, "admin1234")
-    console.log("reset", response2)
-
-    const passwrodPolicy = await changePassword("admin1234", 'admin123')
-    console.log(passwrodPolicy)
-    const userData = {
-      firstName: "John",
-      lastName: "Doe",
-      email: "www.niyazkumanali@gmail.com",
-      password: "secret",
-      recaptchaResponse: "your_recaptcha_response", // You need to generate this from a recaptcha service on your frontend
-      pkgName: "com.example.myapp",  // Optional
-      appSecret: "your_app_secret"  // Optional
-    };
     
-    signUp(userData)
-      .then((response) => {
-        console.log('Account created successfully:', response);
-      })
-      .catch((error) => {
-        console.error('Error creating account:', error);
-      });
-    const policy = await privacyPolicyAccepted()
-    console.log(policy)
-    const captcha = await getRecaptchaParams()
-    console.log(captcha)
 
   };
 
