@@ -55,7 +55,6 @@ const Devices: React.FC = () => {
         await deleteDevice(id);
         handleClick();
         fetchDevices(0);
-
     }
 
     const handleClick = () => {
@@ -94,10 +93,6 @@ const Devices: React.FC = () => {
         fetchDevices(0);
         // fetchDeviceProfileNames();
     }, []);
-
-    useEffect(() => {
-        deviceCountDispatch(set_DeviceCount(devices.length));
-    }, [devices]);
 
     return (
         <div className="menu-data">

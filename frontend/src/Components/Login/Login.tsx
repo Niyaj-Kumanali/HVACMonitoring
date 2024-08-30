@@ -170,10 +170,25 @@ const Login: React.FC = () => {
     };
 
     const handleEmailsubmit = async () => {
-        console.log(forgetpasswordemail)
         const responce = await requestResetPasswordByEmail(forgetpasswordemail)
         console.log(responce)
-        handleDialogClose()
+        if ( responce == 200)
+        {
+            handleDialogClose()
+            setSnackbarMessage('Reset password Link Generated');
+            setSnackbarStyle({ backgroundColor: 'green' });
+            setTimeout(()=>{
+                setState({ open: true, Transition: SlideTransition })
+            }, 500)
+        }
+        else{
+            handleDialogClose()
+            setSnackbarMessage('Unable to generate link');
+            setSnackbarStyle({ backgroundColor: 'red' });
+            setTimeout(() => {
+                setState({ open: true, Transition: SlideTransition })
+            }, 500)
+        }
     }
 
     useEffect(() => {
