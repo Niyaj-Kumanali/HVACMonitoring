@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Warehouse.css";
 import WarehouseIcon from '@mui/icons-material/Warehouse';
+import { getCurrentUser } from "../../api/loginApi";
 
 interface Warehouse {
     _id: string;
@@ -9,6 +10,8 @@ interface Warehouse {
     location: string;
     latitude: string;
     longitude: string;
+    userId: string;
+    email: string
 }
 
 interface LocationInfo {
@@ -23,11 +26,21 @@ const Warehouse = () => {
     const fetchAllWarehouses = async () => {
         try {
             const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
+
+            const currentUser = await getCurrentUser()
+            console.log(currentUser.id.id)
+            
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
 
             const data: Warehouse[] = await response.json();
+            console.log(data)
+
+            data.forEach(details => {
+                console.log(`userID: ${details.userId}, Email: ${details.email}`);
+            });
+
             setAllWarehouses(data);
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);

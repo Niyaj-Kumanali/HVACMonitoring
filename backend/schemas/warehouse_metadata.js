@@ -19,7 +19,9 @@ import { type } from 'os';
         },
         energy_resource : {type: String, required: true},
         cooling_units :{type: Number, required: true},
-        sensors: {type: Number, reqired: true}
+        sensors: {type: Number, reqired: true},
+        userId: {type: String, required: true},
+        email: {type: String, required: true}
 
         // sensors :[{
         //     sensor : {type: mongoose.Schema.Types.ObjectId, ref:'sensor_meatadata'},

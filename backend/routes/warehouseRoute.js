@@ -3,6 +3,7 @@ import warehouse from '../schemas/warehouse_metadata.js'; // Make sure to add th
 const router = express.Router();
 import mongoose from 'mongoose';
 
+
 // create a new warehouse
 router.post('/addwarehouse', async(req, res) =>{
     try {

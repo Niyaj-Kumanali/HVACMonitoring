@@ -6,6 +6,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getCurrentUser } from '../../api/loginApi';
 
 interface WarehouseDimensions {
     length: string;
@@ -21,6 +22,8 @@ interface WarehouseData {
     energy_resource: string;
     cooling_units: string | null; // Set as string or null
     sensors: string | null; // Set as string or null
+    userId: string,
+    email: string
 }
 
 const AddWarehouse: React.FC = () => {
@@ -36,6 +39,8 @@ const AddWarehouse: React.FC = () => {
         energy_resource: '',
         cooling_units: null,
         sensors: null,
+        userId: '',
+        email: ''
     });
 
     const [submitted, setSubmitted] = useState<boolean>(false);
@@ -57,6 +62,8 @@ const AddWarehouse: React.FC = () => {
             energy_resource: '',
             cooling_units: null,
             sensors: null,
+            userId: '',
+            email: ''
         });
         setSubmitted(false);
     };
@@ -99,6 +106,8 @@ const AddWarehouse: React.FC = () => {
         e.preventDefault();
         setLoading(true);
 
+        const currentUser = await getCurrentUser()
+
         const convertedData = {
             ...formData,
             latitude: parseFloat(formData.latitude),
@@ -110,13 +119,15 @@ const AddWarehouse: React.FC = () => {
             },
             cooling_units: Number(formData.cooling_units),
             sensors: Number(formData.sensors),
+            userId: currentUser.id.id,
+            email: currentUser.email
         };
 
         console.log(JSON.stringify(convertedData))
 
         try {
             const response = await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(convertedData));
-            console.log('Warehouse added:', response);
+            console.log('Warehouse added:', response.data);
 
             setTimeout(() => {
                 handleReset();
