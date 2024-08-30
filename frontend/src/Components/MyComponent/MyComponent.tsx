@@ -25,7 +25,7 @@ import {
   getTenantCustomerByTitle,
 } from '../../api/customerAPI';
 import { getTenantById } from '../../api/tenantAPI';
-import { acceptPrivacyPolicy, getRecaptchaParams, getRecaptchaPublicKey, privacyPolicyAccepted, signUp } from '../../api/signupAPIs';
+import { acceptPrivacyPolicy, getRecaptchaParams, getRecaptchaPublicKey, privacyPolicyAccepted } from '../../api/signupAPIs';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
