@@ -73,6 +73,8 @@ const AddVehicle: React.FC = () => {
         setSubmitted(false);
     };
 
+    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 

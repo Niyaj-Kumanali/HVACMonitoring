@@ -34,3 +34,4 @@ export const set_warehouse_count = (warehouse: number) => {
         payload: warehouse
     }
 }
+

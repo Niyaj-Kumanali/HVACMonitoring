@@ -27,6 +27,7 @@ interface VehicleData {
 const Vehicles = () => {
     const [allVehicles, setAllVehicles] = useState<VehicleData[]>([]);
     // const [error, setError] = useState<{ [key: string]: string | null }>({});
+    
 
     const fetchAllVehicles = async () => {
         try {
