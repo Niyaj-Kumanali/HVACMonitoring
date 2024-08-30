@@ -13,8 +13,10 @@ interface DashboardProps {}
 const Dashboard: React.FC<DashboardProps> = () => {
   const [layout, setLayout] = useState<Layout[]>([]);
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [selectedDevice, setSelectedDevice] = useState('');
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const [selectedSensor, setSelectedSensor] = useState("");
   const [devices, setDevices] = useState<{ id: string; name: string }[]>([]);
+  const [sensors, setSensors] = useState<string[]>([])
   const [telemetryData, setTelemetryData] = useState<{ [key: string]: { ts: number; value: string }[] }>({});
 
   useEffect(() => {
@@ -45,6 +47,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
     // Fetch telemetry data whenever a new device is selected
     const fetchTelemetryData = async (deviceId: string) => {
       const keys: string[] = await getTimeseriesKeys('DEVICE', deviceId || '')
+      setSensors(keys)
       const keysString = keys.join(',');
       const params: TelemetryQueryParams = {
         keys: keysString, // Pass the comma-separated string of keys
@@ -82,8 +85,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
     <div className="menu-data">
       <DashboardHeader
         devices={devices}
+        sensors={sensors}
         selectedDevice={selectedDevice}
+        selectedSensor={selectedSensor}
         onSelectDevice={setSelectedDevice}
+        onSelectSensor={setSelectedSensor}
         onEdit={onEdit}
         onSave={onSave}
       />

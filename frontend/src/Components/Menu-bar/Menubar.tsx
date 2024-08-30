@@ -20,7 +20,9 @@ const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
     const userCount = useSelector((state: any) => state.user.userCount);
     const warehousecount = useSelector((state: any) => state.user.warehouseCount);
+
     const vehicleCount = useSelector((state: any) => state.user.vehicleCount)
+
     const userSelectionRef = useRef(null);
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(false);
     

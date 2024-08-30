@@ -41,3 +41,4 @@ export const set_vehicle_count = (vehicle: number) => {
         payload: vehicle
     }
 }
+

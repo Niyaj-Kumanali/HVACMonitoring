@@ -77,10 +77,13 @@ const AddWarehouse: React.FC = () => {
         } else {
             // Handle number inputs
             if (name === 'cooling_units' || name === 'sensors') {
+                const numericValue = parseInt(value, 10);
+            if (numericValue >= 0 || value === '') {
                 setFormData({
                     ...formData,
                     [name]: value === '' ? null : value,
                 });
+            }
             } else {
                 setFormData({
                     ...formData,
@@ -89,6 +92,8 @@ const AddWarehouse: React.FC = () => {
             }
         }
     };
+
+    
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -220,7 +225,7 @@ const AddWarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Cooling Units"
+                            label="No Of Cooling Units"
                             name="cooling_units"
                             type="number"
                             value={formData.cooling_units ?? ''}
@@ -231,7 +236,7 @@ const AddWarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Sensors"
+                            label="No Of Sensors"
                             name="sensors"
                             type="number"
                             value={formData.sensors ?? ''}
