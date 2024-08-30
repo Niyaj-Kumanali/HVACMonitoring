@@ -9,10 +9,12 @@ import { useEffect, useState } from 'react';
 import { DashboardQueryParams, DashboardType, Device, DeviceQueryParams, PageData } from '../../types/thingsboardTypes';
 import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
 import { useDispatch } from 'react-redux';
-import { set_DeviceCount, set_usersCount, set_warehouse_count } from '../../Redux/Action/Action';
+import { set_DeviceCount, set_usersCount, set_vehicle_count, set_warehouse_count } from '../../Redux/Action/Action';
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
+import { mongoAPI } from '../../api/MongoAPIInstance';
+
 
 const Dashboard = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
@@ -21,6 +23,7 @@ const Dashboard = () => {
   const warecountdispatch = useDispatch();
   const usercountdispatch = useDispatch();
   const deviceCountDispatch = useDispatch();
+  const vehicleCountDispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,10 +59,20 @@ const Dashboard = () => {
       }
     };
 
+      const fetchAllVehicles = async () => {
+        try {
+          const response = await mongoAPI.get("vehicle/getallvehicle");
+          vehicleCountDispatch(set_vehicle_count(response.data.length));
+        } catch (error) {
+          console.error("Failed to fetch vehicles:", error);
+        }
+      }
+
 
     fetchUserData();
     fetchDevices(0);
-  }, [usercountdispatch, deviceCountDispatch]);
+    fetchAllVehicles();
+  }, [usercountdispatch, deviceCountDispatch, vehicleCountDispatch]);
 
 
     
