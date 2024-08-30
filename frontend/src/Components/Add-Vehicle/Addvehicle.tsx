@@ -6,6 +6,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance'; 
+import "./Addvehicle.css"
 
 interface VehicleDimensions {
     length: string;
