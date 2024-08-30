@@ -21,7 +21,9 @@ const vehicleSchema = new mongoose.Schema({
         licence_id : {type: String, required:true},
     },
     cooling_units :{type: Number, required: true},
-    sensors :{type: Number, required: true}
+    sensors :{type: Number, required: true},
+    userId: {type: String, reqired: true},
+    email: {type: String, reqired: true}
 })
 
 
