@@ -14,6 +14,10 @@ import './Dashboard.css';
 
 interface DashboardProps {}
 
+interface TelemetryData {
+  [key: string]: number[]; // Assuming telemetry data for each sensor is an array of numbers
+}
+
 const Dashboard: React.FC<DashboardProps> = () => {
   const [layout, setLayout] = useState<Layout[]>([]);
   const [isEditable, setIsEditable] = useState<boolean>(false);
@@ -82,7 +86,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
     // Filter telemetry data based on selected sensors
     const handleFilteredData = () => {
       if (selectedSensors.length > 0) {
-        const data: { [key: string]: any } = selectedSensors.reduce((acc, sensor) => {
+        const data: TelemetryData = selectedSensors.reduce((acc: TelemetryData, sensor: string) => {
           acc[sensor] = telemetryData[sensor] || [];
           return acc;
         }, {});

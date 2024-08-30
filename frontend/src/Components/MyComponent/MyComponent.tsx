@@ -9,8 +9,7 @@ import {
   DashboardQueryParams,
   Customer,
 } from '../../types/thingsboardTypes';
-import { changePassword, getCurrentUser, getUserPasswordPolicy, resetPassword } from '../../api/loginApi';
-// import {  requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
+import { changePassword, getCurrentUser, resetPassword } from '../../api/loginApi';
 
 import { getTenantDevices } from '../../api/deviceApi';
 import { getTenantDashboards, saveDashboard } from '../../api/dashboardApi';
@@ -26,6 +25,7 @@ import {
   getTenantCustomerByTitle,
 } from '../../api/customerAPI';
 import { getTenantById } from '../../api/tenantAPI';
+import { getRecaptchaParams, privacyPolicyAccepted, signUp } from '../../api/signupAPIs';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -240,15 +240,34 @@ const MyComponent: React.FC = () => {
     // console.log("sent", response1)
 
 
-    // const token = localStorage.getItem('token') || ""
-    // console.log("Token",token)
-    // const response2 = await resetPassword(token, "admin1234")
-    // console.log("reset", response2)
+    const token = localStorage.getItem('token') || ""
+    console.log("Token",token)
+    const response2 = await resetPassword(token, "admin1234")
+    console.log("reset", response2)
 
     const passwrodPolicy = await changePassword("admin1234", 'admin123')
     console.log(passwrodPolicy)
-
-
+    const userData = {
+      firstName: "John",
+      lastName: "Doe",
+      email: "www.niyazkumanali@gmail.com",
+      password: "secret",
+      recaptchaResponse: "your_recaptcha_response", // You need to generate this from a recaptcha service on your frontend
+      pkgName: "com.example.myapp",  // Optional
+      appSecret: "your_app_secret"  // Optional
+    };
+    
+    signUp(userData)
+      .then((response) => {
+        console.log('Account created successfully:', response);
+      })
+      .catch((error) => {
+        console.error('Error creating account:', error);
+      });
+    const policy = await privacyPolicyAccepted()
+    console.log(policy)
+    const captcha = await getRecaptchaParams()
+    console.log(captcha)
 
   };
 
