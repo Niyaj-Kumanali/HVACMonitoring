@@ -236,7 +236,7 @@ router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
 /**
  * @swagger
  * /warehouse/updatewarehouse/{warehouse_id}:
- *   delete:
+ *   put:
  *     summary: Update a warehouse by warehouse ID
  *     tags: [Warehouse]
  *     parameters:
