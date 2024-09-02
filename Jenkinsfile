@@ -60,7 +60,7 @@ pipeline {
                     // Navigate to frontend directory and install dependencies
                     sh '''
                     cd backend
-                    npm install
+                    sudo npm install
                     '''
                 }
             }
