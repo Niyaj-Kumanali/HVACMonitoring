@@ -26,7 +26,6 @@ const Menubar = () => {
     const userSelectionRef = useRef<HTMLDivElement>(null);
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(false);
 
-    console.log(currentuser)
 
     useEffect(() => {
         if (hideref.current) {

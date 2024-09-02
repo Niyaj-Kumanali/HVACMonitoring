@@ -144,8 +144,8 @@ const AddVehicle: React.FC = () => {
             },
             cooling_units: Number(formData.cooling_units),
             sensors: Number(formData.sensors),
-            userId: currentUser.id.id,
-            email: currentUser.email
+            userId: currentUser.data.id.id,
+            email: currentUser.data.email
         };
 
         console.log(convertedData)
@@ -178,7 +178,7 @@ const AddVehicle: React.FC = () => {
     const fetchAllVehicles = async () => {
         try {
             const currentUser = await getCurrentUser()
-            const response = await mongoAPI.get(`/vehicle/getallvehicle/${currentUser.id.id}`);
+            const response = await mongoAPI.get(`/vehicle/getallvehicle/${currentUser.data.id.id}`);
             vehicleCountDispatch(set_vehicle_count(response.data.length));
         } catch (error) {
             console.error("Failed to fetch vehicles:", error);

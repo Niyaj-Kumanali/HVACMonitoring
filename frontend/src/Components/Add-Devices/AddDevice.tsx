@@ -8,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import { Device, DeviceQueryParams, PageData } from "../../types/thingsboardTypes";
+import { Device, DeviceQueryParams } from "../../types/thingsboardTypes";
 import { saveDevice, getTenantDevices } from "../../api/deviceApi";
 import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";
@@ -65,8 +65,8 @@ const AddDevice = () => {
                 sortOrder: 'ASC',
             };
 
-            const response: PageData<Device> = await getTenantDevices(params);
-            deviceCountDispatch(set_DeviceCount(response.totalElements || 0));
+            const response = await getTenantDevices(params);
+            deviceCountDispatch(set_DeviceCount(response.data.totalElements || 0));
         } catch (error) {
             console.error('Failed to fetch devices', error);
         }

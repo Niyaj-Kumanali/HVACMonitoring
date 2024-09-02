@@ -6,7 +6,6 @@ import { getTenantDevices } from '../../api/deviceApi';
 import {
   Device,
   DeviceQueryParams,
-  PageData,
   TelemetryQueryParams,
 } from '../../types/thingsboardTypes';
 import { getTimeseries, getTimeseriesKeys } from '../../api/telemetryAPIs';
@@ -39,8 +38,8 @@ const Dashboard: React.FC<DashboardProps> = () => {
         sortProperty: 'name',
         sortOrder: 'ASC',
       };
-      const response: PageData<Device> = await getTenantDevices(params);
-      const devices: Device[] = response.data || [];
+      const response = await getTenantDevices(params);
+      const devices: Device[] = response.data.data || [];
       setDevices(
         devices.map((device: any) => ({
           id: device.id.id,
@@ -55,7 +54,8 @@ const Dashboard: React.FC<DashboardProps> = () => {
   useEffect(() => {
     // Fetch telemetry data whenever a new device is selected
     const fetchTelemetryData = async (deviceId: string) => {
-      const keys: string[] = await getTimeseriesKeys('DEVICE', deviceId || '');
+      const keyResponse = await getTimeseriesKeys('DEVICE', deviceId || '');
+      const keys: string[] = keyResponse.data
       setSensors(keys);
       setSelectedSensors(keys); // Initialize selectedSensors to all keys when a new device is selected
       const keysString = keys.join(',');
@@ -68,13 +68,13 @@ const Dashboard: React.FC<DashboardProps> = () => {
         orderBy: 'ASC'
       };
 
-      const telemetryData = await getTimeseries(
+      const response = await getTimeseries(
         'DEVICE',
         deviceId || '',
         params
       );
-      console.log(telemetryData);
-      setTelemetryData(telemetryData);
+      console.log(response.data.data);
+      setTelemetryData(response.data);
     };
 
     if (selectedDevice) {

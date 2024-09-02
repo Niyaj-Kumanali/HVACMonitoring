@@ -42,7 +42,7 @@ const Header: React.FC = () => {
         const fetchUserData = async () => {
             try {
                 const userData = await getCurrentUser();
-                setEmail(userData.email);
+                setEmail(userData.data.email);
             } catch (error) {
                 console.error('Failed to fetch user data', error);
             }

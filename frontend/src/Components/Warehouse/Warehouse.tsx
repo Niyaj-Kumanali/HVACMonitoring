@@ -149,7 +149,22 @@ const Warehouse: React.FC = () => {
 
 
         try {
-            
+
+            const currentUser = await getCurrentUser();
+            const convertedData = {
+                ...formData,
+                latitude: parseFloat(formData.latitude),
+                longitude: parseFloat(formData.longitude),
+                warehouse_dimensions: {
+                    length: parseFloat(formData.warehouse_dimensions.length),
+                    width: parseFloat(formData.warehouse_dimensions.width),
+                    height: parseFloat(formData.warehouse_dimensions.height),
+                },
+                cooling_units: Number(formData.cooling_units),
+                sensors: Number(formData.sensors),
+                userId: currentUser.data.id.id,
+                email: currentUser.data.email,
+            };
 
             await mongoAPI.put(`warehouse/updatewarehouse/${warehouse.warehouse_id}`, JSON.stringify(convertedData));
 
@@ -176,7 +191,7 @@ const Warehouse: React.FC = () => {
         try {
             const currentUser = await getCurrentUser();
 
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
             if (response.data.length === 0) {
                 warehousecountDispatch(set_warehouse_count(0));
             } else {

@@ -38,7 +38,7 @@ const Vehicles = () => {
     const fetchAllVehicles = async () => {
         try {
             const currentUser = await getCurrentUser();
-            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.id.id}`);
+            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.data.id.id}`);
             if (response.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
                 setMessage("No Vehicle Found");

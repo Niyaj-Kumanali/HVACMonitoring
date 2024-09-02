@@ -3,7 +3,7 @@ import thingsboardAPI from './thingsboardAPI';
 export const login = async (
   username: string,
   password: string
-): Promise<string> => {
+) => {
   const response = await thingsboardAPI.post<{ token: string }>('/auth/login', {
     username,
     password,
@@ -13,7 +13,7 @@ export const login = async (
   return token;
 };
 // Existing logout function
-export const logout = async (): Promise<void> => {
+export const logout = async () => {
   await thingsboardAPI.post('/auth/logout');
   localStorage.removeItem('token');
 };
@@ -24,7 +24,7 @@ export const logout = async (): Promise<void> => {
 export const changePassword = async (
   currentPassword: string,
   newPassword: string
-): Promise<any> => {
+) => {
   const response = await thingsboardAPI.post('/auth/changePassword', {
     currentPassword,
     newPassword,
@@ -34,15 +34,15 @@ export const changePassword = async (
 };
 
 // Get Current User
-export const getCurrentUser = async (): Promise<any> => {
+export const getCurrentUser = async () => {
   const response = await thingsboardAPI.get('/auth/user');
-  return response.data;
+  return response;
 };
 
 // Check Activate User Token
 export const checkActivateToken = async (
   activateToken: string
-): Promise<void> => {
+) => {
   await thingsboardAPI.get('/noauth/activate', {
     params: { activateToken },
   });
@@ -52,7 +52,7 @@ export const checkActivateToken = async (
 export const activateUser = async (
   activateToken?: string,
   sendActivationMail?: boolean
-): Promise<void> => {
+) => {
   await thingsboardAPI.post('/noauth/activate', null, {
     params: { activateToken, sendActivationMail },
   });
@@ -84,7 +84,7 @@ export const requestResetPasswordByEmail = async (
 };
 
 // Get User Password Policy
-export const getUserPasswordPolicy = async (): Promise<any> => {
+export const getUserPasswordPolicy = async () => {
   const response = await thingsboardAPI.get('/noauth/userPasswordPolicy');
-  return response.data;
+  return response;
 };

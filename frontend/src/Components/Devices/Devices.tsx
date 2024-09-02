@@ -1,6 +1,6 @@
 import "./Devices.css";
 import { useEffect, useState } from 'react';
-import { Device, PageData } from '../../types/thingsboardTypes';
+import { Device } from '../../types/thingsboardTypes';
 import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
 import Loader from "../Loader/Loader";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -86,10 +86,10 @@ const Devices: React.FC = () => {
                 sortOrder: 'ASC',
             };
 
-            const response: PageData<Device> = await getTenantDeviceInfos(params);
-            setDevices(response.data || []);
+            const response = await getTenantDeviceInfos(params);
+            setDevices(response.data.data || []);
 
-            deviceCountDispatch(set_DeviceCount(response.totalElements));
+            deviceCountDispatch(set_DeviceCount(response.data.totalElements));
 
             setTimeout(() => {
                 setLoadingDevices(false);

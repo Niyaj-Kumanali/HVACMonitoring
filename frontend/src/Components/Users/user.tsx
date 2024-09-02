@@ -27,6 +27,8 @@ const User = () => {
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const devicecountdispatch = useDispatch();
 
+    console.log(username, firstName, lastName, phone, authority)
+
     const userinfo = useLocation();
     const user = userinfo.state;
 
@@ -37,8 +39,10 @@ const User = () => {
                 page: 0
             };
             const userData = await getUsers(params);
+
             console.log(username, firstName, lastName, phone, authority)
-            devicecountdispatch(set_usersCount(userData.data.length));
+            devicecountdispatch(set_usersCount(userData.data.data.length));
+
         } catch (error) {
             console.error('Failed to fetch user data', error);
         }
