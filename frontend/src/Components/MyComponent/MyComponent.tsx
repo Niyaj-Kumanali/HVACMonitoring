@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './myComponent.css';
-import { DashboardType } from '../../types/thingsboardTypes';
+import { DashboardType, Tenant } from '../../types/thingsboardTypes';
 import { getCurrentUser } from '../../api/loginApi';
 
 import { saveDashboard } from '../../api/dashboardApi';
@@ -15,7 +15,6 @@ import {
   getRecaptchaPublicKey,
   privacyPolicyAccepted,
 } from '../../api/signupAPIs';
-import thingsboardAPI from '../../api/thingsboardAPI';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -29,6 +28,7 @@ const MyComponent: React.FC = () => {
   const [currentWidgetPage, setCurrentWidgetPage] = useState<number>(0);
   const [totalWidgetPages, setTotalWidgetPages] = useState<number>(0);
 
+  const [orgName, setOrgName] = useState('Tenant');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,21 +44,19 @@ const MyComponent: React.FC = () => {
     setSuccessMessage('');
 
     try {
-
       const userBody = {
         email: email,
         firstName: firstName,
         lastName: lastName,
         // password: password,
         authority: 'TENANT_ADMIN',
-      }
+      };
       const tenant: Tenant = {
-        title: "tenant3"
-      }
-      const response = await CreateSignUpUser(tenant, userBody)
+        title: orgName,
+      };
+      const response = await CreateSignUpUser(tenant, userBody);
 
-      console.log(response)
-
+      console.log(response);
 
       if (response.status === 200) {
         setSuccessMessage(
@@ -211,6 +209,15 @@ const MyComponent: React.FC = () => {
       <div>
         <h2>Sign Up</h2>
         <form onSubmit={handleSignUp}>
+          <div>
+            <label>Organization:</label>
+            <input
+              type="text"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              required
+            />
+          </div>
           <div>
             <label>First Name:</label>
             <input

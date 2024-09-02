@@ -57,7 +57,7 @@ const Accountinfo = () => {
                     </div>
                     <div className="accountinfo-lastlogin">
                         <p>Last Login</p>
-                        <p>{formatDate(user.additionalInfo.lastLoginTs)}</p> {/* Consider making this dynamic if possible */}
+                        <p>{formatDate(user.additionalInfo?.lastLoginTs)}</p> {/* Consider making this dynamic if possible */}
                     </div>
                 </header>
                 <main className="accountinfo-main">

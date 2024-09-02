@@ -2,6 +2,7 @@ import { Tenant, User } from '../types/thingsboardTypes';
 import { login } from './loginApi';
 import { saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
+import { saveUser } from './userApi';
 
 
 
@@ -61,7 +62,7 @@ export const getRecaptchaParams = async (): Promise<any> => { // Replace `any` w
 // Get Recaptcha Public Key
 export const getRecaptchaPublicKey = async (): Promise<string> => {
   const response = await thingsboardAPI.get('/noauth/signup/recaptchaPublicKey');
-  return response.data;
+  return response;
 };
 
 // Accept Privacy Policy
@@ -100,10 +101,8 @@ export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
     }
 
 
-    return
-
     // Create a tenant admin user
-    const userResponse = await thingsboardAPI.post('/api/user', tenantUserBody);
+    const userResponse = await saveUser(tenantUserBody, true);
 
     return userResponse
   } catch (error) {
