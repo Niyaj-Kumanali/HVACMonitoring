@@ -260,7 +260,7 @@ router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
         const updateData = req.body;
 
         // Find the warehouse by warehouse_id and update it
-        const updatedWarehouse = await Warehouse.findOneAndUpdate(
+        const updatedWarehouse = await warehouse.findOneAndUpdate(
             { warehouse_id },
             updateData,
             { new: true } // Return the updated document
