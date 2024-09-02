@@ -40,3 +40,8 @@
     height: 20px !important;
     white-space: nowrap;
 }
+.del-btn-warehouse{
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}

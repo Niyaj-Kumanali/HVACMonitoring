@@ -7,6 +7,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
+import { useDispatch } from 'react-redux';
+import { set_warehouse_count } from '../../Redux/Action/Action';
 
 interface WarehouseDimensions {
     length: string;
@@ -135,6 +137,7 @@ const AddWarehouse: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage('Warehouse Added Successfully');
+                fetchAllWarehouses();
             }, 1000);
 
         } catch (error) {
@@ -145,6 +148,21 @@ const AddWarehouse: React.FC = () => {
                 setMessage('Failed to Add Warehouse');
                 console.error('Error submitting form:', error);
             }, 1000);
+        }
+    };
+
+    const warehousecountDispatch = useDispatch();
+
+
+    const fetchAllWarehouses = async () => {
+        try {
+            const currentUser = await getCurrentUser()
+            console.log(currentUser.id.id)
+
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`)
+            warehousecountDispatch(set_warehouse_count(response.data.length))
+        } catch (error) {
+            console.error("Failed to fetch warehouses:", error);
         }
     };
 

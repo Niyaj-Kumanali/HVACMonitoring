@@ -1,101 +1,327 @@
-import { useEffect, useState } from "react";
-import "./Warehouse.css";
-import WarehouseIcon from '@mui/icons-material/Warehouse';
-import { getCurrentUser } from "../../api/loginApi";
-import Loader from "../Loader/Loader";
-import { mongoAPI } from "../../api/MongoAPIInstance";
+import React, { useState } from 'react';
+import { FormControl, Snackbar, SnackbarCloseReason, SnackbarContent, TextField } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import ErrorIcon from '@mui/icons-material/Error';
+import SaveIcon from '@mui/icons-material/Save';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getCurrentUser } from '../../api/loginApi';
+import { useDispatch } from 'react-redux';
+import { set_warehouse_count } from '../../Redux/Action/Action';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+interface WarehouseDimensions {
+    length: string;
+    width: string;
+    height: string;
+}
 
-interface Warehouse {
-    _id: string;
-    warehouse_id: string;
+interface WarehouseData {
     warehouse_name: string;
-    location: string;
     latitude: string;
     longitude: string;
+    warehouse_dimensions: WarehouseDimensions;
+    energy_resource: string;
+    cooling_units: string | null;
+    sensors: string | null;
     userId: string;
-    email: string
+    email: string;
 }
 
-interface LocationInfo {
-    display_name: string;
-}
+const Warehouse: React.FC = () => {
+    const [formData, setFormData] = useState<WarehouseData>({
+        warehouse_name: '',
+        latitude: '',
+        longitude: '',
+        warehouse_dimensions: { length: '', width: '', height: '' },
+        energy_resource: '',
+        cooling_units: null,
+        sensors: null,
+        userId: '',
+        email: ''
+    });
 
-const Warehouse = () => {
-    const [allWarehouses, setAllWarehouses] = useState<Warehouse[]>([]);
-    const [locationInfo, setLocationInfo] = useState<{ [key: string]: LocationInfo | null }>({});
-    // const [error, setError] = useState<{ [key: string]: string | null }>({});
-    const [loading, setLoader] = useState(true)
+    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+    const [message, setMessage] = useState("");
 
+    const location = useLocation();
+    const warehouse = location.state;
+    const navigate = useNavigate();
+    const warehousecountDispatch = useDispatch();
 
-    const fetchAllWarehouses = async () => {
+    const handleDeleteWarehouse = async () => {
         try {
-            const currentUser = await getCurrentUser()
-            console.log(currentUser.id.id)
-
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`)
-
-            setAllWarehouses(response.data);
-            setTimeout(() => {
-                setLoader(false);
-            }, 500);
+            await mongoAPI.delete(`/warehouse/deletewarehouse/${warehouse.warehouse_id}`);
+            fetchAllWarehouses();
+            navigate("/warehouses");
         } catch (error) {
-            console.error("Failed to fetch warehouses:", error);
+            console.error("Error deleting warehouse:", error);
         }
     };
 
-    useEffect(() => {
-        fetchAllWarehouses();
-    }, []);
-
-    useEffect(() => {
-        const fetchLocationInfo = async (latitude: string, longitude: string, warehouseId: string) => {
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch location data');
-                }
-
-                const data: LocationInfo = await response.json();
-                setLocationInfo(prevState => ({ ...prevState, [warehouseId]: data }));
-            } catch (err: any) {
-                // setError(prevState => ({ ...prevState, [warehouseId]: err.message }));
-                console.log(err)
-            }
-        };
-
-        allWarehouses.forEach(warehouse => {
-            if (warehouse.latitude && warehouse.longitude) {
-                fetchLocationInfo(warehouse.latitude, warehouse.longitude, warehouse._id);
-            }
+    const handleReset = () => {
+        setFormData({
+            warehouse_name: '',
+            latitude: '',
+            longitude: '',
+            warehouse_dimensions: { length: '', width: '', height: '' },
+            energy_resource: '',
+            cooling_units: null,
+            sensors: null,
+            userId: '',
+            email: ''
         });
-    }, [allWarehouses]);
+        setSubmitted(false);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        if (name.startsWith('warehouse_dimensions.')) {
+            const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
+            setFormData((prev) => ({
+                ...prev,
+                warehouse_dimensions: {
+                    ...prev.warehouse_dimensions,
+                    [dimensionKey]: value,
+                },
+            }));
+        } else if (name === 'cooling_units' || name === 'sensors') {
+            const numericValue = parseInt(value, 10);
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value === '' ? null : numericValue >= 0 ? value : prev[name],
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const currentUser = await getCurrentUser();
+            const convertedData = {
+                ...formData,
+                latitude: parseFloat(formData.latitude),
+                longitude: parseFloat(formData.longitude),
+                warehouse_dimensions: {
+                    length: parseFloat(formData.warehouse_dimensions.length),
+                    width: parseFloat(formData.warehouse_dimensions.width),
+                    height: parseFloat(formData.warehouse_dimensions.height),
+                },
+                cooling_units: Number(formData.cooling_units),
+                sensors: Number(formData.sensors),
+                userId: currentUser.id.id,
+                email: currentUser.email,
+            };
+
+            await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(convertedData));
+
+            setTimeout(() => {
+                handleReset();
+                setLoading(false);
+                setOpen(true);
+                setSnackbarType('success');
+                setMessage('Warehouse Added Successfully');
+                fetchAllWarehouses();
+            }, 1000);
+        } catch (error) {
+            setTimeout(() => {
+                setLoading(false);
+                setOpen(true);
+                setSnackbarType('error');
+                setMessage('Failed to Add Warehouse');
+                console.error("Error submitting form:", error);
+            }, 1000);
+        }
+    };
+
+    const fetchAllWarehouses = async () => {
+        try {
+            const currentUser = await getCurrentUser();
+
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+            if (response.data.length === 0) {
+                warehousecountDispatch(set_warehouse_count(0));
+            } else {
+                warehousecountDispatch(set_warehouse_count(response.data.length));
+            }
+        } catch (error) {
+            console.error("Failed to fetch warehouses:", error);
+            warehousecountDispatch(set_warehouse_count(0));
+        }
+    };
+
+    const handleClose = (_event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+        if (reason === 'clickaway') return;
+        setOpen(false);
+    };
 
     return (
-        loading ? (
-            <Loader/>
-        ) : (
-            <>
-                <div className="menu-data">
-                    <div className="warehouses">
-                        {allWarehouses.map((warehouse) => (
-                            <div className="userinfo" key={warehouse._id}>
-                                <div className="user-img-info">
-                                    <div className="img">
-                                        <WarehouseIcon className="personicon" />
-                                    </div>
-                                    <div className="status">
-                                        <p className="username">{warehouse.warehouse_name}</p>
-                                        <p>{warehouse.warehouse_id}</p>
-                                        <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+        <div className="menu-data">
+            <div className="warehouse">
+                <h3>Warehouse: {warehouse.warehouse_name}</h3>
+                <form className="warehouse-form" onSubmit={handleSubmit}>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Warehouse Name"
+                            name="warehouse_name"
+                            value={warehouse.warehouse_name}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Latitude"
+                            name="latitude"
+                            type="number"
+                            value={warehouse.latitude}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Longitude"
+                            name="longitude"
+                            type="number"
+                            value={warehouse.longitude}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Length"
+                            name="warehouse_dimensions.length"
+                            type="number"
+                            value={warehouse.warehouse_dimensions.length}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Width"
+                            name="warehouse_dimensions.width"
+                            type="number"
+                            value={warehouse.warehouse_dimensions.width}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Height"
+                            name="warehouse_dimensions.height"
+                            type="number"
+                            value={warehouse.warehouse_dimensions.height}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Energy Resource"
+                            name="energy_resource"
+                            value={warehouse.energy_resource}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="No Of Cooling Units"
+                            name="cooling_units"
+                            type="number"
+                            value={warehouse.cooling_units ?? ''}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="No Of Sensors"
+                            name="sensors"
+                            type="number"
+                            value={warehouse.sensors ?? ''}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className='textfieldss'
+                        />
+                    </FormControl>
+                    <div className='del-btn-warehouse'>
+                        <LoadingButton
+                            size="small"
+                            type="submit"
+                            color="secondary"
+                            loading={loading}
+                            loadingPosition="start"
+                            startIcon={<SaveIcon />}
+                            variant="contained"
+                            disabled={loading}
+                            className="btn-save"
+                        >
+                            <span>Save</span>
+                        </LoadingButton>
+                        <LoadingButton
+                            size="small"
+                            color="error"
+                            loading={loading}
+                            loadingPosition="start"
+                            startIcon={<DeleteIcon />}
+                            variant="contained"
+                            disabled={loading}
+                            className="btn-save"
+                            onClick={handleDeleteWarehouse}
+                        >
+                            <span>Delete</span>
+                        </LoadingButton>
                     </div>
-                </div>
-            </>
-        )
+                </form>
+            </div>
+            <Snackbar
+                open={open}
+                autoHideDuration={2000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                style={{ marginTop: '64px' }}
+            >
+                <SnackbarContent
+                    style={{
+                        backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                    message={
+                        <>
+                            {snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />}
+                            {message}
+                        </>
+                    }
+                />
+            </Snackbar>
+        </div>
     );
 };
 
