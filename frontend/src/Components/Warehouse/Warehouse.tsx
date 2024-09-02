@@ -30,50 +30,68 @@ interface WarehouseData {
 }
 
 const Warehouse: React.FC = () => {
+
+    const location = useLocation();
+    const warehouse = location.state;
+
     const [formData, setFormData] = useState<WarehouseData>({
-        warehouse_name: '',
-        latitude: '',
-        longitude: '',
-        warehouse_dimensions: { length: '', width: '', height: '' },
-        energy_resource: '',
-        cooling_units: null,
-        sensors: null,
-        userId: '',
-        email: ''
+        warehouse_name: warehouse.warehouse_name,
+        latitude: warehouse.latitude,
+        longitude: warehouse.longitude,
+        warehouse_dimensions: { length: warehouse.warehouse_dimensions.length, width: warehouse.warehouse_dimensions.width, height: warehouse.warehouse_dimensions.height },
+        energy_resource: warehouse.energy_resource,
+        cooling_units: warehouse.cooling_units,
+        sensors: warehouse.sensors,
+        userId: warehouse.userId,
+        email: warehouse.email
     });
 
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingg, setLoadingg] = useState(false);
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState("");
 
-    const location = useLocation();
-    const warehouse = location.state;
+    
     const navigate = useNavigate();
     const warehousecountDispatch = useDispatch();
 
     const handleDeleteWarehouse = async () => {
-        try {
-            await mongoAPI.delete(`/warehouse/deletewarehouse/${warehouse.warehouse_id}`);
-            fetchAllWarehouses();
-            navigate("/warehouses");
-        } catch (error) {
-            console.error("Error deleting warehouse:", error);
-        }
+        setLoadingg(true);  // Start the loader
+
+        setTimeout(async () => {
+            try {
+                await mongoAPI.delete(`/warehouse/deletewarehouse/${warehouse.warehouse_id}`);
+                fetchAllWarehouses();
+
+                setOpen(true);
+                setSnackbarType('success');
+                setMessage('Warehouse Deleted Successfully');
+                navigate("/warehouses");
+            } catch (error) {
+                console.error("Error deleting warehouse:", error);
+                setOpen(true);
+                setSnackbarType('error');
+                setMessage('Failed to Delete Warehouse');
+            } finally {
+                setLoadingg(false); 
+            }
+        }, 500); 
     };
+
 
     const handleReset = () => {
         setFormData({
-            warehouse_name: '',
-            latitude: '',
-            longitude: '',
-            warehouse_dimensions: { length: '', width: '', height: '' },
-            energy_resource: '',
-            cooling_units: null,
-            sensors: null,
-            userId: '',
-            email: ''
+            warehouse_name: formData.warehouse_name,
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            warehouse_dimensions: { length: formData.warehouse_dimensions.length, width: formData.warehouse_dimensions.width, height: formData.warehouse_dimensions.height },
+            energy_resource: formData.energy_resource,
+            cooling_units: formData.cooling_units,
+            sensors: formData.sensors,
+            userId: formData.userId,
+            email: formData.email
         });
         setSubmitted(false);
     };
@@ -91,10 +109,9 @@ const Warehouse: React.FC = () => {
                 },
             }));
         } else if (name === 'cooling_units' || name === 'sensors') {
-            const numericValue = parseInt(value, 10);
             setFormData((prev) => ({
                 ...prev,
-                [name]: value === '' ? null : numericValue >= 0 ? value : prev[name],
+                [name]: value === '' ? null : value,
             }));
         } else {
             setFormData((prev) => ({
@@ -104,11 +121,35 @@ const Warehouse: React.FC = () => {
         }
     };
 
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+        console.log(formData)
         e.preventDefault();
+
         setLoading(true);
 
+        const convertedData = {
+            ...formData,
+            warehouse_name: formData.warehouse_name,
+            latitude: parseFloat(formData.latitude),
+            longitude: parseFloat(formData.longitude),
+            warehouse_dimensions: {
+                length: parseFloat(formData.warehouse_dimensions.length),
+                width: parseFloat(formData.warehouse_dimensions.width),
+                height: parseFloat(formData.warehouse_dimensions.height),
+            },
+            cooling_units: Number(formData.cooling_units),
+            energy_resource: formData.energy_resource,
+            sensors: Number(formData.sensors),
+            userId: warehouse.userId,
+            email: warehouse.email
+        };
+        
+
+
         try {
+
             const currentUser = await getCurrentUser();
             const convertedData = {
                 ...formData,
@@ -125,24 +166,24 @@ const Warehouse: React.FC = () => {
                 email: currentUser.data.email,
             };
 
-            await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(convertedData));
+            await mongoAPI.put(`warehouse/updatewarehouse/${warehouse.warehouse_id}`, JSON.stringify(convertedData));
 
             setTimeout(() => {
-                handleReset();
                 setLoading(false);
                 setOpen(true);
                 setSnackbarType('success');
-                setMessage('Warehouse Added Successfully');
+                setMessage('Warehouse Updated Successfully');
                 fetchAllWarehouses();
-            }, 1000);
+                handleReset();
+            }, 500);
         } catch (error) {
             setTimeout(() => {
                 setLoading(false);
                 setOpen(true);
                 setSnackbarType('error');
-                setMessage('Failed to Add Warehouse');
+                setMessage('Failed to Update Warehouse');
                 console.error("Error submitting form:", error);
-            }, 1000);
+            }, 500);
         }
     };
 
@@ -176,7 +217,7 @@ const Warehouse: React.FC = () => {
                         <TextField
                             label="Warehouse Name"
                             name="warehouse_name"
-                            value={warehouse.warehouse_name}
+                            value={formData.warehouse_name}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -187,7 +228,7 @@ const Warehouse: React.FC = () => {
                             label="Latitude"
                             name="latitude"
                             type="number"
-                            value={warehouse.latitude}
+                            value={formData.latitude}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -198,7 +239,7 @@ const Warehouse: React.FC = () => {
                             label="Longitude"
                             name="longitude"
                             type="number"
-                            value={warehouse.longitude}
+                            value={formData.longitude}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -209,7 +250,7 @@ const Warehouse: React.FC = () => {
                             label="Length"
                             name="warehouse_dimensions.length"
                             type="number"
-                            value={warehouse.warehouse_dimensions.length}
+                            value={formData.warehouse_dimensions.length}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -220,7 +261,7 @@ const Warehouse: React.FC = () => {
                             label="Width"
                             name="warehouse_dimensions.width"
                             type="number"
-                            value={warehouse.warehouse_dimensions.width}
+                            value={formData.warehouse_dimensions.width}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -231,7 +272,7 @@ const Warehouse: React.FC = () => {
                             label="Height"
                             name="warehouse_dimensions.height"
                             type="number"
-                            value={warehouse.warehouse_dimensions.height}
+                            value={formData.warehouse_dimensions.height}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -241,7 +282,7 @@ const Warehouse: React.FC = () => {
                         <TextField
                             label="Energy Resource"
                             name="energy_resource"
-                            value={warehouse.energy_resource}
+                            value={formData.energy_resource}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -252,7 +293,7 @@ const Warehouse: React.FC = () => {
                             label="No Of Cooling Units"
                             name="cooling_units"
                             type="number"
-                            value={warehouse.cooling_units ?? ''}
+                            value={formData.cooling_units ?? ''}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -263,7 +304,7 @@ const Warehouse: React.FC = () => {
                             label="No Of Sensors"
                             name="sensors"
                             type="number"
-                            value={warehouse.sensors ?? ''}
+                            value={formData.sensors ?? ''}
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
@@ -281,12 +322,12 @@ const Warehouse: React.FC = () => {
                             disabled={loading}
                             className="btn-save"
                         >
-                            <span>Save</span>
+                            <span>Update</span>
                         </LoadingButton>
                         <LoadingButton
                             size="small"
                             color="error"
-                            loading={loading}
+                            loading={loadingg}
                             loadingPosition="start"
                             startIcon={<DeleteIcon />}
                             variant="contained"
@@ -314,10 +355,10 @@ const Warehouse: React.FC = () => {
                         gap: '8px',
                     }}
                     message={
-                        <>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px'}}>
                             {snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />}
-                            {message}
-                        </>
+                            <span>{message}</span>
+                        </div>
                     }
                 />
             </Snackbar>
