@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './myComponent.css';
-import { DashboardType, Tenant } from '../../types/thingsboardTypes';
+import { DashboardType, Tenant, User } from '../../types/thingsboardTypes';
 import { getCurrentUser } from '../../api/loginApi';
 
 import { saveDashboard } from '../../api/dashboardApi';
@@ -15,6 +15,7 @@ import {
   getRecaptchaPublicKey,
   privacyPolicyAccepted,
 } from '../../api/signupAPIs';
+import { getActivationLink } from '../../api/userApi';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -44,29 +45,32 @@ const MyComponent: React.FC = () => {
     setSuccessMessage('');
 
     try {
-      const userBody = {
+      const userBody: User = {
         email: email,
+        authority: 'TENANT_ADMIN',
         firstName: firstName,
         lastName: lastName,
-        // password: password,
-        authority: 'TENANT_ADMIN',
+        password: password,
+        phone: '123456789',
+        additionalInfo: {},
       };
+
       const tenant: Tenant = {
         title: orgName,
       };
-      const response = await CreateSignUpUser(tenant, userBody);
+      const createdUser = await CreateSignUpUser(tenant, userBody);
+      const activationLink = await getActivationLink(createdUser.data.id?.id);
 
-      console.log(response);
+      console.log(createdUser);
+      console.log(activationLink)
 
-      if (response.status === 200) {
-        setSuccessMessage(
-          'Sign-up successful! Please check your email to activate your account.'
-        );
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPassword('');
-      }
+      setSuccessMessage(
+        'Sign-up successful! Please check your email to activate your account.'
+      );
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setPassword('');
     } catch (error) {
       console.error('Sign-up error', error);
       setErrorMessage('Sign-up failed. Please try again later.');
@@ -80,7 +84,7 @@ const MyComponent: React.FC = () => {
     try {
       const response = await getAllWidgetsBundles();
       setLoadingWidgetBundles(true);
-      setWidgetBundles(response || []);
+      setWidgetBundles(response.data || []);
     } catch (error) {
       console.error('Failed to fetch widget bundles', error);
     } finally {
@@ -97,8 +101,8 @@ const MyComponent: React.FC = () => {
         page: page,
       };
       const response = await getWidgetsBundles(params);
-      setWidgetBundles(response.data || []);
-      setTotalWidgetPages(response.totalPages ?? 0);
+      setWidgetBundles(response.data.data || []);
+      setTotalWidgetPages(response.data.totalPages ?? 0);
       // console.log(response.data)
     } catch (error) {
       console.error('Failed to fetch widget bundles', error);
@@ -121,56 +125,12 @@ const MyComponent: React.FC = () => {
     }
   };
 
-  const initializeRecaptcha = async () => {
-    try {
-      // You can choose to use either recaptcha params or public key based on your implementation
-      const recaptchaParams = await getRecaptchaParams();
-      console.log('Recaptcha Params:', recaptchaParams);
 
-      // or
-      const recaptchaPublicKey = await getRecaptchaPublicKey();
-      console.log('Recaptcha Public Key:', recaptchaPublicKey);
-    } catch (error) {
-      console.error('Error fetching Recaptcha details:', error);
-    }
-  };
-
-  const registerNewUser = async () => {
-    const userData = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@company.com',
-      password: 'secretPassword',
-      recaptchaResponse: 'string', // Replace with actual response from Recaptcha widget
-      pkgName: 'string',
-      appSecret: 'string', // Optional depending on your setup
-    };
-    userData;
-
-    try {
-      // const response = await signUp(userData);
-      // console.log('Sign up response:', response.data);
-
-      // Step 3: Accept Privacy Policy (if required)
-      const policyAccepted = await privacyPolicyAccepted();
-      if (!policyAccepted) {
-        await acceptPrivacyPolicy();
-        console.log('Privacy Policy Accepted');
-      } else {
-        console.log('Privacy Policy already accepted');
-      }
-    } catch (error) {
-      console.error('Error during sign up:', error);
-    }
-  };
   const handleGetAll = async () => {
     fetchAllWidgetBundles();
     fetchWidgetBundles(currentWidgetPage);
     const currentuser = await getCurrentUser();
-    console.log('Current User: \n', currentuser);
-
-    initializeRecaptcha();
-    registerNewUser();
+    console.log('Current User: \n', currentuser.data);
   };
 
   const handlePageChangeWidgets = (page: number) => {

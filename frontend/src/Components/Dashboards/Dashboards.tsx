@@ -111,8 +111,8 @@ const Dashboard = () => {
         sortProperty: 'title',
         sortOrder: 'ASC',
       };
-      const response: PageData<DashboardType> = await getTenantDashboards(params);
-      setDashboards(response.data ?? []);
+      const response = await getTenantDashboards(params);
+      setDashboards(response.data.data ?? []);
       setTimeout(() => {
         setLoader(false);
       }, 500);

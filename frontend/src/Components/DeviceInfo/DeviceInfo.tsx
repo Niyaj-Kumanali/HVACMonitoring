@@ -30,7 +30,6 @@ const DeviceInfo: React.FC = () => {
   const [location, setLocation] = useState('');
   const [action, setAction] = useState('');
 
-
   const [loaders, setLoaders] = useState(true);
   const deviceCountDispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -43,7 +42,7 @@ const DeviceInfo: React.FC = () => {
     const fetchDeviceInfo = async () => {
       try {
         const deviceData = await getDeviceById(deviceId);
-        setDeviceInfo(deviceData);
+        setDeviceInfo(deviceData.data);
       } catch (error) {
         console.error('Error fetching device info:', error);
       } finally {
@@ -53,7 +52,6 @@ const DeviceInfo: React.FC = () => {
 
     fetchDeviceInfo();
   }, [deviceId]);
-
 
   const handleAdminChange = (event: SelectChangeEvent) => {
     setAdmin(event.target.value);
@@ -125,144 +123,166 @@ const DeviceInfo: React.FC = () => {
     setOpen(false);
   };
 
-
-  console.log(deviceInfo)
   return (
     <>
-    {
-        loaders ? (<Loader />) : (
-            <div className="menu-data">
-                <div className="add-device">
-                    <form>
-                        <label htmlFor="" className="label">Device Info</label>
-                        <Box className="text-field-box">
-                            <TextField
-                                fullWidth
-                                label="Name"
-                                onChange={(e) => setDeviceInfo(prev => ({...prev, name: e.target.value}))}
-                                value={deviceInfo.name || ''}
-                            />
-                        </Box>
-                        <label htmlFor="" className="label">Label</label>
-                        <Box className="text-field-box">
-                            <TextField
-                                fullWidth
-                                label="Label"
-                                onChange={(e) => setDeviceInfo(prev => ({...prev, label: e.target.value}))}
-                                value={deviceInfo.label || ''}
-                                className="textfiled"
-                            />
-                        </Box>
-                        <label htmlFor="" className="label">Type</label>
-                        <Box className="text-field-box">
-                            <TextField
-                                fullWidth
-                                label="type"
-                                onChange={(e) => setDeviceInfo(prev => ({...prev, type: e.target.value}))}
-                                value={deviceInfo.type || ''}
-                                className="textfiled"
-                            />
-                        </Box>
-                        <label htmlFor="" className="label">Admin</label>
-                        <FormControl className="form-control">
-                            <InputLabel id="admin-label">Select User</InputLabel>
-                            <Select
-                                labelId="admin-label"
-                                id="admin-select"
-                                value={admin}
-                                label="Select User"
-                                onChange={handleAdminChange}
-                                className="form-control-inner"
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <label htmlFor="" className="label">Location</label>
-                        <FormControl className="form-control">
-                            <InputLabel id="location-label">Select Location</InputLabel>
-                            <Select
-                                labelId="location-label"
-                                id="location-select"
-                                value={location}
-                                label="Select Location"
-                                onChange={handleLocationChange}
-                                className="form-control-inner"
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <label htmlFor="" className="label">Action</label>
-                        <FormControl className="form-control">
-                            <InputLabel id="action-label">Select Action</InputLabel>
-                            <Select
-                                labelId="action-label"
-                                id="action-select"
-                                value={action}
-                                label="Select Action"
-                                onChange={handleActionChange}
-                                className="form-control-inner"
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <div className="accountinfo-savebtn">
-                            <LoadingButton
-                                size="small"
-                                color="secondary"
-                                onClick={handleClick}
-                                loading={loading}
-                                loadingPosition="start"
-                                startIcon={<SaveIcon />}
-                                variant="contained"
-                                disabled={loading}
-                                className="btn-save"
-                            >
-                                <span>Save</span>
-                            </LoadingButton>
-                        </div>
-                    </form>
-                </div>
-                <Snackbar
-                    open={open}
-                    autoHideDuration={2000}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    style={{ marginTop: '64px' }}
+      {loaders ? (
+        <Loader />
+      ) : (
+        <div className="menu-data">
+          <div className="add-device">
+            <form>
+              <label htmlFor="" className="label">
+                Device Info
+              </label>
+              <Box className="text-field-box">
+                <TextField
+                  fullWidth
+                  label="Name"
+                  onChange={(e) =>
+                    setDeviceInfo((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  value={deviceInfo.name || ''}
+                />
+              </Box>
+              <label htmlFor="" className="label">
+                Label
+              </label>
+              <Box className="text-field-box">
+                <TextField
+                  fullWidth
+                  label="Label"
+                  onChange={(e) =>
+                    setDeviceInfo((prev) => ({
+                      ...prev,
+                      label: e.target.value,
+                    }))
+                  }
+                  value={deviceInfo.label || ''}
+                  className="textfiled"
+                />
+              </Box>
+              <label htmlFor="" className="label">
+                Type
+              </label>
+              <Box className="text-field-box">
+                <TextField
+                  fullWidth
+                  label="type"
+                  onChange={(e) =>
+                    setDeviceInfo((prev) => ({ ...prev, type: e.target.value }))
+                  }
+                  value={deviceInfo.type || ''}
+                  className="textfiled"
+                />
+              </Box>
+              <label htmlFor="" className="label">
+                Admin
+              </label>
+              <FormControl className="form-control">
+                <InputLabel id="admin-label">Select User</InputLabel>
+                <Select
+                  labelId="admin-label"
+                  id="admin-select"
+                  value={admin}
+                  label="Select User"
+                  onChange={handleAdminChange}
+                  className="form-control-inner"
                 >
-                    <SnackbarContent
-                        style={{
-                            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                            color: 'white'
-                        }}
-                        message={
-                            <span style={{ display: 'flex', alignItems: 'center' }}>
-                                {snackbarType === 'success' ? <CheckIcon style={{ marginRight: '8px' }} /> : <ErrorIcon style={{ marginRight: '8px' }} />}
-                                {message}
-                            </span>
-                        }
-                    />
-                </Snackbar>
-            </div>
-        )
-    }
-</>
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              </FormControl>
+              <label htmlFor="" className="label">
+                Location
+              </label>
+              <FormControl className="form-control">
+                <InputLabel id="location-label">Select Location</InputLabel>
+                <Select
+                  labelId="location-label"
+                  id="location-select"
+                  value={location}
+                  label="Select Location"
+                  onChange={handleLocationChange}
+                  className="form-control-inner"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              </FormControl>
+              <label htmlFor="" className="label">
+                Action
+              </label>
+              <FormControl className="form-control">
+                <InputLabel id="action-label">Select Action</InputLabel>
+                <Select
+                  labelId="action-label"
+                  id="action-select"
+                  value={action}
+                  label="Select Action"
+                  onChange={handleActionChange}
+                  className="form-control-inner"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              </FormControl>
+              <div className="accountinfo-savebtn">
+                <LoadingButton
+                  size="small"
+                  color="secondary"
+                  onClick={handleClick}
+                  loading={loading}
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  disabled={loading}
+                  className="btn-save"
+                >
+                  <span>Save</span>
+                </LoadingButton>
+              </div>
+            </form>
+          </div>
+          <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            style={{ marginTop: '64px' }}
+          >
+            <SnackbarContent
+              style={{
+                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+                color: 'white',
+              }}
+              message={
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  {snackbarType === 'success' ? (
+                    <CheckIcon style={{ marginRight: '8px' }} />
+                  ) : (
+                    <ErrorIcon style={{ marginRight: '8px' }} />
+                  )}
+                  {message}
+                </span>
+              }
+            />
+          </Snackbar>
+        </div>
+      )}
+    </>
   );
 };
 
 export default DeviceInfo;
-

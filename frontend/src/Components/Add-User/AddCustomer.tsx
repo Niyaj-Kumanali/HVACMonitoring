@@ -33,7 +33,7 @@ const Adduser = () => {
                 page: 0
             }
             const userData = await getUsers(params);
-            devicecountdispatch(set_usersCount(userData.data.length));
+            devicecountdispatch(set_usersCount(userData.data.data.length));
         } catch (error) {
             console.error('Failed to fetch user data', error);
         }
@@ -47,13 +47,15 @@ const Adduser = () => {
 
         try {
             const cust: Customer = { title: title };
-            const currentuser: User = await getCurrentUser();
+            const currentuser = await getCurrentUser();
 
             let customer = undefined;
             try {
-                customer = await createOrUpdateCustomer(cust);
+                const response = await createOrUpdateCustomer(cust);
+                customer = response.data
             } catch (error) {
-                customer = await getTenantCustomerByTitle(title);
+                const response = await getTenantCustomerByTitle(title);
+                customer = response.data
             }
 
             const newUser: User = {
@@ -73,11 +75,11 @@ const Adduser = () => {
                 },
             };
 
-            const user: User = await saveUser(newUser, IsSendActivationMail);
+            const user = await saveUser(newUser, IsSendActivationMail);
             console.log(user);
 
-            const activationlink = await getActivationLink(user.id?.id);
-            setActivationlink(activationlink);;
+            const activationlink = await getActivationLink(user.data.id?.id);
+            setActivationlink(activationlink.data);;
 
             setMessage("User created successfully!");
             setSnackbarType('success');

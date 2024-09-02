@@ -18,7 +18,8 @@ const Accountinfo = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const userData = await getCurrentUser();
+                const response = await getCurrentUser();
+                const userData = response.data
                 setUsername(userData.email || "");
                 setFirstname(userData.firstName || "");
                 setLastname(userData.lastName || "");
@@ -53,7 +54,7 @@ const Accountinfo = () => {
                 <header className="accountinfo-header">
                     <div className="accountinfo-email">
                         <p className="accountinfo-profile">Profile</p>
-                        <p>{username}</p>
+                        {/* <p>{username}</p> */}
                     </div>
                     <div className="accountinfo-lastlogin">
                         <p>Last Login</p>

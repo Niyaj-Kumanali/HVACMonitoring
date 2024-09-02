@@ -65,8 +65,8 @@ const AddDevice = () => {
                 sortOrder: 'ASC',
             };
 
-            const response: PageData<Device> = await getTenantDevices(params);
-            deviceCountDispatch(set_DeviceCount(response.totalElements || 0));
+            const response = await getTenantDevices(params);
+            deviceCountDispatch(set_DeviceCount(response.data.totalElements || 0));
         } catch (error) {
             console.error('Failed to fetch devices', error);
         }

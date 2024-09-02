@@ -2,7 +2,7 @@ import { Tenant, User } from '../types/thingsboardTypes';
 import { login } from './loginApi';
 import { saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
-import { saveUser } from './userApi';
+import { getActivationLink, saveUser } from './userApi';
 
 
 
@@ -10,7 +10,7 @@ import { saveUser } from './userApi';
 export const activateUserByEmailCode = async (
   emailCode: string,
   pkgName?: string
-): Promise<void> => {
+) => {
   await thingsboardAPI.post('/noauth/activateByEmailCode', null, {
     params: { emailCode, pkgName },
   });
@@ -20,7 +20,7 @@ export const activateUserByEmailCode = async (
 export const activateEmail = async (
   emailCode: string,
   pkgName?: string
-): Promise<void> => {
+) => {
   await thingsboardAPI.get('/noauth/activateEmail', {
     params: { emailCode, pkgName },
   });
@@ -29,7 +29,7 @@ export const activateEmail = async (
 // Mobile Login
 export const mobileLogin = async (
   pkgName?: string
-): Promise<void> => {
+) => {
   await thingsboardAPI.get('/noauth/login', {
     params: { pkgName },
   });
@@ -39,7 +39,7 @@ export const mobileLogin = async (
 export const resendEmailActivation = async (
   email: string,
   pkgName?: string
-): Promise<void> => {
+) => {
   await thingsboardAPI.post('/noauth/resendEmailActivation', null, {
     params: { email, pkgName },
   });
@@ -48,42 +48,41 @@ export const resendEmailActivation = async (
 // Sign Up
 export const signUp = async (
   data: any // Replace `any` with appropriate type if known
-): Promise<any> => {
+) => {
   const response = await thingsboardAPI.post('/noauth/signup', data);
   return response
 };
 
 // Get Recaptcha Params
-export const getRecaptchaParams = async (): Promise<any> => { // Replace `any` with appropriate type if known
+export const getRecaptchaParams = async () => { // Replace `any` with appropriate type if known
   const response = await thingsboardAPI.get('/noauth/signup/recaptchaParams');
-  return response.data;
+  return response;
 };
 
 // Get Recaptcha Public Key
-export const getRecaptchaPublicKey = async (): Promise<string> => {
+export const getRecaptchaPublicKey = async () => {
   const response = await thingsboardAPI.get('/noauth/signup/recaptchaPublicKey');
   return response;
 };
 
 // Accept Privacy Policy
-export const acceptPrivacyPolicy = async (): Promise<void> => {
+export const acceptPrivacyPolicy = async () => {
   await thingsboardAPI.post('/signup/acceptPrivacyPolicy');
 };
 
 // Check Privacy Policy Acceptance
-export const privacyPolicyAccepted = async (): Promise<boolean> => {
+export const privacyPolicyAccepted = async () => {
   const response = await thingsboardAPI.get('/signup/privacyPolicyAccepted');
-  return response.data;
+  return response;
 };
 
 // Delete Tenant Account
-export const deleteTenantAccount = async (): Promise<void> => {
+export const deleteTenantAccount = async () => {
   await thingsboardAPI.delete('/signup/tenantAccount');
 };
 
 
 export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
-  try {
     // Ensure the admin is logged in and token is set
     const adminUserName = import.meta.env.VITE_THINGSBOARD_ADMINUSERNAME
     const adminPassword = import.meta.env.VITE_THINGSBOARD_ADMINUSERPASSWORD
@@ -91,23 +90,19 @@ export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
 
     // Create a tenant
     const tenantResponse = await saveTenant(tenant)
-    console.log(tenantResponse)
     
-    const tenantId = tenantResponse.id;
+    const tenantId = tenantResponse.data.id;
+    console.log(tenantId)
     const tenantUserBody = {
       ...tenantBody,
-      authority: 'TENANT_ADMIN',
       tenantId: tenantId
     }
 
+    const createdUser = await saveUser(tenantUserBody, false);
+    const activationLink = await getActivationLink(createdUser.data.id?.id);
+    console.log(activationLink)
 
-    // Create a tenant admin user
-    const userResponse = await saveUser(tenantUserBody, true);
 
-    return userResponse
-  } catch (error) {
-    console.error('Error creating tenant or user', error);
-    throw error;
-  }
+    return createdUser
 }
 
