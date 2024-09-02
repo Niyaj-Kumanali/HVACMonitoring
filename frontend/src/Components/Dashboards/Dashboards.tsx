@@ -87,15 +87,18 @@ const Dashboard = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const response = await fetch('http://3.111.205.170:2000/warehouse/getallwarehouse');
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      const currentUser = await getCurrentUser();
+
+      const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+      if (response.data.length === 0) {
+        warecountdispatch(set_warehouse_count(0));
+      } else {
+        warecountdispatch(set_warehouse_count(response.data.length));
       }
-      const data = await response.json();
-      const length = data.length;
-      warecountdispatch(set_warehouse_count(length));
+      setLoader(false);
     } catch (error) {
-      console.error('Failed to fetch warehouses:', error);
+      console.error("Failed to fetch warehouses:", error);
+      warecountdispatch(set_warehouse_count(0));
     }
   };
 

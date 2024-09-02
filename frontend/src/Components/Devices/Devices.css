@@ -13,6 +13,7 @@
     list-style-type: none;
     gap: 10px;
     cursor: pointer;
+    align-items: center;
 }
 
 .devices ul li {

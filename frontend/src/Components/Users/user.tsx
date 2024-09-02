@@ -66,7 +66,7 @@ const User = () => {
             setSnackbarType('error');
             setOpen(true);
             setLoadingDelete(false);
-            setTimeout(() => setOpen(false), 2000); // Hide the error message after 2 seconds
+            setTimeout(() => setOpen(false), 2000);
         }
     };
 
@@ -153,7 +153,7 @@ const User = () => {
                             loadingPosition="start"
                             startIcon={<DeleteIcon />}
                             variant="contained"
-                            disabled={loading} // Disable Delete button if Update button is loading
+                            disabled={loading}
                             sx={{ width: '150px', height: '50px' }}
                         >
                             <span>Delete</span>

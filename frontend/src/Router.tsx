@@ -6,7 +6,7 @@ import Devices from './Components/Devices/Devices';
 import Locations from './Components/Locations/Locations';
 import Users from './Components/Users/Users';
 import AddDevice from './Components/Add-Devices/AddDevice';
-import Warehouse from './Components/Warehouse/Warehouse';
+import Warehouses from './Components/Warehouse/Warehouses';
 import Vehicles from './Components/Vehicles/Vehicles';
 import AddAction from './Components/Add-Action/AddAction';
 import AddLocation from './Components/Add-Location/AddLocation';
@@ -25,6 +25,7 @@ import AddCustomer from './Components/Add-User/AddCustomer';
 import Signup from './Components/Login/Signup';
 import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
 import User from './Components/Users/user';
+import Warehouse from './Components/Warehouse/Warehouse';
 
 const Router = createBrowserRouter([
   {
@@ -77,7 +78,7 @@ const Router = createBrowserRouter([
       },
       {
         path: '/warehouses',
-        element: <Warehouse />,
+        element: <Warehouses />,
       },
       {
         path: '/vehicles',
@@ -118,6 +119,10 @@ const Router = createBrowserRouter([
       {
         path: '/user/:email',
         element: <User/>
+      },
+      {
+        path: '/warehouse/:warehouseid',
+        element: <Warehouse/>
       }
     ],
   },

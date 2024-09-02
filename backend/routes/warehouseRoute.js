@@ -82,7 +82,8 @@ router.post('/addwarehouse', async (req, res) => {
     try {
         const existingWarehouse = await warehouse.findOne({
             $or: [
-                { warehouse_id: req.body.warehouse_id },
+                {warehouse_id: req.body.warehouse_id}
+
             ]
         });
 

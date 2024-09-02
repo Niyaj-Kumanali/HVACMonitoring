@@ -33,20 +33,33 @@ const Vehicles = () => {
     const [allVehicles, setAllVehicles] = useState<VehicleData[]>([]);
     const [loading, setLoading] = useState(true);
     const vehicleCountDispatch = useDispatch();
+    const [message, setMessage] = useState("");
 
     const fetchAllVehicles = async () => {
         try {
-            const currentUser = await getCurrentUser()
+            const currentUser = await getCurrentUser();
             const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.id.id}`);
-            setAllVehicles(response.data);
-            vehicleCountDispatch(set_vehicle_count(response.data.length));
+            if (response.data.length === 0) {
+                vehicleCountDispatch(set_vehicle_count(0));
+                setMessage("No Vehicle Found");
+            } else {
+                setAllVehicles(response.data);
+                setMessage("");
+                vehicleCountDispatch(set_vehicle_count(response.data.length));
+            }
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
         } catch (error) {
             console.error("Failed to fetch vehicles:", error);
+            vehicleCountDispatch(set_vehicle_count(0));
+            setMessage("Failed to fetch vehicles");
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
         }
     };
+
 
     useEffect(() => {
         fetchAllVehicles();
@@ -55,6 +68,8 @@ const Vehicles = () => {
     return (
         loading ? (
             <Loader />
+        ) : allVehicles.length === 0 ? (
+            <div className="menu-data">{message}</div>
         ) : (
             <div className="menu-data">
                 <div className="warehouses">
