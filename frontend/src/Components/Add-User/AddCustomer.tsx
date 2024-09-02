@@ -70,7 +70,7 @@ const Adduser = () => {
                     entityType: 'CUSTOMER',
                 },
                 tenantId: {
-                    id: currentuser.id?.id || '',
+                    id: currentuser.data.id?.id || '',
                     entityType: 'TENANT',
                 },
             };

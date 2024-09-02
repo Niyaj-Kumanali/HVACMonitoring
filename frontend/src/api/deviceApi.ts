@@ -1,5 +1,5 @@
 import thingsboardAPI from './thingsboardAPI';
-import { Device, DeviceQueryParams, PageData } from '../types/thingsboardTypes';
+import { Device, DeviceQueryParams } from '../types/thingsboardTypes';
 
 // Get commands to publish device telemetry
 export const getDevicePublishTelemetryCommands = async (

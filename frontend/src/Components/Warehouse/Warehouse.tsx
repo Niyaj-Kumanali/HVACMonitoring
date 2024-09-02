@@ -121,8 +121,8 @@ const Warehouse: React.FC = () => {
                 },
                 cooling_units: Number(formData.cooling_units),
                 sensors: Number(formData.sensors),
-                userId: currentUser.id.id,
-                email: currentUser.email,
+                userId: currentUser.data.id.id,
+                email: currentUser.data.email,
             };
 
             await mongoAPI.post("warehouse/addwarehouse", JSON.stringify(convertedData));
@@ -150,7 +150,7 @@ const Warehouse: React.FC = () => {
         try {
             const currentUser = await getCurrentUser();
 
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
             if (response.data.length === 0) {
                 warehousecountDispatch(set_warehouse_count(0));
             } else {

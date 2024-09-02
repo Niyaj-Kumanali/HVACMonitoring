@@ -1,4 +1,4 @@
-import { DashboardType, PageData } from '../types/thingsboardTypes';
+import { DashboardType } from '../types/thingsboardTypes';
 import thingsboardAPI from './thingsboardAPI';
 
 // Create or Update Dashboard

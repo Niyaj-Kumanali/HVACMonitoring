@@ -27,6 +27,8 @@ const User = () => {
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const devicecountdispatch = useDispatch();
 
+    console.log(username, firstName, lastName, phone, authority)
+
     const userinfo = useLocation();
     const user = userinfo.state;
 

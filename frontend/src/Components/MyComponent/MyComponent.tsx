@@ -8,13 +8,7 @@ import {
   getAllWidgetsBundles,
   getWidgetsBundles,
 } from '../../api/widgetsBundleAPI';
-import {
-  acceptPrivacyPolicy,
-  CreateSignUpUser,
-  getRecaptchaParams,
-  getRecaptchaPublicKey,
-  privacyPolicyAccepted,
-} from '../../api/signupAPIs';
+import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 
 const MyComponent: React.FC = () => {
@@ -62,7 +56,7 @@ const MyComponent: React.FC = () => {
       const activationLink = await getActivationLink(createdUser.data.id?.id);
 
       console.log(createdUser);
-      console.log(activationLink)
+      console.log(activationLink);
 
       setSuccessMessage(
         'Sign-up successful! Please check your email to activate your account.'
@@ -124,7 +118,6 @@ const MyComponent: React.FC = () => {
       setDashboardError('Failed to create dashboard');
     }
   };
-
 
   const handleGetAll = async () => {
     fetchAllWidgetBundles();

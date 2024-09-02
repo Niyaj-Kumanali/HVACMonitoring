@@ -89,7 +89,7 @@ const Dashboard = () => {
     try {
       const currentUser = await getCurrentUser();
 
-      const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+      const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
       if (response.data.length === 0) {
         warecountdispatch(set_warehouse_count(0));
       } else {
@@ -160,7 +160,7 @@ const Dashboard = () => {
     fetchAllWarehouses();
     const currentuser = async () => {
       const user = await getCurrentUser();
-      setCurrentuser(user.authority)
+      setCurrentuser(user.data.authority)
     }
 
     currentuser()

@@ -8,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import { Device, DeviceQueryParams, PageData } from "../../types/thingsboardTypes";
+import { Device, DeviceQueryParams } from "../../types/thingsboardTypes";
 import { saveDevice, getTenantDevices } from "../../api/deviceApi";
 import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";

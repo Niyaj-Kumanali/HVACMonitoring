@@ -6,7 +6,6 @@ import { getTenantDevices } from '../../api/deviceApi';
 import {
   Device,
   DeviceQueryParams,
-  PageData,
   TelemetryQueryParams,
 } from '../../types/thingsboardTypes';
 import { getTimeseries, getTimeseriesKeys } from '../../api/telemetryAPIs';

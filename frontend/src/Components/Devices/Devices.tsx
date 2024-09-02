@@ -1,6 +1,6 @@
 import "./Devices.css";
 import { useEffect, useState } from 'react';
-import { Device, PageData } from '../../types/thingsboardTypes';
+import { Device } from '../../types/thingsboardTypes';
 import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
 import Loader from "../Loader/Loader";
 import DeleteIcon from '@mui/icons-material/Delete';
