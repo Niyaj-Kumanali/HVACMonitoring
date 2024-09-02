@@ -2,35 +2,59 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv'; // Import dotenv
-dotenv.config(); 
+import dotenv from 'dotenv';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-
-const mongoUri = process.env.MONGODB_URI
+const mongoUri = process.env.MONGODB_URI;
 
 mongoose.connect(mongoUri)
-.then(()=>{
-    console.log("mongodb connected")
-}).catch((error)=>{
-    console.log("Error connecting to MongoDB", error)
-});
+    .then(() => {
+        console.log("MongoDB connected");
+    })
+    .catch((error) => {
+        console.log("Error connecting to MongoDB", error);
+    });
 
-import warehouseRouter from './routes/warehouseRoute.js'; 
-import coolantRouter from './routes/coolantRoute.js'; 
-import sensorRouter from './routes/sensorRoute.js'; 
-import vehicleRouter from './routes/vehicleRoute.js'; 
+// Swagger setup
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: "3.0.0",
+        info: {
+            title: "API Documentation",
+            version: "1.0.0",
+            description: "API documentation for warehouse and vehical management",
+        },
+        servers: [
+            {
+                url: `http://localhost:${process.env.PORT || 2000}`,
+            },
+        ],
+    },
+    apis: ['./routes/*.js'], // Path to the API docs
+};
 
-app.use('/warehouse', warehouseRouter)
-app.use('/coolant', coolantRouter)
-app.use('/sensor',sensorRouter)
-app.use('/vehicle',vehicleRouter)
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Routes
+import warehouseRouter from './routes/warehouseRoute.js';
+import coolantRouter from './routes/coolantRoute.js';
+import sensorRouter from './routes/sensorRoute.js';
+import vehicleRouter from './routes/vehicleRoute.js';
+
+app.use('/warehouse', warehouseRouter);
+app.use('/coolant', coolantRouter);
+app.use('/sensor', sensorRouter);
+app.use('/vehicle', vehicleRouter);
 
 const port = process.env.PORT || 2000;
-console.log(port)
-app.listen(port, ()=>{
-    console.log(`Server is running on port ${port}`)
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });

@@ -1,108 +1,224 @@
 import express from 'express';
-import warehouse from '../schemas/warehouse_metadata.js'; // Make sure to add the .js extension or update the path based on your project structure
+import warehouse from '../schemas/warehouse_metadata.js';
 const router = express.Router();
-import mongoose from 'mongoose';
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Warehouse:
+ *       type: object
+ *       required:
+ *         - warehouse_id
+ *         - warehouse_name
+ *         - latitude
+ *         - longitude
+ *         - warehouse_dimensions
+ *         - energy_resource
+ *         - cooling_units
+ *         - sensors
+ *         - userId
+ *         - email
+ *       properties:
+ *         warehouse_id:
+ *           type: string
+ *           description: Unique ID for the warehouse
+ *         warehouse_name:
+ *           type: string
+ *           description: Name of the warehouse
+ *         latitude:
+ *           type: number
+ *           description: Latitude coordinate
+ *         longitude:
+ *           type: number
+ *           description: Longitude coordinate
+ *         warehouse_dimensions:
+ *           type: object
+ *           properties:
+ *             length:
+ *               type: number
+ *             width:
+ *               type: number
+ *             height:
+ *               type: number
+ *         energy_resource:
+ *           type: string
+ *           description: Type of energy resource used
+ *         cooling_units:
+ *           type: number
+ *           description: Number of cooling units
+ *         sensors:
+ *           type: number
+ *           description: Number of sensors
+ *         userId:
+ *           type: string
+ *           description: User ID associated with the warehouse
+ *         email:
+ *           type: string
+ *           description: Email of the user
+ */
 
-// create a new warehouse
-router.post('/addwarehouse', async(req, res) =>{
+/**
+ * @swagger
+ * /warehouse/addwarehouse:
+ *   post:
+ *     summary: Create a new warehouse
+ *     tags: [Warehouse]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Warehouse'
+ *     responses:
+ *       201:
+ *         description: Warehouse created successfully
+ *       400:
+ *         description: Error creating warehouse
+ *       409:
+ *         description: Warehouse already exists
+ */
+router.post('/addwarehouse', async (req, res) => {
     try {
-
         const existingWarehouse = await warehouse.findOne({
             $or: [
                 {warehouse_id: req.body.warehouse_id}
+
             ]
-        })
+        });
 
         if (existingWarehouse) {
             return res.status(409).send({ message: 'Warehouse already exists' });
         }
 
-
-        const newwarehouse = new warehouse(req.body);
-        await newwarehouse.save();
-        res.status(201).send(newwarehouse);
+        const newWarehouse = new warehouse(req.body);
+        await newWarehouse.save();
+        res.status(201).send(newWarehouse);
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-//  get all warehouses
-router.get('/getallwarehouse', async(req, res) => {
+/**
+ * @swagger
+ * /warehouse/getallwarehouse:
+ *   get:
+ *     summary: Get all warehouses
+ *     tags: [Warehouse]
+ *     responses:
+ *       200:
+ *         description: A list of all warehouses
+ *       500:
+ *         description: Error retrieving warehouse data
+ */
+router.get('/getallwarehouse', async (req, res) => {
     try {
-        // const getallwarehouse = await warehouse.find()
-        // .populate({
-        //     path: 'cooling_units.coolant',
-        //     select: 'coolant_id location_in_warehouse'  
-        // })
-        // .populate({
-        //     path: 'sensors.sensor',
-        //     select: 'sensor_id indoor_location Type date_of_installation' 
-        // })
-        // .exec();
+        const getAllWarehouse = await warehouse.find();
 
-        const getallwarehouse = await warehouse.find();
-
-        if (!getallwarehouse) {
+        if (!getAllWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found' });
         }
-        res.status(200).json(getallwarehouse);
+        res.status(200).json(getAllWarehouse);
     } catch (error) {
-        
         res.status(500).json({ message: 'Error retrieving warehouse data', error });
     }
 });
 
-//  get all warehouses by userId
+/**
+ * @swagger
+ * /warehouse/getallwarehouse/{userId}:
+ *   get:
+ *     summary: Get all warehouses by user ID
+ *     tags: [Warehouse]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID associated with the warehouses
+ *     responses:
+ *       200:
+ *         description: A list of warehouses for the specified user
+ *       404:
+ *         description: Warehouse not found
+ *       500:
+ *         description: Error retrieving warehouse data
+ */
 router.get('/getallwarehouse/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const getallwarehouse = await warehouse.find({ userId });
+        const getAllWarehouse = await warehouse.find({ userId });
 
-        if (getallwarehouse.length === 0) {
+        if (getAllWarehouse.length === 0) {
             return res.status(404).json({ message: 'Warehouse not found' });
         }
 
-        res.status(200).json(getallwarehouse);
+        res.status(200).json(getAllWarehouse);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving warehouse data', error });
     }
 });
 
-
-// get warehouse by warehouse_id
-router.get('/getwarehouse/:warehouse_id', async(req, res) => {
+/**
+ * @swagger
+ * /warehouse/getwarehouse/{warehouse_id}:
+ *   get:
+ *     summary: Get warehouse by warehouse ID
+ *     tags: [Warehouse]
+ *     parameters:
+ *       - in: path
+ *         name: warehouse_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Warehouse ID
+ *     responses:
+ *       200:
+ *         description: A warehouse object
+ *       404:
+ *         description: Warehouse not found
+ *       500:
+ *         description: Error retrieving warehouse data
+ */
+router.get('/getwarehouse/:warehouse_id', async (req, res) => {
     try {
         const { warehouse_id } = req.params;
-        // const getwarehouse = await warehouse.findOne({ warehouse_id })
-        // .populate({
-        //     path: 'cooling_units.coolant',
-        //     select: 'coolant_id location_in_warehouse'  
-        // })
-        // .populate({
-        //     path: 'sensors.sensor',
-        //     select: 'sensor_id indoor_location Type date_of_installation' 
-        // })
-        // .exec();
+        const getWarehouse = await warehouse.findOne({ warehouse_id });
 
-        const getwarehouse = await warehouse.findOne({warehouse_id})
-
-        if (!getwarehouse) {
+        if (!getWarehouse) {
             return res.status(404).json({ message: 'Warehouse not found' });
         }
-        res.status(200).json(getwarehouse);
+        res.status(200).json(getWarehouse);
     } catch (error) {
-        
         res.status(500).json({ message: 'Error retrieving warehouse data', error });
     }
 });
 
-// delete a warehouse by id
+/**
+ * @swagger
+ * /warehouse/deletewarehouse/{warehouse_id}:
+ *   delete:
+ *     summary: Delete a warehouse by warehouse ID
+ *     tags: [Warehouse]
+ *     parameters:
+ *       - in: path
+ *         name: warehouse_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Warehouse ID
+ *     responses:
+ *       200:
+ *         description: Warehouse deleted successfully
+ *       404:
+ *         description: Warehouse not found
+ *       500:
+ *         description: Error deleting warehouse
+ */
 router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
     try {
         const { warehouse_id } = req.params;
-
-        // Adjust the query based on your Mongoose schema
         const result = await warehouse.findOneAndDelete({ warehouse_id });
 
         if (!result) {
@@ -111,61 +227,56 @@ router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
 
         res.status(200).send({ message: 'Warehouse deleted successfully' });
     } catch (error) {
-        console.error('Error deleting warehouse:', error); // Improved logging
         res.status(500).send({ message: 'Error deleting warehouse', error });
     }
 });
 
 
-// add indoor_location and data_of_installation
-// router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
-//     try {
-//         const { warehouse_id } = req.params;
-        
-//         const { sensors } = req.body; // Extract sensors from request body
-//         // console.log(sensors)
 
-//         // Find the warehouse and populate related fields
-//         const warehousedata = await warehouse.findOne({ warehouse_id })
-//             .populate({
-//                 path: 'cooling_units.coolant',
-//                 select: 'coolant_id location_in_warehouse'  
-//             })
-//             .populate({
-//                 path: 'sensors.sensor',
-//                 select: 'sensor_id indoor_location Type date_of_installation' 
-//             })
-//             .exec();
+/**
+ * @swagger
+ * /warehouse/updatewarehouse/{warehouse_id}:
+ *   delete:
+ *     summary: Update a warehouse by warehouse ID
+ *     tags: [Warehouse]
+ *     parameters:
+ *       - in: path
+ *         name: warehouse_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Warehouse ID
+ *     responses:
+ *       200:
+ *         description: Warehouse Updated successfully
+ *       404:
+ *         description: Warehouse not found
+ *       500:
+ *         description: Error updating warehouse
+ */
+// Update a warehouse by warehouse_id
+router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
+    try {
+        const { warehouse_id } = req.params;
+        const updateData = req.body;
 
-//         // Create a map for quick lookup of sensor IDs
-//         const sensorMap = new Map();
-//         warehousedata.sensors.forEach((item) => {
-//             console.log(item)
-//             sensorMap.set(item.sensor.indoor_location, item);
-//         });
+        // Find the warehouse by warehouse_id and update it
+        const updatedWarehouse = await Warehouse.findOneAndUpdate(
+            { warehouse_id },
+            updateData,
+            { new: true } // Return the updated document
+        );
 
-//         // Update the sensors with new locations
-//         sensors.forEach((sensorEntry) => {
-//             const existingSensor = sensorMap.get(sensor_id);
-//             // console.log(existingSensor)
-//             if (existingSensor) {
-//                 // Update indoor location and date of installation
-//                 existingSensor.sensor.indoor_location = indoor_location;
-//                 existingSensor.sensor.date_of_installation = date_of_installation;
-//             }
-//         });
+        if (!updatedWarehouse) {
+            return res.status(404).json({ message: 'Warehouse not found' });
+        }
 
-//         // Save the updated warehouse data
-//         await warehousedata.save();
-
-//         res.status(200).send('Warehouse sensors updated successfully');
-//     } catch (error) {
-//         res.status(400).send(error);
-//     }
-// });
-
+        res.status(200).json(updatedWarehouse);
+    } catch (error) {
+        console.error("Error updating warehouse:", error);
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+});
 
 
-
-
-export default router
+export default router;

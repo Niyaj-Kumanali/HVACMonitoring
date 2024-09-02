@@ -1,4 +1,8 @@
+import { Tenant, User } from '../types/thingsboardTypes';
+import { login } from './loginApi';
+import { saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
+import { saveUser } from './userApi';
 
 
 
@@ -58,7 +62,7 @@ export const getRecaptchaParams = async (): Promise<any> => { // Replace `any` w
 // Get Recaptcha Public Key
 export const getRecaptchaPublicKey = async (): Promise<string> => {
   const response = await thingsboardAPI.get('/noauth/signup/recaptchaPublicKey');
-  return response.data;
+  return response;
 };
 
 // Accept Privacy Policy
@@ -76,3 +80,34 @@ export const privacyPolicyAccepted = async (): Promise<boolean> => {
 export const deleteTenantAccount = async (): Promise<void> => {
   await thingsboardAPI.delete('/signup/tenantAccount');
 };
+
+
+export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
+  try {
+    // Ensure the admin is logged in and token is set
+    const adminUserName = import.meta.env.VITE_THINGSBOARD_ADMINUSERNAME
+    const adminPassword = import.meta.env.VITE_THINGSBOARD_ADMINUSERPASSWORD
+    await login(adminUserName, adminPassword);
+
+    // Create a tenant
+    const tenantResponse = await saveTenant(tenant)
+    console.log(tenantResponse)
+    
+    const tenantId = tenantResponse.id;
+    const tenantUserBody = {
+      ...tenantBody,
+      authority: 'TENANT_ADMIN',
+      tenantId: tenantId
+    }
+
+
+    // Create a tenant admin user
+    const userResponse = await saveUser(tenantUserBody, true);
+
+    return userResponse
+  } catch (error) {
+    console.error('Error creating tenant or user', error);
+    throw error;
+  }
+}
+

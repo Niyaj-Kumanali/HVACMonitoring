@@ -1,22 +1,17 @@
-import { useDispatch } from 'react-redux';
 import thingsboardAPI from './thingsboardAPI';
-import { set_Accesstoken } from '../Redux/Action/Action';
 
 export const login = async (
   username: string,
   password: string
 ): Promise<string> => {
-  const dispatch = useDispatch();
   const response = await thingsboardAPI.post<{ token: string }>('/auth/login', {
     username,
     password,
   });
   const token = response.data.token;
   localStorage.setItem('token', token);
-  dispatch(set_Accesstoken(token));
   return token;
 };
-
 // Existing logout function
 export const logout = async (): Promise<void> => {
   await thingsboardAPI.post('/auth/logout');
