@@ -74,7 +74,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         params
       );
       console.log(response.data.data);
-      setTelemetryData(response.data.data);
+      setTelemetryData(response.data);
     };
 
     if (selectedDevice) {
