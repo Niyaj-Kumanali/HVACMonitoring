@@ -4,8 +4,8 @@ import { mongoAPI } from "../../api/MongoAPIInstance";
 import { useDispatch } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import Loader from '../Loader/Loader';
 import { getCurrentUser } from "../../api/loginApi";
+import VehicleLoader from "../Loader/VehicleLoader";
 
 interface VehicleDimensions {
     length: string;
@@ -67,7 +67,7 @@ const Vehicles = () => {
 
     return (
         loading ? (
-            <Loader />
+            <VehicleLoader />
         ) : allVehicles.length === 0 ? (
             <div className="menu-data">{message}</div>
         ) : (

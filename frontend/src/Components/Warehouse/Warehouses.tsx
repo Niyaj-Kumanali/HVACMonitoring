@@ -37,6 +37,7 @@ const Warehouses = () => {
             const currentUser = await getCurrentUser();
 
             const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`);
+            console.log(response)
             if (response.data.length === 0) {
                 setMessage("No Warehouse Found");
                 warehousecountDispatch(set_warehouse_count(0));
@@ -47,7 +48,7 @@ const Warehouses = () => {
             setLoader(false);
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
-            setMessage("No Warehouse Found");
+            setMessage("Problem Fetching Warehouses");
             warehousecountDispatch(set_warehouse_count(0));
             setLoader(false);
         }
