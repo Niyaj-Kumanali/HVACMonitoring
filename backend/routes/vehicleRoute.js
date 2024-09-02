@@ -197,7 +197,7 @@ router.get('/getbyvehicleid/:vehicle_id', async(req, res) => {
         .exec();
 
         if (!vehicleData) {
-            return res.status(404).json({ message: 'Vehicle not found' });
+            return res.status(204).json({ message: 'Vehicle not found' });
         }
 
         res.json(vehicleData);
@@ -235,11 +235,36 @@ router.delete('/deletevehicle/:vehicle_id', async(req, res) => {
         const result = await vehicle.findOneAndDelete({ vehicle_id });
 
         if(!result){
-            return res.status(404).send({ message: 'Vehicle not found' });
+            return res.status(204).send({ message: 'Vehicle not found' });
         }
         res.status(200).send({ message: 'Vehicle deleted successfully' });
     } catch (error) {
         res.status(400).send(error);
+    }
+});
+
+
+// update vehicle by vehicle_id
+router.put('/updatevehicle/:vehicle_id', async (req, res) => {
+    try {
+        const { vehicle_id } = req.params;
+        const updateData = req.body;
+
+        // Find the warehouse by warehouse_id and update it
+        const updatedVehicle = await vehicle.findOneAndUpdate(
+            { vehicle_id },
+            updateData,
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedVehicle) {
+            return res.status(204).json({ message: 'vehicle not found' });
+        }
+
+        res.status(200).json(updatedVehicle);
+    } catch (error) {
+        console.error("Error updating vehicle:", error);
+        res.status(500).json({ message: 'Internal Server Error', error });
     }
 });
 

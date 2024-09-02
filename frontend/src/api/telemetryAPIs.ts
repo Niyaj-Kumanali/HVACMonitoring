@@ -6,7 +6,7 @@ export const saveDeviceAttributes = async (
   deviceId: string,
   scope: 'SERVER_SCOPE' | 'SHARED_SCOPE',
   attributes: Record<string, any>
-): Promise<void> => {
+) => {
   await thingsboardAPI.post(`/plugins/telemetry/${deviceId}/${scope}`, attributes);
 };
 
@@ -15,7 +15,7 @@ export const deleteDeviceAttributes = async (
   deviceId: string,
   scope: string,
   keys?: string[]
-): Promise<void> => {
+) => {
   await thingsboardAPI.delete(`/plugins/telemetry/${deviceId}/${scope}`, {
     params: { keys: keys?.join(',') },
   });
@@ -27,7 +27,7 @@ export const saveEntityAttributesV1 = async (
   entityId: string,
   scope: string,
   attributes: Record<string, any>
-): Promise<void> => {
+) => {
   await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/${scope}`, attributes);
 };
 
@@ -37,7 +37,7 @@ export const deleteEntityAttributes = async (
   entityId: string,
   scope: string,
   keys?: string[]
-): Promise<void> => {
+) => {
   await thingsboardAPI.delete(`/plugins/telemetry/${entityType}/${entityId}/${scope}`, {
     params: { keys: keys?.join(',') },
   });
@@ -49,7 +49,7 @@ export const saveEntityAttributesV2 = async (
   entityId: string,
   scope: string,
   attributes: Record<string, any>
-): Promise<void> => {
+) => {
   await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/attributes/${scope}`, attributes);
 };
 
@@ -57,9 +57,9 @@ export const saveEntityAttributesV2 = async (
 export const getAttributeKeys = async (
   entityType: string,
   entityId: string
-): Promise<string[]> => {
+) => {
   const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/attributes`);
-  return response.data;
+  return response;
 };
 
 // Get all attribute keys by scope
@@ -67,18 +67,18 @@ export const getAttributeKeysByScope = async (
   entityType: string,
   entityId: string,
   scope: string
-): Promise<string[]> => {
+) => {
   const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/attributes/${scope}`);
-  return response.data;
+  return response;
 };
 
 // Get time-series keys
 export const getTimeseriesKeys = async (
   entityType: string,
   entityId: string
-): Promise<string[]> => {
+) => {
   const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/timeseries`);
-  return response.data;
+  return response;
 };
 
 // Save or update time-series data
@@ -87,7 +87,7 @@ export const saveEntityTelemetry = async (
   entityId: string,
   scope: string,
   telemetryData: Record<string, any>
-): Promise<void> => {
+) => {
   await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}`, telemetryData);
 };
 
@@ -98,7 +98,7 @@ export const saveEntityTelemetryWithTTL = async (
   scope: string,
   ttl: number,
   telemetryData: Record<string, any>
-): Promise<void> => {
+) => {
   await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}/${ttl}`, telemetryData);
 };
 
@@ -112,7 +112,7 @@ export const deleteEntityTimeseries = async (
   endTs?: number,
   deleteLatest?: boolean,
   rewriteLatestIfDeleted?: boolean
-): Promise<void> => {
+) => {
   await thingsboardAPI.delete(`/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`, {
     params: {
       keys: keys?.join(','),
@@ -130,12 +130,12 @@ export const getAttributes = async (
   entityType: string,
   entityId: string,
   keys?: string[]
-): Promise<Record<string, any>> => {
+) => {
   const response = await thingsboardAPI.get<Record<string, any>>(
     `/plugins/telemetry/${entityType}/${entityId}/values/attributes`,
     { params: { keys: keys?.join(',') } }
   );
-  return response.data;
+  return response;
 };
 
 // Get attributes by scope
@@ -144,12 +144,12 @@ export const getAttributesByScope = async (
   entityId: string,
   scope: string,
   keys?: string[]
-): Promise<Record<string, any>> => {
+) => {
   const response = await thingsboardAPI.get<Record<string, any>>(
     `/plugins/telemetry/${entityType}/${entityId}/values/attributes/${scope}`,
     { params: { keys: keys?.join(',') } }
   );
-  return response.data;
+  return response;
 };
 
 // Get time-series data
@@ -157,12 +157,12 @@ export const getTimeseries = async (
   entityType: string,
   entityId: string,
   params: TelemetryQueryParams
-): Promise<Record<string, any>> => {
+) => {
   const response = await thingsboardAPI.get<Record<string, any>>(
     `/plugins/telemetry/${entityType}/${entityId}/values/timeseries`,
     { params }
   );
-  return response.data;
+  return response;
 };
 
 // Get latest time-series value
@@ -171,10 +171,10 @@ export const getLatestTimeseries = async (
   entityId: string,
   keys?: string[],
   useStrictDataTypes?: boolean
-): Promise<Record<string, any>> => {
+) => {
   const response = await thingsboardAPI.get<Record<string, any>>(
     `/plugins/telemetry/${entityType}/${entityId}/values/timeseries`,
     { params: { keys: keys?.join(','), useStrictDataTypes } }
   );
-  return response.data;
+  return response;
 };

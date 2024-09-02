@@ -30,7 +30,7 @@ const AddSupervisor = () => {
                 page: 0
             }
             const userData = await getUsers(params);
-            devicecountdispatch(set_usersCount(userData.data.length));
+            devicecountdispatch(set_usersCount(userData.data.data.length));
         } catch (error) {
             console.error('Failed to fetch user data', error);
         }
@@ -55,9 +55,9 @@ const AddSupervisor = () => {
             };
 
             const user = await saveUser(newUser, isSendActivationMail);
-            const activationLink = await getActivationLink(user.id?.id);
+            const activationLink = await getActivationLink(user.data.id?.id);
 
-            setActivationlink(activationLink);
+            setActivationlink(activationLink.data);
 
             setMessage("User created successfully!");
             setSnackbarType('success');

@@ -121,8 +121,8 @@ const AddWarehouse: React.FC = () => {
             },
             cooling_units: Number(formData.cooling_units),
             sensors: Number(formData.sensors),
-            userId: currentUser.id.id,
-            email: currentUser.email
+            userId: currentUser.data.id.id,
+            email: currentUser.data.email
         };
 
         console.log(JSON.stringify(convertedData))
@@ -157,9 +157,9 @@ const AddWarehouse: React.FC = () => {
     const fetchAllWarehouses = async () => {
         try {
             const currentUser = await getCurrentUser()
-            console.log(currentUser.id.id)
+            console.log(currentUser.data.id.id)
 
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.id.id}`)
+            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`)
             warehousecountDispatch(set_warehouse_count(response.data.length))
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);

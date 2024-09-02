@@ -5,7 +5,7 @@ pipeline {
     }
 
     stages {
-        stage('Install Dependencies') {
+        stage('Install Frontend Dependencies') {
             steps {
                 script {
                     // Navigate to frontend directory and install dependencies
@@ -53,5 +53,19 @@ pipeline {
                 }
             }
         }
+
+        stage('Install Backend Dependencies') {
+            steps {
+                script {
+                    // Navigate to frontend directory and install dependencies
+                    sh '''
+                    cd backend
+                    npm install
+                    '''
+                }
+            }
+        }
+
+
     }
 }

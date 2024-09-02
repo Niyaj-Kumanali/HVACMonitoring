@@ -118,6 +118,7 @@ export interface User {
   authority?: string;
   additionalInfo?: Object;
   phone?: string;
+  password?:string;
 }
 
 // Customer types

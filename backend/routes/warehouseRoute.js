@@ -151,7 +151,7 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
         const getAllWarehouse = await warehouse.find({ userId });
 
         if (getAllWarehouse.length === 0) {
-            return res.status(404).json({ message: 'Warehouse not found' });
+            return res.status(204).json({ statusText: 'Warehouse not found' });
         }
 
         res.status(200).json(getAllWarehouse);
@@ -222,7 +222,7 @@ router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
         const result = await warehouse.findOneAndDelete({ warehouse_id });
 
         if (!result) {
-            return res.status(404).send({ message: 'Warehouse not found' });
+            return res.status(204).send({ message: 'Warehouse not found' });
         }
 
         res.status(200).send({ message: 'Warehouse deleted successfully' });
@@ -268,7 +268,7 @@ router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
         );
 
         if (!updatedWarehouse) {
-            return res.status(404).json({ message: 'Warehouse not found' });
+            return res.status(204).json({ message: 'Warehouse not found' });
         }
 
         res.status(200).json(updatedWarehouse);

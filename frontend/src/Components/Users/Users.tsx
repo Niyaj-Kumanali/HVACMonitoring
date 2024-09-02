@@ -27,8 +27,8 @@ const AddCustomer: React.FC= () => {
                     page: 0
                 }
                 const userData = await getUsers(params);
-                setUserdata(userData.data);
-                usercountdispatch(set_usersCount(userData.data.length));
+                setUserdata(userData.data.data);
+                usercountdispatch(set_usersCount(userData.data.data.length));
                 setTimeout(() => {
                     setLoader(false);
                 }, 500);
