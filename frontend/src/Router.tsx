@@ -22,10 +22,10 @@ import App from './App';
 import PageNotFound from './Components/PageNotFound/PageNotFound';
 import AddSupervisor from './Components/Add-User/AddSupervisor';
 import AddCustomer from './Components/Add-User/AddCustomer';
-import Signup from './Components/Login/Signup';
 import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
 import User from './Components/Users/user';
 import Warehouse from './Components/Warehouse/Warehouse';
+import Signup from './Components/Login/Signup';
 
 const Router = createBrowserRouter([
   {
