@@ -26,6 +26,7 @@ import Signup from './Components/Login/Signup';
 import DeviceInfo from './Components/DeviceInfo/DeviceInfo';
 import User from './Components/Users/user';
 import Warehouse from './Components/Warehouse/Warehouse';
+import Vehicleinfo from './Components/Vehicles/Vehicleinfo';
 
 const Router = createBrowserRouter([
   {
@@ -123,6 +124,10 @@ const Router = createBrowserRouter([
       {
         path: '/warehouse/:warehouseid',
         element: <Warehouse/>
+      },
+      {
+        path: '/vehicle/:vehicleid',
+        element: <Vehicleinfo />
       }
     ],
   },
