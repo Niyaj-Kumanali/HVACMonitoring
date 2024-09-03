@@ -111,11 +111,12 @@ const Dashboard = () => {
 
     fetchDashboards(0);
     currentUser();
-    authorityDispatch(set_Authority(currentuser.authority || 'TENANT_ADMIN'));
+    authorityDispatch(set_Authority(currentuser.authority));
     fetchUserData();
     fetchDevices(0);
     fetchAllVehicles();
     fetchAllWarehouses();
+    
   }, [currentuser.id.id]);
 
   const fetchDashboards = async (page: number) => {
@@ -170,54 +171,9 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const params = {
-          pageSize: 16,
-          page: 0,
-        };
-        const userData = await getUsers(params);
-        usercountdispatch(set_usersCount(userData.data.data.length));
-      } catch (error) {
-        console.error('Failed to fetch user data', error);
-      }
-    };
-
-    const fetchDevices = async (page: number): Promise<void> => {
-      try {
-        const params: DeviceQueryParams = {
-          pageSize: 10,
-          page: page,
-          type: 'default',
-          textSearch: '',
-          sortProperty: 'name',
-          sortOrder: 'ASC',
-        };
-
-        const response = await getTenantDevices(params);
-        const devices = response.data.data || [];
-
-        deviceCountDispatch(set_DeviceCount(devices.length));
-      } catch (error) {
-        console.error('Failed to fetch devices', error);
-        deviceCountDispatch(set_DeviceCount(0));
-      }
-    };
-
-
-    const fetchAllVehicles = async () => {
-      try {
-        const response = await mongoAPI.get(
-          `vehicle/getallvehicle/${currentuser.id.id}`
-        );
-        vehicleCountDispatch(set_vehicle_count(response.data.length));
-      } catch (error) {
-        console.error('Failed to fetch vehicles:', error);
-      }
-    };
 
   useEffect(() => {
+
 
     fetchUserData();
     fetchDevices(0);
