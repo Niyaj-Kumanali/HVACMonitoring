@@ -6,6 +6,7 @@ import { set_vehicle_count } from "../../Redux/Action/Action";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { getCurrentUser } from "../../api/loginApi";
 import VehicleLoader from "../Loader/VehicleLoader";
+import { Link } from "react-router-dom";
 
 interface VehicleDimensions {
     length: string;
@@ -26,6 +27,7 @@ interface VehicleData {
     Driver_details: DriverDetails;
     cooling_units: string | null;
     sensors: string | null;
+    vehicle_id: string;
 }
 
 const Vehicles = () => {
@@ -74,7 +76,7 @@ const Vehicles = () => {
             <div className="menu-data">
                 <div className="warehouses">
                     {allVehicles.map((vehicle, index) => (
-                        <div className="userinfo" key={index}>
+                        <Link className="userinfo" key={index} to={`/vehicle/${vehicle.vehicle_id}`}>
                             <div className="user-img-info">
                                 <div className="img">
                                     <LocalShippingIcon className="personicon" />
@@ -89,7 +91,7 @@ const Vehicles = () => {
                                     <p className="sensors">Sensors: {vehicle.sensors || "N/A"}</p>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

@@ -20,7 +20,7 @@ type User = {
   authority: string;
 };
 
-const Dashboard = () => {
+const Dashboards = () => {
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
   const warecountdispatch = useDispatch();
@@ -28,8 +28,8 @@ const Dashboard = () => {
   const deviceCountDispatch = useDispatch();
   const vehicleCountDispatch = useDispatch();
   const navigate = useNavigate();
-  const [loading, setLoader] = useState(true)
-  const [currentuser, setCurrentuser] = useState < User | any >("");
+  const [loading, setLoader] = useState(true);
+  const [currentuser, setCurrentuser] = useState<User | any>("");
   const authorityDispatch = useDispatch();
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>("");
@@ -42,6 +42,7 @@ const Dashboard = () => {
           page: 0,
         };
         const userData = await getUsers(params);
+        console.log(userData);
         usercountdispatch(set_usersCount(userData.data.length));
       } catch (error) {
         console.error('Failed to fetch user data', error);
@@ -67,34 +68,26 @@ const Dashboard = () => {
       }
     };
 
-      const fetchAllVehicles = async () => {
-        try {
-          const response = await mongoAPI.get("vehicle/getallvehicle");
-          vehicleCountDispatch(set_vehicle_count(response.data.length));
-        } catch (error) {
-          console.error("Failed to fetch vehicles:", error);
-        }
+    const fetchAllVehicles = async () => {
+      try {
+        const response = await mongoAPI.get("vehicle/getallvehicle");
+        vehicleCountDispatch(set_vehicle_count(response.data.length));
+      } catch (error) {
+        console.error("Failed to fetch vehicles:", error);
       }
-
+    };
 
     fetchUserData();
     fetchDevices(0);
     fetchAllVehicles();
   }, [usercountdispatch, deviceCountDispatch, vehicleCountDispatch]);
 
-
-    
-
   const fetchAllWarehouses = async () => {
     try {
       const currentUser = await getCurrentUser();
 
       const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
-      if (response.data.length === 0) {
-        warecountdispatch(set_warehouse_count(0));
-      } else {
-        warecountdispatch(set_warehouse_count(response.data.length));
-      }
+      warecountdispatch(set_warehouse_count(response.data.length || 0));
       setLoader(false);
     } catch (error) {
       console.error("Failed to fetch warehouses:", error);
@@ -113,17 +106,12 @@ const Dashboard = () => {
       };
       const response = await getTenantDashboards(params);
       setDashboards(response.data.data ?? []);
-      setTimeout(() => {
-        setLoader(false);
-      }, 500);
+      setLoader(false);
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
       setError('No Dashboard Found');
       setShowError(true);
-    } finally {
-      setTimeout(() => {
-        setLoader(false);
-      }, 500);
+      setLoader(false);
     }
   };
 
@@ -142,7 +130,7 @@ const Dashboard = () => {
     reason?: SnackbarCloseReason
   ) => {
     if (reason === 'clickaway') {
-      event
+      event.preventDefault();
       return;
     }
     setOpen(false);
@@ -154,19 +142,26 @@ const Dashboard = () => {
     }
   };
 
-
   useEffect(() => {
     fetchDashboards(0);
     fetchAllWarehouses();
-    const currentuser = async () => {
-      const user = await getCurrentUser();
-      setCurrentuser(user.data.authority)
-    }
+    const fetchCurrentUser = async () => {
+      try {
+        const user = await getCurrentUser();
+        setCurrentuser(user.data.authority);
+      } catch (error) {
+        console.error('Failed to fetch current user', error);
+      }
+    };
 
-    currentuser()
+    fetchCurrentUser();
   }, []);
 
-  authorityDispatch(set_Authority(currentuser));
+  useEffect(() => {
+    if (currentuser) {
+      authorityDispatch(set_Authority(currentuser));
+    }
+  }, [currentuser, authorityDispatch]);
 
   return (
     <>
@@ -175,7 +170,7 @@ const Dashboard = () => {
           {loading ? (
             <Loader />
           ) : showError ? (
-              <div>{error}</div>
+            <div>{error}</div>
           ) : (
             <>
               <h2>Dashboards</h2>
@@ -222,4 +217,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboards;
