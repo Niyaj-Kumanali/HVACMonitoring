@@ -11,6 +11,7 @@ export interface Device {
   additionalInfo?: Object;
   active?:boolean;
   deviceProfileName?:string,
+  sensors?: string[]
   
 }
 
@@ -168,4 +169,8 @@ export interface TelemetryQueryParams {
   agg?: 'MIN' | 'MAX' | 'SUM' | 'AVG' | 'COUNT' | 'NONE',
   orderBy?: 'ASC' | 'DESC',
   useStrictDataTypes?: boolean
+}
+
+export interface TelemetryData {
+  [key: string]: { ts: number; value: number }[];
 }

@@ -1,133 +1,52 @@
-import React, { useEffect, useState } from 'react';
+// Dashboard.tsx
+import React, { useState, useEffect } from 'react';
 import GridLayout, { Layout } from 'react-grid-layout';
-import ChartWidget from './ChartWidget';
-import DashboardHeader from './DashboardHeader';
 import { getTenantDevices } from '../../api/deviceApi';
-import {
-  Device,
-  DeviceQueryParams,
-  TelemetryQueryParams,
-} from '../../types/thingsboardTypes';
-import { getTimeseries, getTimeseriesKeys } from '../../api/telemetryAPIs';
 import './Dashboard.css';
+import { Device } from '../../types/thingsboardTypes';
+import Widget from './Widget';
+import { useParams } from 'react-router-dom';
 
-interface DashboardProps {}
-
-interface TelemetryData {
-  [key: string]: number[]; // Assuming telemetry data for each sensor is an array of numbers
-}
-
-const Dashboard: React.FC<DashboardProps> = () => {
+const Dashboard: React.FC = () => {
   const [layout, setLayout] = useState<Layout[]>([]);
+  const [devices, setDevices] = useState<Device[]>([]);
   const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [selectedDevice, setSelectedDevice] = useState('');
-  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
-  const [devices, setDevices] = useState<{ id: string; name: string }[]>([]);
-  const [sensors, setSensors] = useState<string[]>([]);
-  const [telemetryData, setTelemetryData] = useState<{ [key: string]: any }>({});
-  const [filteredTelemetryData, setFilteredTelemetryData] = useState<{ [key: string]: any }>({});
+
+  const {dashboardId} = useParams()
+
 
   useEffect(() => {
-    // Fetch devices from ThingsBoard
     const fetchDevices = async () => {
-      const params: DeviceQueryParams = {
-        pageSize: 10,
-        page: 0,
-        type: 'default',
-        textSearch: '',
-        sortProperty: 'name',
-        sortOrder: 'ASC',
-      };
+      const params = {
+        pageSize: 50,
+        page: 0
+      }
       const response = await getTenantDevices(params);
-      const devices: Device[] = response.data.data || [];
-      setDevices(
-        devices.map((device: any) => ({
-          id: device.id.id,
-          name: device.name,
-        }))
-      );
+      setDevices(response.data.data);
+      console.log(response.data.data)
     };
 
     fetchDevices();
   }, []);
 
-  useEffect(() => {
-    // Fetch telemetry data whenever a new device is selected
-    const fetchTelemetryData = async (deviceId: string) => {
-      const keyResponse = await getTimeseriesKeys('DEVICE', deviceId || '');
-      const keys: string[] = keyResponse.data
-      setSensors(keys);
-      setSelectedSensors(keys); // Initialize selectedSensors to all keys when a new device is selected
-      const keysString = keys.join(',');
-
-      const params: TelemetryQueryParams = {
-        keys: keysString, // Pass the comma-separated string of keys
-        startTs: 1672597800000,
-        endTs: 1735583400000,
-        limit: 50,
-        orderBy: 'ASC'
-      };
-
-      const response = await getTimeseries(
-        'DEVICE',
-        deviceId || '',
-        params
-      );
-      console.log(response.data.data);
-      setTelemetryData(response.data);
-    };
-
-    if (selectedDevice) {
-      fetchTelemetryData(selectedDevice);
-    }
-  }, [selectedDevice]);
-
-  useEffect(() => {
-    // Filter telemetry data based on selected sensors
-    const handleFilteredData = () => {
-      if (selectedSensors.length > 0) {
-        const data: TelemetryData = selectedSensors.reduce((acc: TelemetryData, sensor: string) => {
-          acc[sensor] = telemetryData[sensor] || [];
-          return acc;
-        }, {});
-        setFilteredTelemetryData(data);
-      } else {
-        setFilteredTelemetryData(telemetryData); // If no sensors selected, show all data
-      }
-    };
-
-    handleFilteredData();
-  }, [selectedSensors, telemetryData]);
-
-  const onEdit = () => {
-    setIsEditable(!isEditable);
-  };
-
-  const onSave = () => {
-    alert('Layout saved!');
-    setIsEditable(false);
-  };
-
-  const onAddChart = () => {
+  const onAddWidget = (type: 'line' | 'bar' | 'scatter' | 'pie') => {
     setLayout((prevLayout) => [
       ...prevLayout,
-      { i: `chart-${prevLayout.length}`, x: 0, y: Infinity, w: 4, h: 4 },
+      { i: `widget-${prevLayout.length}`, x: 0, y: Infinity, w: 4, h: 4, type },
     ]);
   };
 
+  const onToggleEdit = () => {
+    setIsEditable((prev) => !prev);
+  };
+
   return (
-    <div className="menu-data">
-      <DashboardHeader
-        devices={devices}
-        sensors={sensors}
-        selectedDevice={selectedDevice}
-        selectedSensors={selectedSensors}
-        onSelectDevice={setSelectedDevice}
-        onSelectSensors={setSelectedSensors}
-        onEdit={onEdit}
-        onSave={onSave}
-      />
-      <button onClick={onAddChart}>Add Chart</button>
+    <div className="menu-data dashboard">
+      <button onClick={onToggleEdit}>{isEditable ? 'Save Layout' : 'Edit Layout'}</button>
+      <button onClick={() => onAddWidget('line')}>Add Line Chart</button>
+      <button onClick={() => onAddWidget('bar')}>Add Bar Chart</button>
+      <button onClick={() => onAddWidget('scatter')}>Add Scatter Plot</button>
+      <button onClick={() => onAddWidget('pie')}>Add Pie Chart</button>
       <GridLayout
         className="layout"
         layout={layout}
@@ -136,11 +55,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
         width={1200}
         isDraggable={isEditable}
         isResizable={isEditable}
-        onLayoutChange={(layout: any) => setLayout(layout)}
+        onLayoutChange={(layout) => setLayout(layout)}
       >
         {layout.map((item) => (
           <div key={item.i} data-grid={item}>
-            <ChartWidget data={filteredTelemetryData} />
+            <Widget devices={devices} type={item.type} />
           </div>
         ))}
       </GridLayout>

@@ -4,7 +4,7 @@ interface Userstate {
     accesstoken: string | null;
 }
 const initial_state: any = {
-    // user: null ,
+    user: null ,
     accesstoken: null,
     usercount: 0,
     warehousecount: 0,
@@ -15,11 +15,11 @@ const initial_state: any = {
 
 const userReducer = (state = initial_state, action: any): Userstate => {
     switch (action.type) {
-        // case "SET_USER" :
-        //     return {
-        //         ...state,
-        //         user: action.payload
-        //     };
+        case "SET_USER" :
+            return {
+                ...state,
+                user: action.payload
+            };
 
         case "SET_DEVICE_COUNT":
             return {

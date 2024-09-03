@@ -1,11 +1,11 @@
-// import { User } from "../../types/thingsboardTypes";
+import { User } from "../../types/thingsboardTypes";
 
-// export const set_User = (user : User) => {
-//     return{
-//         type : "SET_USER",
-//         payload : user
-//     };
-// };
+export const set_User = (user : User) => {
+    return{
+        type : "SET_USER",
+        payload : user
+    };
+};
 
 export const set_Accesstoken = (accesstoken: String) => {
     return {
