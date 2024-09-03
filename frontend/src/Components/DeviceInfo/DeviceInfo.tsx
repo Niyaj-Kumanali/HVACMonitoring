@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getDeviceById } from '../../api/deviceApi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { deleteDevice, getDeviceById } from '../../api/deviceApi';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
@@ -21,6 +21,9 @@ import { set_DeviceCount } from '../../Redux/Action/Action';
 import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
+import DeleteIcon from '@mui/icons-material/Delete';
+import "./DeviceInfo.css"
+
 
 const DeviceInfo: React.FC = () => {
   const { deviceId } = useParams();
@@ -110,6 +113,40 @@ const DeviceInfo: React.FC = () => {
       }, 500);
     }
   };
+  
+  const navigate = useNavigate();
+
+  const handleDeleteDevice = async () => {
+    setLoading(true);
+
+    try {
+      await deleteDevice(deviceId || "");
+
+      setTimeout(() => {
+        setLoading(false);
+        setOpen(true);
+        setMessage('Device Deleted');
+        setSnackbarType("success");
+
+        setTimeout(() => {
+          navigate("/devices");
+        }, 900);
+
+      }, 900);
+
+    } catch (error) {
+      console.error('Failed to delete device', error);
+
+      setTimeout(() => {
+        setLoading(false);
+        setOpen(true);
+        setMessage('Failed to delete device');
+        setSnackbarType("error");
+      }, 500);
+    }
+  };
+
+
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -238,7 +275,7 @@ const DeviceInfo: React.FC = () => {
                   <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
               </FormControl>
-              <div className="accountinfo-savebtn">
+              <div className="accountinfo-savebtn-delete-btn">
                 <LoadingButton
                   size="small"
                   color="secondary"
@@ -252,6 +289,19 @@ const DeviceInfo: React.FC = () => {
                 >
                   <span>Save</span>
                 </LoadingButton>
+                  <LoadingButton
+                    size="small"
+                    color="error"
+                    onClick={handleDeleteDevice}
+                    loading={loading}
+                    loadingPosition="start"
+                    startIcon={<DeleteIcon />}
+                    variant="contained"
+                    disabled={loading}
+                    className="btn-save"
+                  >
+                    <span>Delete</span>
+                  </LoadingButton>
               </div>
             </form>
           </div>

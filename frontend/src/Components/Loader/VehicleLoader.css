@@ -25,6 +25,7 @@
     height: fit-content;
     margin-bottom: 6px;
     animation: motion 1s linear infinite;
+    
 }
 
 /* truck suspension animation*/
@@ -66,6 +67,7 @@
     bottom: 0;
     align-self: flex-end;
     border-radius: 3px;
+    
 }
 
 .road::before {
@@ -98,10 +100,8 @@
     right: -90%;
     height: 90px;
     animation: roadAnimation 1.4s linear infinite;
+    
 }
-
-
-
 
 
 @keyframes roadAnimation {

@@ -50,8 +50,8 @@ const Dashboard = () => {
     };
     fetchDashboards(0);
     currentUser();
-    authorityDispatch(set_Authority(currentuser.authority));
-  }, []);
+    authorityDispatch(set_Authority(currentuser.authority || 'TENANT_ADMIN'));
+  }, [currentuser.id.id]);
 
   const fetchDashboards = async (page: number) => {
     try {
@@ -132,13 +132,14 @@ const Dashboard = () => {
 
         const response = await getTenantDevices(params);
         const devices = response.data.data || [];
-        deviceCountDispatch(
-          set_DeviceCount(devices.length >= 1 ? devices.length : 0)
-        );
+
+        deviceCountDispatch(set_DeviceCount(devices.length));
       } catch (error) {
         console.error('Failed to fetch devices', error);
+        deviceCountDispatch(set_DeviceCount(0));
       }
     };
+
 
     const fetchAllVehicles = async () => {
       try {
@@ -177,6 +178,7 @@ const Dashboard = () => {
     deviceCountDispatch,
     vehicleCountDispatch,
     warecountdispatch,
+    currentuser.id.id
   ]);
 
   return (

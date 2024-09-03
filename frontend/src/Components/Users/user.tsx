@@ -1,69 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useLocation, useNavigate } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteUser } from "../../api/userApi";
+import { deleteUser, getUserById, getUsers, saveUser } from "../../api/userApi";
 import { Snackbar, SnackbarCloseReason, SnackbarContent } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getUsers } from "../../api/userApi";
 import { set_usersCount } from "../../Redux/Action/Action";
 import { useDispatch } from "react-redux";
+import { User as UserType } from "../../types/thingsboardTypes";
+import { useParams, useNavigate } from "react-router-dom";
 
 const User = () => {
     const [username, setUsername] = useState<string>("");
     const [firstName, setFirstname] = useState<string>("");
     const [lastName, setLastname] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
+    const [authority, setAuthority] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [authority, setAuthority] = useState<string>("");
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState("");
+    const [open, setOpen] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>("");
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const devicecountdispatch = useDispatch();
-
-    console.log(username, firstName, lastName, phone, authority)
-
-    const userinfo = useLocation();
-    const user = userinfo.state;
+    const { email } = useParams<{ email: string }>();
+    const [user, setUser] = useState<UserType | undefined>();
 
     const fetchUserData = async () => {
         try {
-            const params = {
-                pageSize: 16,
-                page: 0
-            };
+            const params = { pageSize: 16, page: 0 };
             const userData = await getUsers(params);
-
-            console.log(username, firstName, lastName, phone, authority)
             devicecountdispatch(set_usersCount(userData.data.data.length));
-
         } catch (error) {
             console.error('Failed to fetch user data', error);
         }
     };
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                if (email) {
+                    const response = await getUserById(email);
+                    const userData = response.data;
+                    setUsername(userData.email || "");
+                    setFirstname(userData.firstName || "");
+                    setLastname(userData.lastName || "");
+                    setPhone(userData.phone || "");
+                    setAuthority(userData.authority || "");
+                    setUser(userData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch user data', error);
+            }
+        };
+
+        fetchUserData();
+    }, [email]);
+
     const handleDeleteUser = async () => {
         setLoadingDelete(true);
         try {
-            const out = await deleteUser(user.id.id);
-            if (out.status === 200) {
-                setMessage("User Deleted");
-                setSnackbarType('success');
-                setOpen(true);
-                setTimeout(() => {
-                    setLoadingDelete(false);
+            if (user && user.id && user.id.id) {
+                const out = await deleteUser(user.id.id);
+                if (out.status === 200) {
+                    setMessage("User Deleted");
+                    setSnackbarType('success');
+                    setOpen(true);
                     setTimeout(() => {
-                        setOpen(false);
-                        navigate("/users");
-                        fetchUserData();
-                    }, 500);
-                }, 800);
+                        setLoadingDelete(false);
+                        setTimeout(() => {
+                            setOpen(false);
+                            navigate("/users");
+                            fetchUserData();
+                        }, 500);
+                    }, 800);
+                }
             }
         } catch (error) {
             console.error('Failed to delete user', error);
@@ -75,12 +89,39 @@ const User = () => {
         }
     };
 
-    const handleClick = () => {
+    const handleClick = async () => {
         setLoading(true);
-        setTimeout(() => {
-            console.log("Data saved!");
-            setLoading(false);
-        }, 2000);
+        if (user) {
+            const updateUser: UserType = {
+                ...user,
+                email: username,
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
+            };
+
+            try {
+                const response = await saveUser(updateUser, false);
+                if (response.status === 200) {
+                    setMessage("User updated successfully");
+                    setSnackbarType('success');
+                    setOpen(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        setOpen(false);
+                    }, 1000);
+                } else {
+                    throw new Error('Failed to update user');
+                }
+            } catch (error) {
+                console.error('Failed to update user', error);
+                setMessage("Failed to update user");
+                setSnackbarType('error');
+                setOpen(true);
+                setLoading(false);
+                setTimeout(() => setOpen(false), 1000);
+            }
+        }
     };
 
     const formatDate = (timestamp: number) => {
@@ -88,10 +129,7 @@ const User = () => {
         return date.toLocaleString();
     };
 
-    const handleClose = (
-        event: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason,
-    ) => {
+    const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
         if (reason === 'clickaway') {
             event.preventDefault();
             return;
@@ -105,37 +143,55 @@ const User = () => {
                 <header className="accountinfo-header">
                     <div className="accountinfo-email">
                         <p className="accountinfo-profile">Profile</p>
-                        <p>{user.email}</p>
+                        <p>{user?.email}</p>
                     </div>
                     <div className="accountinfo-lastlogin">
                         <p>Last Login</p>
-                        <p>{formatDate(user.additionalInfo.lastLoginTs)}</p>
+                        <p>{user?.additionalInfo?.lastLoginTs ? formatDate(user.additionalInfo.lastLoginTs) : 'N/A'}</p>
                     </div>
                 </header>
                 <main className="accountinfo-main">
-                    {['Email', 'First Name', 'Last Name', 'Phone Number', 'Authority'].map((label, index) => (
-                        <Box key={index} sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
-                            <TextField
-                                fullWidth
-                                label={label}
-                                value={
-                                    label === 'Email' ? user.email :
-                                        label === 'First Name' ? user.firstName :
-                                            label === 'Last Name' ? user.lastName :
-                                                label === 'Phone Number' ? user.phone :
-                                                    label === 'Authority' ? user.authority :
-                                                        ''
-                                }
-                                onChange={(e) => {
-                                    if (label === 'Email') setUsername(e.target.value);
-                                    if (label === 'First Name') setFirstname(e.target.value);
-                                    if (label === 'Last Name') setLastname(e.target.value);
-                                    if (label === 'Phone Number') setPhone(e.target.value);
-                                    if (label === 'Authority') setAuthority(e.target.value);
-                                }}
-                            />
-                        </Box>
-                    ))}
+                    <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
+                        <TextField
+                            fullWidth
+                            label="Email"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
+                        <TextField
+                            fullWidth
+                            label="First Name"
+                            value={firstName}
+                            onChange={(e) => setFirstname(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
+                        <TextField
+                            fullWidth
+                            label="Last Name"
+                            value={lastName}
+                            onChange={(e) => setLastname(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
+                        <TextField
+                            fullWidth
+                            label="Phone Number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
+                        <TextField
+                            fullWidth
+                            label="Authority"
+                            value={authority}
+                            onChange={(e) => setAuthority(e.target.value)}
+                            disabled={true}
+                        />
+                    </Box>
                     <div className="accountinfo-savebtn-delt-btn">
                         <LoadingButton
                             size="small"
@@ -145,7 +201,7 @@ const User = () => {
                             loadingPosition="start"
                             startIcon={<SaveIcon />}
                             variant="contained"
-                            disabled={loadingDelete} // Disable Update button if Delete button is loading
+                            disabled={loadingDelete}
                             sx={{ width: '150px', height: '50px' }}
                         >
                             <span>Update</span>
