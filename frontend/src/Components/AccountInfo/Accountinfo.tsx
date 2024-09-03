@@ -5,6 +5,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import "./Accountinfo.css";
 import { getCurrentUser } from "../../api/loginApi";
+import { saveUser } from "../../api/userApi";
 
 const Accountinfo = () => {
     const [username, setUsername] = useState<string>("");
@@ -34,8 +35,20 @@ const Accountinfo = () => {
         fetchUserData();
     }, []);
 
-    const handleClick = () => {
+    const handleClick = async() => {
         setLoading(true);
+
+        const updateUser = {
+            ...user,
+            email: username,
+            firstName: firstName,
+            lastName: lastName,
+            phone: phone,
+        };
+
+        console.log(updateUser)
+        await saveUser(updateUser, false)
+        alert('User updated successfully')
 
         setTimeout(() => {
             console.log("Data saved!");
