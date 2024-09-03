@@ -6,7 +6,7 @@ import BarChartWidget from './BarChartWidget';
 import ScatterPlotWidget from './ScatterPlotWidget';
 import PieChartWidget from './PieChartWidget';
 import { Device, TelemetryData } from '../../types/thingsboardTypes';
-import { getTimeseries } from '../../api/telemetryAPIs';
+import { getTimeseries, getTimeseriesKeys } from '../../api/telemetryAPIs';
 
 interface WidgetProps {
   devices: Device[];
@@ -17,27 +17,27 @@ const Widget: React.FC<WidgetProps> = ({ devices, type }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [telemetryData, setTelemetryData] = useState<TelemetryData>({});
-  const [filteredTelemetryData, setFilteredTelemetryData] = useState<TelemetryData>({});
+  const [filteredTelemetryData, setFilteredTelemetryData] =
+    useState<TelemetryData>({});
 
   useEffect(() => {
-    console.log("Selected Device:", selectedDevice);
-    console.log("Selected Sensors:", selectedSensors);
+    console.log('Selected Device:', selectedDevice);
+    console.log('Selected Sensors:', selectedSensors);
 
     // Fetch telemetry data whenever selectedDevice or selectedSensors changes
     const fetchTelemetryData = async () => {
-      if (!selectedDevice || selectedSensors.length === 0) return;  // Only fetch if device and sensors are selected
-
       try {
+        const keyResponse = await getTimeseriesKeys('DEVICE', selectedDevice)
         const response = await getTimeseries('DEVICE', selectedDevice, {
-          keys: selectedSensors.join(','),
+          keys: selectedSensors ? selectedSensors.join(','): keyResponse.data.join(", "),
           startTs: Date.now() - 3600000, // last hour
           endTs: Date.now(),
           limit: 100,
         });
-        console.log("Telemetry response:", response);
+        console.log('Telemetry response:', response);
         setTelemetryData(response.data);
       } catch (error) {
-        console.error("Failed to fetch telemetry data:", error);
+        console.error('Failed to fetch telemetry data:', error);
       }
     };
 
@@ -47,10 +47,13 @@ const Widget: React.FC<WidgetProps> = ({ devices, type }) => {
   useEffect(() => {
     // Filter telemetry data based on selected sensors
     if (selectedSensors.length > 0) {
-      const data: TelemetryData = selectedSensors.reduce((acc: any, sensor: string) => {
-        acc[sensor] = telemetryData[sensor] || [];
-        return acc;
-      }, {});
+      const data: TelemetryData = selectedSensors.reduce(
+        (acc: any, sensor: string) => {
+          acc[sensor] = telemetryData[sensor] || [];
+          return acc;
+        },
+        {}
+      );
       setFilteredTelemetryData(data);
     } else {
       setFilteredTelemetryData(telemetryData); // If no sensors selected, show all data

@@ -42,16 +42,82 @@ const Dashboard = () => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>('');
 
+  const fetchUserData = async () => {
+    try {
+      const params = {
+        pageSize: 16,
+        page: 0,
+      };
+      const userData = await getUsers(params);
+      usercountdispatch(set_usersCount(userData.data.data.length));
+    } catch (error) {
+      console.error('Failed to fetch user data', error);
+    }
+  };
+
+  const fetchDevices = async (page: number): Promise<void> => {
+    try {
+      const params: DeviceQueryParams = {
+        pageSize: 10,
+        page: page,
+        type: 'default',
+        textSearch: '',
+        sortProperty: 'name',
+        sortOrder: 'ASC',
+      };
+
+      const response = await getTenantDevices(params);
+      const devices = response.data.data || [];
+      deviceCountDispatch(
+        set_DeviceCount(devices.length >= 1 ? devices.length : 0)
+      );
+    } catch (error) {
+      console.error('Failed to fetch devices', error);
+    }
+  };
+
+  const fetchAllVehicles = async () => {
+    try {
+      const response = await mongoAPI.get(
+        `vehicle/getallvehicle/${currentuser.id.id}`
+      );
+      console.log(response.data)
+      console.log(response.data.length)
+      vehicleCountDispatch(set_vehicle_count(response.data.length));
+    } catch (error) {
+      console.error('Failed to fetch vehicles:', error);
+    }
+  };
+
+  const fetchAllWarehouses = async () => {
+    try {
+      const response = await mongoAPI.get(
+        `/warehouse/getallwarehouse/${currentuser.id.id}`
+      );
+      warecountdispatch(set_warehouse_count(response.data.length));
+      setLoader(false);
+    } catch (error) {
+      console.error('Failed to fetch warehouses:', error);
+      warecountdispatch(set_warehouse_count(0));
+    }
+  };
+
   useEffect(() => {
     const currentUser = async () => {
       const response = await getCurrentUser();
       dispatch(set_User(response.data));
-      return response.data
+      return response.data;
     };
+
     fetchDashboards(0);
     currentUser();
     authorityDispatch(set_Authority(currentuser.authority));
-  }, []);
+    fetchUserData();
+    fetchDevices(0);
+    fetchAllVehicles();
+    fetchAllWarehouses();
+    
+  }, [currentuser.id.id]);
 
   const fetchDashboards = async (page: number) => {
     try {
@@ -105,68 +171,9 @@ const Dashboard = () => {
     }
   };
 
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const params = {
-          pageSize: 16,
-          page: 0,
-        };
-        const userData = await getUsers(params);
-        usercountdispatch(set_usersCount(userData.data.data.length));
-      } catch (error) {
-        console.error('Failed to fetch user data', error);
-      }
-    };
 
-    const fetchDevices = async (page: number): Promise<void> => {
-      try {
-        const params: DeviceQueryParams = {
-          pageSize: 10,
-          page: page,
-          type: 'default',
-          textSearch: '',
-          sortProperty: 'name',
-          sortOrder: 'ASC',
-        };
-
-        const response = await getTenantDevices(params);
-        const devices = response.data.data || [];
-        deviceCountDispatch(
-          set_DeviceCount(devices.length >= 1 ? devices.length : 0)
-        );
-      } catch (error) {
-        console.error('Failed to fetch devices', error);
-      }
-    };
-
-    const fetchAllVehicles = async () => {
-      try {
-        const response = await mongoAPI.get(
-          `vehicle/getallvehicle/${currentuser.id.id}`
-        );
-        vehicleCountDispatch(set_vehicle_count(response.data.length));
-      } catch (error) {
-        console.error('Failed to fetch vehicles:', error);
-      }
-    };
-
-    const fetchAllWarehouses = async () => {
-      try {
-        const response = await mongoAPI.get(
-          `/warehouse/getallwarehouse/${currentuser.id.id}`
-        );
-        if (response.data.length === 0) {
-          warecountdispatch(set_warehouse_count(0));
-        } else {
-          warecountdispatch(set_warehouse_count(response.data.length));
-        }
-        setLoader(false);
-      } catch (error) {
-        console.error('Failed to fetch warehouses:', error);
-        warecountdispatch(set_warehouse_count(0));
-      }
-    };
 
     fetchUserData();
     fetchDevices(0);
@@ -177,6 +184,7 @@ const Dashboard = () => {
     deviceCountDispatch,
     vehicleCountDispatch,
     warecountdispatch,
+    currentuser.id.id
   ]);
 
   return (
