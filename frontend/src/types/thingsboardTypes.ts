@@ -117,7 +117,9 @@ export interface User {
   email?: string;
   name?: string;
   authority?: string;
-  additionalInfo?: Object;
+  additionalInfo?: {
+    lastLoginTs?: number;
+  };
   phone?: string;
   password?:string;
 }
