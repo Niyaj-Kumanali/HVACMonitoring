@@ -58,7 +58,7 @@ const Warehouse: React.FC = () => {
     const warehousecountDispatch = useDispatch();
 
     const handleDeleteWarehouse = async () => {
-        setLoadingg(true);  // Start the loader
+        setLoadingg(true);
 
         setTimeout(async () => {
             try {
@@ -68,17 +68,25 @@ const Warehouse: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage('Warehouse Deleted Successfully');
-                navigate("/warehouses");
+
+                setTimeout(() => {
+                    setLoadingg(false);
+                    navigate("/warehouses");
+                }, 500);
             } catch (error) {
                 console.error("Error deleting warehouse:", error);
                 setOpen(true);
                 setSnackbarType('error');
                 setMessage('Failed to Delete Warehouse');
-            } finally {
-                setLoadingg(false); 
+
+                setTimeout(() => {
+                    setLoadingg(false);
+                    navigate("/warehouses");
+                }, 1000);
             }
-        }, 500); 
+        }, 1000); 
     };
+
 
 
     const handleReset = () => {
@@ -128,24 +136,6 @@ const Warehouse: React.FC = () => {
         e.preventDefault();
 
         setLoading(true);
-
-        const convertedData = {
-            ...formData,
-            warehouse_name: formData.warehouse_name,
-            latitude: parseFloat(formData.latitude),
-            longitude: parseFloat(formData.longitude),
-            warehouse_dimensions: {
-                length: parseFloat(formData.warehouse_dimensions.length),
-                width: parseFloat(formData.warehouse_dimensions.width),
-                height: parseFloat(formData.warehouse_dimensions.height),
-            },
-            cooling_units: Number(formData.cooling_units),
-            energy_resource: formData.energy_resource,
-            sensors: Number(formData.sensors),
-            userId: warehouse.userId,
-            email: warehouse.email
-        };
-        
 
 
         try {
@@ -319,7 +309,7 @@ const Warehouse: React.FC = () => {
                             loadingPosition="start"
                             startIcon={<SaveIcon />}
                             variant="contained"
-                            disabled={loading}
+                            disabled={loadingg}
                             className="btn-save"
                         >
                             <span>Update</span>

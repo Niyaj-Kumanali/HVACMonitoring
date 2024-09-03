@@ -39,19 +39,24 @@ const Warehouses = () => {
 
             const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
 
-            if (response.data.length === 0) {
-                setMessage("No Warehouse Found");
-                warehousecountDispatch(set_warehouse_count(0));
-            } else {
-                setAllWarehouses(response.data);
-                warehousecountDispatch(set_warehouse_count(response.data.length));
-            }
-            setLoader(false);
+            setTimeout(() => {
+                if (response.data.length === 0) {
+                    setMessage("No Warehouse Found");
+                    warehousecountDispatch(set_warehouse_count(0));
+                } else {
+                    setAllWarehouses(response.data);
+                    warehousecountDispatch(set_warehouse_count(response.data.length));
+                }
+                setLoader(false);
+            }, 800)
+            
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
-            setMessage("Problem Fetching Warehouses");
-            warehousecountDispatch(set_warehouse_count(0));
-            setLoader(false);
+            setTimeout(() => {
+                setMessage("Problem Fetching Warehouses");
+                warehousecountDispatch(set_warehouse_count(0));
+                setLoader(false);
+            }, 800)
         }
     };
 
