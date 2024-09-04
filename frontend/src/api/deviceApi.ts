@@ -237,3 +237,14 @@ export const getTenantDevices = async (params: DeviceQueryParams) => {
   const response = await thingsboardAPI.get('/tenant/devices', { params });
   return response;
 };
+
+export const getFilteredDevices = async(id: string) => {
+  const params = {
+    pageSize: 1000000000,
+    page: 0
+  }
+  const response = await getTenantDevices(params)
+
+  const filteredDevices = response.data.data.filter((device: Device) => device.label == id)
+  return filteredDevices
+}

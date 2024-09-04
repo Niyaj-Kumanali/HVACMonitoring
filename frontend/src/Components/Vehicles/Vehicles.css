@@ -3,3 +3,9 @@
     gap: 15px;
     margin-top: 15px;
 }
+.user-img-info .img{
+    /* border:1px solid black; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

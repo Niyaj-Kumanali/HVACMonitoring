@@ -60,3 +60,8 @@
     gap: 30px;
     margin-top: 15px;
 }
+.user-img-info .img img {
+    transition: opacity 0.3s ease-in-out;
+}
+
+

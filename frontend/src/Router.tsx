@@ -27,6 +27,7 @@ import User from './Components/Users/user';
 import Warehouse from './Components/Warehouse/Warehouse';
 import Signup from './Components/Login/Signup';
 import Vehicleinfo from './Components/Vehicles/Vehicleinfo';
+import AddDashboard from './Components/Add-Dashboard/AddDashboard';
 
 const Router = createBrowserRouter([
   {
@@ -76,6 +77,10 @@ const Router = createBrowserRouter([
       {
         path: '/addDevice',
         element: <AddDevice />,
+      },
+      {
+        path: '/dashboard',
+        element: <AddDashboard />,
       },
       {
         path: '/warehouses',

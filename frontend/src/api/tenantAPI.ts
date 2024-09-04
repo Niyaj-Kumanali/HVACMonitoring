@@ -14,7 +14,7 @@ export const getTenantById = async (tenantId: string = '') => {
 };
 
 // Delete Tenant by ID
-export const deleteTenant = async (tenantId: string) => {
+export const deleteTenant = async (tenantId: string = '') => {
   await thingsboardAPI.delete(`/tenant/${tenantId}`);
 };
 

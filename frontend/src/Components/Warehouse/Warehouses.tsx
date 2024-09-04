@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import "./Warehouse.css";
-import WarehouseIcon from '@mui/icons-material/Warehouse';
 import { getCurrentUser } from "../../api/loginApi";
 import Loader from "../Loader/Loader";
 import { mongoAPI } from "../../api/MongoAPIInstance";
 import { useDispatch } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
+import warehouseimg from "../../assets/warehouse.gif"
 
 
 interface Warehouse {
@@ -98,7 +98,7 @@ const Warehouses = () => {
                         <Link to={`/warehouse/${warehouse.warehouse_id}`} state={warehouse} className="userinfo" key={warehouse._id}>
                             <div className="user-img-info">
                                 <div className="img">
-                                    <WarehouseIcon className="personicon" />
+                                    <img src={warehouseimg} className="personicon" />
                                 </div>
                                 <div className="status">
                                     <p className="username">{warehouse.warehouse_name}</p>

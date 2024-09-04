@@ -3,10 +3,11 @@ import "../Warehouse/Warehouse.css";
 import { mongoAPI } from "../../api/MongoAPIInstance";
 import { useDispatch } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+// import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { getCurrentUser } from "../../api/loginApi";
 import VehicleLoader from "../Loader/VehicleLoader";
 import { Link } from "react-router-dom";
+import truckimage from "../../assets/truck.gif"
 
 interface VehicleDimensions {
     length: string;
@@ -79,7 +80,7 @@ const Vehicles = () => {
                         <Link className="userinfo" key={index} to={`/vehicle/${vehicle.vehicle_id}`}>
                             <div className="user-img-info">
                                 <div className="img">
-                                    <LocalShippingIcon className="personicon" />
+                                    <img src={truckimage} className="personicon" alt="Truck Icon" />
                                 </div>
                                 <div className="status">
                                     <p className="username">{vehicle.vehicle_name}</p>
@@ -91,6 +92,7 @@ const Vehicles = () => {
                                     <p className="sensors">Sensors: {vehicle.sensors || "N/A"}</p>
                                 </div>
                             </div>
+
                         </Link>
                     ))}
                 </div>

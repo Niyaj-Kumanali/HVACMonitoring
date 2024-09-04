@@ -1,10 +1,8 @@
 import { Tenant, User } from '../types/thingsboardTypes';
 import { login } from './loginApi';
-import { saveTenant } from './tenantAPI';
+import { deleteTenant, saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
 import { getActivationLink, saveUser } from './userApi';
-
-
 
 // Activate User by Email Code
 export const activateUserByEmailCode = async (
@@ -17,19 +15,14 @@ export const activateUserByEmailCode = async (
 };
 
 // Activate Email
-export const activateEmail = async (
-  emailCode: string,
-  pkgName?: string
-) => {
+export const activateEmail = async (emailCode: string, pkgName?: string) => {
   await thingsboardAPI.get('/noauth/activateEmail', {
     params: { emailCode, pkgName },
   });
 };
 
 // Mobile Login
-export const mobileLogin = async (
-  pkgName?: string
-) => {
+export const mobileLogin = async (pkgName?: string) => {
   await thingsboardAPI.get('/noauth/login', {
     params: { pkgName },
   });
@@ -50,18 +43,21 @@ export const signUp = async (
   data: any // Replace `any` with appropriate type if known
 ) => {
   const response = await thingsboardAPI.post('/noauth/signup', data);
-  return response
+  return response;
 };
 
 // Get Recaptcha Params
-export const getRecaptchaParams = async () => { // Replace `any` with appropriate type if known
+export const getRecaptchaParams = async () => {
+  // Replace `any` with appropriate type if known
   const response = await thingsboardAPI.get('/noauth/signup/recaptchaParams');
   return response;
 };
 
 // Get Recaptcha Public Key
 export const getRecaptchaPublicKey = async () => {
-  const response = await thingsboardAPI.get('/noauth/signup/recaptchaPublicKey');
+  const response = await thingsboardAPI.get(
+    '/noauth/signup/recaptchaPublicKey'
+  );
   return response;
 };
 
@@ -81,29 +77,40 @@ export const deleteTenantAccount = async () => {
   await thingsboardAPI.delete('/signup/tenantAccount');
 };
 
+export const CreateSignUpUser = async (tenant: Tenant, tenantBody: User) => {
+  // Ensure the admin is logged in and token is set
+  const adminUserName = import.meta.env.VITE_THINGSBOARD_ADMINUSERNAME;
+  const adminPassword = import.meta.env.VITE_THINGSBOARD_ADMINUSERPASSWORD;
 
-export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
-    // Ensure the admin is logged in and token is set
-    const adminUserName = import.meta.env.VITE_THINGSBOARD_ADMINUSERNAME
-    const adminPassword = import.meta.env.VITE_THINGSBOARD_ADMINUSERPASSWORD
-    console.log(adminPassword, adminUserName)
-    await login(adminUserName, adminPassword);
+  if (!adminUserName || !adminPassword) {
+    throw new Error('Admin credentials are not set.');
+  }
 
-    // Create a tenant
-    const tenantResponse = await saveTenant(tenant)
-    
-    const tenantId = tenantResponse.data.id;
-    console.log(tenantId)
-    const tenantUserBody = {
-      ...tenantBody,
-      tenantId: tenantId
-    }
+  console.log('Admin Credentials:', adminUserName, adminPassword);
 
+  const response = await login(adminUserName, adminPassword);
+  console.log('Admin Response', response);
+
+  // Create a tenant
+  const tenantResponse = await saveTenant(tenant);
+  console.log(tenantResponse)
+
+  const tenantId = tenantResponse.data.id;
+  console.log('Tenant ID:', tenantId);
+
+  const tenantUserBody: User = {
+    ...tenantBody,
+    tenantId: tenantId,
+  };
+
+  try {
+    // Create a user
     const createdUser = await saveUser(tenantUserBody, false);
     const activationLink = await getActivationLink(createdUser.data.id?.id);
-    console.log(activationLink)
-
-
-    return createdUser
-}
-
+    console.log('Activation Link:', activationLink);
+    return createdUser;
+  } catch (error) {
+    await deleteTenant(tenantId.id);
+    console.log('Tenant deleted');
+  }
+};
