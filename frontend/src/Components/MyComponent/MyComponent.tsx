@@ -10,6 +10,8 @@ import {
 } from '../../api/widgetsBundleAPI';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
+import { getDeviceCredentialsByDeviceId, getFilteredDevices } from '../../api/deviceApi';
+import { CatchingPokemon } from '@mui/icons-material';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -124,6 +126,12 @@ const MyComponent: React.FC = () => {
     fetchWidgetBundles(currentWidgetPage);
     const currentuser = await getCurrentUser();
     console.log('Current User: \n', currentuser.data);
+
+    const fdevices = await getFilteredDevices('78c9816c-5d45-49ea-8ba7-8524eb65624c')
+    console.log(fdevices)
+
+    const deviceInfo = await getDeviceCredentialsByDeviceId("ddebbb60-6aa0-11ef-98f0-3545332af3c6")
+    console.log(deviceInfo.data)
   };
 
   const handlePageChangeWidgets = (page: number) => {
