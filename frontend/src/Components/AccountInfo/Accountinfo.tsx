@@ -20,13 +20,13 @@ const Accountinfo = () => {
         const fetchUserData = async () => {
             try {
                 const response = await getCurrentUser();
-                const userData = response.data
+                const userData = response.data;
                 setUsername(userData.email || "");
                 setFirstname(userData.firstName || "");
                 setLastname(userData.lastName || "");
                 setPhone(userData.phone || "");
-                setAuthority(userData.authority || "")
-                setUser(userData)
+                setAuthority(userData.authority || "");
+                setUser(userData);
             } catch (error) {
                 console.error('Failed to fetch user data', error);
             }
@@ -35,7 +35,7 @@ const Accountinfo = () => {
         fetchUserData();
     }, []);
 
-    const handleClick = async() => {
+    const handleClick = async () => {
         setLoading(true);
 
         const updateUser = {
@@ -46,9 +46,9 @@ const Accountinfo = () => {
             phone: phone,
         };
 
-        console.log(updateUser)
-        await saveUser(updateUser, false)
-        alert('User updated successfully')
+        console.log(updateUser);
+        await saveUser(updateUser, false);
+        alert('User updated successfully');
 
         setTimeout(() => {
             console.log("Data saved!");
@@ -86,14 +86,17 @@ const Accountinfo = () => {
                                             label === 'Last Name' ? lastName :
                                                 label === 'Phone Number' ? phone :
                                                     label === 'Authority' ? authority :
-                                                    ''
+                                                        ''
                                 }
                                 onChange={(e) => {
                                     if (label === 'Email') setUsername(e.target.value);
                                     if (label === 'First Name') setFirstname(e.target.value);
                                     if (label === 'Last Name') setLastname(e.target.value);
                                     if (label === 'Phone Number') setPhone(e.target.value);
-                                    if (label == 'Authority') setAuthority(e.target.value);
+                                    if (label === 'Authority') setAuthority(e.target.value);
+                                }}
+                                InputProps={{
+                                    readOnly: label === 'Authority',
                                 }}
                             />
                         </Box>

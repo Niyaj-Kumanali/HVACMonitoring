@@ -31,16 +31,12 @@ const Dashboard = () => {
   const currentuser = useSelector((state: any) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
-  const warecountdispatch = useDispatch();
-  const usercountdispatch = useDispatch();
-  const deviceCountDispatch = useDispatch();
-  const vehicleCountDispatch = useDispatch();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [loading, setLoader] = useState(true);
-  const authorityDispatch = useDispatch();
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>('');
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const fetchUserData = async () => {
     try {
@@ -49,7 +45,7 @@ const Dashboard = () => {
         page: 0,
       };
       const userData = await getUsers(params);
-      usercountdispatch(set_usersCount(userData.data.data.length));
+      dispatch(set_usersCount(userData.data.data.length));
     } catch (error) {
       console.error('Failed to fetch user data', error);
     }
@@ -68,9 +64,7 @@ const Dashboard = () => {
 
       const response = await getTenantDevices(params);
       const devices = response.data.data || [];
-      deviceCountDispatch(
-        set_DeviceCount(devices.length >= 1 ? devices.length : 0)
-      );
+      dispatch(set_DeviceCount(devices.length >= 1 ? devices.length : 0));
     } catch (error) {
       console.error('Failed to fetch devices', error);
     }
@@ -78,12 +72,12 @@ const Dashboard = () => {
 
   const fetchAllVehicles = async () => {
     try {
-      const response = await mongoAPI.get(
-        `vehicle/getallvehicle/${currentuser.id.id}`
-      );
-      console.log(response.data)
-      console.log(response.data.length)
-      vehicleCountDispatch(set_vehicle_count(response.data.length));
+      if (currentuser?.id?.id) {
+        const response = await mongoAPI.get(
+          `vehicle/getallvehicle/${currentuser.id.id}`
+        );
+        dispatch(set_vehicle_count(response.data.length));
+      }
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
     }
@@ -91,33 +85,17 @@ const Dashboard = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const response = await mongoAPI.get(
-        `/warehouse/getallwarehouse/${currentuser.id.id}`
-      );
-      warecountdispatch(set_warehouse_count(response.data.length));
-      setLoader(false);
+      if (currentuser?.id?.id) {
+        const response = await mongoAPI.get(
+          `/warehouse/getallwarehouse/${currentuser.id.id}`
+        );
+        dispatch(set_warehouse_count(response.data.length));
+      }
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
-      warecountdispatch(set_warehouse_count(0));
+      dispatch(set_warehouse_count(0));
     }
   };
-
-  useEffect(() => {
-    const currentUser = async () => {
-      const response = await getCurrentUser();
-      dispatch(set_User(response.data));
-      return response.data;
-    };
-
-    fetchDashboards(0);
-    currentUser();
-    authorityDispatch(set_Authority(currentuser.authority));
-    fetchUserData();
-    fetchDevices(0);
-    fetchAllVehicles();
-    fetchAllWarehouses();
-    
-  }, [currentuser.id.id]);
 
   const fetchDashboards = async (page: number) => {
     try {
@@ -130,19 +108,45 @@ const Dashboard = () => {
       };
       const response = await getTenantDashboards(params);
       setDashboards(response.data.data ?? []);
-      setTimeout(() => {
-        setLoader(false);
-      }, 500);
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
       setError('No Dashboard Found');
       setShowError(true);
     } finally {
-      setTimeout(() => {
-        setLoader(false);
-      }, 500);
+      setLoader(false);
     }
   };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        // Fetch current user
+        const response = await getCurrentUser();
+        dispatch(set_User(response.data));
+
+        if (response.data?.id?.id) {
+          dispatch(set_Authority(response.data.authority));
+
+          // Fetch dashboards, user data, devices, vehicles, and warehouses
+          await Promise.all([
+            fetchDashboards(0),
+            fetchUserData(),
+            fetchDevices(0),
+            fetchAllVehicles(),
+            fetchAllWarehouses(),
+          ]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch all data:', error);
+        setError('Failed to load data');
+        setShowError(true);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchAllData();
+  }, [dispatch, currentuser?.id?.id]);
 
   const handleDelete = async (dashboardId: string = '') => {
     try {
@@ -159,7 +163,7 @@ const Dashboard = () => {
     reason?: SnackbarCloseReason
   ) => {
     if (reason === 'clickaway') {
-      event;
+      event
       return;
     }
     setOpen(false);
@@ -170,22 +174,6 @@ const Dashboard = () => {
       navigate(`/dashboard/${dashboardId}`);
     }
   };
-
-
-  useEffect(() => {
-
-
-    fetchUserData();
-    fetchDevices(0);
-    fetchAllVehicles();
-    fetchAllWarehouses();
-  }, [
-    usercountdispatch,
-    deviceCountDispatch,
-    vehicleCountDispatch,
-    warecountdispatch,
-    currentuser.id.id
-  ]);
 
   return (
     <>
