@@ -1,5 +1,5 @@
 // WidgetHeader.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Select,
   MenuItem,
@@ -9,7 +9,6 @@ import {
   ListItemText,
 } from '@mui/material';
 import { Device } from '../../types/thingsboardTypes';
-import { getDeviceById } from '../../api/deviceApi';
 
 interface WidgetHeaderProps {
   devices: Device[];
@@ -26,15 +25,6 @@ const WidgetHeader: React.FC<WidgetHeaderProps> = ({
   onSelectDevice,
   onSelectSensors,
 }) => {
-const [device, setDevice] = useState<Device>({})
-
-  useEffect(()=> {
-    const getDevice = async()=> {
-        const response = await getDeviceById(selectedDevice)
-        setDevice(response.data)
-    }
-    getDevice()
-  }, [selectedDevice])
 
   return (
     <div className="widget-header">
@@ -56,7 +46,11 @@ const [device, setDevice] = useState<Device>({})
       </FormControl>
 
       {/* Sensors Selection */}
-      <FormControl variant="outlined" size="small" style={{ minWidth: 200, marginLeft: 16 }}>
+      <FormControl
+        variant="outlined"
+        size="small"
+        style={{ minWidth: 200, marginLeft: 16 }}
+      >
         <InputLabel id="sensor-select-label">Select Sensors</InputLabel>
         <Select
           labelId="sensor-select-label"

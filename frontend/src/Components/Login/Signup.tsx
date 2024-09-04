@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import waveImg from '../../assets/wave.png';
 import bgImg from '../../assets/bg.svg';
@@ -7,242 +6,323 @@ import avatarImg from '../../assets/avatar.svg';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import Snackbar from '@mui/material/Snackbar';
-import Slide, { SlideProps } from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
-import { useDispatch } from 'react-redux';
-import { set_Accesstoken } from '../../Redux/Action/Action';
-import thingsboardAPI from '../../api/thingsboardAPI';
+import Slide from '@mui/material/Slide';
 import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 import axios from 'axios';
-
-function SlideTransition(props: SlideProps) {
-    return <Slide {...props} direction="down" />;
-}
-
+ 
 const Signup: React.FC = () => {
-    const [orgName, setOrgName] = useState('Tenant');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [snackbarMessage, setSnackbarMessage] = useState<string>('');
-    const [snackbarStyle, setSnackbarStyle] = useState<React.CSSProperties>({});
-    const [isLoading, setIsLoading] = useState<boolean>(true); 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [firstNameFocused, setFirstNameFocused] = useState<boolean>(false);
-    const [lastNameFocused, setLastNameFocused] = useState<boolean>(false);
-    const [emailFocused, setEmailFocused] = useState<boolean>(false);
-    const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
-
-    const handleFocus = (setter: React.Dispatch<React.SetStateAction<boolean>>) => () => {
-        setter(true);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  });
+  const [focusedFields, setFocusedFields] = useState({
+    firstName: false,
+    lastName: false,
+    email: false,
+    password: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    style: {} as React.CSSProperties,
+    Transition: Slide,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+ 
+  const handleInputChange =
+    (field: keyof typeof formData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, [field]: e.target.value });
     };
-
-    const handleBlur = (setter: React.Dispatch<React.SetStateAction<boolean>>) => (e: any) => {
-        if (e.target.value === '') {
-            setter(false);
+ 
+  const handleFocus = (field: keyof typeof focusedFields) => () => {
+    setFocusedFields((prev) => ({ ...prev, [field]: true }));
+  };
+ 
+  const handleBlur =
+    (field: keyof typeof focusedFields) =>
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      if (e.target.value === '') {
+        setFocusedFields((prev) => ({ ...prev, [field]: false }));
+      }
+    };
+ 
+  const setUserPassword = async (activateToken: string, password: string) => {
+    try {
+      const response = await axios.post(
+        'http://3.111.205.170:8085/login/createPassword',
+        {
+          activateToken,
+          password,
+          confirmPassword: password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         }
+      );
+      return response;
+    } catch (error) {
+      console.error('Error setting password:', error);
+      throw error;
+    }
+  };
+ 
+  const handleSignUp = async (event: React.FormEvent) => {
+    event.preventDefault();
+ 
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: 'All fields are required',
+        style: { backgroundColor: 'red' },
+      });
+      return;
+    }
+ 
+    setLoading(true);
+ 
+    try {
+      const userBody: User = {
+        email: formData.email,
+        authority: 'TENANT_ADMIN',
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        password: formData.password,
+        phone: '',
+        additionalInfo: {},
+      };
+ 
+      const tenant: Tenant = {
+        title: 'TenantUser',
+      };
+ 
+      const createdUser = await CreateSignUpUser(tenant, userBody);
+      const responseActivationLink = await getActivationLink(
+        createdUser.data.id?.id
+      );
+ 
+      const activateToken = responseActivationLink.data.split('=')[1];
+      const res = await setUserPassword(activateToken, formData.password);
+ 
+      if (res.status === 200) {
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+        });
+        setSnackbar({
+          ...snackbar,
+          open: true,
+          message: 'Sign-up successful',
+          style: { backgroundColor: 'green' },
+        });
+      } else {
+        setSnackbar({
+            ...snackbar,
+            open: true,
+            message: 'Activation failed. Please try again later.',
+            style: { backgroundColor: 'yellow' },
+          });
+      }
+    } catch (error) {
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: 'An error occurred. Please try again.',
+        style: { backgroundColor: 'red' },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
+  useEffect(() => {
+    usernameRef.current?.focus();
+  }, []);
+ 
+  useEffect(() => {
+    const handleNavigation = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
     };
-
-    const [state, setState] = useState<{
-        open: boolean;
-        Transition: React.ComponentType<
-            TransitionProps & {
-                children: React.ReactElement<any, any>;
-            }
-        >;
-    }>({
-        open: false,
-        Transition: SlideTransition,
-    });
-
-  
-
-    const handleSignUp = async (event: React.FormEvent) => {
-        event.preventDefault();
-        setIsLoading(true);
-        setErrorMessage('');
-        setSuccessMessage('');
-
-        try {
-            const userBody: User = {
-                email: email,
-                authority: 'TENANT_ADMIN',
-                firstName: firstName,
-                lastName: lastName,
-                password: password,
-                phone: '',
-                additionalInfo: {},
-            };
-
-            const tenant: Tenant = {
-                title: orgName,
-            };
-
-            let responseActivationLink;
-            try {
-                const createdUser = await CreateSignUpUser(tenant, userBody);
-                responseActivationLink = await getActivationLink(createdUser.data.id?.id);
-            } catch (error) {
-                console.error("Error creating user:", error);
-                setErrorMessage("Failed to create user. Please try again.");
-                return;
-            }
-
-            const activateToken = responseActivationLink?.data.split("=")[1];
-            const res = await setUserPassword(activateToken, password);
-
-            if (res.status === 200) {
-                navigate('/login');
-            } else {
-                setErrorMessage('Activation failed. Please check your email for the activation link.');
-            }
-
-            setSuccessMessage('Sign-up successful! Please check your email to activate your account.');
-            setFirstName('');
-            setLastName('');
-            setEmail('');
-            setPassword('');
-        } catch (error) {
-            setErrorMessage('An error occurred during sign-up. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
+ 
+    if (loading) {
+      window.addEventListener('beforeunload', handleNavigation);
+    } else {
+      window.removeEventListener('beforeunload', handleNavigation);
+    }
+ 
+    return () => {
+      window.removeEventListener('beforeunload', handleNavigation);
     };
-
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 500);
-    }, []);
-
-    return isLoading ? (
-        <div className="loading"><Loader /></div>
-    ) : (
-        <div className="login-page">
-            <img className="wave" src={waveImg} alt="wave" />
-            <div className="container">
-                <div className="img">
-                    <img src={bgImg} alt="background" />
-                </div>
-
-                <div className="login-content">
-                    <form onSubmit={handleSignUp} autoComplete="on">
-                        <img src={avatarImg} alt="avatar" />
-                        <h2 className="title">Sign Up</h2>
-
-                        <div className={`input-div one ${firstNameFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-user"></i>
-                            </div>
-                            <div className="div">
-                                <h5>FirstName</h5>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    onFocus={handleFocus(setFirstNameFocused)}
-                                    onBlur={handleBlur(setFirstNameFocused)}
-                                    autoComplete="firstName"
-                                />
-                            </div>
-                        </div>
-                        <div className={`input-div one ${lastNameFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-user"></i>
-                            </div>
-                            <div className="div">
-                                <h5>LastName</h5>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    onFocus={handleFocus(setLastNameFocused)}
-                                    onBlur={handleBlur(setLastNameFocused)}
-                                    autoComplete="lastName"
-                                />
-                            </div>
-                        </div>
-
-                        <div className={`input-div one ${emailFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-envelope"></i>
-                            </div>
-                            <div className="div">
-                                <h5>Email</h5>
-                                <input
-                                    type="email"
-                                    className="input"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    onFocus={handleFocus(setEmailFocused)}
-                                    onBlur={handleBlur(setEmailFocused)}
-                                    autoComplete="email"
-                                />
-                            </div>
-                        </div>
-                        <div className={`input-div pass ${passwordFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-lock"></i>
-                            </div>
-                            <div className="div">
-                                <h5>Password</h5>
-                                <input
-                                    type="password"
-                                    className="input"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onFocus={handleFocus(setPasswordFocused)}
-                                    onBlur={handleBlur(setPasswordFocused)}
-                                    autoComplete="current-password"
-                                />
-                            </div>
-                        </div>
-                        <LoadingButton
-                            type="submit"
-                            size="small"
-                            loading={loading}
-                            loadingPosition="start"
-                            startIcon={<SaveIcon />}
-                            variant="contained"
-                            sx={{ width: '150px', height: '50px', marginTop: "40px" }}
-                            className="btn"
-                        >
-                            <span>Sign up</span>
-                        </LoadingButton>
-                        <Snackbar
-                            open={state.open}
-                            onClose={() => setState(prevState => ({ ...prevState, open: false }))}
-                            TransitionComponent={state.Transition}
-                            message={snackbarMessage}
-                            key={state.Transition.name}
-                            autoHideDuration={1500}
-                            ContentProps={{
-                                style: { ...snackbarStyle, textAlign: 'center' },
-                            }}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'center',
-                            }}
-                        />
-                        <div className='sign-in-toggle'>
-                            <p>Already have an account? </p>
-                            <Link to={"/login"}>Log In</Link>
-                        </div>
-                    </form>
-                </div>
-            </div>
+  }, [loading]);
+ 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+ 
+  const handleCloseSnackbar = () => {
+    setSnackbar((prevState) => ({ ...prevState, open: false }));
+  };
+ 
+  return isLoading ? (
+    <div className="loading">
+      <Loader />
+    </div>
+  ) : (
+    <div className="login-page">
+      <img className="wave" src={waveImg} alt="wave" />
+      <div className="container">
+        <div className="img">
+          <img src={bgImg} alt="background" />
         </div>
-    );
+ 
+        <div className="login-content">
+          <form onSubmit={handleSignUp} autoComplete="on">
+            <img src={avatarImg} alt="avatar" />
+            <h2 className="title">Sign Up</h2>
+ 
+            <div
+              className={`input-div one ${
+                focusedFields.firstName ? 'focus' : ''
+              }`}
+            >
+              <div className="i">
+                <i className="fas fa-user"></i>
+              </div>
+              <div className="div">
+                <h5>First Name</h5>
+                <input
+                  type="text"
+                  className="input"
+                  value={formData.firstName}
+                  onChange={handleInputChange('firstName')}
+                  onFocus={handleFocus('firstName')}
+                  onBlur={handleBlur('firstName')}
+                  autoComplete="given-name"
+                  ref={usernameRef}
+                />
+              </div>
+            </div>
+ 
+            <div
+              className={`input-div one ${
+                focusedFields.lastName ? 'focus' : ''
+              }`}
+            >
+              <div className="i">
+                <i className="fas fa-user"></i>
+              </div>
+              <div className="div">
+                <h5>Last Name</h5>
+                <input
+                  type="text"
+                  className="input"
+                  value={formData.lastName}
+                  onChange={handleInputChange('lastName')}
+                  onFocus={handleFocus('lastName')}
+                  onBlur={handleBlur('lastName')}
+                  autoComplete="family-name"
+                />
+              </div>
+            </div>
+ 
+            <div
+              className={`input-div one ${focusedFields.email ? 'focus' : ''}`}
+            >
+              <div className="i">
+                <i className="fas fa-envelope"></i>
+              </div>
+              <div className="div">
+                <h5>Email</h5>
+                <input
+                  type="email"
+                  className="input"
+                  value={formData.email}
+                  onChange={handleInputChange('email')}
+                  onFocus={handleFocus('email')}
+                  onBlur={handleBlur('email')}
+                  autoComplete="email"
+                />
+              </div>
+            </div>
+ 
+            <div
+              className={`input-div pass ${
+                focusedFields.password ? 'focus' : ''
+              }`}
+            >
+              <div className="i">
+                <i className="fas fa-lock"></i>
+              </div>
+              <div className="div">
+                <h5>Password</h5>
+                <input
+                  type="password"
+                  className="input"
+                  value={formData.password}
+                  onChange={handleInputChange('password')}
+                  onFocus={handleFocus('password')}
+                  onBlur={handleBlur('password')}
+                  autoComplete="new-password"
+                  ref={passwordRef}
+                />
+              </div>
+            </div>
+ 
+            <LoadingButton
+              type="submit"
+              size="small"
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<SaveIcon />}
+              variant="contained"
+              sx={{ width: '150px', height: '50px', marginTop: '40px' }}
+              className="btn"
+            >
+              <span>Sign up</span>
+            </LoadingButton>
+ 
+            <Snackbar
+              open={snackbar.open}
+              onClose={handleCloseSnackbar}
+              TransitionComponent={snackbar.Transition}
+              message={snackbar.message}
+              key={snackbar.Transition.name}
+              autoHideDuration={1500}
+              ContentProps={{
+                style: { ...snackbar.style, textAlign: 'center' },
+              }}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
-
+ 
 export default Signup;

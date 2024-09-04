@@ -1,29 +1,29 @@
-// Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import GridLayout, { Layout } from 'react-grid-layout';
 import { getTenantDevices } from '../../api/deviceApi';
 import './Dashboard.css';
 import { Device } from '../../types/thingsboardTypes';
 import Widget from './Widget';
-// import { useParams } from 'react-router-dom';
+
+// Extend the Layout type to include a "type" property
+interface CustomLayout extends Layout {
+  type: 'line' | 'bar' | 'scatter' | 'pie';
+}
 
 const Dashboard: React.FC = () => {
-  const [layout, setLayout] = useState<Layout[]>([]);
+  const [layout, setLayout] = useState<CustomLayout[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
   const [isEditable, setIsEditable] = useState<boolean>(false);
-
-  // const {dashboardId} = useParams()
-
 
   useEffect(() => {
     const fetchDevices = async () => {
       const params = {
         pageSize: 50,
         page: 0
-      }
+      };
       const response = await getTenantDevices(params);
       setDevices(response.data.data);
-      console.log(response.data.data)
+      console.log(response.data.data);
     };
 
     fetchDevices();
@@ -55,11 +55,11 @@ const Dashboard: React.FC = () => {
         width={1200}
         isDraggable={isEditable}
         isResizable={isEditable}
-        onLayoutChange={(layout) => setLayout(layout)}
+        onLayoutChange={(layout) => setLayout(layout as CustomLayout[])}
       >
         {layout.map((item) => (
           <div key={item.i} data-grid={item}>
-            <Widget devices={devices} type={'item.type'} />
+            <Widget devices={devices} type={item.type} />
           </div>
         ))}
       </GridLayout>
