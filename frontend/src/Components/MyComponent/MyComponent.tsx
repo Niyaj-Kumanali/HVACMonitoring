@@ -10,6 +10,7 @@ import {
 } from '../../api/widgetsBundleAPI';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
+import connectToPostgres from '../../api/connectToPostgres';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -86,6 +87,8 @@ const MyComponent: React.FC = () => {
     }
   };
 
+  
+
   // Fetch widget bundles with parameters
   const fetchWidgetBundles = async (page: number) => {
     try {
@@ -126,6 +129,11 @@ const MyComponent: React.FC = () => {
     console.log('Current User: \n', currentuser.data);
   };
 
+  const handlePostgres = async () => {
+    const responce = await connectToPostgres();
+    console.log(responce)
+  }
+
   const handlePageChangeWidgets = (page: number) => {
     if (page >= 0 && page < totalWidgetPages) {
       setCurrentWidgetPage(page);
@@ -143,6 +151,7 @@ const MyComponent: React.FC = () => {
 
   return (
     <div className="menu-data mycomponent">
+      <button onClick={handlePostgres}>postgres</button>
       <h1>MyComponent</h1>
       <button onClick={handleGetAll}>Get Data</button>
 
@@ -248,5 +257,8 @@ const MyComponent: React.FC = () => {
     </div>
   );
 };
+
+
+
 
 export default MyComponent;

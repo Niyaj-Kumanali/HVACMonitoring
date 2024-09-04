@@ -188,7 +188,7 @@ router.get('/getbyvehicleid/:vehicle_id', async(req, res) => {
         const vehicleData = await vehicle.findOne({ vehicle_id })
         .populate({
             path: 'cooling_units.coolant',
-            select: 'coolant_id location_in_warehouse'
+            select: 'coolant_id location_in vehicle'
         })
         .populate({
             path: 'sensors.sensor',
@@ -244,13 +244,36 @@ router.delete('/deletevehicle/:vehicle_id', async(req, res) => {
 });
 
 
-// update vehicle by vehicle_id
+/**
+ * @swagger
+ * /vehicle/updatevehicle/{vehicle_id}:
+ *   put:
+ *     summary: Update a vehicle by vehicle ID
+ *     tags:
+ *       - Vehicle
+ *     parameters:
+ *       - in: path
+ *         name: vehicle_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Vehicle ID
+ *     responses:
+ *       200:
+ *         description: Vehicle updated successfully
+ *       404:
+ *         description: Vehicle not found
+ *       500:
+ *         description: Error updating vehicle
+ */
+
+// Update a vehicle by vehicle_id
 router.put('/updatevehicle/:vehicle_id', async (req, res) => {
     try {
         const { vehicle_id } = req.params;
         const updateData = req.body;
 
-        // Find the warehouse by warehouse_id and update it
+        // Find the vehicle by vehicle_id and update it
         const updatedVehicle = await vehicle.findOneAndUpdate(
             { vehicle_id },
             updateData,
