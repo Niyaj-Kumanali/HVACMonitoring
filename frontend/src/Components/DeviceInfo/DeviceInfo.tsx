@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteDevice, getDeviceById } from '../../api/deviceApi';
+import { deleteDevice, getDeviceById, saveDevice, getTenantDevices } from '../../api/deviceApi';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
@@ -9,40 +9,52 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import {
-  Device,
-  DeviceQueryParams,
-  PageData,
-} from '../../types/thingsboardTypes';
-import { saveDevice, getTenantDevices } from '../../api/deviceApi';
+import { Device, DeviceQueryParams, PageData } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
-import "./DeviceInfo.css"
+import "./DeviceInfo.css";
+import { getCurrentUser } from '../../api/loginApi';
+import { mongoAPI } from '../../api/MongoAPIInstance';
+
+interface Warehouse {
+  warehouse_id: string;
+  warehouse_name: string;
+}
+
+interface Vehicle {
+  vehicle_id: string;
+  vehicle_name: string;
+}
 
 
 const DeviceInfo: React.FC = () => {
   const { deviceId } = useParams();
+  const navigate = useNavigate();
+  const deviceCountDispatch = useDispatch();
+  const user = useSelector((state: any) => state.user.user);
+
   const [deviceInfo, setDeviceInfo] = useState<Device>({});
   const [loading, setLoading] = useState(false);
   const [admin, setAdmin] = useState('');
-  const [location, setLocation] = useState('');
   const [action, setAction] = useState('');
-
+  const [label, setLabel] = useState('');
+  const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
+  const [warehouseInfo, setWarehouseInfo] = useState('');
+  const [vehicle, setVehicle] = useState<Vehicle[]>([]);
+  const [vehicleInfo, setVehicleInfo] = useState('');
   const [loaders, setLoaders] = useState(true);
-  const deviceCountDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-    'success'
-  );
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
+      setLoading(true);
       try {
         const deviceData = await getDeviceById(deviceId);
         setDeviceInfo(deviceData.data);
@@ -56,21 +68,17 @@ const DeviceInfo: React.FC = () => {
     fetchDeviceInfo();
   }, [deviceId]);
 
-  const handleAdminChange = (event: SelectChangeEvent) => {
-    setAdmin(event.target.value);
-  };
+    const fetchAllWarehouses = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
+        setWarehouse(response.data);
+      } catch (error) {
+        console.error("Failed to fetch warehouses:", error);
+      }
+    };
 
-  const handleLocationChange = (event: SelectChangeEvent) => {
-    setLocation(event.target.value);
-  };
-
-  const handleActionChange = (event: SelectChangeEvent) => {
-    setAction(event.target.value);
-  };
-
-  setTimeout(() => {
-    setLoaders(false);
-  }, 1000);
+    fetchAllWarehouses();
 
   const fetchDevices = async (page: number): Promise<void> => {
     try {
@@ -90,75 +98,81 @@ const DeviceInfo: React.FC = () => {
     }
   };
 
+  const handleAdminChange = (event: SelectChangeEvent) => setAdmin(event.target.value);
+  const handleActionChange = (event: SelectChangeEvent) => setAction(event.target.value);
+
+  const handleLabelChange = async (event: SelectChangeEvent) => {
+    const selectedLabel = event.target.value;
+    setLabel(selectedLabel);
+
+    if (selectedLabel === 'warehouse') {
+      fetchAllWarehouses();
+    } else if (selectedLabel === 'vehicle') {
+      try {
+        const response = await mongoAPI.get(`/vehicle/getallvehicle/${user.id.id}`);
+        setVehicle(response.data);
+      } catch (error) {
+        console.error("Failed to fetch vehicles:", error);
+      }
+    }
+  };
+
+  const handleWarehouseChange = (event: SelectChangeEvent) => {
+    setWarehouseInfo(event.target.value);
+    setDeviceInfo(prev => ({ ...prev, label: event.target.value }));
+  };
+
+  const handleVehicleChange = (event: SelectChangeEvent) => {
+    setVehicleInfo(event.target.value);
+    setDeviceInfo(prev => ({ ...prev, label: event.target.value }));
+  };
+
   const handleClick = async () => {
     setLoading(true);
-
     try {
       await saveDevice(deviceInfo);
       await fetchDevices(0);
 
-      setTimeout(() => {
-        setLoading(false);
-        setMessage('Device added successfully!');
-        setSnackbarType('success');
-        setOpen(true);
-      }, 500);
+      setMessage('Device added successfully!');
+      setSnackbarType('success');
     } catch (error) {
-      console.log('Failed to create device');
-      setTimeout(() => {
-        setLoading(false);
-        setMessage('Device Already Exist');
-        setSnackbarType('error');
-        setOpen(true);
-      }, 500);
+      console.error('Failed to create device', error);
+      setMessage('Device Already Exist');
+      setSnackbarType('error');
+    } finally {
+      setLoading(false);
+      setOpen(true);
     }
   };
-  
-  const navigate = useNavigate();
 
   const handleDeleteDevice = async () => {
     setLoading(true);
-
     try {
       await deleteDevice(deviceId || "");
 
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setMessage('Device Deleted');
-        setSnackbarType("success");
-
-        setTimeout(() => {
-          navigate("/devices");
-        }, 900);
-
-      }, 900);
-
+      setMessage('Device Deleted');
+      setSnackbarType('success');
+      setTimeout(() => navigate("/devices"), 900);
     } catch (error) {
       console.error('Failed to delete device', error);
-
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setMessage('Failed to delete device');
-        setSnackbarType("error");
-      }, 500);
+      setMessage('Failed to delete device');
+      setSnackbarType('error');
+    } finally {
+      setLoading(false);
+      setOpen(true);
     }
   };
 
-
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event;
-      return;
-    }
-
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+    if (reason === 'clickaway') return;
+    event
     setOpen(false);
   };
+
+  useEffect(() => {
+    const loaderTimeout = setTimeout(() => setLoaders(false), 1000);
+    return () => clearTimeout(loaderTimeout);
+  }, []);
 
   return (
     <>
@@ -168,53 +182,84 @@ const DeviceInfo: React.FC = () => {
         <div className="menu-data">
           <div className="add-device">
             <form>
-              <label htmlFor="" className="label">
-                Device Info
-              </label>
+              <label className="label">Device Info</label>
               <Box className="text-field-box">
                 <TextField
                   fullWidth
                   label="Name"
-                  onChange={(e) =>
-                    setDeviceInfo((prev) => ({ ...prev, name: e.target.value }))
-                  }
+                  onChange={(e) => setDeviceInfo(prev => ({ ...prev, name: e.target.value }))}
                   value={deviceInfo.name || ''}
                 />
               </Box>
-              <label htmlFor="" className="label">
-                Label
-              </label>
+              <label className="label">Location</label>
+              <FormControl className="form-control">
+                <InputLabel id="location-label">Select Location</InputLabel>
+                <Select
+                  labelId="location-label"
+                  id="location-select"
+                  value={label}
+                  label="Select Location"
+                  onChange={handleLabelChange}
+                  className="form-control-inner"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="warehouse">Warehouse</MenuItem>
+                  <MenuItem value="vehicle">Vehicle</MenuItem>
+                </Select>
+              </FormControl>
+              {label === 'warehouse' && (
+                <FormControl className="form-control">
+                  <InputLabel id="warehouse-label">Select Warehouse</InputLabel>
+                  <Select
+                    labelId="warehouse-label"
+                    id="warehouse-select"
+                    value={warehouseInfo}
+                    label="Select Warehouse"
+                    onChange={handleWarehouseChange}
+                    className="form-control-inner"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {warehouse.map((wh, index) => (
+                      <MenuItem key={index} value={wh.warehouse_id}>{wh.warehouse_name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              {label === 'vehicle' && (
+                <FormControl className="form-control">
+                  <InputLabel id="vehicle-label">Select Vehicle</InputLabel>
+                  <Select
+                    labelId="vehicle-label"
+                    id="vehicle-select"
+                    value={vehicleInfo}
+                    label="Select Vehicle"
+                    onChange={handleVehicleChange}
+                    className="form-control-inner"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {vehicle.map((veh, index) => (
+                      <MenuItem key={index} value={veh.vehicle_id}>{veh.vehicle_name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+              <label className="label">Type</label>
               <Box className="text-field-box">
                 <TextField
                   fullWidth
-                  label="Label"
-                  onChange={(e) =>
-                    setDeviceInfo((prev) => ({
-                      ...prev,
-                      label: e.target.value,
-                    }))
-                  }
-                  value={deviceInfo.label || ''}
-                  className="textfiled"
-                />
-              </Box>
-              <label htmlFor="" className="label">
-                Type
-              </label>
-              <Box className="text-field-box">
-                <TextField
-                  fullWidth
-                  label="type"
-                  onChange={(e) =>
-                    setDeviceInfo((prev) => ({ ...prev, type: e.target.value }))
-                  }
+                  label="Type"
+                  onChange={(e) => setDeviceInfo(prev => ({ ...prev, type: e.target.value }))}
                   value={deviceInfo.type || ''}
                   className="textfiled"
                 />
               </Box>
-              <label htmlFor="" className="label">
-                Admin
-              </label>
+              <label className="label">Admin</label>
               <FormControl className="form-control">
                 <InputLabel id="admin-label">Select User</InputLabel>
                 <Select
@@ -228,35 +273,10 @@ const DeviceInfo: React.FC = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {/* Render user options here */}
                 </Select>
               </FormControl>
-              <label htmlFor="" className="label">
-                Location
-              </label>
-              <FormControl className="form-control">
-                <InputLabel id="location-label">Select Location</InputLabel>
-                <Select
-                  labelId="location-label"
-                  id="location-select"
-                  value={location}
-                  label="Select Location"
-                  onChange={handleLocationChange}
-                  className="form-control-inner"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-              <label htmlFor="" className="label">
-                Action
-              </label>
+              <label className="label">Action</label>
               <FormControl className="form-control">
                 <InputLabel id="action-label">Select Action</InputLabel>
                 <Select
@@ -270,25 +290,24 @@ const DeviceInfo: React.FC = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem value="add">Add</MenuItem>
+                  <MenuItem value="remove">Remove</MenuItem>
                 </Select>
               </FormControl>
-              <div className="accountinfo-savebtn-delete-btn">
-                <LoadingButton
-                  size="small"
-                  color="secondary"
-                  onClick={handleClick}
-                  loading={loading}
-                  loadingPosition="start"
-                  startIcon={<SaveIcon />}
-                  variant="contained"
-                  disabled={loading}
-                  className="btn-save"
-                >
-                  <span>Save</span>
-                </LoadingButton>
+                <div className="accountinfo-savebtn-delete-btn">
+                  <LoadingButton
+                    size="small"
+                    color="secondary"
+                    onClick={handleClick}
+                    loading={loading}
+                    loadingPosition="start"
+                    startIcon={<SaveIcon />}
+                    variant="contained"
+                    disabled={loading}
+                    className="btn-save"
+                  >
+                    <span>Save</span>
+                  </LoadingButton>
                   <LoadingButton
                     size="small"
                     color="error"
@@ -302,35 +321,28 @@ const DeviceInfo: React.FC = () => {
                   >
                     <span>Delete</span>
                   </LoadingButton>
-              </div>
+                </div>
             </form>
           </div>
-          <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            style={{ marginTop: '64px' }}
-          >
-            <SnackbarContent
-              style={{
-                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                color: 'white',
-              }}
-              message={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {snackbarType === 'success' ? (
-                    <CheckIcon style={{ marginRight: '8px' }} />
-                  ) : (
-                    <ErrorIcon style={{ marginRight: '8px' }} />
-                  )}
-                  {message}
-                </span>
-              }
-            />
-          </Snackbar>
         </div>
       )}
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <SnackbarContent
+          message={
+            <span>
+              {snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />}
+              {message}
+            </span>
+          }
+          style={{
+            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+          }}
+        />
+      </Snackbar>
     </>
   );
 };
