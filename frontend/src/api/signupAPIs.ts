@@ -87,7 +87,7 @@ export const CreateSignUpUser = async(tenant: Tenant, tenantBody: User) => {
     const adminUserName = import.meta.env.VITE_THINGSBOARD_ADMINUSERNAME
     const adminPassword = import.meta.env.VITE_THINGSBOARD_ADMINUSERPASSWORD
     console.log(adminPassword, adminUserName)
-    const response = await login(adminUserName, adminPassword);
+    await login(adminUserName, adminPassword);
 
     // Create a tenant
     const tenantResponse = await saveTenant(tenant)

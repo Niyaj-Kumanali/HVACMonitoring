@@ -11,7 +11,7 @@ const PieChartWidget: React.FC<PieChartWidgetProps> = ({ data }) => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   // Aggregate data for Pie Chart display
-  const pieData = Object.keys(data).map((key, index) => {
+  const pieData = Object.keys(data).map((key) => {
     const total = data[key].reduce((sum, point) => sum + point.value, 0);
     return { name: key, value: total };
   });
@@ -27,7 +27,7 @@ const PieChartWidget: React.FC<PieChartWidgetProps> = ({ data }) => {
           fill="#8884d8"
           label
         >
-          {pieData.map((entry, index) => (
+          {pieData.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
