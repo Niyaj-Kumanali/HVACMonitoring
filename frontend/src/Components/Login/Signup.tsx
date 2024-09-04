@@ -13,23 +13,37 @@ import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import thingsboardAPI from '../../api/thingsboardAPI';
 import Loader from '../Loader/Loader';
+import { Tenant, User } from '../../types/thingsboardTypes';
+import { CreateSignUpUser } from '../../api/signupAPIs';
+import { getActivationLink } from '../../api/userApi';
+import axios from 'axios';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
 }
 
-const Login: React.FC = () => {
-    const [username, setUsername] = useState<string>('');
+const Signup: React.FC = () => {
+    const [orgName, setOrgName] = useState('Tenant');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [snackbarStyle, setSnackbarStyle] = useState<React.CSSProperties>({});
     const [isLoading, setIsLoading] = useState<boolean>(true); // Added loading state
     const navigate = useNavigate();
+    const firstNameRef = useRef<HTMLInputElement>(null);
+    const lastNameRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
-    const [usernameFocused, setUsernameFocused] = useState<boolean>(false);
+    const [firstNameFocused, setfirstNameFocused] = useState<boolean>(false);
+    const [lastNameFocused, setlastNameFocused] = useState<boolean>(false);
+    const [emailFocused, setemailFocused] = useState<boolean>(false);
     const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
 
     const handleFocus = (setter: React.Dispatch<React.SetStateAction<boolean>>) => () => {
@@ -55,55 +69,117 @@ const Login: React.FC = () => {
         Transition: SlideTransition,
     });
 
-    const login = async (username: string, password: string): Promise<string> => {
-        try {
-            const response = await thingsboardAPI.post<{ token: string }>(
-                '/auth/login',
-                { username, password }
-            );
-            const token = response.data.token;
-            localStorage.setItem('token', token);
-            dispatch(set_Accesstoken(token));
-            return token;
-        } catch (error) {
-            console.error('Login failed', error);
-            throw error;
-        }
+    // const func = async (link: string, password: string) => {
+    //     console.log(link, password)
+    //     try {
+
+    //         // curl -X POST link -d "password=password>"
+    //         const response = await thingsboardAPI.post(link, {
+    //             password: password
+    //         });
+    //         return response.data; // or handle the response as needed
+    //     } catch (error) {
+    //         console.error("Error occurred during API call:", error);
+    //         throw error; // or handle the error as needed
+    //     }
+    // }
+
+    // Function to set the password using the activation link and token
+    const setUserPassword = async (activateToken: string, password: string) => {
+        const response = await axios.post('http://3.111.205.170:8085/login/createPassword', {
+            activateToken,
+            password,
+            confirmPassword: password
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        return response;
+
     };
 
-    const handleLogin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    // const login = async (username: string, password: string): Promise<string> => {
+    //     try {
+    //         const response = await thingsboardAPI.post<{ token: string }>(
+    //             '/auth/login',
+    //             { username, password }
+    //         );
+    //         const token = response.data.token;
+    //         localStorage.setItem('token', token);
+    //         console.log(response.data)
+    //         dispatch(set_Accesstoken(token));
+    //         return token;
+    //     } catch (error) {
+    //         console.error('Login failed', error);
+    //         throw error;
+    //     }
+    // };
+
+
+    const handleSignUp = async (event: React.FormEvent) => {
         event.preventDefault();
-        setLoading(true);
+        setIsLoading(true);
+        setErrorMessage('');
+        setSuccessMessage('');
 
         try {
-            await login(username, password);
+            const userBody: User = {
+                email: email,
+                authority: 'TENANT_ADMIN',
+                firstName: firstName,
+                lastName: lastName,
+                password: password,
+                phone: '',
+                additionalInfo: {},
+            };
 
-            // Set success message and show it after the button finishes loading
-            setTimeout(() => {
-                setLoading(false);
-                setSnackbarMessage('Login successful!');
-                setSnackbarStyle({ backgroundColor: 'green' });
-                setState({ open: true, Transition: SlideTransition });
+            const tenant: Tenant = {
+                title: orgName,
+            };
 
-                // Hide the success message after 1 second
-                setTimeout(() => {
-                    setState(prevState => ({ ...prevState, open: false }));
-                    navigate('/dashboards', { state: username });
-                }, 500);
-            }, 1000);
+            // Create the user
+            let responseActivationLink = {}
+            try{
+                const createdUser = await CreateSignUpUser(tenant, userBody);
+                responseActivationLink = await getActivationLink(createdUser.data.id?.id);
+            }
+            catch(error ){
+                console.log("Error creating user", error)
+                return
+            }
 
+
+            const activateToken = responseActivationLink?.data.split("=")[1];
+            console.log("Activation Token:", activateToken);
+
+            // Set the user password
+            const res = await setUserPassword(activateToken, password);
+            console.log("Set Password Response:", res);
+
+            if (res.status === 200) {
+                // Uncomment to navigate to login page
+                // navigate('/login');
+                console.log("Password set successfully, navigate to login.");
+            } else {
+                console.error('Activation failed:', res);
+            }
+
+            setSuccessMessage(
+                'Sign-up successful! Please check your email to activate your account.'
+            );
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPassword('');
         } catch (error) {
-            setSnackbarMessage('Invalid username or password');
-            setSnackbarStyle({ backgroundColor: 'red' });
-            setLoading(false);
-            setState({ open: true, Transition: SlideTransition });
-
-            // Hide the error message after 1 second
-            setTimeout(() => {
-                setState(prevState => ({ ...prevState, open: false }));
-            }, 1000); // 1 second delay before hiding
+            throw error
+        } finally {
+            setIsLoading(false);
         }
     };
+
 
 
     // Focus username input on mount
@@ -183,25 +259,61 @@ const Login: React.FC = () => {
                 <div className="img">
                     <img src={bgImg} alt="background" />
                 </div>
+
                 <div className="login-content">
-                    <form onSubmit={handleLogin} autoComplete="on">
+                    <form onSubmit={handleSignUp} autoComplete="on">
                         <img src={avatarImg} alt="avatar" />
                         <h2 className="title">Sign Up</h2>
-                        <div className={`input-div one ${usernameFocused ? 'focus' : ''}`}>
+
+                        <div className={`input-div one ${firstNameFocused ? 'focus' : ''}`}>
                             <div className="i">
                                 <i className="fas fa-user"></i>
                             </div>
-                            
                             <div className="div">
-                                <h5>Username</h5>
+                                <h5>FirstName</h5>
                                 <input
                                     type="text"
                                     className="input"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    onFocus={handleFocus(() => setUsernameFocused(true))}
-                                    onBlur={handleBlur(() => setUsernameFocused(false))}
-                                    autoComplete="username"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    onFocus={handleFocus(() => setfirstNameFocused(true))}
+                                    onBlur={handleBlur(() => setfirstNameFocused(false))}
+                                    autoComplete="firstName"
+                                />
+                            </div>
+                        </div>
+                        <div className={`input-div one ${lastNameFocused ? 'focus' : ''}`}>
+                            <div className="i">
+                                <i className="fas fa-user"></i>
+                            </div>
+                            <div className="div">
+                                <h5>LastName</h5>
+                                <input
+                                    type="text"
+                                    className="input"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    onFocus={handleFocus(() => setlastNameFocused(true))}
+                                    onBlur={handleBlur(() => setlastNameFocused(false))}
+                                    autoComplete="lastName"
+                                />
+                            </div>
+                        </div>
+
+                        <div className={`input-div one ${emailFocused ? 'focus' : ''}`}>
+                            <div className="i">
+                                <i className="fas fa-user"></i>
+                            </div>
+                            <div className="div">
+                                <h5>Email</h5>
+                                <input
+                                    type="email"
+                                    className="input"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onFocus={handleFocus(() => setemailFocused(true))}
+                                    onBlur={handleBlur(() => setemailFocused(false))}
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
@@ -232,7 +344,7 @@ const Login: React.FC = () => {
                             sx={{ width: '150px', height: '50px', marginTop: "40px" }}
                             className="btn"
                         >
-                            <span>Login</span>
+                            <span>Sign up</span>
                         </LoadingButton>
                         <Snackbar
                             open={state.open}
@@ -260,4 +372,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default Signup;

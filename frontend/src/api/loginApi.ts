@@ -43,9 +43,10 @@ export const getCurrentUser = async () => {
 export const checkActivateToken = async (
   activateToken: string
 ) => {
-  await thingsboardAPI.get('/noauth/activate', {
+  const response = await thingsboardAPI.get('/noauth/activate', {
     params: { activateToken },
   });
+  return response
 };
 
 // Activate User
