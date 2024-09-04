@@ -61,9 +61,9 @@ const Menubar = () => {
                 <Link to="/actions" className="link">
                     <li><ElectricBoltIcon className="speedicon" />Actions <span className="count">3</span></li>
                 </Link>
-                <Link to="/devices" className="link" ref={hideref}>
+                {currentuser == 'TENANT_ADMIN' && <Link to="/devices" className="link">
                     <li><CableIcon className="speedicon" />Devices <span className="count">{deviceCount}</span></li>
-                </Link>
+                </Link>}
                 <Link to="/locations" className="link">
                     <li><LocationOnIcon className="speedicon" />Locations <span className="count">3</span></li>
                 </Link>

@@ -5,14 +5,14 @@ import { getTenantDevices } from '../../api/deviceApi';
 import './Dashboard.css';
 import { Device } from '../../types/thingsboardTypes';
 import Widget from './Widget';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const [layout, setLayout] = useState<Layout[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  const {dashboardId} = useParams()
+  // const {dashboardId} = useParams()
 
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const Dashboard: React.FC = () => {
       >
         {layout.map((item) => (
           <div key={item.i} data-grid={item}>
-            <Widget devices={devices} type={item.type} />
+            <Widget devices={devices} type={'item.type'} />
           </div>
         ))}
       </GridLayout>
