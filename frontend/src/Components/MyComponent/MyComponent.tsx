@@ -137,10 +137,6 @@ const MyComponent: React.FC = () => {
     console.log(deviceInfo.data)
   };
 
-  const handlePostgres = async () => {
-    const responce = await connectToPostgres();
-    console.log(responce)
-  }
 
   const handlePageChangeWidgets = (page: number) => {
     if (page >= 0 && page < totalWidgetPages) {
@@ -159,7 +155,6 @@ const MyComponent: React.FC = () => {
 
   return (
     <div className="menu-data mycomponent">
-      <button onClick={handlePostgres}>postgres</button>
       <h1>MyComponent</h1>
       <button onClick={handleGetAll}>Get Data</button>
 
