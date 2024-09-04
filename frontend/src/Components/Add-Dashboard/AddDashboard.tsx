@@ -8,15 +8,14 @@ import {
   Button,
   Box,
 } from '@mui/material';
-import { getCustomerUsers } from '../../api/userApi';
-import { useSelector } from 'react-redux';
+import { getUsers } from '../../api/userApi';
+import { User } from '../../types/thingsboardTypes';
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedCustomer, setAssignedCustomer] = useState('');
   const [customers, setCustomers] = useState([]);
-  const user = useSelector((state: any)=> state.user.user)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +33,11 @@ const AddDashboard: React.FC = () => {
             pageSize: 1000,
             page:0
         }
-        const response = await getCustomerUsers(user.customerId.id, params)
+        const response = await getUsers(params)
         setCustomers(response.data)
     }
 
+    getCustomers()
   }, [])
 
   return (
@@ -86,9 +86,9 @@ const AddDashboard: React.FC = () => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          {customers.map((customer) => (
-            <MenuItem key={customer} value={customer.email}>
-              {customer}
+          {customers.map((customer: User) => (
+            <MenuItem key={customer.id?.id} value={customer.email}>
+              {customer.email}
             </MenuItem>
           ))}
         </Select>

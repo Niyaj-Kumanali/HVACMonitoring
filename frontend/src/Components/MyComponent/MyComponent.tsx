@@ -11,7 +11,6 @@ import {
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 import { getDeviceCredentialsByDeviceId, getFilteredDevices } from '../../api/deviceApi';
-import { CatchingPokemon } from '@mui/icons-material';
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -54,10 +53,10 @@ const MyComponent: React.FC = () => {
       const tenant: Tenant = {
         title: orgName,
       };
-      const createdUser = await CreateSignUpUser(tenant, userBody);
-      const activationLink = await getActivationLink(createdUser.data.id?.id);
+      const response = await CreateSignUpUser(tenant, userBody);
+      const activationLink = await getActivationLink(response?.data.id?.id);
 
-      console.log(createdUser);
+      console.log(response);
       console.log(activationLink);
 
       setSuccessMessage(

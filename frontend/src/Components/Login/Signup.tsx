@@ -9,7 +9,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
-import { activateEmail, CreateSignUpUser } from '../../api/signupAPIs';
+import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -22,7 +22,7 @@ const Signup: React.FC = () => {
     password: '',
   });
   const [focusedFields, setFocusedFields] = useState({
-    firstName: false,
+    firstName: true,
     lastName: false,
     email: false,
     password: false,
@@ -64,6 +64,9 @@ const Signup: React.FC = () => {
           headers: {
             'Content-Type': 'application/json', // Changed to 'application/json'
           },
+          params: {
+            password: password
+          }
         }
       );
       return response;

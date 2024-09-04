@@ -8,7 +8,7 @@ export interface Device {
   credentials?: any; // Optional: Device credentials if applicable
   tenantId?: {id: string, entityType: string};
   customerId?: {id: string, entityType: string};
-  additionalInfo?: Object;
+  additionalInfo?: any;
   active?:boolean;
   deviceProfileName?:string,
   sensors?: string[]

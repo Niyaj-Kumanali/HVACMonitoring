@@ -110,7 +110,7 @@ export const CreateSignUpUser = async (tenant: Tenant, tenantBody: User) => {
     console.log('Activation Link:', activationLink);
     return createdUser;
   } catch (error) {
-    await deleteTenant(tenantId.id);
+    await deleteTenant(tenantId?.id);
     console.log('Tenant deleted');
   }
 };
