@@ -1,11 +1,11 @@
 import "./users.css";
 import { useEffect, useState } from "react";
 import { getUsers } from "../../api/userApi";
-import PersonIcon from '@mui/icons-material/Person';
 import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";
 import { set_usersCount } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
+import userimage from "../../assets/user.gif"
 
 interface AdditionalInfo {
     lastLoginTs?: number;
@@ -75,7 +75,8 @@ const AddCustomer: React.FC = () => {
                         <Link to={`/user/${user.id.id}`} className="userinfo" key={index} state={user}>
                             <div className="user-img-info">
                                 <div className="img">
-                                    <PersonIcon className="personicon" />
+                                    <img src={userimage} className="personicon static-img" alt="User Static" />
+                                    <img src={userimage} className="personicon animated-img" alt="User Animated" />
                                 </div>
                                 <div className="status">
                                     <p className="username">{user.email}</p>

@@ -41,6 +41,7 @@ const Devices: React.FC = () => {
             };
 
             const response = await getTenantDeviceInfos(params);
+            console.log(response.data.data)
             setDevices(response.data.data || []);
             deviceCountDispatch(set_DeviceCount(response.data.totalElements));
 
