@@ -12,7 +12,7 @@ import { Tenant, User } from '../../types/thingsboardTypes';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 import axios from 'axios';
-
+ 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -36,17 +36,17 @@ const Signup: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-
+ 
   const handleInputChange =
     (field: keyof typeof formData) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData({ ...formData, [field]: e.target.value });
     };
-
+ 
   const handleFocus = (field: keyof typeof focusedFields) => () => {
     setFocusedFields((prev) => ({ ...prev, [field]: true }));
   };
-
+ 
   const handleBlur =
     (field: keyof typeof focusedFields) =>
     (e: React.FocusEvent<HTMLInputElement>) => {
@@ -54,7 +54,7 @@ const Signup: React.FC = () => {
         setFocusedFields((prev) => ({ ...prev, [field]: false }));
       }
     };
-
+ 
   const setUserPassword = async (activateToken: string, password: string) => {
     try {
       const response = await axios.post(
@@ -76,10 +76,10 @@ const Signup: React.FC = () => {
       throw error;
     }
   };
-
+ 
   const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
-
+ 
     if (
       !formData.firstName ||
       !formData.lastName ||
@@ -94,9 +94,9 @@ const Signup: React.FC = () => {
       });
       return;
     }
-
+ 
     setLoading(true);
-
+ 
     try {
       const userBody: User = {
         email: formData.email,
@@ -107,19 +107,19 @@ const Signup: React.FC = () => {
         phone: '',
         additionalInfo: {},
       };
-
+ 
       const tenant: Tenant = {
         title: 'TenantUser',
       };
-
+ 
       const createdUser = await CreateSignUpUser(tenant, userBody);
       const responseActivationLink = await getActivationLink(
         createdUser.data.id?.id
       );
-
+ 
       const activateToken = responseActivationLink.data.split('=')[1];
       const res = await setUserPassword(activateToken, formData.password);
-
+ 
       if (res.status === 200) {
         setFormData({
           firstName: '',
@@ -152,39 +152,39 @@ const Signup: React.FC = () => {
       setLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     usernameRef.current?.focus();
   }, []);
-
+ 
   useEffect(() => {
     const handleNavigation = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = '';
     };
-
+ 
     if (loading) {
       window.addEventListener('beforeunload', handleNavigation);
     } else {
       window.removeEventListener('beforeunload', handleNavigation);
     }
-
+ 
     return () => {
       window.removeEventListener('beforeunload', handleNavigation);
     };
   }, [loading]);
-
+ 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 500);
     return () => clearTimeout(timer);
   }, []);
-
+ 
   const handleCloseSnackbar = () => {
     setSnackbar((prevState) => ({ ...prevState, open: false }));
   };
-
+ 
   return isLoading ? (
     <div className="loading">
       <Loader />
@@ -196,12 +196,12 @@ const Signup: React.FC = () => {
         <div className="img">
           <img src={bgImg} alt="background" />
         </div>
-
+ 
         <div className="login-content">
           <form onSubmit={handleSignUp} autoComplete="on">
             <img src={avatarImg} alt="avatar" />
             <h2 className="title">Sign Up</h2>
-
+ 
             <div
               className={`input-div one ${
                 focusedFields.firstName ? 'focus' : ''
@@ -224,7 +224,7 @@ const Signup: React.FC = () => {
                 />
               </div>
             </div>
-
+ 
             <div
               className={`input-div one ${
                 focusedFields.lastName ? 'focus' : ''
@@ -246,7 +246,7 @@ const Signup: React.FC = () => {
                 />
               </div>
             </div>
-
+ 
             <div
               className={`input-div one ${focusedFields.email ? 'focus' : ''}`}
             >
@@ -266,7 +266,7 @@ const Signup: React.FC = () => {
                 />
               </div>
             </div>
-
+ 
             <div
               className={`input-div pass ${
                 focusedFields.password ? 'focus' : ''
@@ -289,7 +289,7 @@ const Signup: React.FC = () => {
                 />
               </div>
             </div>
-
+ 
             <LoadingButton
               type="submit"
               size="small"
@@ -302,7 +302,7 @@ const Signup: React.FC = () => {
             >
               <span>Sign up</span>
             </LoadingButton>
-
+ 
             <Snackbar
               open={snackbar.open}
               onClose={handleCloseSnackbar}
@@ -324,5 +324,5 @@ const Signup: React.FC = () => {
     </div>
   );
 };
-
+ 
 export default Signup;
