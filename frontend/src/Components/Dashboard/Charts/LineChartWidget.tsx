@@ -68,7 +68,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({ data }) => {
             key={index}
             type="monotone"
             dataKey={key}
-            stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`} // Random color for each line
+            // stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`} // Random color for each line
           />
         ))}
       </LineChart>

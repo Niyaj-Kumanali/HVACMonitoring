@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import GridLayout, { Layout } from 'react-grid-layout';
 import './Dashboard.css';
 import Widget from './Widget';
+import DashboardHeader from './DashboardHeader'; // Import the DashboardHeader component
+import { Container, Box } from '@mui/material'; // Material UI for layout
 
 // Extend the Layout type to include a "type" property
 interface CustomLayout extends Layout {
@@ -13,11 +15,11 @@ const Dashboard: React.FC = () => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
   const onAddWidget = () => {
-    const newWidget = {
+    const newWidget: CustomLayout = {
       i: `widget-${layout.length}`,
       x: 0,
-      y: Math.max(...layout.map(item => item.y || 0)) + 4, // Adjusting y to place below existing widgets
-      w: 4,
+      y: Math.max(...layout.map((item) => item.y || 0)) + 4, // Adjusting y to place below existing widgets
+      w: 8,
       h: 4,
       minW: 5, // Minimum width in grid units
       minH: 5, // Minimum height in grid units
@@ -30,10 +32,11 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="menu-data dashboard">
-      <button onClick={onToggleEdit}>{isEditable ? 'Save Layout' : 'Edit Layout'}</button>
-      <button onClick={() => onAddWidget()}>Add Widget</button>
-      <div className="layout-container">
+    <Container maxWidth="xl" className="dashboard-container menu-data">
+      {/* Use the DashboardHeader Component */}
+      <DashboardHeader onToggleEdit={onToggleEdit} onAddWidget={onAddWidget} isEditable={isEditable} />
+
+      <Box mt={3} className="layout-container">
         <GridLayout
           className="layout"
           layout={layout}
@@ -42,7 +45,7 @@ const Dashboard: React.FC = () => {
           width={1200}
           isDraggable={isEditable}
           isResizable={isEditable}
-          onLayoutChange={(layout) => setLayout(layout as CustomLayout[])}
+          onLayoutChange={(newLayout) => setLayout(newLayout as CustomLayout[])}
           margin={[10, 10]} // Add margin between items
           containerPadding={[10, 10]} // Add padding inside the grid container
         >
@@ -52,24 +55,26 @@ const Dashboard: React.FC = () => {
             </div>
           ))}
         </GridLayout>
+
         {/* Add vertical grid lines */}
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(col => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((col) => (
           <div
             key={`v-line-${col}`}
             className="grid-line vertical-line"
             style={{ left: `${(col / 11) * 100}%` }}
           ></div>
         ))}
+
         {/* Add horizontal grid lines */}
-        {[1, 2, 3, 4, 5].map(row => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((row) => (
           <div
             key={`h-line-${row}`}
             className="grid-line horizontal-line"
-            style={{ top: `${(row / 6) * 100}%` }}
+            style={{ top: `${(row / 9) * 100}%` }}
           ></div>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 };
 

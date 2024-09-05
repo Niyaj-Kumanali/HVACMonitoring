@@ -4,3 +4,11 @@ export const setDevices = (devices: any[]) => {
         payload: devices
     };
 };
+
+export const saveDashboard = (dashboard: Object) => {
+
+    return {
+        type: "SAVE_DASHBOARD",
+        payload: dashboard
+    }
+}

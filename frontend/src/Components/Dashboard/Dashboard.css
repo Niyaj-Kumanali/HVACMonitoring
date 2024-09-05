@@ -39,7 +39,7 @@
 .widget .widget-header{
   display: flex;
   justify-content: flex-end;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
 }
 

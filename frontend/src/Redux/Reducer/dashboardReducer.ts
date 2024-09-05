@@ -1,21 +1,30 @@
-// import { User } from "../../types/thingsboardTypes";
-
-interface Userstate {
-  accesstoken: string | null;
+// Define the type for a single dashboard
+interface Dashboard {
+  id: string;
+  selectedcharts: Object;
 }
-const initial_state: any = {
-  devices: [],
-  sensors: [],
-  selectedDevice: '',
-  selectedSensors: [],
+
+// Define the type for the state
+interface DashboardState {
+  dashboards: { [id: string]: Dashboard };
+}
+
+// Define the initial state
+const initial_state: DashboardState = {
+  dashboards: {}
 };
 
-const dashboardReducer = (state = initial_state, action: any): Userstate => {
+// Reducer function
+const dashboardReducer = (state = initial_state, action: any): DashboardState => {
   switch (action.type) {
-    case 'SET_DEVICES':
+    case 'SET_DASHBOARD':
+      // Assuming action.payload is an object where keys are dashboard IDs and values are dashboard objects
       return {
         ...state,
-        devices: action.payload,
+        dashboards: {
+          ...state.dashboards,
+          ...action.payload
+        }
       };
     default:
       return state;

@@ -1,7 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './Dashboard.css';
-import { Device, TelemetryData } from '../../types/thingsboardTypes';
-import { getTimeseries, getTimeseriesKeys } from '../../api/telemetryAPIs';
+import {
+  Device,
+  TelemetryData,
+  TelemetryQueryParams,
+} from '../../types/thingsboardTypes';
+import {
+  getLatestTimeseries,
+  getTimeseries,
+  getTimeseriesKeys,
+} from '../../api/telemetryAPIs';
 import { getTenantDevices } from '../../api/deviceApi';
 import {
   Checkbox,
@@ -13,8 +21,6 @@ import {
   Toolbar,
 } from '@mui/material';
 import LineChartWidget from './Charts/LineChartWidget';
-
-
 
 const Widget: React.FC = () => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
@@ -41,30 +47,63 @@ const Widget: React.FC = () => {
     const fetchTelemetryData = async () => {
       try {
         if (!selectedDevice) return;
+  
         console.log(selectedDevice);
+  
         const keyResponse = await getTimeseriesKeys('DEVICE', selectedDevice);
         setSensors(keyResponse.data);
-        setSelectedSensors(keyResponse.data)
-
-        const response = await getTimeseries('DEVICE', selectedDevice, {
+        setSelectedSensors(prev => prev.length > 0 ? prev : keyResponse.data);
+  
+        const params: TelemetryQueryParams = {
           keys:
             selectedSensors.length > 0
               ? selectedSensors.join(',')
-              : keyResponse.data.join(', '),
+              : keyResponse.data.join(','),
           startTs: Date.now() - 3600000, // last hour
           endTs: Date.now(),
           limit: 100,
-        });
-        setTelemetryData(response.data);
+          orderBy: 'ASC',
+        };
+  
+        // const response = await getTimeseries('DEVICE', selectedDevice, params);
+        // setTelemetryData(response.data);
+  
+        const intervalId = setInterval(async () => {
+          const latestResponse = await getLatestTimeseries(
+            'DEVICE',
+            selectedDevice,
+            selectedSensors.length > 0 ? selectedSensors : keyResponse.data
+          );
+          console.log(latestResponse.data);
+  
+          const latestTelemetryData = latestResponse.data;
+  
+          // Merge latestTelemetryData with existing telemetryData
+          const updatedTelemetryData = Object.keys(latestTelemetryData).reduce(
+            (acc, key) => {
+              return {
+                ...acc,
+                [key]: [...(telemetryData[key] || []), ...latestTelemetryData[key]],
+              };
+            },
+            telemetryData
+          );
+  
+          setTelemetryData(updatedTelemetryData);
+        }, 5000);
+  
+        // Clean up the interval on component unmount or if selectedDevice changes
+        return () => {console.log("Interval cleared"); return clearInterval(intervalId)};
       } catch (error) {
-        console.log('Failed to fetch telemetry data');
+        console.log('Failed to fetch telemetry data', error);
         setSensors([]);
         setSelectedSensors([]);
       }
     };
-
+  
     fetchTelemetryData();
-  }, [selectedDevice]);
+  }, [selectedDevice, selectedSensors, telemetryData]);
+  
 
   useEffect(() => {
     const data =
@@ -79,10 +118,9 @@ const Widget: React.FC = () => {
   }, [selectedSensors, telemetryData]);
 
   const renderChart = useMemo(() => {
-    console.log(filteredTelemetryData)
-        return <LineChartWidget data={filteredTelemetryData} />;
+    console.log(filteredTelemetryData);
+    return <LineChartWidget data={filteredTelemetryData} />;
   }, [filteredTelemetryData]);
-
 
   return (
     <div className="widget">
@@ -102,11 +140,7 @@ const Widget: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl
-          variant="outlined"
-          size="small"
-          style={{ width: 200 }}
-        >
+        <FormControl variant="outlined" size="small" style={{ width: 200 }}>
           <InputLabel id="sensor-select-label">Select Sensors</InputLabel>
           <Select
             labelId="sensor-select-label"
@@ -125,8 +159,7 @@ const Widget: React.FC = () => {
           </Select>
         </FormControl>
       </Toolbar>
-        {renderChart}
-      
+      {renderChart}
     </div>
   );
 };
