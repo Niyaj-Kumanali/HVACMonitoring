@@ -83,6 +83,12 @@ const Router = createBrowserRouter([
         element: <AddDashboard />,
       },
       {
+        path: 'dashboard/edit/:dashboardId',
+        element: <AddDashboard/>,
+      },
+
+
+      {
         path: '/warehouses',
         element: <Warehouses />,
       },

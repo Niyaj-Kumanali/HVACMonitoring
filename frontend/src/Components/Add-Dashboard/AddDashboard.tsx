@@ -7,38 +7,108 @@ import {
   MenuItem,
   Button,
   Box,
+  SnackbarContent,
+  SnackbarCloseReason,
+  Snackbar,
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import ErrorIcon from '@mui/icons-material/Error';
 import { getUsers } from '../../api/userApi';
-import { User } from '../../types/thingsboardTypes';
+import { DashboardType, User } from '../../types/thingsboardTypes';
+import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [assignedCustomer, setAssignedCustomer] = useState('');
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState<User[]>([]);
+  const [message, setMessage] = useState('');
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+  const [open, setOpen] = useState(false);
+  const [buttonText, setButtonText] = useState('Add Dashboard');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log({
-      title,
-      description,
-      assignedCustomer,
-    });
-  };
+  const navigate = useNavigate();
 
-  useEffect(()=> {
-    const getCustomers = async()=> {
-        const params = {
-            pageSize: 1000,
-            page:0
-        }
-        const response = await getUsers(params)
-        setCustomers(response.data)
+  const {dashboardId} = useParams()
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+        const response = await getDashboardById(dashboardId || '')
+        setTitle(response.data?.title || '');
+        setDescription(response.data?.description || '');
+        setButtonText('Save Dashboard')
     }
 
-    getCustomers()
-  }, [])
+    if(dashboardId) {
+      fetchDashboard()
+    }
+    
+  }, [dashboardId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const newDashboard: DashboardType = {
+        title,
+        description,
+      };
+
+      if (dashboardId) {
+        const response = await getDashboardById(dashboardId);
+        await saveDashboard({ ...response.data, ...newDashboard });
+        setMessage('Dashboard updated successfully!');
+      } else {
+        await saveDashboard(newDashboard);
+        setMessage('Dashboard created successfully!');
+      }
+      setSnackbarType('success');
+
+      setOpen(true);
+
+      setTimeout(() => {
+        navigate('/dashboards');
+      }, 1000);
+    } catch (error) {
+      console.error('Error saving dashboard:', error);
+      setSnackbarType('error');
+      setMessage('Failed to create/update dashboard');
+      setOpen(true);
+    }
+  };
+
+  useEffect(() => {
+    const getCustomers = async () => {
+      const params = {
+        pageSize: 1000,
+        page: 0,
+      };
+      const response = await getUsers(params);
+      setCustomers(response.data.data);
+    };
+
+    getCustomers();
+  }, []);
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    event.preventDefault();
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const snackbarStyles = {
+    backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+    color: 'white',
+  };
+
+  const snackbarIcon = snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />;
 
   return (
     <Box
@@ -71,10 +141,9 @@ const AddDashboard: React.FC = () => {
         minRows={4}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        required
       />
 
-      <FormControl fullWidth required>
+      <FormControl fullWidth>
         <InputLabel id="assignedCustomer-label">Assigned Customer</InputLabel>
         <Select
           labelId="assignedCustomer-label"
@@ -95,8 +164,25 @@ const AddDashboard: React.FC = () => {
       </FormControl>
 
       <Button type="submit" variant="contained" color="primary">
-        Add Dashboard
+        {buttonText}
       </Button>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        style={{ marginTop: '64px' }}
+      >
+        <SnackbarContent
+          style={snackbarStyles}
+          message={
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+              {snackbarIcon}
+              {message}
+            </span>
+          }
+        />
+      </Snackbar>
     </Box>
   );
 };

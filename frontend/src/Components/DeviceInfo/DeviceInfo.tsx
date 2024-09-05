@@ -5,11 +5,13 @@ import {
   getDeviceById,
   saveDevice,
   getTenantDevices,
+  getDeviceCredentialsByDeviceId,
 } from '../../api/deviceApi';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
+import ShareIcon from '@mui/icons-material/Share';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
@@ -22,7 +24,12 @@ import {
 import Loader from '../Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
-import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
+import {
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+  SnackbarContent,
+} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -44,9 +51,11 @@ const DeviceInfo: React.FC = () => {
   const navigate = useNavigate();
   const deviceCountDispatch = useDispatch();
   const user = useSelector((state: any) => state.user.user);
+  const [accessToken, setAccessToken] = useState<string>('');
+  console.log(accessToken);
 
   const [deviceInfo, setDeviceInfo] = useState<Device>({
-    type: 'default'
+    type: 'default',
   });
   const [loading, setLoading] = useState(false);
   const [admin, setAdmin] = useState('');
@@ -86,6 +95,11 @@ const DeviceInfo: React.FC = () => {
     try {
       const response = await getDeviceById(deviceId);
       setDeviceInfo(response.data);
+      const responseForCreds = await getDeviceCredentialsByDeviceId(
+        deviceId || ''
+      );
+      console.log(responseForCreds.data);
+      setAccessToken(responseForCreds.data.credentialsId);
     } catch (error) {
       console.error('Error fetching device info:', error);
       setMessage('Failed to fetch device information.');
@@ -144,13 +158,13 @@ const DeviceInfo: React.FC = () => {
   const handleClick = async () => {
     setLoading(true);
 
-    if(deviceInfo.name === "" || deviceInfo.type === ""){
+    if (deviceInfo.name === '' || deviceInfo.type === '') {
       setLoading(false);
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
-      setOpen(true)
-      return
-  }
+      setOpen(true);
+      return;
+    }
     try {
       await saveDevice(deviceInfo);
       await fetchDevices(0);
@@ -199,6 +213,38 @@ const DeviceInfo: React.FC = () => {
     setDeviceInfo((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleCopyAccessToken = () => {
+    navigator.clipboard
+      .writeText(accessToken)
+      .then(() => {
+        setMessage('Access Token copied to clipboard!');
+        setSnackbarType('success');
+        setOpen(true);
+      })
+      .catch((error) => {
+        console.error('Failed to copy access token:', error);
+        setMessage('Failed to copy access token');
+        setSnackbarType('error');
+        setOpen(true);
+      });
+  };
+
+  const handleCopyId = () => {
+    navigator.clipboard
+      .writeText(deviceId || '')
+      .then(() => {
+        setMessage('Device ID copied to clipboard!');
+        setSnackbarType('success');
+        setOpen(true);
+      })
+      .catch((error) => {
+        console.error('Failed to copy Device ID:', error);
+        setMessage('Failed to copy Device ID');
+        setSnackbarType('error');
+        setOpen(true);
+      });
+  };
+
   useEffect(() => {
     fetchDeviceInfo();
   }, [deviceId]);
@@ -206,7 +252,7 @@ const DeviceInfo: React.FC = () => {
   useEffect(() => {
     fetchDeviceInfo();
     fetchAllWarehouses();
-    fetchAllVehicles()
+    fetchAllVehicles();
     const loaderTimeout = setTimeout(() => setLoaders(false), 1000);
     return () => clearTimeout(loaderTimeout);
   }, []);
@@ -219,7 +265,49 @@ const DeviceInfo: React.FC = () => {
         <div className="menu-data">
           <div className="add-device">
             <form>
-              <label className="label">Device Info</label>
+              <div className="header-container">
+                <label className="label">Device Info</label>
+                <div className="buttons">
+                  <Button
+                    variant="outlined" // Use 'outlined' for a transparent background
+                    color="primary" // Sets the text and border color
+                    onClick={handleCopyId}
+                    startIcon={<ShareIcon />}
+                    sx={{
+                      ml: 2,
+                      backgroundColor: 'transparent', // Make the background transparent
+                      border: '1px solid', // Optional: Add border to distinguish button
+                      borderColor: 'primary.main', // Border color
+                      color: 'primary.main', // Text color
+                      '&:hover': {
+                        backgroundColor: 'primary.light', // Background color on hover
+                        color: 'primary.contrastText', // Text color on hover
+                      },
+                    }}
+                  >
+                    Copy Id
+                  </Button>
+                  <Button
+                    variant="outlined" // Use 'outlined' for a transparent background
+                    color="primary" // Sets the text and border color
+                    onClick={handleCopyAccessToken}
+                    startIcon={<ShareIcon />}
+                    sx={{
+                      ml: 2,
+                      backgroundColor: 'transparent', // Make the background transparent
+                      border: '1px solid', // Optional: Add border to distinguish button
+                      borderColor: 'primary.main', // Border color
+                      color: 'primary.main', // Text color
+                      '&:hover': {
+                        backgroundColor: 'primary.light', // Background color on hover
+                        color: 'primary.contrastText', // Text color on hover
+                      },
+                    }}
+                  >
+                    Copy Token
+                  </Button>
+                </div>
+              </div>
               <Box className="text-field-box">
                 <TextField
                   fullWidth
@@ -361,21 +449,32 @@ const DeviceInfo: React.FC = () => {
               </div>
             </form>
           </div>
+          <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            style={{ marginTop: '64px' }}
+          >
+            <SnackbarContent
+              style={{
+                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+                color: 'white',
+              }}
+              message={
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  {snackbarType === 'success' ? (
+                    <CheckIcon style={{ marginRight: '8px' }} />
+                  ) : (
+                    <ErrorIcon style={{ marginRight: '8px' }} />
+                  )}
+                  {message}
+                </span>
+              }
+            />
+          </Snackbar>
         </div>
       )}
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <SnackbarContent
-          message={
-            <span>
-              {snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />}
-              {message}
-            </span>
-          }
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-          }}
-        />
-      </Snackbar>
     </>
   );
 };

@@ -1,9 +1,18 @@
-import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+  SnackbarContent,
+  IconButton,
+} from '@mui/material';
 import Loader from '../Loader/Loader';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
+import AddIcon from '@mui/icons-material/Add';
 import './Dashboards.css';
 import { useEffect, useState } from 'react';
 import {
@@ -157,13 +166,17 @@ const Dashboard = () => {
       console.error('Failed to delete dashboard', error);
     }
   };
+  const handleEdit = async (dashboardId: string = '') => {
+    navigate(`/dashboard/edit/${dashboardId}`)
+  };
+
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
     if (reason === 'clickaway') {
-      event
+      event;
       return;
     }
     setOpen(false);
@@ -175,9 +188,34 @@ const Dashboard = () => {
     }
   };
 
+  const handleAddDashboard = () => {
+    // Handle logic to add a new dashboard
+    navigate(`/dashboard`);
+  };
+
   return (
     <>
       <div className="menu-data dashboard">
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" style={{ flexGrow: 1 }}>
+              Dashboard Management
+            </Typography>
+            <Button
+              color="inherit"
+              onClick={handleAddDashboard}
+              style={{
+                borderRadius: '50%',
+                height: '40px', // Adjust the height to your preference
+                width: '40px', // Make the width equal to the height
+                minWidth: '40px', // Ensure the button is not resized               
+              }}
+            >
+              <AddIcon />
+            </Button>
+          </Toolbar>
+        </AppBar>
+
         <div className="devices">
           {loading ? (
             <Loader />
@@ -195,7 +233,8 @@ const Dashboard = () => {
                       {dashboard.title}
                     </span>
                     <div>
-                      <IconButton aria-label="edit">
+                      <IconButton aria-label="edit"
+                      onClick={()=> handleEdit(dashboard.id?.id)}>
                         <EditIcon className="edit-icon" />
                       </IconButton>
                       <IconButton
