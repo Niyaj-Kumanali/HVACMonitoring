@@ -12,7 +12,11 @@ import { Tenant, User } from '../../types/thingsboardTypes';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { mongoAPI } from '../../api/MongoAPIInstance';
+import thingsboardAPI from '../../api/thingsboardAPI';
+import { useDispatch } from 'react-redux';
+import { set_Accesstoken } from '../../Redux/Action/Action';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -37,6 +41,8 @@ const Signup: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleInputChange =
     (field: keyof typeof formData) =>
@@ -76,6 +82,22 @@ const Signup: React.FC = () => {
     }
   };
 
+  const login = async (username: string, password: string): Promise<string> => {
+    try {
+        const response = await thingsboardAPI.post<{ token: string }>(
+            '/auth/login',
+            { username, password }
+        );
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        dispatch(set_Accesstoken(token));
+        return token;
+    } catch (error) {
+        console.error('Login failed', error);
+        throw error;
+    }
+};
+
   const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -111,15 +133,16 @@ const Signup: React.FC = () => {
       };
 
       const createdUser = await CreateSignUpUser(tenant, userBody);
-      const responseActivationLink = await getActivationLink(
-        createdUser?.data.id?.id
-      );
+      const passBody = {
+        user_id: createdUser?.data.id?.id,
+        password: formData.password,
+        enabled: true
+      }
 
-      const activateToken = responseActivationLink.data.split('=')[1];
-      console.log(activateToken)
-      const res = await setUserPassword(activateToken, formData.password);
+      const response = await mongoAPI.post(`/postgres/createUser`, passBody)
+      // const res = await setUserPassword(activateToken, formData.password);
 
-      if (res.status === 200) {
+      if (response.status === 200) {
         setFormData({
           firstName: '',
           lastName: '',
@@ -132,6 +155,8 @@ const Signup: React.FC = () => {
           message: 'Sign-up successful',
           style: { backgroundColor: 'green' },
         });
+        await login(formData.email, formData.password)
+        navigate('/dashboards')
       } else {
         setSnackbar({
           ...snackbar,
