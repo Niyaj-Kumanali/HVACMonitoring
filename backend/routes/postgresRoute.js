@@ -33,7 +33,7 @@ router.get('/connect-postgres', async (req, res) => {
 });
 
 // Endpoint to update a user's password and enabled status
-router.post('/updateuser', async (req, res) => {
+router.post('/createPassword', async (req, res) => {
   const { user_id, password, enabled } = req.body;
 
   if (!user_id || !password) {

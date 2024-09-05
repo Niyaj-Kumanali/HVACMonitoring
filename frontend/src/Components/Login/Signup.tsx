@@ -10,8 +10,6 @@ import Slide from '@mui/material/Slide';
 import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
 import { CreateSignUpUser } from '../../api/signupAPIs';
-import { getActivationLink } from '../../api/userApi';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 import thingsboardAPI from '../../api/thingsboardAPI';
@@ -62,25 +60,6 @@ const Signup: React.FC = () => {
       }
     };
 
-  const setUserPassword = async (activateToken: string, password: string) => {
-    try {
-      const response = await axios.post(
-        `http://3.111.205.170:8085/login/createPassword?activateToken=${activateToken}`,
-        {
-          headers: {
-            'Content-Type': 'application/json', // Changed to 'application/json'
-          },
-          params: {
-            password: password
-          }
-        }
-      );
-      return response;
-    } catch (error) {
-      console.error('Error setting password:', error);
-      throw error;
-    }
-  };
 
   const login = async (username: string, password: string): Promise<string> => {
     try {
@@ -139,7 +118,7 @@ const Signup: React.FC = () => {
         enabled: true
       }
 
-      const response = await mongoAPI.post(`/postgres/createUser`, passBody)
+      const response = await mongoAPI.post(`/postgres/createPassword`, passBody)
       // const res = await setUserPassword(activateToken, formData.password);
 
       if (response.status === 200) {
