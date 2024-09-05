@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { requestResetPasswordByEmail } from '../../api/loginApi';
+import { getResetToken, requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -169,9 +169,24 @@ const Login: React.FC = () => {
     };
 
     const handleEmailsubmit = async () => {
-        const responce = await requestResetPasswordByEmail(forgetpasswordemail)
-        if (responce == 200) {
+        // const res = await requestResetPasswordByEmail(forgetpasswordemail)
+        // console.log(res)
+        const requestBody: {
+            email : string
+        } = {
+            email: forgetpasswordemail
+        }
+        console.log(email.value)
+        const response = await getResetToken(requestBody)
+        console.log(response)
+        if (response.status == 200) {
             handleDialogClose()
+
+            const resetToken = response.data.resetToken
+            console.log(resetToken)
+
+            const resetResponse = await resetPassword(resetToken, "admin123")
+            console.log(resetResponse)
             setSnackbarMessage('Reset password Link Generated');
             setSnackbarStyle({ backgroundColor: 'green' });
             setTimeout(() => {

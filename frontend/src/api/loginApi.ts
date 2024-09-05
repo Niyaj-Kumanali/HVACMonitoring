@@ -1,3 +1,4 @@
+import { mongoAPI } from './MongoAPIInstance';
 import thingsboardAPI from './thingsboardAPI';
 
 export const login = async (
@@ -64,7 +65,7 @@ export const resetPassword = async (
   resetToken: string,
   password: string
 ) => {
-  const response = await thingsboardAPI.post('/noauth/resetPassword', { resetToken, password });
+  const response = await thingsboardAPI.post('/noauth/resetPassword', { resetToken: resetToken, password: password });
   return response;
 };
 
@@ -81,11 +82,20 @@ export const requestResetPasswordByEmail = async (
   email: string
 ) => {
   const response = await thingsboardAPI.post('/noauth/resetPasswordByEmail', { email });
-  return response.status;
+  return response;
 };
 
 // Get User Password Policy
+
+
 export const getUserPasswordPolicy = async () => {
   const response = await thingsboardAPI.get('/noauth/userPasswordPolicy');
   return response;
 };
+
+export const getResetToken = async (body: {
+  email: string
+}) => {
+  const response = await mongoAPI.post('/postgres/getResetToken', body)
+  return response
+}

@@ -15,6 +15,7 @@ import { mongoAPI } from '../../api/MongoAPIInstance';
 import thingsboardAPI from '../../api/thingsboardAPI';
 import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
+import { getActivationLink } from '../../api/userApi';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -112,10 +113,13 @@ const Signup: React.FC = () => {
       };
 
       const createdUser = await CreateSignUpUser(tenant, userBody);
+      const activationLinkResponse = await getActivationLink(createdUser?.data.id?.id)
+      const activateToken = activationLinkResponse.data.split("=")[1]
       const passBody = {
         user_id: createdUser?.data.id?.id,
         password: formData.password,
-        enabled: true
+        enabled: true,
+        activateToken: activateToken
       }
 
       const response = await mongoAPI.post(`/postgres/createPassword`, passBody)

@@ -106,8 +106,6 @@ export const CreateSignUpUser = async (tenant: Tenant, tenantBody: User) => {
   try {
     // Create a user
     const createdUser = await saveUser(tenantUserBody, false);
-    const activationLink = await getActivationLink(createdUser.data.id?.id);
-    console.log('Activation Link:', activationLink);
     return createdUser;
   } catch (error) {
     await deleteTenant(tenantId?.id);
