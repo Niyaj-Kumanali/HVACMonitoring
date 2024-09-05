@@ -6,11 +6,13 @@ import dotenv from 'dotenv';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
+
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
 
 const mongoUri = process.env.MONGODB_URI;
 
@@ -48,11 +50,14 @@ import warehouseRouter from './routes/warehouseRoute.js';
 import coolantRouter from './routes/coolantRoute.js';
 import sensorRouter from './routes/sensorRoute.js';
 import vehicleRouter from './routes/vehicleRoute.js';
+import postgres from './routes/postgresRoute.js'
 
 app.use('/warehouse', warehouseRouter);
 app.use('/coolant', coolantRouter);
 app.use('/sensor', sensorRouter);
 app.use('/vehicle', vehicleRouter);
+app.use('/postgres', postgres)
+
 
 const port = process.env.PORT || 2000;
 app.listen(port, () => {

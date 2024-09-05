@@ -53,7 +53,7 @@ const Menubar = () => {
             </div>
             <ul>
                 <Link to="/dashboards" className="link">
-                    <li><SpeedIcon className="speedicon" />DashBoard</li>
+                    <li><SpeedIcon className="speedicon" />Dashboards</li>
                 </Link>
                 <Link to="/charts" className="link">
                     <li><PieChartIcon className="speedicon" />Charts</li>

@@ -10,8 +10,9 @@ import {
 } from '../../api/widgetsBundleAPI';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
+
 import { getDeviceCredentialsByDeviceId, getFilteredDevices } from '../../api/deviceApi';
-import { CatchingPokemon } from '@mui/icons-material';
+
 
 const MyComponent: React.FC = () => {
   // State for dashboard creation
@@ -54,10 +55,10 @@ const MyComponent: React.FC = () => {
       const tenant: Tenant = {
         title: orgName,
       };
-      const createdUser = await CreateSignUpUser(tenant, userBody);
-      const activationLink = await getActivationLink(createdUser.data.id?.id);
+      const response = await CreateSignUpUser(tenant, userBody);
+      const activationLink = await getActivationLink(response?.data.id?.id);
 
-      console.log(createdUser);
+      console.log(response);
       console.log(activationLink);
 
       setSuccessMessage(
@@ -87,6 +88,8 @@ const MyComponent: React.FC = () => {
       setLoadingWidgetBundles(false);
     }
   };
+
+  
 
   // Fetch widget bundles with parameters
   const fetchWidgetBundles = async (page: number) => {
@@ -133,6 +136,7 @@ const MyComponent: React.FC = () => {
     const deviceInfo = await getDeviceCredentialsByDeviceId("ddebbb60-6aa0-11ef-98f0-3545332af3c6")
     console.log(deviceInfo.data)
   };
+
 
   const handlePageChangeWidgets = (page: number) => {
     if (page >= 0 && page < totalWidgetPages) {
@@ -256,5 +260,8 @@ const MyComponent: React.FC = () => {
     </div>
   );
 };
+
+
+
 
 export default MyComponent;

@@ -1,24 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteDevice, getDeviceById, saveDevice, getTenantDevices } from '../../api/deviceApi';
+import {
+  deleteDevice,
+  getDeviceById,
+  saveDevice,
+  getTenantDevices,
+  getDeviceCredentialsByDeviceId,
+} from '../../api/deviceApi';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
+import ShareIcon from '@mui/icons-material/Share';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
+
 import Loader from '../Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
-import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
+import {
+  Button,
+  Snackbar,
+  SnackbarCloseReason,
+  SnackbarContent,
+} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
-import "./DeviceInfo.css";
-import { getCurrentUser } from '../../api/loginApi';
+import './DeviceInfo.css';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 
 interface Warehouse {
@@ -31,27 +43,33 @@ interface Vehicle {
   vehicle_name: string;
 }
 
-
 const DeviceInfo: React.FC = () => {
   const { deviceId } = useParams();
   const navigate = useNavigate();
   const deviceCountDispatch = useDispatch();
   const user = useSelector((state: any) => state.user.user);
+  const [accessToken, setAccessToken] = useState<string>('');
+  console.log(accessToken);
 
-  const [deviceInfo, setDeviceInfo] = useState<Device>({});
+
+  
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState<Device>({
+    type: 'default',
+  });
+  // const [loading, setLoading] = useState(false);
+
   const [admin, setAdmin] = useState('');
   const [action, setAction] = useState('');
-  const [label, setLabel] = useState('');
   const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
-  const [warehouseInfo, setWarehouseInfo] = useState('');
   const [vehicle, setVehicle] = useState<Vehicle[]>([]);
-  const [vehicleInfo, setVehicleInfo] = useState('');
   const [loaders, setLoaders] = useState(true);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+    'success'
+  );
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
@@ -69,13 +87,45 @@ const DeviceInfo: React.FC = () => {
     fetchDeviceInfo();
   }, [deviceId]);
 
+
   const fetchAllWarehouses = async () => {
     try {
-      const currentUser = await getCurrentUser();
-      const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
+      const response = await mongoAPI.get(
+        `/warehouse/getallwarehouse/${user.id.id}`
+      );
       setWarehouse(response.data);
     } catch (error) {
-      console.error("Failed to fetch warehouses:", error);
+      console.error('Failed to fetch warehouses:', error);
+    }
+  };
+  const fetchAllVehicles = async () => {
+    try {
+      const response = await mongoAPI.get(
+        `/vehicle/getallvehicle/${user.id.id}`
+      );
+      setVehicle(response.data);
+    } catch (error) {
+      console.error('Failed to fetch vehicles:', error);
+    }
+  };
+
+  const fetchDeviceInfo = async () => {
+    // setLoading(true);
+    try {
+      const response = await getDeviceById(deviceId);
+      setDeviceInfo(response.data);
+      const responseForCreds = await getDeviceCredentialsByDeviceId(
+        deviceId || ''
+      );
+      console.log(responseForCreds.data);
+      setAccessToken(responseForCreds.data.credentialsId);
+    } catch (error) {
+      console.error('Error fetching device info:', error);
+      setMessage('Failed to fetch device information.');
+      setSnackbarType('error');
+      setOpen(true);
+    } finally {
+      // setLoading(false);
     }
   };
 
@@ -97,38 +147,45 @@ const DeviceInfo: React.FC = () => {
     }
   };
 
-  const handleAdminChange = (event: SelectChangeEvent) => setAdmin(event.target.value);
-  const handleActionChange = (event: SelectChangeEvent) => setAction(event.target.value);
+  const handleAdminChange = (event: SelectChangeEvent) =>
+    setAdmin(event.target.value);
+  const handleActionChange = (event: SelectChangeEvent) =>
+    setAction(event.target.value);
 
   const handleLabelChange = async (event: SelectChangeEvent) => {
     const selectedLabel = event.target.value;
-    setLabel(selectedLabel);
+    setDeviceInfo((prev) => ({
+      ...prev,
+      additionalInfo: { ...prev.additionalInfo, labelType: event.target.value },
+    }));
 
     if (selectedLabel === 'warehouse') {
       fetchAllWarehouses();
     } else if (selectedLabel === 'vehicle') {
-      try {
-        const response = await mongoAPI.get(`/vehicle/getallvehicle/${user.id.id}`);
-        setVehicle(response.data);
-      } catch (error) {
-        console.error("Failed to fetch vehicles:", error);
-      }
+      fetchAllVehicles();
     }
   };
 
   const handleWarehouseChange = (event: SelectChangeEvent) => {
-    setWarehouseInfo(event.target.value);
-    setDeviceInfo(prev => ({ ...prev, label: event.target.value }));
+    setDeviceInfo((prev) => ({ ...prev, label: event.target.value }));
   };
 
   const handleVehicleChange = (event: SelectChangeEvent) => {
-    setVehicleInfo(event.target.value);
-    setDeviceInfo(prev => ({ ...prev, label: event.target.value }));
+    setDeviceInfo((prev) => ({ ...prev, label: event.target.value }));
   };
   
 
   const handleClick = async () => {
     setLoadingSave(true);
+
+
+    if (deviceInfo.name === '' || deviceInfo.type === '') {
+      // setLoading(false);
+      setMessage('Fill the requiered fields!');
+      setSnackbarType('error');
+      setOpen(true);
+      return;
+    }
 
     try {
       await saveDevice(deviceInfo);
@@ -156,8 +213,7 @@ const DeviceInfo: React.FC = () => {
     setLoadingDelete(true);
 
     try {
-      await deleteDevice(deviceId || "");
-
+      await deleteDevice(deviceId || '');
       setTimeout(() => {
         setLoadingDelete(false);
         setOpen(true);
@@ -169,7 +225,6 @@ const DeviceInfo: React.FC = () => {
         }, 900);
 
       }, 900);
-
     } catch (error) {
       console.error('Failed to delete device', error);
 
@@ -182,13 +237,60 @@ const DeviceInfo: React.FC = () => {
     }
   };
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
     if (reason === 'clickaway') return;
-    event
+    event;
     setOpen(false);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDeviceInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCopyAccessToken = () => {
+    navigator.clipboard
+      .writeText(accessToken)
+      .then(() => {
+        setMessage('Access Token copied to clipboard!');
+        setSnackbarType('success');
+        setOpen(true);
+      })
+      .catch((error) => {
+        console.error('Failed to copy access token:', error);
+        setMessage('Failed to copy access token');
+        setSnackbarType('error');
+        setOpen(true);
+      });
+  };
+
+  const handleCopyId = () => {
+    navigator.clipboard
+      .writeText(deviceId || '')
+      .then(() => {
+        setMessage('Device ID copied to clipboard!');
+        setSnackbarType('success');
+        setOpen(true);
+      })
+      .catch((error) => {
+        console.error('Failed to copy Device ID:', error);
+        setMessage('Failed to copy Device ID');
+        setSnackbarType('error');
+        setOpen(true);
+      });
+  };
+
   useEffect(() => {
+    fetchDeviceInfo();
+  }, [deviceId]);
+
+  useEffect(() => {
+    fetchDeviceInfo();
+    fetchAllWarehouses();
+    fetchAllVehicles();
     const loaderTimeout = setTimeout(() => setLoaders(false), 1000);
     return () => clearTimeout(loaderTimeout);
   }, []);
@@ -201,13 +303,57 @@ const DeviceInfo: React.FC = () => {
         <div className="menu-data">
           <div className="add-device">
             <form>
-              <label className="label">Device Info</label>
+              <div className="header-container">
+                <label className="label">Device Info</label>
+                <div className="buttons">
+                  <Button
+                    variant="outlined" // Use 'outlined' for a transparent background
+                    color="primary" // Sets the text and border color
+                    onClick={handleCopyId}
+                    startIcon={<ShareIcon />}
+                    sx={{
+                      ml: 2,
+                      backgroundColor: 'transparent', // Make the background transparent
+                      border: '1px solid', // Optional: Add border to distinguish button
+                      borderColor: 'primary.main', // Border color
+                      color: 'primary.main', // Text color
+                      '&:hover': {
+                        backgroundColor: 'primary.light', // Background color on hover
+                        color: 'primary.contrastText', // Text color on hover
+                      },
+                    }}
+                  >
+                    Copy Id
+                  </Button>
+                  <Button
+                    variant="outlined" // Use 'outlined' for a transparent background
+                    color="primary" // Sets the text and border color
+                    onClick={handleCopyAccessToken}
+                    startIcon={<ShareIcon />}
+                    sx={{
+                      ml: 2,
+                      backgroundColor: 'transparent', // Make the background transparent
+                      border: '1px solid', // Optional: Add border to distinguish button
+                      borderColor: 'primary.main', // Border color
+                      color: 'primary.main', // Text color
+                      '&:hover': {
+                        backgroundColor: 'primary.light', // Background color on hover
+                        color: 'primary.contrastText', // Text color on hover
+                      },
+                    }}
+                  >
+                    Copy Token
+                  </Button>
+                </div>
+              </div>
               <Box className="text-field-box">
                 <TextField
                   fullWidth
                   label="Name"
-                  onChange={(e) => setDeviceInfo(prev => ({ ...prev, name: e.target.value }))}
+                  name="name"
+                  onChange={handleInputChange}
                   value={deviceInfo.name || ''}
+                  required
                 />
               </Box>
               <label className="label">Location</label>
@@ -216,7 +362,7 @@ const DeviceInfo: React.FC = () => {
                 <Select
                   labelId="location-label"
                   id="location-select"
-                  value={label}
+                  value={deviceInfo.additionalInfo?.labelType || ''}
                   label="Select Location"
                   onChange={handleLabelChange}
                   className="form-control-inner"
@@ -228,42 +374,40 @@ const DeviceInfo: React.FC = () => {
                   <MenuItem value="vehicle">Vehicle</MenuItem>
                 </Select>
               </FormControl>
-              {label === 'warehouse' && (
+              {deviceInfo.additionalInfo?.labelType === 'warehouse' && (
                 <FormControl className="form-control">
                   <InputLabel id="warehouse-label">Select Warehouse</InputLabel>
                   <Select
                     labelId="warehouse-label"
                     id="warehouse-select"
-                    value={warehouseInfo}
+                    value={deviceInfo.label}
                     label="Select Warehouse"
                     onChange={handleWarehouseChange}
                     className="form-control-inner"
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
                     {warehouse.map((wh, index) => (
-                      <MenuItem key={index} value={wh.warehouse_id}>{wh.warehouse_name}</MenuItem>
+                      <MenuItem key={index} value={wh.warehouse_id}>
+                        {wh.warehouse_name}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               )}
-              {label === 'vehicle' && (
+              {deviceInfo.additionalInfo?.labelType === 'vehicle' && (
                 <FormControl className="form-control">
                   <InputLabel id="vehicle-label">Select Vehicle</InputLabel>
                   <Select
                     labelId="vehicle-label"
                     id="vehicle-select"
-                    value={vehicleInfo}
+                    value={deviceInfo.label}
                     label="Select Vehicle"
                     onChange={handleVehicleChange}
                     className="form-control-inner"
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
                     {vehicle.map((veh, index) => (
-                      <MenuItem key={index} value={veh.vehicle_id}>{veh.vehicle_name}</MenuItem>
+                      <MenuItem key={index} value={veh.vehicle_id}>
+                        {veh.vehicle_name}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -273,9 +417,10 @@ const DeviceInfo: React.FC = () => {
                 <TextField
                   fullWidth
                   label="Type"
-                  onChange={(e) => setDeviceInfo(prev => ({ ...prev, type: e.target.value }))}
+                  name="type"
+                  onChange={handleInputChange}
                   value={deviceInfo.type || ''}
-                  className="textfiled"
+                  required
                 />
               </Box>
               <label className="label">Admin</label>
@@ -292,7 +437,6 @@ const DeviceInfo: React.FC = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {/* Render user options here */}
                 </Select>
               </FormControl>
               <label className="label">Action</label>
@@ -323,6 +467,7 @@ const DeviceInfo: React.FC = () => {
                   startIcon={<SaveIcon />}
                   variant="contained"
                   disabled={loadingDelete}
+
                   className="btn-save"
                 >
                   <span>Save</span>
@@ -336,6 +481,7 @@ const DeviceInfo: React.FC = () => {
                   startIcon={<DeleteIcon />}
                   variant="contained"
                   disabled={loadingSave}
+
                   className="btn-save"
                 >
                   <span>Delete</span>
@@ -343,6 +489,30 @@ const DeviceInfo: React.FC = () => {
               </div>
             </form>
           </div>
+          <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            style={{ marginTop: '64px' }}
+          >
+            <SnackbarContent
+              style={{
+                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+                color: 'white',
+              }}
+              message={
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  {snackbarType === 'success' ? (
+                    <CheckIcon style={{ marginRight: '8px' }} />
+                  ) : (
+                    <ErrorIcon style={{ marginRight: '8px' }} />
+                  )}
+                  {message}
+                </span>
+              }
+            />
+          </Snackbar>
         </div>
       )}
       <Snackbar
