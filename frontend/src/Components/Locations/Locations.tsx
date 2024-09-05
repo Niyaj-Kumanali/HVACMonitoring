@@ -96,5 +96,14 @@ const Locations = () => {
         </div>
     );
 };
+            <div className="locations">
+                <div className="location-div">
+                    Location
+                </div>
+            </div>
+        </div>
+    )
+}
+
 
 export default Locations;
