@@ -72,7 +72,6 @@ const Login: React.FC = () => {
             );
             const token = response.data.token;
             localStorage.setItem('token', token);
-            console.log(response.data)
             dispatch(set_Accesstoken(token));
             return token;
         } catch (error) {
@@ -171,7 +170,6 @@ const Login: React.FC = () => {
 
     const handleEmailsubmit = async () => {
         const responce = await requestResetPasswordByEmail(forgetpasswordemail)
-        console.log(responce)
         if (responce == 200) {
             handleDialogClose()
             setSnackbarMessage('Reset password Link Generated');
