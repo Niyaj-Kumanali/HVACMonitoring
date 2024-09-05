@@ -16,11 +16,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import {
-  Device,
-  DeviceQueryParams,
-  PageData,
-} from '../../types/thingsboardTypes';
+import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
+
 import Loader from '../Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
@@ -54,10 +51,15 @@ const DeviceInfo: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string>('');
   console.log(accessToken);
 
+
+  
+  const [loadingSave, setLoadingSave] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState<Device>({
     type: 'default',
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+
   const [admin, setAdmin] = useState('');
   const [action, setAction] = useState('');
   const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
@@ -68,6 +70,23 @@ const DeviceInfo: React.FC = () => {
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
     'success'
   );
+
+  useEffect(() => {
+    const fetchDeviceInfo = async () => {
+      setLoadingSave(true);
+      try {
+        const deviceData = await getDeviceById(deviceId);
+        setDeviceInfo(deviceData.data);
+      } catch (error) {
+        console.error('Error fetching device info:', error);
+      } finally {
+        setLoadingSave(false);
+      }
+    };
+
+    fetchDeviceInfo();
+  }, [deviceId]);
+
 
   const fetchAllWarehouses = async () => {
     try {
@@ -91,7 +110,7 @@ const DeviceInfo: React.FC = () => {
   };
 
   const fetchDeviceInfo = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await getDeviceById(deviceId);
       setDeviceInfo(response.data);
@@ -106,7 +125,7 @@ const DeviceInfo: React.FC = () => {
       setSnackbarType('error');
       setOpen(true);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -115,14 +134,14 @@ const DeviceInfo: React.FC = () => {
       const params: DeviceQueryParams = {
         pageSize: 10,
         page: page,
-        type: '',
+        type: 'default',
         textSearch: '',
         sortProperty: 'name',
-        sortOrder: 'DESC',
+        sortOrder: 'ASC',
       };
 
-      const response: PageData<Device> = await getTenantDevices(params);
-      deviceCountDispatch(set_DeviceCount(response.totalElements || 0));
+      const response = await getTenantDevices(params);
+      deviceCountDispatch(set_DeviceCount(response.data.totalElements || 0));
     } catch (error) {
       console.error('Failed to fetch devices', error);
     }
@@ -154,48 +173,67 @@ const DeviceInfo: React.FC = () => {
   const handleVehicleChange = (event: SelectChangeEvent) => {
     setDeviceInfo((prev) => ({ ...prev, label: event.target.value }));
   };
+  
 
   const handleClick = async () => {
-    setLoading(true);
+    setLoadingSave(true);
+
 
     if (deviceInfo.name === '' || deviceInfo.type === '') {
-      setLoading(false);
+      // setLoading(false);
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
       setOpen(true);
       return;
     }
+
     try {
       await saveDevice(deviceInfo);
       await fetchDevices(0);
 
-      setMessage('Device added successfully!');
-      setSnackbarType('success');
+      setTimeout(() => {
+        setLoadingSave(false);
+        setMessage('Device Updated successfully!');
+        setSnackbarType('success');
+        setOpen(true);
+      }, 500);
     } catch (error) {
-      console.error('Failed to create device', error);
-      setMessage('Device Already Exist');
-      setSnackbarType('error');
-    } finally {
-      setLoading(false);
-      setOpen(true);
+      console.log('Failed to create device');
+      setTimeout(() => {
+        setLoadingSave(false);
+        setMessage('Device Already Exist');
+        setSnackbarType('error');
+        setOpen(true);
+      }, 500);
     }
   };
 
+
   const handleDeleteDevice = async () => {
-    setLoading(true);
+    setLoadingDelete(true);
+
     try {
       await deleteDevice(deviceId || '');
+      setTimeout(() => {
+        setLoadingDelete(false);
+        setOpen(true);
+        setMessage('Device Deleted');
+        setSnackbarType("success");
 
-      setMessage('Device Deleted');
-      setSnackbarType('success');
-      setTimeout(() => navigate('/devices'), 900);
+        setTimeout(() => {
+          navigate("/devices");
+        }, 900);
+
+      }, 900);
     } catch (error) {
       console.error('Failed to delete device', error);
-      setMessage('Failed to delete device');
-      setSnackbarType('error');
-    } finally {
-      setLoading(false);
-      setOpen(true);
+
+      setTimeout(() => {
+        setLoadingDelete(false);
+        setOpen(true);
+        setMessage('Failed to delete device');
+        setSnackbarType("error");
+      }, 500);
     }
   };
 
@@ -424,11 +462,12 @@ const DeviceInfo: React.FC = () => {
                   size="small"
                   color="secondary"
                   onClick={handleClick}
-                  loading={loading}
+                  loading={loadingSave}
                   loadingPosition="start"
                   startIcon={<SaveIcon />}
                   variant="contained"
-                  disabled={loading}
+                  disabled={loadingDelete}
+
                   className="btn-save"
                 >
                   <span>Save</span>
@@ -437,11 +476,12 @@ const DeviceInfo: React.FC = () => {
                   size="small"
                   color="error"
                   onClick={handleDeleteDevice}
-                  loading={loading}
+                  loading={loadingDelete}
                   loadingPosition="start"
                   startIcon={<DeleteIcon />}
                   variant="contained"
-                  disabled={loading}
+                  disabled={loadingSave}
+
                   className="btn-save"
                 >
                   <span>Delete</span>
@@ -475,6 +515,30 @@ const DeviceInfo: React.FC = () => {
           </Snackbar>
         </div>
       )}
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        style={{ marginTop: '64px' }}
+      >
+        <SnackbarContent
+          style={{
+            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
+            color: 'white',
+          }}
+          message={
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+              {snackbarType === 'success' ? (
+                <CheckIcon style={{ marginRight: '8px' }} />
+              ) : (
+                <ErrorIcon style={{ marginRight: '8px' }} />
+              )}
+              {message}
+            </span>
+          }
+        />
+      </Snackbar>
     </>
   );
 };
