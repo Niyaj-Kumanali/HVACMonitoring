@@ -11,11 +11,14 @@
     padding: 30px;
     border-radius:10px
 }
-.form-control {
+.chart .form-control {
     width: 700px;
     margin: 30px 0px 30px 0px!important;
 }
 
 .form-control-inner {
     width: 100%;
+}
+.tablecell{
+    font-size:15px !important;
 }

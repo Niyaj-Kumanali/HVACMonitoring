@@ -243,7 +243,7 @@ export const getFilteredDevices = async(id: string) => {
     pageSize: 1000000000,
     page: 0
   }
-  const response = await getTenantDevices(params)
+  const response = await getTenantDeviceInfos(params)
 
   const filteredDevices = response.data.data.filter((device: Device) => device.label == id)
   return filteredDevices
