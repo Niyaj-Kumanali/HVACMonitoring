@@ -21,6 +21,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { getResetToken } from '../../api/loginApi';
+import { mongoAPI } from '../../api/MongoAPIInstance';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -171,45 +172,72 @@ const Login: React.FC = () => {
     };
 
     const handleEmailsubmit = async () => {
-        // const res = await requestResetPasswordByEmail(forgetpasswordemail)
-        // console.log(res)
-        // console.log(forgetpasswordemail)
-        const requestBody: {
-            email : string
-        } = {
+        const requestBody = {
             email: forgetpasswordemail
-        }
-        console.log(requestBody.email)
-        const response = await getResetToken(requestBody)
+        };
+        console.log(requestBody.email);
 
-        if (response.status == 200) {
-            handleDialogClose()
+        try {
+            const response = await getResetToken(requestBody);
 
-            const {resetToken, userId} = response.data
-            console.log(response)
-            console.log(resetToken)
-            const data = {
-                resetToken: resetToken,
-                userId: userId,
-                email: forgetpasswordemail
+            if (response.status === 200) {
+                handleDialogClose();
+
+                let { resetToken, userId } = response.data;
+                resetToken = resetToken == null ? "": resetToken
+                
+                console.log(response);
+                console.log(resetToken);
+                console.log(userId)
+
+                const emailPayload = {
+                    email: forgetpasswordemail,
+                    resetToken: resetToken,
+                };
+
+                // Send the email
+                const emailResponse = await mongoAPI.post('/activatemail/send-reset-email', emailPayload);
+                console.log(emailResponse)
+
+                if (emailResponse.status == 200) {
+                    setTimeout(() => {
+                        setLoading(false);
+                        setSnackbarMessage('Email Sent');
+                        setSnackbarStyle({ backgroundColor: 'green' });
+                        setState({ open: true, Transition: SlideTransition });
+
+                        setTimeout(() => {
+                            setState(prevState => ({ ...prevState, open: false }));
+                            // navigate(`/login/resetPassword?token=${resetToken}`, { state: { resetToken, userId, email: forgetpasswordemail } });
+                            navigate('/login')
+                        }, 500);
+                    }, 1000);
+                } else {
+                    setSnackbarMessage('Failed to send email');
+                    setSnackbarStyle({ backgroundColor: 'red' });
+                    setOpen(true)
+                }
+
+
+            } else {
+                handleDialogClose();
+                setSnackbarMessage('Unable to generate link');
+                setSnackbarStyle({ backgroundColor: 'red' });
+                setTimeout(() => {
+                    setState({ open: true, Transition: SlideTransition });
+                }, 500);
             }
-
-            navigate('/login/resetPassword', {state : {...data}})
-            setSnackbarMessage('Reset password Link Generated');
-            setSnackbarStyle({ backgroundColor: 'green' });
-            setTimeout(() => {
-                setState({ open: true, Transition: SlideTransition })
-            }, 500)
-        }
-        else {
-            handleDialogClose()
-            setSnackbarMessage('Unable to generate link');
+        } catch (error) {
+            console.error('Error:', error);
+            handleDialogClose();
+            setSnackbarMessage('An error occurred');
             setSnackbarStyle({ backgroundColor: 'red' });
             setTimeout(() => {
-                setState({ open: true, Transition: SlideTransition })
-            }, 500)
+                setState({ open: true, Transition: SlideTransition });
+            }, 500);
         }
-    }
+    };
+
 
     useEffect(() => {
         setTimeout(() => {

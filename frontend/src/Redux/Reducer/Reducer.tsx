@@ -1,8 +1,10 @@
-// import { User } from "../../types/thingsboardTypes";
+import { User } from "../../types/thingsboardTypes";
 
 interface Userstate {
     accesstoken: string | null;
+    user: User
 }
+
 const initial_state: any = {
     user: null ,
     accesstoken: null,

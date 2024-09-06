@@ -2,33 +2,38 @@ import React, { useState } from 'react';
 import './ResetPassword.css'; 
 import { useLocation, useNavigate } from 'react-router-dom'
 import { setPassword } from '../../api/loginApi';
+// import { useLocation, useNavigate } from 'react-router-dom'
+// import { setPassword } from '../../api/loginApi';
+
 
 
 const ResetPassword: React.FC = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const navigate = useNavigate()
-    const location = useLocation()
-    const {resetToken, userId} = location.state
+
+    // const navigate = useNavigate()
+    // const location = useLocation()
+    // const {resetToken, userId} = location.state
 
     const handleReset = async() => {
-        if (newPassword === confirmPassword) {
+        // if (newPassword === confirmPassword) {
 
-            const passBody = {
-                user_id: userId,
-                password: newPassword,
-                enabled: true,
-                activateToken: resetToken
-              }
+        //     const passBody = {
+        //         user_id: userId,
+        //         password: newPassword,
+        //         enabled: true,
+        //         activateToken: resetToken
+        //       }
         
-              const response = await setPassword(passBody)
-              console.log(response)
-            // Handle password reset logic here
-            alert('Password reset successfully');
-            navigate(`/login`)
-        } else {
-            console.log('Passwords do not match');
-        }
+        //       const response = await setPassword(passBody)
+        //       console.log(response)
+        //     // Handle password reset logic here
+        //     alert('Password reset successfully');
+        //     navigate(`/login`)
+        // } else {
+        //     console.log('Passwords do not match');
+        // }
+        console.log("handleReset")
     };
 
     const handleCancel = () => {

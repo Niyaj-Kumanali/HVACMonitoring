@@ -1,8 +1,9 @@
 import { Layout } from "react-grid-layout";
 
+
 export const SET_LAYOUT = 'SET_LAYOUT';
 
-export const setLayout = (layout: Layout[]) => ({
+export const setLayout = (dashboardId: string = "", layout: Layout[]) => ({
   type: SET_LAYOUT,
-  payload: layout,
+  payload: { dashboardId, layout },
 });

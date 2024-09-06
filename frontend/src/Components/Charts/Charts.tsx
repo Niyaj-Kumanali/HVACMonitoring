@@ -93,11 +93,14 @@ const Charts = () => {
 
     const handleTelemetryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
-        setSelectedTelemetry(prevSelected =>
-            prevSelected.includes(value)
+        setSelectedTelemetry(prevSelected => {
+            const newSelection = prevSelected.includes(value)
                 ? prevSelected.filter(t => t !== value)
-                : [...prevSelected, value]
-        );
+                : [...prevSelected, value];
+    
+            // Ensure at least one checkbox is selected
+            return newSelection.length > 0 ? newSelection : prevSelected;
+        });
     };
 
     const getTelemetryData = async (): Promise<any | null> => {
