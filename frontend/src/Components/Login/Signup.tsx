@@ -9,7 +9,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
-import { CreateSignUpUser, resendEmailActivation } from '../../api/signupAPIs';
+import { CreateSignUpUser } from '../../api/signupAPIs';
 import { Link, useNavigate } from 'react-router-dom';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 import thingsboardAPI from '../../api/thingsboardAPI';

@@ -184,6 +184,7 @@ const Login: React.FC = () => {
                 const { resetToken, userId } = response.data;
                 console.log(response);
                 console.log(resetToken);
+                console.log(userId)
 
                 const emailPayload = {
                     email: forgetpasswordemail,
