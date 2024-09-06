@@ -2,7 +2,7 @@ import { Tenant, User } from '../types/thingsboardTypes';
 import { login } from './loginApi';
 import { deleteTenant, saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
-import { getActivationLink, saveUser } from './userApi';
+import {saveUser } from './userApi';
 
 // Activate User by Email Code
 export const activateUserByEmailCode = async (

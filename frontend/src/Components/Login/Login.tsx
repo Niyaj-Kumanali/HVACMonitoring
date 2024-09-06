@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { getResetToken, requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
+import { getResetToken} from '../../api/loginApi';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ResetPassword.css'; 
 import { useLocation, useNavigate } from 'react-router-dom'
-import { resetPassword, setPassword } from '../../api/loginApi';
+import { setPassword } from '../../api/loginApi';
 
 
 const ResetPassword: React.FC = () => {
@@ -9,7 +9,7 @@ const ResetPassword: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate()
     const location = useLocation()
-    const {email, resetToken, userId} = location.state
+    const {resetToken, userId} = location.state
 
     const handleReset = async() => {
         if (newPassword === confirmPassword) {

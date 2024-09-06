@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './myComponent.css';
-import { DashboardType, Tenant, User } from '../../types/thingsboardTypes';
+import { DashboardType} from '../../types/thingsboardTypes';
 import { getCurrentUser } from '../../api/loginApi';
 
 import { saveDashboard } from '../../api/dashboardApi';
@@ -8,8 +8,7 @@ import {
   getAllWidgetsBundles,
   getWidgetsBundles,
 } from '../../api/widgetsBundleAPI';
-import { CreateSignUpUser } from '../../api/signupAPIs';
-import { getActivationLink } from '../../api/userApi';
+
 
 import { getImages } from '../../api/imageAPIs';
 
@@ -26,55 +25,6 @@ const MyComponent: React.FC = () => {
   const [currentWidgetPage, setCurrentWidgetPage] = useState<number>(0);
   const [totalWidgetPages, setTotalWidgetPages] = useState<number>(0);
 
-  const [orgName, setOrgName] = useState('Tenant');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSignUp = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setErrorMessage('');
-    setSuccessMessage('');
-
-    try {
-      const userBody: User = {
-        email: email,
-        authority: 'TENANT_ADMIN',
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
-        phone: '123456789',
-        additionalInfo: {},
-      };
-
-      const tenant: Tenant = {
-        title: orgName,
-      };
-      const response = await CreateSignUpUser(tenant, userBody);
-      const activationLink = await getActivationLink(response?.data.id?.id);
-
-      console.log(response);
-      console.log(activationLink);
-
-      setSuccessMessage(
-        'Sign-up successful! Please check your email to activate your account.'
-      );
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPassword('');
-    } catch (error) {
-      console.error('Sign-up error', error);
-      setErrorMessage('Sign-up failed. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Fetch widget bundles with parameters
   const fetchAllWidgetBundles = async () => {

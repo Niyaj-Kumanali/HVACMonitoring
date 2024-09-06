@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import './Locations.css';
-import { getCurrentUser } from '../../api/loginApi';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import 'leaflet/dist/leaflet.css';
+
+import { getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
 import L from 'leaflet';
+import Loader from '../Loader/Loader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Reducer';
 
 interface Warehouse {
+  warehouseName?: string;
   latitude: string;
   longitude: string;
 }
@@ -22,14 +27,12 @@ const Locations = () => {
     { latitude: string; longitude: string }[]
   >([]);
   const [map, setMap] = useState<L.Map | null>(null);
+  const user = useSelector((state: RootState) => state.user.user)
 
   // Fetch all warehouses
   const fetchAllWarehouses = async () => {
     try {
-      const currentUser = await getCurrentUser(); // Fetch the current user
-      const response = await mongoAPI.get(
-        `/warehouse/getallwarehouse/${currentUser.data.id.id}`
-      );
+      const response = await getAllWarehouseByUserId(user.id?.id || "")
 
       // Filter for unique locations by comparing latitude and longitude
       const uniqueLocations = response.data.reduce(
@@ -96,7 +99,7 @@ const Locations = () => {
   useEffect(() => {
     if (!map && uniqueLocations.length > 0) {
       // Initialize the map and set it to the first warehouse's location
-      const initialLocation = [
+      const initialLocation: any = [
         parseFloat(uniqueLocations[0].latitude),
         parseFloat(uniqueLocations[0].longitude),
       ];
@@ -136,14 +139,16 @@ const Locations = () => {
     fetchAllWarehouses();
   }, []);
 
+  console.log('rendered');
+
   return (
     <div className="menu-data">
       {loading ? (
-        <p>Loading locations...</p>
+        <Loader />
       ) : (
         <div className="map-container">
           <h1>Locations of warehouses</h1>
-          <div id="map"></div> {/* Map container */}
+          <div id="map"></div>
         </div>
       )}
     </div>
