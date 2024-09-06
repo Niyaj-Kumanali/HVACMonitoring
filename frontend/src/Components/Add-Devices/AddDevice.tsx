@@ -178,6 +178,7 @@ const AddDevice = () => {
               <label htmlFor="" className="label">
                 Location
               </label>
+              <div></div>
               <FormControl className="form-control">
                 <InputLabel id="location-label">Select Location</InputLabel>
                 <Select

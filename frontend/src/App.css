@@ -39,7 +39,7 @@
     overflow-y: auto;
     box-sizing: border-box;
     height: calc(100vh - 65px);
-
-
+    display: flex;
+    justify-content: flex-start;
 }
 

@@ -8,8 +8,8 @@
 }
 
 .add-device .label {
-    font-size: 20px !important;
-    margin-bottom: 10px !important;
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
     display: inline-block;
 }
 .add-device .text-field-box {
@@ -39,4 +39,7 @@
 }
 .add-device form{
     width: 100%;
+}
+.add-device .MuiFormControl-root {
+    margin-top: 0px !important;
 }

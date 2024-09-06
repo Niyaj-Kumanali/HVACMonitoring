@@ -101,13 +101,15 @@ const Login: React.FC = () => {
             }, 1000);
 
         } catch (error) {
-            setSnackbarMessage('Invalid username or password');
-            setSnackbarStyle({ backgroundColor: 'red' });
-            setLoading(false);
-            setState({ open: true, Transition: SlideTransition });
-
             setTimeout(() => {
-                setState(prevState => ({ ...prevState, open: false }));
+                setSnackbarMessage('Invalid username or password');
+                setSnackbarStyle({ backgroundColor: 'red' });
+                setLoading(false);
+                setState({ open: true, Transition: SlideTransition });
+
+                setTimeout(() => {
+                    setState(prevState => ({ ...prevState, open: false }));
+                }, 500);
             }, 1000);
         }
     };
