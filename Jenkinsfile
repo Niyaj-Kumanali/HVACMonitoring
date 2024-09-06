@@ -61,11 +61,12 @@ pipeline {
                 script {
                     sh '''
                         cd backend
-
+                        
                         if pm2 list | grep -q 'hvac_backend'; then
                             pm2 restart hvac_backend --update-env
                         else
                             pm2 start index.js --name hvac_backend
+                            pm2 save
                         fi
                     '''
                 }
