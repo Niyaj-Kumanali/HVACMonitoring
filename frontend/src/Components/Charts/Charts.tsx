@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
-import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Checkbox } from "@mui/material";
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    SelectChangeEvent,
+    Checkbox,
+    FormControlLabel
+} from "@mui/material";
 import { getCurrentUser } from "../../api/loginApi";
 import { mongoAPI } from "../../api/MongoAPIInstance";
 import { getFilteredDevices } from "../../api/deviceApi";
@@ -13,7 +22,6 @@ import TableRow from '@mui/material/TableRow';
 import { useTheme } from '@mui/material/styles';
 import { LineChart } from '@mui/x-charts/LineChart';
 import "./Charts.css";
-
 
 interface Warehouse {
     warehouse_id: string;
@@ -42,31 +50,47 @@ const Charts = () => {
     const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
     const [devices, setDevices] = useState<Device[]>([]);
     const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+    const [selectedTelemetry, setSelectedTelemetry] = useState<string[]>(["Temperature"]);
     const theme = useTheme();
     const [data, setData] = useState<TelemetryData | null>(null);
+    const [humidity, setHumidity] = useState<TelemetryData | null>(null);
+    const [Power, setPower] = useState<TelemetryData | null>(null);
 
     const fetchAllWarehouses = async () => {
         try {
             const currentUser = await getCurrentUser();
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
+            const response = await mongoAPI.get<Warehouse[]>(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
             setWarehouse(response.data);
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
         }
     };
 
-    const handleWarehouseChange = async (e: SelectChangeEvent) => {
+    const handleWarehouseChange = async (e: SelectChangeEvent<string>) => {
         const selectedValue = e.target.value;
         setSelectedWarehouse(selectedValue);
-        const fdevices = await getFilteredDevices(selectedValue);
-        setDevices(fdevices);
+        try {
+            const filteredDevices = await getFilteredDevices(selectedValue);
+            setDevices(filteredDevices);
+        } catch (error) {
+            console.error("Failed to fetch devices:", error);
+        }
     };
 
     const handleCheckboxChange = (deviceId: string) => {
-        setSelectedDevice((prevSelected) => (prevSelected === deviceId ? null : deviceId));
+        setSelectedDevice(prevSelected => (prevSelected === deviceId ? null : deviceId));
     };
 
-    const getTelemetryData = async () => {
+    const handleTelemetryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSelectedTelemetry(prevSelected =>
+            prevSelected.includes(value)
+                ? prevSelected.filter(t => t !== value)
+                : [...prevSelected, value]
+        );
+    };
+
+    const getTelemetryData = async (): Promise<any | null> => {
         if (selectedDevice) {
             try {
                 const response = await getLatestTimeseries("DEVICE", selectedDevice);
@@ -83,25 +107,50 @@ const Charts = () => {
         fetchAllWarehouses();
     }, []);
 
+    const seriesData: any = [
+        selectedTelemetry.includes("Temperature") && data ? { data: data.value, label: 'Temperature' } : null,
+        selectedTelemetry.includes("Humidity") && humidity ? { data: humidity.value, label: 'Humidity' } : null,
+        selectedTelemetry.includes("Power") && Power ? { data: Power.value, label: 'Power' } : null
+    ].filter(Boolean);
+
     useEffect(() => {
-        const interval = setInterval(async () => {
+        const fetchTelemetry = async () => {
             const telemetryData = await getTelemetryData();
-            if (telemetryData) {
+
+            if (telemetryData && Object.keys(telemetryData).length !== 0) {
+                console.log("Telemetry data fetched:", telemetryData);
                 setData(prev => ({
-                    ts: [...(prev?.ts || []), ...telemetryData.temperature.map((t: any) => formatDate(t.ts))],
-                    value: [...(prev?.value || []), ...telemetryData.temperature.map((t: any) => t.value)],
+                    ts: [...(prev?.ts || []), ...(telemetryData.temperature?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(prev?.value || []), ...(telemetryData.temperature?.map((t: any) => t.value) || [])],
                 }));
+                setHumidity(prev => ({
+                    ts: [...(prev?.ts || []), ...(telemetryData.humidity?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(prev?.value || []), ...(telemetryData.humidity?.map((t: any) => t.value) || [])],
+                }));
+                setPower(prev => ({
+                    ts: [...(prev?.ts || []), ...(telemetryData.power?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(prev?.value || []), ...(telemetryData.power?.map((t: any) => t.value) || [])],
+                }));
+            } else {
+                setData(null);
+                setHumidity(null);
+                setPower(null);
             }
-        }, 3000);
+        };
+
+        fetchTelemetry();
+        const interval = setInterval(fetchTelemetry, 3000);
 
         return () => clearInterval(interval);
-    }, [selectedDevice, data]);
+    }, [selectedDevice]);
 
-    const formatDate = (timestamp: number) => {
-        const date = new Date(timestamp);
-        return date.toLocaleString();
-    };
-    
+    const formatDate = (timestamp: number): string => new Date(timestamp).toLocaleString();
+
+    const telemetryCheckboxes = [
+        { label: 'Temperature', value: 'Temperature' },
+        { label: 'Humidity', value: 'Humidity' },
+        { label: 'Power', value: 'Power' }
+    ];
 
     return (
         <div className="menu-data">
@@ -127,7 +176,6 @@ const Charts = () => {
                             </Select>
                         </FormControl>
 
-                        {/* Device Table */}
                         <Paper style={{ height: '100%', width: '100%' }}>
                             <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="device table">
@@ -160,28 +208,43 @@ const Charts = () => {
                                 </Table>
                             </TableContainer>
                         </Paper>
+
                         <div>
-                            {data ? (
-                                <LineChart
-                                    width={900}
-                                    height={600}
-                                    series={[
-                                        { data: data.value, label: 'Temperature', yAxisId: 'leftAxisId' },
-                                    ]}
-                                    xAxis={[{ scaleType: 'point', data: data.ts}]}
-                                    yAxis={[{ id: 'leftAxisId' }]}
-                                    grid={{ vertical: true, horizontal: true }}
-                                    
-                                />
+                            <div>
+                                {telemetryCheckboxes.map((checkbox) => (
+                                    <FormControlLabel
+                                        key={checkbox.value}
+                                        control={
+                                            <Checkbox
+                                                checked={selectedTelemetry.includes(checkbox.value)}
+                                                onChange={handleTelemetryChange}
+                                                value={checkbox.value}
+                                            />
+                                        }
+                                        label={checkbox.label}
+                                    />
+                                ))}
+                            </div>
+                            {selectedDevice ? (
+                                seriesData.length > 0 ? (
+                                    <LineChart
+                                        width={900}
+                                        height={600}
+                                        series={seriesData}
+                                        xAxis={[{ scaleType: 'point', data: data?.ts || [] }]}
+                                        grid={{ vertical: true, horizontal: true }}
+                                    />
+                                ) : (
+                                    <p>No valid data available for the selected device.</p>
+                                )
                             ) : (
-                                <p>No telemetry data available</p>
+                                    <p>Please select a device to view telemetry data.</p>
                             )}
-                            
                         </div>
                     </div>
                 </div>
             ) : (
-                <div>No Warehouse Data is Present</div>
+                <p>Loading...</p>
             )}
         </div>
     );
