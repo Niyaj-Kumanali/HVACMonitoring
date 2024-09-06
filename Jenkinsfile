@@ -59,7 +59,14 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        pm2 restart hvac_backend
+                        cd backend
+
+                        # Check if the PM2 process is running and restart or start it
+                        if pm2 list | grep -q 'hvac_backend'; then
+                            pm2 restart hvac_backend
+                        else
+                            pm2 start index.js --name hvac_backend
+                        fi
                     '''
                 }
             }
