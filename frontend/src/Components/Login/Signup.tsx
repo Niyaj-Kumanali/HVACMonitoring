@@ -38,7 +38,7 @@ const Signup: React.FC = () => {
     Transition: Slide,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const firstNameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -90,7 +90,7 @@ const Signup: React.FC = () => {
       setSnackbar({
         ...snackbar,
         open: true,
-        message: 'All fields are required',
+        message: 'Please fill all fields.',
         style: { backgroundColor: 'red' },
       });
       return;
@@ -104,7 +104,7 @@ const Signup: React.FC = () => {
         setSnackbar({
           ...snackbar,
           open: true,
-          message: 'User already exist!',
+          message: 'User with this email exists.',
           style: { backgroundColor: 'red' },
         });
         setLoading(false)
@@ -170,7 +170,7 @@ const Signup: React.FC = () => {
       setSnackbar({
         ...snackbar,
         open: true,
-        message: 'An error occurred. Please try again.',
+        message: 'An error occurred. Please try again later.',
         style: { backgroundColor: 'red' },
       });
       
@@ -180,8 +180,8 @@ const Signup: React.FC = () => {
   };
 
   useEffect(() => {
-    if (usernameRef.current) {
-      usernameRef.current.focus();
+    if (firstNameRef.current) {
+      firstNameRef.current.focus();
     }
   }, [isLoading]);
 
@@ -247,7 +247,7 @@ const Signup: React.FC = () => {
                   onFocus={handleFocus('firstName')}
                   onBlur={handleBlur('firstName')}
                   autoComplete="given-name"
-                  ref={usernameRef}
+                  ref={firstNameRef}
                 />
               </div>
             </div>
