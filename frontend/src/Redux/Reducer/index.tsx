@@ -1,16 +1,11 @@
-import dashboardReducer from "./dashboardReducer";
-import userReducer from "./Reducer";
-import { combineReducers } from "redux";
+import layoutReducer from './layoutReducer';
+import userReducer from './Reducer';
+import { combineReducers } from 'redux';
 
+const rootReducer  = combineReducers({
+  user: userReducer,
+  layout: layoutReducer,
+});
 
-const Root_Reducer = combineReducers
-(
-    {
-        user : userReducer ,
-        dashboard: dashboardReducer,
-    }
-)
-
-export default Root_Reducer;
-
-
+export type RootState = ReturnType<typeof rootReducer>;
+export default rootReducer ;

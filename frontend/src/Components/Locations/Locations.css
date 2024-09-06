@@ -1,11 +1,10 @@
-.locations{
-    padding:20px;
-    width: 100%;
+.map-container {
+    flex: 1; /* Ensures that the map container takes the full remaining height after the title */
+    display: flex;
+    flex-direction: column;
 }
-.locations .location-div{
+
+#map {
+    flex: 1; /* Ensures the map takes up all available space inside the map-container */
     width: 100%;
-    height: 100%;
-    background-color:white;
-    padding: 20px;
-    border-radius: 10px;
 }

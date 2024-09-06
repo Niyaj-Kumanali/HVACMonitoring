@@ -11,7 +11,6 @@ import {
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { getActivationLink } from '../../api/userApi';
 
-import { getDeviceCredentialsByDeviceId, getFilteredDevices } from '../../api/deviceApi';
 import { getImages } from '../../api/imageAPIs';
 
 
@@ -131,12 +130,6 @@ const MyComponent: React.FC = () => {
     const currentuser = await getCurrentUser();
     console.log('Current User: \n', currentuser.data);
 
-    // const fdevices = await getFilteredDevices('78c9816c-5d45-49ea-8ba7-8524eb65624c')
-    // console.log(fdevices)
-
-    // const deviceInfo = await getDeviceCredentialsByDeviceId("ddebbb60-6aa0-11ef-98f0-3545332af3c6")
-    // console.log(deviceInfo.data)
-
     const params = {
       pageSize: 10000,
       page: 0
@@ -180,61 +173,6 @@ const MyComponent: React.FC = () => {
         {dashboardError && <p>{dashboardError}</p>}
       </div>
 
-      <div>
-        <h2>Sign Up</h2>
-        <form onSubmit={handleSignUp}>
-          <div>
-            <label>Organization:</label>
-            <input
-              type="text"
-              value={orgName}
-              onChange={(e) => setOrgName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>First Name:</label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Last Name:</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Signing Up...' : 'Sign Up'}
-          </button>
-        </form>
-        {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      </div>
 
       {/* Widget Bundles List */}
       <div>

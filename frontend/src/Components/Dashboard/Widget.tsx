@@ -30,6 +30,45 @@ const Widget: React.FC = () => {
   const [filteredTelemetryData, setFilteredTelemetryData] =
     useState<TelemetryData>({});
   const [devices, setdevices] = useState([]);
+
+  const fetchTimeseriesKeys = async (deviceId: string) => {
+    const response = await getTimeseriesKeys('DEVICE', deviceId);
+    return response.data;
+  };
+
+  const fetchTimeseriesData = async (
+    deviceId: string,
+    selectedSensors: string[],
+    sensors: string[]
+  ) => {
+    const params: TelemetryQueryParams = {
+      keys:
+        selectedSensors.length > 0
+          ? selectedSensors.join(',')
+          : sensors.join(','),
+      startTs: Date.now() - 3600000, // last hour
+      endTs: Date.now(),
+      limit: 100,
+      orderBy: 'ASC',
+    };
+
+    const response = await getTimeseries('DEVICE', deviceId, params);
+    return response.data;
+  };
+
+  const fetchLatestTelemetryData = async (
+    deviceId: string,
+    selectedSensors: string[],
+    sensors: string[]
+  ) => {
+    const response = await getLatestTimeseries(
+      'DEVICE',
+      deviceId,
+      selectedSensors.length > 0 ? selectedSensors : sensors
+    );
+    return response.data;
+  };
+
   useEffect(() => {
     const fetchAllDevices = async () => {
       const params = {
@@ -47,63 +86,59 @@ const Widget: React.FC = () => {
     const fetchTelemetryData = async () => {
       try {
         if (!selectedDevice) return;
-  
-        console.log(selectedDevice);
-  
-        const keyResponse = await getTimeseriesKeys('DEVICE', selectedDevice);
-        setSensors(keyResponse.data);
-        setSelectedSensors(prev => prev.length > 0 ? prev : keyResponse.data);
-  
-        const params: TelemetryQueryParams = {
-          keys:
-            selectedSensors.length > 0
-              ? selectedSensors.join(',')
-              : keyResponse.data.join(','),
-          startTs: Date.now() - 3600000, // last hour
-          endTs: Date.now(),
-          limit: 100,
-          orderBy: 'ASC',
-        };
-  
-        // const response = await getTimeseries('DEVICE', selectedDevice, params);
-        // setTelemetryData(response.data);
-  
+
+
+        const keys = await fetchTimeseriesKeys(selectedDevice);
+        setSensors(keys);
+        setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
+
+        const telemetryData = await fetchTimeseriesData(
+          selectedDevice,
+          selectedSensors,
+          keys
+        );
+
+        setTelemetryData(telemetryData);
+
         const intervalId = setInterval(async () => {
-          const latestResponse = await getLatestTimeseries(
-            'DEVICE',
+          const latestData = await fetchLatestTelemetryData(
             selectedDevice,
-            selectedSensors.length > 0 ? selectedSensors : keyResponse.data
+            selectedSensors,
+            keys
           );
-          console.log(latestResponse.data);
-  
-          const latestTelemetryData = latestResponse.data;
-  
+          const latestTelemetryData = latestData;
+
           // Merge latestTelemetryData with existing telemetryData
           const updatedTelemetryData = Object.keys(latestTelemetryData).reduce(
             (acc, key) => {
               return {
                 ...acc,
-                [key]: [...(telemetryData[key] || []), ...latestTelemetryData[key]],
+                [key]: [
+                  ...(telemetryData[key] || []),
+                  ...latestTelemetryData[key],
+                ],
               };
             },
             telemetryData
           );
-  
+
           setTelemetryData(updatedTelemetryData);
         }, 5000);
-  
+
         // Clean up the interval on component unmount or if selectedDevice changes
-        return () => {console.log("Interval cleared"); return clearInterval(intervalId)};
+        return () => {
+          console.log('Interval cleared');
+          return clearInterval(intervalId);
+        };
       } catch (error) {
         console.log('Failed to fetch telemetry data', error);
         setSensors([]);
         setSelectedSensors([]);
       }
     };
-  
+
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors, telemetryData]);
-  
+  }, [selectedDevice, selectedSensors]);
 
   useEffect(() => {
     const data =

@@ -1,17 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import 'leaflet/dist/leaflet.css';
 
 import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import Router from './Router'
 import { Provider } from 'react-redux'
-import { persistor, Store } from "./Store"
+import { persistor, store } from "./Store"
 import { PersistGate } from 'redux-persist/integration/react';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Provider store={Store}>
+    <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <RouterProvider router={Router} />
       </PersistGate>
