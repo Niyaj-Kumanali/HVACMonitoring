@@ -69,7 +69,6 @@ router.post('/createPassword', async (req, res) => {
 
 router.post('/resetpasswordforresttoken', async (req, res) => {
   const { resetToken, password, confirmpassword, user_id } = req.body;
-  console.log("resetpasswordforresttoken", resetToken, password, confirmpassword);
 
   const client = new Client(config);
 
@@ -116,7 +115,6 @@ router.post('/resetpasswordforresttoken', async (req, res) => {
 
 router.post('/getResetToken', async (req, res) => {
   const { email } = req.body;
-  console.log("/getResetToken", email)
 
   if (!email) {
     return res.status(400).send('email is required');
@@ -141,10 +139,8 @@ router.post('/getResetToken', async (req, res) => {
     // Execute the update query
     const result = await client.query(userIdQuery, [email]);
     const userId = result.rows[0].id
-    console.log(userId)
     const response = await client.query(resetTokenQuery, [userId])
     const resetToken = response.rows[0].reset_token
-    console.log(resetToken)
     res.status(200).json({ resetToken: resetToken, userId: userId })
     // res.status(200).send('User updated successfully');
   } catch (error) {

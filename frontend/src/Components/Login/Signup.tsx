@@ -9,13 +9,14 @@ import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
-import { CreateSignUpUser } from '../../api/signupAPIs';
+import { CreateSignUpUser, resendEmailActivation } from '../../api/signupAPIs';
 import { Link, useNavigate } from 'react-router-dom';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 import thingsboardAPI from '../../api/thingsboardAPI';
 import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import { getActivationLink } from '../../api/userApi';
+import { getResetToken } from '../../api/loginApi';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -45,9 +46,9 @@ const Signup: React.FC = () => {
 
   const handleInputChange =
     (field: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData({ ...formData, [field]: e.target.value });
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [field]: e.target.value });
+      };
 
   const handleFocus = (field: keyof typeof focusedFields) => () => {
     setFocusedFields((prev) => ({ ...prev, [field]: true }));
@@ -55,28 +56,28 @@ const Signup: React.FC = () => {
 
   const handleBlur =
     (field: keyof typeof focusedFields) =>
-    (e: React.FocusEvent<HTMLInputElement>) => {
-      if (e.target.value === '') {
-        setFocusedFields((prev) => ({ ...prev, [field]: false }));
-      }
-    };
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        if (e.target.value === '') {
+          setFocusedFields((prev) => ({ ...prev, [field]: false }));
+        }
+      };
 
 
   const login = async (username: string, password: string): Promise<string> => {
     try {
-        const response = await thingsboardAPI.post<{ token: string }>(
-            '/auth/login',
-            { username, password }
-        );
-        const token = response.data.token;
-        localStorage.setItem('token', token);
-        dispatch(set_Accesstoken(token));
-        return token;
+      const response = await thingsboardAPI.post<{ token: string }>(
+        '/auth/login',
+        { username, password }
+      );
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      dispatch(set_Accesstoken(token));
+      return token;
     } catch (error) {
-        console.error('Login failed', error);
-        throw error;
+      console.error('Login failed', error);
+      throw error;
     }
-};
+  };
 
   const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -97,6 +98,22 @@ const Signup: React.FC = () => {
     }
 
     setLoading(true);
+
+    const checkUser = {
+      email: formData.email
+    }
+
+    const response = await getResetToken(checkUser)
+    if (response.status == 200) {
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: 'User already exist!',
+        style: { backgroundColor: 'red' },
+      });
+      setLoading(false)
+      return
+    }
 
     try {
       const userBody: User = {
@@ -161,8 +178,10 @@ const Signup: React.FC = () => {
   };
 
   useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+    if (usernameRef.current) {
+      usernameRef.current?.focus();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const handleNavigation = (e: BeforeUnloadEvent) => {
@@ -210,9 +229,8 @@ const Signup: React.FC = () => {
             <h2 className="title">Sign Up</h2>
 
             <div
-              className={`input-div one ${
-                focusedFields.firstName ? 'focus' : ''
-              }`}
+              className={`input-div one ${focusedFields.firstName ? 'focus' : ''
+                }`}
             >
               <div className="i">
                 <i className="fas fa-user"></i>
@@ -233,9 +251,8 @@ const Signup: React.FC = () => {
             </div>
 
             <div
-              className={`input-div one ${
-                focusedFields.lastName ? 'focus' : ''
-              }`}
+              className={`input-div one ${focusedFields.lastName ? 'focus' : ''
+                }`}
             >
               <div className="i">
                 <i className="fas fa-user"></i>
@@ -275,9 +292,8 @@ const Signup: React.FC = () => {
             </div>
 
             <div
-              className={`input-div pass ${
-                focusedFields.password ? 'focus' : ''
-              }`}
+              className={`input-div pass ${focusedFields.password ? 'focus' : ''
+                }`}
             >
               <div className="i">
                 <i className="fas fa-lock"></i>
