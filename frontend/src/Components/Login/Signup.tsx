@@ -16,7 +16,7 @@ import thingsboardAPI from '../../api/thingsboardAPI';
 import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import { getActivationLink } from '../../api/userApi';
-import { getResetToken } from '../../api/loginApi';
+import { getResetTokenByEmail } from '../../api/loginApi';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -99,11 +99,7 @@ const Signup: React.FC = () => {
 
     setLoading(true);
 
-    const checkUser = {
-      email: formData.email
-    }
-
-    const response = await getResetToken(checkUser)
+    const response = await getResetTokenByEmail(formData.email)
     if (response.status == 200) {
       setSnackbar({
         ...snackbar,
@@ -135,7 +131,6 @@ const Signup: React.FC = () => {
       const passBody = {
         user_id: createdUser?.data.id?.id,
         password: formData.password,
-        enabled: true,
         activateToken: activateToken
       }
 

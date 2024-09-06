@@ -23,9 +23,6 @@ const App = () => {
       if (!token || token !== accesstoken) {
         navigate('/login');
       } 
-      // else {
-      //   navigate('/dashboards');
-      // }
 
       setLoading(false);
     };

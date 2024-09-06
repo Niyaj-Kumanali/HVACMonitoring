@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { getResetToken } from '../../api/loginApi';
+import { getResetTokenByEmail } from '../../api/loginApi';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 
 function SlideTransition(props: SlideProps) {
@@ -172,13 +172,9 @@ const Login: React.FC = () => {
     };
 
     const handleEmailsubmit = async () => {
-        const requestBody = {
-            email: forgetpasswordemail
-        };
-        console.log(requestBody.email);
 
         try {
-            const response = await getResetToken(requestBody);
+            const response = await getResetTokenByEmail(forgetpasswordemail);
 
             if (response.status === 200) {
                 handleDialogClose();
@@ -196,7 +192,7 @@ const Login: React.FC = () => {
                 };
 
                 // Send the email
-                const emailResponse = await mongoAPI.post('/activatemail/send-reset-email', emailPayload);
+                const emailResponse = await mongoAPI.post('/mailservice/send-reset-email', emailPayload);
                 console.log(emailResponse)
 
                 if (emailResponse.status == 200) {

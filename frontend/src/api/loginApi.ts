@@ -1,10 +1,7 @@
 import { mongoAPI } from './MongoAPIInstance';
 import thingsboardAPI from './thingsboardAPI';
 
-export const login = async (
-  username: string,
-  password: string
-) => {
+export const login = async (username: string, password: string) => {
   const response = await thingsboardAPI.post<{ token: string }>('/auth/login', {
     username,
     password,
@@ -31,7 +28,7 @@ export const changePassword = async (
     newPassword,
   });
 
-  return response
+  return response;
 };
 
 // Get Current User
@@ -41,13 +38,11 @@ export const getCurrentUser = async () => {
 };
 
 // Check Activate User Token
-export const checkActivateToken = async (
-  activateToken: string
-) => {
+export const checkActivateToken = async (activateToken: string) => {
   const response = await thingsboardAPI.get('/noauth/activate', {
     params: { activateToken },
   });
-  return response
+  return response;
 };
 
 // Activate User
@@ -61,11 +56,11 @@ export const activateUser = async (
 };
 
 // Reset Password
-export const resetPassword = async (
-  resetToken: string,
-  password: string
-) => {
-  const response = await thingsboardAPI.post('/noauth/resetPassword', { resetToken: resetToken, password: password });
+export const resetPassword = async (resetToken: string, password: string) => {
+  const response = await thingsboardAPI.post('/noauth/resetPassword', {
+    resetToken: resetToken,
+    password: password,
+  });
   return response;
 };
 
@@ -74,40 +69,46 @@ export const checkResetToken = async (resetToken: string) => {
   const response = await thingsboardAPI.get('/noauth/resetPassword', {
     params: { resetToken },
   });
-  return response
+  return response;
 };
 
 // Request Reset Password Email
-export const requestResetPasswordByEmail = async (
-  email: string
-) => {
-  const response = await thingsboardAPI.post('/noauth/resetPasswordByEmail', { email });
+export const requestResetPasswordByEmail = async (email: string) => {
+  const response = await thingsboardAPI.post('/noauth/resetPasswordByEmail', {
+    email,
+  });
   return response;
 };
 
 // Get User Password Policy
-
 
 export const getUserPasswordPolicy = async () => {
   const response = await thingsboardAPI.get('/noauth/userPasswordPolicy');
   return response;
 };
 
-export const getResetToken = async (body: {
-  email: string
-}) => {
-  console.log(body.email)
-  const response = await mongoAPI.post('/postgres/getResetToken', body)
+export const getResetTokenByEmail = async (email: string) => {
+  const response = await mongoAPI.get('/postgres/resettoken', {
+    params: email,
+  });
   // console.log(response)
-  return response
-}
+  return response;
+};
 
-export const setPassword = async(body: {
-  user_id: string,
-  password: string,
-  enabled: boolean,
-  activateToken: string | null
+export const setPassword = async (body: {
+  user_id: string;
+  password: string;
+  activateToken: string;
 }) => {
-  const response = await mongoAPI.post(`/postgres/createPassword`, body)
-  return response
+  const response = await mongoAPI.post(`/postgres/setpassword`, body);
+  return response;
+};
+
+
+export const resetPasswordByToken = async (body: {
+  resetToken: string | null,
+  password: string
+}) => {
+  const response = await mongoAPI.post(`/postgres/resetpassword`, body);
+  return response;
 }

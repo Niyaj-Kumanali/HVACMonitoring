@@ -35,6 +35,7 @@ const Warehouses = () => {
     const fetchAllWarehouses = async () => {
         try {
             const currentUser = await getCurrentUser();
+            console.log(currentUser.data.id.id);
 
 
             const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);

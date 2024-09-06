@@ -58,7 +58,7 @@ app.use('/coolant', coolantRouter);
 app.use('/sensor', sensorRouter);
 app.use('/vehicle', vehicleRouter);
 app.use('/postgres', postgres)
-app.use('/activatemail', mailRouter)
+app.use('/mailservice', mailRouter)
 
 
 

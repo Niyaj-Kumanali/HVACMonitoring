@@ -33,16 +33,16 @@ import ResetPassword from './Components/ResetPassword/ResetPassword';
 const Router = createBrowserRouter([
   {
     path: '/login',
-    element: <Login />
+    element: <Login />,
   },
 
   {
     path: '/login/resetpassword',
-    element: <ResetPassword />
+    element: <ResetPassword />,
   },
   {
     path: '/signup',
-    element: <Signup />
+    element: <Signup />,
   },
   {
     path: '/',
@@ -90,9 +90,8 @@ const Router = createBrowserRouter([
       },
       {
         path: 'dashboard/edit/:dashboardId',
-        element: <AddDashboard/>,
+        element: <AddDashboard />,
       },
-
 
       {
         path: '/warehouses',
@@ -132,20 +131,20 @@ const Router = createBrowserRouter([
       },
       {
         path: '/addSupervisor',
-        element: <AddSupervisor/>,
+        element: <AddSupervisor />,
       },
       {
         path: '/user/:email',
-        element: <User/>
+        element: <User />,
       },
       {
         path: '/warehouse/:warehouseid',
-        element: <Warehouse/>
+        element: <Warehouse />,
       },
       {
         path: '/vehicle/:vehicleid',
-        element: <Vehicleinfo />
-      }
+        element: <Vehicleinfo />,
+      },
     ],
   },
   {
