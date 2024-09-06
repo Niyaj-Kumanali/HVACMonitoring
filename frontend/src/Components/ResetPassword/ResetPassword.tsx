@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './ResetPassword.css'; 
-import { useLocation, useNavigate } from 'react-router-dom'
-import { setPassword } from '../../api/loginApi';
+
 // import { useLocation, useNavigate } from 'react-router-dom'
 // import { setPassword } from '../../api/loginApi';
 
@@ -37,7 +36,7 @@ const ResetPassword: React.FC = () => {
     };
 
     const handleCancel = () => {
-        navigate(`/login`)
+        // navigate(`/login`)
     }
 
     return (
