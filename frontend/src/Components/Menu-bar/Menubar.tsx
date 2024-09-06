@@ -11,7 +11,6 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AddLocationIcon from '@mui/icons-material/AddLocation';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -83,9 +82,6 @@ const Menubar = () => {
                     </Link>
                     <Link to="/addAction" className="link">
                         <li><AddIcon className="speedicon" />Add Action</li>
-                    </Link>
-                    <Link to="/addLocation" className="link">
-                        <li><AddLocationIcon className="speedicon" />Add Location</li>
                     </Link>
                     <Link to="/addWarehouse" className="link">
                         <li><AddIcon className="speedicon" />Add Warehouse</li>
