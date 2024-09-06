@@ -55,6 +55,7 @@ pipeline {
                 }
             }
         }
+        
         stage('Restart backend') {
             steps {
                 script {
@@ -62,7 +63,7 @@ pipeline {
                         cd backend
 
                         if pm2 list | grep -q 'hvac_backend'; then
-                            pm2 restart hvac_backend
+                            pm2 restart hvac_backend --update-env
                         else
                             pm2 start index.js --name hvac_backend
                         fi
