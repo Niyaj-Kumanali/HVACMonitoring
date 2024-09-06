@@ -28,11 +28,17 @@ import Warehouse from './Components/Warehouse/Warehouse';
 import Signup from './Components/Login/Signup';
 import Vehicleinfo from './Components/Vehicles/Vehicleinfo';
 import AddDashboard from './Components/Add-Dashboard/AddDashboard';
+import ResetPassword from './Components/ResetPassword/ResetPassword';
 
 const Router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
+  },
+
+  {
+    path: '/login/resetPassword',
+    element: <ResetPassword />
   },
   {
     path: '/signup',

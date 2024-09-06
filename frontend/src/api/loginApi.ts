@@ -96,6 +96,18 @@ export const getUserPasswordPolicy = async () => {
 export const getResetToken = async (body: {
   email: string
 }) => {
+  console.log(body.email)
   const response = await mongoAPI.post('/postgres/getResetToken', body)
+  // console.log(response)
+  return response
+}
+
+export const setPassword = async(body: {
+  user_id: string,
+  password: string,
+  enabled: boolean,
+  activateToken: string | null
+}) => {
+  const response = await mongoAPI.post(`/postgres/createPassword`, body)
   return response
 }

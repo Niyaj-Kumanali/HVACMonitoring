@@ -171,22 +171,28 @@ const Login: React.FC = () => {
     const handleEmailsubmit = async () => {
         // const res = await requestResetPasswordByEmail(forgetpasswordemail)
         // console.log(res)
+        // console.log(forgetpasswordemail)
         const requestBody: {
             email : string
         } = {
             email: forgetpasswordemail
         }
-        console.log(email.value)
+        console.log(requestBody.email)
         const response = await getResetToken(requestBody)
-        console.log(response)
+
         if (response.status == 200) {
             handleDialogClose()
 
-            const resetToken = response.data.resetToken
+            const {resetToken, userId} = response.data
+            console.log(response)
             console.log(resetToken)
+            const data = {
+                resetToken: resetToken,
+                userId: userId,
+                email: forgetpasswordemail
+            }
 
-            const resetResponse = await resetPassword(resetToken, "admin123")
-            console.log(resetResponse)
+            navigate('/login/resetPassword', {state : {...data}})
             setSnackbarMessage('Reset password Link Generated');
             setSnackbarStyle({ backgroundColor: 'green' });
             setTimeout(() => {
