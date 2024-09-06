@@ -22,9 +22,12 @@ const createClient = () => new Client(config);
 
 // Helper function to generate reset token with expiration
 function generateResetToken() {
-  const token = crypto.randomBytes(24).toString('hex');
+  const randomBytes = crypto.randomBytes(27);
+  let token = randomBytes.toString('base64');
+  token = token.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   // const expiration = new Date(Date.now() + 3600000); // 1 hour from now
-  const expiration = new Date(Date.now() + 60000); // 1 minute from now
+  const expiration = new Date(Date.now() + 300000); // 5 minutes from now
+  // const expiration = new Date(Date.now() + 1000); // 1 seconds from now
   return { token, expiration };
 }
 
@@ -41,24 +44,18 @@ router.post('/setpassword', async (req, res) => {
   const client = createClient();
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRound);
     const { token } = generateResetToken();
-    console.log('Sign up password set for ', token);
 
-    // SQL query to update password and enabled status
     const passwordQuery = `
       UPDATE user_credentials
-      SET password = $1, enabled = true, reset_token = $4, reset_token_expiration = NULL
-      WHERE user_id = $2 AND activate_token = $3
+      SET password = $1, enabled = true, reset_token = $2, reset_token_expiration = NULL
+      WHERE user_id = $3 AND activate_token = $4
     `;
 
-    // Values to be used in the SQL query
-    const values = [hashedPassword, user_id, activateToken, token];
+    const values = [hashedPassword, token, user_id, activateToken];
 
     await client.connect();
-
-    // Execute the update query
     const result = await client.query(passwordQuery, values);
 
     if (result.rowCount === 0) {
@@ -97,7 +94,7 @@ router.get('/resettoken', async (req, res) => {
     `;
 
     const resetTokenQuery = `
-      SELECT reset_token
+      SELECT reset_token, reset_token_expiration
       FROM user_credentials
       WHERE user_id = $1
       LIMIT 1
@@ -105,7 +102,6 @@ router.get('/resettoken', async (req, res) => {
 
     await client.connect();
 
-    // Find the user ID by email
     const userResult = await client.query(userIdQuery, [email]);
     if (userResult.rowCount === 0) {
       return res
@@ -115,37 +111,26 @@ router.get('/resettoken', async (req, res) => {
 
     const userId = userResult.rows[0].id;
 
-    // Find the reset token by user ID
     const tokenResult = await client.query(resetTokenQuery, [userId]);
-    if (tokenResult.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ message: 'Reset token not found for the given user.' });
+    const { reset_token: resetToken, reset_token_expiration: expiration } =
+      tokenResult.rows[0] || {};
+
+    const now = new Date();
+    if (!resetToken || (expiration && now > new Date(expiration))) {
+      const { token: newToken, expiration: newExpiration } =
+        generateResetToken();
+      await client.query(
+        `
+        UPDATE user_credentials
+        SET reset_token = $2, reset_token_expiration = $3
+        WHERE user_id = $1
+      `,
+        [userId, newToken, newExpiration]
+      );
+      res.status(200).json({ token: newToken, userId });
+    } else {
+      res.status(200).json({ resetToken, userId });
     }
-
-    const { reset_token: resetToken } = tokenResult.rows[0];
-
-    const { token, expiration } = generateResetToken();
-    console.log('In request token');
-    console.log('Prev token: ' + resetToken);
-    console.log('New token: ' + token);
-    console.log('Expiration: ' + expiration);
-
-
-    const reResetTokenQuery = `
-    UPDATE user_credentials
-    SET reset_token = $2, reset_token_expiration = $3
-    WHERE user_id = $1
-  `;
-
-    if (!resetToken) {
-      await client.query(reResetTokenQuery, [userId, token, expiration]);
-      res.status(200).json({ token, userId });
-    }
-
-    await client.query(reResetTokenQuery, [userId, resetToken, expiration]);
-
-    res.status(200).json({ resetToken, userId });
   } catch (error) {
     console.error('Error retrieving reset token:', error);
     res
@@ -169,44 +154,49 @@ router.post('/resetpassword', async (req, res) => {
   const client = createClient();
 
   try {
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(password, saltRound);
-
-    // Generate a new reset token
     const { token: newResetToken, expiration: newExpiration } =
       generateResetToken();
 
-    console.log('In reset password');
-    console.log('Prev token: ' + resetToken);
-    console.log('New token: ' + newResetToken);
-    console.log('Expiration: ' + newExpiration);
-    console.log();
-    // SQL query to update password, replace old reset token with a new one
+    // Check if the token is valid and has not expired
     const passwordQuery = `
-      UPDATE user_credentials
-      SET password = $1,
-          enabled = true,
-          reset_token = $2,
-          reset_token_expiration = $3
-      WHERE reset_token = $4 AND reset_token_expiration > NOW()
+      SELECT reset_token_expiration
+      FROM user_credentials
+      WHERE reset_token = $1
     `;
 
-    const values = [hashedPassword, newResetToken, newExpiration, resetToken];
-
     await client.connect();
-
-    const result = await client.query(passwordQuery, values);
+    const result = await client.query(passwordQuery, [resetToken]);
 
     if (result.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ message: 'Invalid or expired reset token.' });
+      return res.status(404).json({ message: 'Invalid reset token.' });
     }
 
-    res.status(200).json({
-      message:
-        'Password reset successfully. A new reset token has been generated.',
-    });
+    const { reset_token_expiration: expiration } = result.rows[0];
+
+    // Check if the current time is past the expiration time
+    const now = new Date();
+    if (expiration && now <= new Date(expiration)) {
+      // Token is valid, update password and reset token
+      const updateQuery = `
+        UPDATE user_credentials
+        SET password = $1,
+            enabled = true,
+            reset_token = $2,
+            reset_token_expiration = $3
+        WHERE reset_token = $4
+      `;
+
+      const values = [hashedPassword, newResetToken, newExpiration, resetToken];
+      await client.query(updateQuery, values);
+
+      res.status(200).json({
+        message:
+          'Password reset successfully. A new reset token has been generated.',
+      });
+    } else {
+      res.status(400).json({ message: 'Reset token has expired.' });
+    }
   } catch (error) {
     console.error('Error resetting password:', error);
     res
