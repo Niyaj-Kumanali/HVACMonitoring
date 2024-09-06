@@ -8,6 +8,7 @@ export const mongoAPI: AxiosInstance = axios.create({
   },
 });
 
+
 export const getAllWarehouseByUserId = async (userId: string) => {
   const response = await mongoAPI.get(`/warehouse/getallwarehouse/${userId}`);
   return response;
