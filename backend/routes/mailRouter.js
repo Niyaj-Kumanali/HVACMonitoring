@@ -33,7 +33,7 @@ router.post('/send-reset-email', async (req, res) => {
       to: email,
       subject: 'Password Reset',
       text: `You requested a password reset. Use the token: ${resetToken} to reset your password.`,
-      html: `<p>You requested a password reset.</p><p>Click <a href="http://myoorja.in/login/resetPassword?token=${resetToken}">here</a> to reset your password.</p>`
+      html: `<p>You requested a password reset.</p><p>Click <a href="http://myoorja.in/login/resetPassword?token=${resetToken == null ? "123456": resetToken}">here</a> to reset your password.</p>`
     };
 
     // Send the email
