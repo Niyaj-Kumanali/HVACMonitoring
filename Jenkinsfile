@@ -60,8 +60,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cd backend
-                        pm2 restart hvac_backend --update-env
+                        cd ~
+                        pm2 restart hvac_backend
                         pm2 save
 
                     '''
