@@ -60,10 +60,15 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cd ~
-                        pm2 restart hvac_backend
+                        cd backend
+
+                        echo "Force restarting hvac_backend..."
+                        pm2 delete hvac_backend || true
+                        pm2 start index.js --name hvac_backend --update-env
                         pm2 save
 
+                        echo "PM2 process list after restarting:"
+                        pm2 list
                     '''
                 }
             }
