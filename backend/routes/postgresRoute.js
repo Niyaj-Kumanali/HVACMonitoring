@@ -63,7 +63,7 @@ router.post('/setpassword', async (req, res) => {
 
 // Endpoint to get reset token based on email
 router.get('/resettoken', async (req, res) => {
-  const { email } = req.query;
+  const {email} = req.query;
 
   if (!email) {
     return res.status(400).json({ message: 'Email is required.' });

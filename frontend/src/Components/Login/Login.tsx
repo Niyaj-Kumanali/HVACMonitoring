@@ -192,7 +192,7 @@ const Login: React.FC = () => {
                 };
 
                 // Send the email
-                const emailResponse = await mongoAPI.post('/mailservice/send-reset-email', emailPayload);
+                const emailResponse = await mongoAPI.post('/mailservice/sendresetemail', emailPayload);
                 console.log(emailResponse)
 
                 if (emailResponse.status == 200) {

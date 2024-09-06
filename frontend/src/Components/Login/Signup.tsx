@@ -11,12 +11,11 @@ import Loader from '../Loader/Loader';
 import { Tenant, User } from '../../types/thingsboardTypes';
 import { CreateSignUpUser } from '../../api/signupAPIs';
 import { Link, useNavigate } from 'react-router-dom';
-import { mongoAPI } from '../../api/MongoAPIInstance';
 import thingsboardAPI from '../../api/thingsboardAPI';
 import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import { getActivationLink } from '../../api/userApi';
-import { getResetTokenByEmail } from '../../api/loginApi';
+import { getResetTokenByEmail, setPassword } from '../../api/loginApi';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -99,17 +98,23 @@ const Signup: React.FC = () => {
 
     setLoading(true);
 
-    const response = await getResetTokenByEmail(formData.email)
-    if (response.status == 200) {
-      setSnackbar({
-        ...snackbar,
-        open: true,
-        message: 'User already exist!',
-        style: { backgroundColor: 'red' },
-      });
-      setLoading(false)
-      return
+    try{
+      const response = await getResetTokenByEmail(formData.email)
+      if (response.status == 200) {
+        setSnackbar({
+          ...snackbar,
+          open: true,
+          message: 'User already exist!',
+          style: { backgroundColor: 'red' },
+        });
+        setLoading(false)
+        return
+      }
+    }catch(error){
+      error
     }
+
+
 
     try {
       const userBody: User = {
@@ -126,15 +131,16 @@ const Signup: React.FC = () => {
       };
 
       const createdUser = await CreateSignUpUser(tenant, userBody);
+      console.log(createdUser);
       const activationLinkResponse = await getActivationLink(createdUser?.data.id?.id)
       const activateToken = activationLinkResponse.data.split("=")[1]
       const passBody = {
-        user_id: createdUser?.data.id?.id,
+        user_id: createdUser?.data.id?.id || "",
         password: formData.password,
         activateToken: activateToken
       }
 
-      const response = await mongoAPI.post(`/postgres/createPassword`, passBody)
+      const response = await setPassword(passBody)
       // const res = await setUserPassword(activateToken, formData.password);
 
       if (response.status === 200) {
@@ -167,6 +173,7 @@ const Signup: React.FC = () => {
         message: 'An error occurred. Please try again.',
         style: { backgroundColor: 'red' },
       });
+      
     } finally {
       setLoading(false);
     }

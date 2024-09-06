@@ -89,7 +89,7 @@ export const getUserPasswordPolicy = async () => {
 
 export const getResetTokenByEmail = async (email: string) => {
   const response = await mongoAPI.get('/postgres/resettoken', {
-    params: email,
+    params: {email},
   });
   // console.log(response)
   return response;
