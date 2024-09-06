@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ResetPassword.css'; 
 import { useLocation, useNavigate } from 'react-router-dom'
-import { resetPassword, setPassword } from '../../api/loginApi';
+import { setPassword } from '../../api/loginApi';
 
 
 const ResetPassword: React.FC = () => {
@@ -9,7 +9,7 @@ const ResetPassword: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate()
     const location = useLocation()
-    const {email, resetToken, userId} = location.state
+    const {resetToken, userId} = location.state
 
     const handleReset = async() => {
         if (newPassword === confirmPassword) {
@@ -31,32 +31,45 @@ const ResetPassword: React.FC = () => {
         }
     };
 
+    const handleCancel = () => {
+        navigate(`/login`)
+    }
+
     return (
-        <div className="reset-password-container">
-            <h2>Password reset</h2>
-            <div className="input-group">
-                <span className="icon">🔒</span>
-                <input
-                    type="password"
-                    placeholder="New password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                />
-            </div>
-            <div className="input-group">
-                <span className="icon">🔒</span>
-                <input
-                    type="password"
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-            </div>
-            <div className="button-group">
-                <button onClick={handleReset} className="primary-button">Reset Password</button>
-                <button className="secondary-button">Cancel</button>
+        <div className="reset-password">
+            <div className="reset-password-container">
+
+                <h2>Password reset</h2>
+
+                <div className="input-divv">
+                    <div className="input-group">
+                        <span className="icon">🔒</span>
+                        <input
+                            type="password"
+                            placeholder="New password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-group">
+                        <span className="icon">🔒</span>
+                        <input
+                            type="password"
+                            placeholder="Confirm new password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                <div className="button-group">
+                    <button onClick={handleReset} className="primary-button">Reset Password</button>
+                    <button className="secondary-button" onClick={handleCancel}>Cancel</button>
+                </div>
+
             </div>
         </div>
+        
     );
 };
 

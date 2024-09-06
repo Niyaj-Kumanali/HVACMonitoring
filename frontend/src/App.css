@@ -40,7 +40,6 @@
     box-sizing: border-box;
     height: calc(100vh - 65px);
     display: flex;
-    flex-direction: column;
-
+    justify-content: flex-start;
 }
 

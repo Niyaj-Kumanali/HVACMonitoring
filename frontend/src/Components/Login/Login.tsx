@@ -20,7 +20,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { getResetToken, requestResetPasswordByEmail, resetPassword } from '../../api/loginApi';
+import { getResetToken } from '../../api/loginApi';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -100,13 +100,15 @@ const Login: React.FC = () => {
             }, 1000);
 
         } catch (error) {
-            setSnackbarMessage('Invalid username or password');
-            setSnackbarStyle({ backgroundColor: 'red' });
-            setLoading(false);
-            setState({ open: true, Transition: SlideTransition });
-
             setTimeout(() => {
-                setState(prevState => ({ ...prevState, open: false }));
+                setSnackbarMessage('Invalid username or password');
+                setSnackbarStyle({ backgroundColor: 'red' });
+                setLoading(false);
+                setState({ open: true, Transition: SlideTransition });
+
+                setTimeout(() => {
+                    setState(prevState => ({ ...prevState, open: false }));
+                }, 500);
             }, 1000);
         }
     };

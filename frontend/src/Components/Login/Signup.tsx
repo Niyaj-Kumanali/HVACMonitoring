@@ -161,8 +161,10 @@ const Signup: React.FC = () => {
   };
 
   useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+    if (usernameRef.current) {
+      usernameRef.current.focus();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     const handleNavigation = (e: BeforeUnloadEvent) => {
