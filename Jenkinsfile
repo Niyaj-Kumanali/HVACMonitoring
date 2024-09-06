@@ -61,7 +61,6 @@ pipeline {
                     sh '''
                         cd backend
 
-                        # Check if the PM2 process is running and restart or start it
                         if pm2 list | grep -q 'hvac_backend'; then
                             pm2 restart hvac_backend
                         else
