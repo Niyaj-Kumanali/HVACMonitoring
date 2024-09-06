@@ -181,14 +181,16 @@ const Login: React.FC = () => {
             if (response.status === 200) {
                 handleDialogClose();
 
-                const { resetToken, userId } = response.data;
+                let { resetToken, userId } = response.data;
+                resetToken = resetToken == null ? "": resetToken
+                
                 console.log(response);
                 console.log(resetToken);
                 console.log(userId)
 
                 const emailPayload = {
                     email: forgetpasswordemail,
-                    resetToken: resetToken
+                    resetToken: resetToken,
                 };
 
                 // Send the email
