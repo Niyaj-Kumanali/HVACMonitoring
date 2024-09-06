@@ -180,6 +180,7 @@ const Signup: React.FC = () => {
   useEffect(() => {
     if (usernameRef.current) {
       usernameRef.current.focus();
+    }
   }, [isLoading]);
 
   useEffect(() => {
