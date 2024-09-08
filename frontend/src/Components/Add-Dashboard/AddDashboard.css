@@ -1,0 +1,50 @@
+.add-dashboard {
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+    min-width: 400px;
+    max-width: 50%;
+    border-radius: 10px;
+}
+
+.add-dashboard .label {
+    font-size: 18px !important;
+    margin-bottom: 8px !important;
+    display: inline-block;
+}
+
+.add-dashboard .text-field-box {
+    width: 100%;
+    background-color: #ebebeb;
+    margin-bottom: 20px;
+}
+
+.add-dashboard .form-control {
+    margin-bottom: 20px;
+    display: block;
+    width: 100%;
+    background-color: #ebebeb;
+}
+
+.add-dashboard .form-control-inner {
+    width: 100%;
+}
+
+.add-dashboard .accountinfo-savebtn {
+    text-align: start !important;
+    margin-top: 30px !important;
+    padding: 10px 0 10px;
+}
+
+.add-dashboard .btn-save {
+    width: 150px;
+    height: 50px;
+}
+
+.add-dashboard form {
+    width: 100%;
+}
+
+.add-dashboard .MuiFormControl-root {
+    margin-top: 0px !important;
+}

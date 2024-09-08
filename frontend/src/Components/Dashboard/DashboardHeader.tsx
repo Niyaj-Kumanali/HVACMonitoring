@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
@@ -151,30 +152,15 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
           <Box className="toolbar-right">
             <FormControl variant="outlined" className="form-control">
-              <InputLabel id="range-label">Range</InputLabel>
+              <InputLabel id="realtime-label">Realtime</InputLabel>
               <Select
-                labelId="range-label"
+                labelId="realtime-label"
                 value={selectedRange}
                 onChange={handleRangeChange}
-                label="Range"
+                label="Realtime"
                 sx={{
                   color: 'white',
-                  backgroundColor: 'transparent',
-                  '& .MuiSelect-select': {
-                    padding: '10px',
-                    color: 'white',
-                  },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      border: 'none',
-                    },
-                    '&:hover fieldset': {
-                      border: 'none',
-                    },
-                    '&.Mui-focused fieldset': {
-                      border: 'none',
-                    },
-                  },
+                  
                 }}
               >
                 <MenuItem value="last-1-minute">Last 1 Minute</MenuItem>

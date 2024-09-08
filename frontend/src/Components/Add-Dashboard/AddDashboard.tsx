@@ -17,6 +17,7 @@ import { getUsers } from '../../api/userApi';
 import { DashboardType, User } from '../../types/thingsboardTypes';
 import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
+import './AddDashboard.css';  // Ensure you import the CSS file
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -29,21 +30,19 @@ const AddDashboard: React.FC = () => {
   const [buttonText, setButtonText] = useState('Add Dashboard');
 
   const navigate = useNavigate();
-
-  const {dashboardId} = useParams()
+  const { dashboardId } = useParams();
 
   useEffect(() => {
     const fetchDashboard = async () => {
-        const response = await getDashboardById(dashboardId || '')
-        setTitle(response.data?.title || '');
-        setDescription(response.data?.description || '');
-        setButtonText('Save Dashboard')
-    }
+      const response = await getDashboardById(dashboardId || '');
+      setTitle(response.data?.title || '');
+      setDescription(response.data?.description || '');
+      setButtonText('Save Dashboard');
+    };
 
-    if(dashboardId) {
-      fetchDashboard()
+    if (dashboardId) {
+      fetchDashboard();
     }
-    
   }, [dashboardId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,7 +63,6 @@ const AddDashboard: React.FC = () => {
         setMessage('Dashboard created successfully!');
       }
       setSnackbarType('success');
-
       setOpen(true);
 
       setTimeout(() => {
@@ -112,38 +110,38 @@ const AddDashboard: React.FC = () => {
 
   return (
     <Box
-      className="menu-data"
+      className="add-dashboard menu-data"
       component="form"
       onSubmit={handleSubmit}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        maxWidth: 400,
-        margin: 'auto',
-        mt: 4,
-        padding: 2,
-        boxShadow: 3,
-        borderRadius: 2,
-        backgroundColor: '#f5f5f5',
-      }}
     >
-      <TextField
-        label="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
+      <label htmlFor="" className="label">
+        Title
+      </label>
+      <Box className="text-field-box">
+        <TextField
+          fullWidth
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+      </Box>
 
-      <TextField
-        label="Description"
-        multiline
-        minRows={4}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <label htmlFor="" className="label">
+        Description
+      </label>
+      <Box className="text-field-box">
+        <TextField
+          fullWidth
+          label="Description"
+          multiline
+          minRows={4}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </Box>
 
-      <FormControl fullWidth>
+      <FormControl className="form-control">
         <InputLabel id="assignedCustomer-label">Assigned Customer</InputLabel>
         <Select
           labelId="assignedCustomer-label"
@@ -151,6 +149,7 @@ const AddDashboard: React.FC = () => {
           value={assignedCustomer}
           label="Assigned Customer"
           onChange={(e) => setAssignedCustomer(e.target.value)}
+          className="form-control-inner"
         >
           <MenuItem value="">
             <em>None</em>
@@ -163,9 +162,17 @@ const AddDashboard: React.FC = () => {
         </Select>
       </FormControl>
 
-      <Button type="submit" variant="contained" color="primary">
-        {buttonText}
-      </Button>
+      <Box className="accountinfo-savebtn">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className="btn-save"
+        >
+          {buttonText}
+        </Button>
+      </Box>
+
       <Snackbar
         open={open}
         autoHideDuration={2000}

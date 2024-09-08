@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
       h: 6,
       minW: 4,
       minH: 6,
-      maxW: 12,
+      maxW: NUM_COLUMNS,
       maxH: 12,
       chart: selectedChart,
       defaultDevice: deviceId,
@@ -117,86 +117,78 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard-container menu-data">
-      {}
-
-      {isClicked ? (
-        <AddWidget onAdd={onAddWidget} onClose={() => setIsClicked(false)} />
-      ) : (
-        <>
-          <DashboardHeader
-            onToggleEdit={onToggleEdit}
-            onAddWidget={() => setIsClicked(true)}
-            isEditable={isEditable}
-            onSettingClicked={setIsSettingClicked}
-          />
-          {isSettingClicked ? (
-            <DashboardSettings onSettingClicked={setIsSettingClicked} />
-          ) : (
-            <Box
-              height="100%"
-              className="layout-container"
-              ref={gridLayoutRef}
-              style={{ position: 'relative' }}
+      <>
+        <DashboardHeader
+          onToggleEdit={onToggleEdit}
+          onAddWidget={() => setIsClicked(true)}
+          isEditable={isEditable}
+          onSettingClicked={setIsSettingClicked}
+        />
+        {isSettingClicked ? (
+          <DashboardSettings onSettingClicked={setIsSettingClicked} />
+        ) : (
+          <Box
+            height="100%"
+            className="layout-container"
+            ref={gridLayoutRef}
+            style={{ position: 'relative' }}
+          >
+            <div className="grid-lines-overlay">
+              {Array.from({ length: NUM_COLUMNS + 1 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="grid-line vertical-line"
+                  style={{
+                    left: columnWidth * i,
+                    top: 0,
+                    height: '106%', // Span entire height of the container
+                    width: '1px', // Adjust thickness if needed
+                    backgroundColor: '#ccc', // Adjust color if needed
+                  }}
+                />
+              ))}
+              {Array.from({ length: numHorizontalLines + 1 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="grid-line horizontal-line"
+                  style={{
+                    top: ROW_HEIGHT * i,
+                    left: 0,
+                    width: '100%',
+                    height: '1px', // Adjust thickness if needed
+                    backgroundColor: '#ccc', // Adjust color if needed
+                  }}
+                />
+              ))}
+            </div>
+            <GridLayout
+              className="layout"
+              layout={layout}
+              cols={NUM_COLUMNS}
+              rowHeight={ROW_HEIGHT}
+              width={GRID_WIDTH}
+              isDraggable={isEditable}
+              isResizable={isEditable}
+              onLayoutChange={onLayoutChange}
+              onResizeStop={onLayoutChange}
+              onDragStop={onLayoutChange}
             >
-              <div className="grid-lines-overlay">
-                {Array.from({ length: NUM_COLUMNS + 1 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="grid-line vertical-line"
-                    style={{
-                      left: columnWidth * i,
-                      top: 0,
-                      height: '106%', // Span entire height of the container
-                      width: '1px', // Adjust thickness if needed
-                      backgroundColor: '#ccc', // Adjust color if needed
-                    }}
+              {layout.map((item: WidgetLayout) => (
+                <div key={item.i} data-grid={item} className="widget-container">
+                  <Widget
+                    widgetId={item.i}
+                    deviceId={item.defaultDevice || ''}
+                    chartType={item.chart || 'Line'}
                   />
-                ))}
-                {Array.from({ length: numHorizontalLines + 1 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="grid-line horizontal-line"
-                    style={{
-                      top: ROW_HEIGHT * i,
-                      left: 0,
-                      width: '100%',
-                      height: '1px', // Adjust thickness if needed
-                      backgroundColor: '#ccc', // Adjust color if needed
-                    }}
-                  />
-                ))}
-              </div>
-              <GridLayout
-                className="layout"
-                layout={layout}
-                cols={NUM_COLUMNS}
-                rowHeight={ROW_HEIGHT}
-                width={GRID_WIDTH}
-                isDraggable={isEditable}
-                isResizable={isEditable}
-                onLayoutChange={onLayoutChange}
-                onResizeStop={onLayoutChange}
-                onDragStop={onLayoutChange}
-              >
-                {layout.map((item: WidgetLayout) => (
-                  <div
-                    key={item.i}
-                    data-grid={item}
-                    className="widget-container"
-                  >
-                    <Widget
-                        widgetId={item.i}
-                        deviceId={item.defaultDevice || ''}
-                        chartType={item.chart || 'Line'}
-                      />
-                    
-                  </div>
-                ))}
-              </GridLayout>
-            </Box>
-          )}
-        </>
-      )}
+                </div>
+              ))}
+            </GridLayout>
+          </Box>
+        )}
+        {isClicked && (
+          <AddWidget onAdd={onAddWidget} onClose={() => setIsClicked(false)} />
+        )}
+      </>
     </div>
   );
 };
