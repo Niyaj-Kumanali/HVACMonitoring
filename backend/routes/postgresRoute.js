@@ -195,7 +195,7 @@ router.post('/resetpassword', async (req, res) => {
           'Password reset successfully. A new reset token has been generated.',
       });
     } else {
-      res.status(400).json({ message: 'Reset token has expired.' });
+      res.status(401).json({ message: 'Reset token has expired.' });
     }
   } catch (error) {
     console.error('Error resetting password:', error);
