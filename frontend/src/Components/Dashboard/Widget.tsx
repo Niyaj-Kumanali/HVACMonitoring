@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './Dashboard.css';
+import './styles/widget.css'
 import {
   Device,
   TelemetryData,
@@ -12,6 +12,7 @@ import {
 } from '../../api/telemetryAPIs';
 import { getTenantDevices } from '../../api/deviceApi';
 import {
+  Button,
   Checkbox,
   FormControl,
   InputLabel,
@@ -21,15 +22,44 @@ import {
   Toolbar,
 } from '@mui/material';
 import LineChartWidget from './Charts/LineChartWidget';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Reducer';
+import { setLayout } from '../../Redux/Action/layoutActions';
 
-const Widget: React.FC = () => {
-  const [selectedDevice, setSelectedDevice] = useState<string>('');
+interface widgetProps {
+  widgetId: string;
+}
+
+const Widget: React.FC<widgetProps> = ({ widgetId }) => {
+
+  const { dashboardId } = useParams(); // Get dashboardId from the URL params
+  const dispatch = useDispatch();
+
+  const storedLayout = useSelector(
+    (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
+  );
+
+  const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last hour
+  const [endDate, setEndDate] = useState<number>(Date.now());
+  const [selectedDevice, setSelectedDevice] = useState<string>(storedLayout?.defaultDevice);
   const [sensors, setSensors] = useState<string[]>([]);
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [telemetryData, setTelemetryData] = useState<TelemetryData>({});
   const [filteredTelemetryData, setFilteredTelemetryData] =
     useState<TelemetryData>({});
-  const [devices, setdevices] = useState([]);
+  const [devices, setDevices] = useState<Device[]>([]);
+
+
+
+  useEffect(() => {
+    const { startDate: layoutStartDate, endDate: layoutEndDate } =
+      storedLayout.dateRange || {};
+    if (layoutStartDate && layoutEndDate) {
+      setStartDate(layoutStartDate);
+      setEndDate(layoutEndDate);
+    }
+  }, [storedLayout]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
@@ -46,9 +76,9 @@ const Widget: React.FC = () => {
         selectedSensors.length > 0
           ? selectedSensors.join(',')
           : sensors.join(','),
-      startTs: Date.now() - 3600000, // last hour
-      endTs: Date.now(),
-      limit: 100,
+      startTs: startDate || Date.now() - 300000, // last five minutes
+      endTs: endDate || Date.now(),
+      limit: storedLayout.limit || 100,
       orderBy: 'ASC',
     };
 
@@ -76,7 +106,7 @@ const Widget: React.FC = () => {
         page: 0,
       };
       const response = await getTenantDevices(params);
-      setdevices(response.data.data);
+      setDevices(response.data.data);
     };
 
     fetchAllDevices();
@@ -84,10 +114,9 @@ const Widget: React.FC = () => {
 
   useEffect(() => {
     const fetchTelemetryData = async () => {
+      if (!selectedDevice) return;
+
       try {
-        if (!selectedDevice) return;
-
-
         const keys = await fetchTimeseriesKeys(selectedDevice);
         setSensors(keys);
         setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
@@ -97,48 +126,51 @@ const Widget: React.FC = () => {
           selectedSensors,
           keys
         );
-
         setTelemetryData(telemetryData);
-
-        const intervalId = setInterval(async () => {
-          const latestData = await fetchLatestTelemetryData(
-            selectedDevice,
-            selectedSensors,
-            keys
-          );
-          const latestTelemetryData = latestData;
-
-          // Merge latestTelemetryData with existing telemetryData
-          const updatedTelemetryData = Object.keys(latestTelemetryData).reduce(
-            (acc, key) => {
-              return {
-                ...acc,
-                [key]: [
-                  ...(telemetryData[key] || []),
-                  ...latestTelemetryData[key],
-                ],
-              };
-            },
-            telemetryData
-          );
-
-          setTelemetryData(updatedTelemetryData);
-        }, 5000);
-
-        // Clean up the interval on component unmount or if selectedDevice changes
-        return () => {
-          console.log('Interval cleared');
-          return clearInterval(intervalId);
-        };
       } catch (error) {
-        console.log('Failed to fetch telemetry data', error);
+        console.error('Failed to fetch telemetry data', error);
         setSensors([]);
         setSelectedSensors([]);
       }
     };
 
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors]);
+  }, [selectedDevice, selectedSensors, startDate, endDate]);
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      if (!selectedDevice) return;
+
+      try {
+        const keys = await fetchTimeseriesKeys(selectedDevice);
+        const latestData = await fetchLatestTelemetryData(
+          selectedDevice,
+          selectedSensors,
+          keys
+        );
+        const updatedTelemetryData = Object.keys(latestData).reduce(
+          (acc, key) => {
+            return {
+              ...acc,
+              [key]: [
+                ...(telemetryData[key] || []),
+                ...latestData[key],
+              ],
+            };
+          },
+          telemetryData
+        );
+
+        setTelemetryData(updatedTelemetryData);
+      } catch (error) {
+        console.error('Failed to fetch latest telemetry data', error);
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedDevice, selectedSensors, telemetryData]);
 
   useEffect(() => {
     const data =
@@ -153,9 +185,18 @@ const Widget: React.FC = () => {
   }, [selectedSensors, telemetryData]);
 
   const renderChart = useMemo(() => {
-    console.log(filteredTelemetryData);
     return <LineChartWidget data={filteredTelemetryData} />;
   }, [filteredTelemetryData]);
+
+  const handleLayoutDelete = () => {
+    const updatedLayout = storedLayout.layout.filter((item) => item.i !== widgetId);
+    if (updatedLayout.length !== storedLayout.layout.length) {
+      dispatch(setLayout(dashboardId, {
+        ...storedLayout,
+        layout: updatedLayout
+      }));
+    }
+  };
 
   return (
     <div className="widget">
@@ -193,6 +234,9 @@ const Widget: React.FC = () => {
             ))}
           </Select>
         </FormControl>
+        <Button className="delete-button" onClick={handleLayoutDelete}>
+          Delete
+        </Button>
       </Toolbar>
       {renderChart}
     </div>

@@ -141,7 +141,6 @@ const Signup: React.FC = () => {
       }
 
       const response = await setPassword(passBody)
-      // const res = await setUserPassword(activateToken, formData.password);
 
       if (response.status === 200) {
         setFormData({

@@ -4,7 +4,7 @@ import { combineReducers } from 'redux';
 
 const rootReducer  = combineReducers({
   user: userReducer,
-  layout: layoutReducer,
+  dashboardLayout: layoutReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

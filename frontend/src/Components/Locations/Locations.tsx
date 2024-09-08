@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
+import L from 'leaflet';
 import './Locations.css';
 import 'leaflet/dist/leaflet.css';
-
 import { getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
-import L from 'leaflet';
 import Loader from '../Loader/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
@@ -27,19 +26,16 @@ const Locations = () => {
     { latitude: string; longitude: string }[]
   >([]);
   const [map, setMap] = useState<L.Map | null>(null);
-  const user = useSelector((state: RootState) => state.user.user)
+  const user = useSelector((state: RootState) => state.user.user);
 
   // Fetch all warehouses
   const fetchAllWarehouses = async () => {
     try {
-      const response = await getAllWarehouseByUserId(user.id?.id || "")
+      const response = await getAllWarehouseByUserId(user.id?.id || "");
 
       // Filter for unique locations by comparing latitude and longitude
       const uniqueLocations = response.data.reduce(
-        (
-          acc: { latitude: string; longitude: string }[],
-          warehouse: Warehouse
-        ) => {
+        (acc: { latitude: string; longitude: string }[], warehouse: Warehouse) => {
           const isLocationUnique = !acc.some(
             (location) =>
               location.latitude === warehouse.latitude &&
@@ -56,8 +52,7 @@ const Locations = () => {
         []
       );
 
-      setUniqueLocations(uniqueLocations); // Set unique locations
-
+      setUniqueLocations(uniqueLocations);
       setLoader(false);
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
@@ -89,7 +84,6 @@ const Locations = () => {
       }
     };
 
-    // Iterate over uniqueLocations and fetch location info
     uniqueLocations.forEach((location) => {
       fetchLocationInfo(location.latitude, location.longitude);
     });
@@ -98,24 +92,46 @@ const Locations = () => {
   // Initialize the map and set markers for warehouse locations
   useEffect(() => {
     if (!map && uniqueLocations.length > 0) {
-      // Initialize the map and set it to the first warehouse's location
       const initialLocation: any = [
         parseFloat(uniqueLocations[0].latitude),
         parseFloat(uniqueLocations[0].longitude),
       ];
-      const mapInstance = L.map('map').setView(initialLocation, 10);
+      const mapInstance = L.map('map', {
+        center: initialLocation,
+        zoom: 10,
+        maxZoom: 18,
+        minZoom: 3,
+      });
 
-      // Set up OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(mapInstance);
 
-      setMap(mapInstance); // Set the map instance in the state
+      const bounds: any = [
+        [85, -180],
+        [-85, 180]
+      ];
+      mapInstance.setMaxBounds(bounds);
+
+      // Add click event listener to map
+      mapInstance.on('click', (e) => {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        navigator.clipboard.writeText(`${lat}, ${lng}`).then(
+          () => {
+            console.log(`Coordinates copied: ${lat}, ${lng}`);
+          },
+          (err) => {
+            console.error('Failed to copy coordinates:', err);
+          }
+        );
+      });
+
+      setMap(mapInstance);
     }
   }, [map, uniqueLocations]);
 
-  // Add markers to the map when locations are available
   useEffect(() => {
     if (map && uniqueLocations.length > 0) {
       uniqueLocations.forEach((location) => {
@@ -125,16 +141,26 @@ const Locations = () => {
           locationInfo[`${location.latitude},${location.longitude}`]
             ?.display_name || 'Unknown location';
 
-        // Add a marker for each location
-        L.marker([latitude, longitude])
+        const marker = L.marker([latitude, longitude])
           .addTo(map)
           .bindPopup(`<b>Warehouse Location</b><br>${locationName}`)
           .openPopup();
+
+        // Add click event listener to marker
+        marker.on('click', () => {
+          navigator.clipboard.writeText(`${latitude}, ${longitude}`).then(
+            () => {
+              console.log(`Coordinates copied: ${latitude}, ${longitude}`);
+            },
+            (err) => {
+              console.error('Failed to copy coordinates:', err);
+            }
+          );
+        });
       });
     }
   }, [map, uniqueLocations, locationInfo]);
 
-  // Fetch warehouses on component mount
   useEffect(() => {
     fetchAllWarehouses();
   }, []);
@@ -148,7 +174,7 @@ const Locations = () => {
       ) : (
         <div className="map-container">
           <h1>Locations of warehouses</h1>
-          <div id="map"></div>
+          <div id="map" style={{ height: '100vh', width: '100%' }}></div>
         </div>
       )}
     </div>

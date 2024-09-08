@@ -176,3 +176,19 @@ export interface TelemetryQueryParams {
 export interface TelemetryData {
   [key: string]: { ts: number; value: number }[];
 }
+
+export interface WidgetLayout {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  minW: number;
+  minH: number;
+  selectedDevice?: string; // Add this field
+  selectedSensors?: string[]; // Add this field
+}
+
+export interface LayoutState {
+  [dashboardId: string]: WidgetLayout[]; // Store layouts based on dashboardId
+}

@@ -11,7 +11,6 @@ import Slide, { SlideProps } from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
-import thingsboardAPI from '../../api/thingsboardAPI';
 import Loader from '../Loader/Loader';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -20,7 +19,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { getResetTokenByEmail } from '../../api/loginApi';
+import { getResetTokenByEmail, login } from '../../api/loginApi';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 
 function SlideTransition(props: SlideProps) {
@@ -65,28 +64,15 @@ const Login: React.FC = () => {
         Transition: SlideTransition,
     });
 
-    const login = async (username: string, password: string): Promise<string> => {
-        try {
-            const response = await thingsboardAPI.post<{ token: string }>(
-                '/auth/login',
-                { username, password }
-            );
-            const token = response.data.token;
-            localStorage.setItem('token', token);
-            dispatch(set_Accesstoken(token));
-            return token;
-        } catch (error) {
-            console.error('Login failed', error);
-            throw error;
-        }
-    };
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
         setLoading(true);
 
         try {
-            await login(username, password);
+            const token = await login(username, password);
+            localStorage.setItem('token', token);
+            dispatch(set_Accesstoken(token));
 
             setTimeout(() => {
                 setLoading(false);

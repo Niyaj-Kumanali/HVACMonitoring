@@ -1,0 +1,17 @@
+/* charts.css */
+.recharts-legend-wrapper {
+  font-size: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recharts-legend-item {
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.recharts-legend-item-text {
+  white-space: nowrap;
+  text-transform: capitalize; 
+}

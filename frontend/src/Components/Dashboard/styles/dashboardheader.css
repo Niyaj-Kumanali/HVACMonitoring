@@ -1,0 +1,56 @@
+/* Base styles */
+.app-bar {
+  background-color: #1976d2;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+
+.datepicker-dialog {
+  position: absolute;
+  top: 60px; /* Adjusted top position */
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.datepicker-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.datepicker-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.datepicker-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+

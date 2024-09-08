@@ -1,0 +1,67 @@
+/* Dashboard.css*/
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.layout {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: auto; /* Make sure the height is adaptive */
+}
+
+.widget-container {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.widget-container:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Slightly bigger shadow on hover */
+}
+
+
+/* Grid Lines */
+.grid-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent interaction with the grid lines */
+  z-index: 0; /* Ensure grid lines are behind widgets */
+}
+
+.grid-line {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.1); /* Light color for visibility */
+}
+
+.vertical-line {
+  width: 1px;
+  height: 100%; /* Ensure vertical lines span the full height */
+}
+
+.horizontal-line {
+  height: 1px;
+  width: 100%;
+}
+
+

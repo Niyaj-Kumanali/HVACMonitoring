@@ -3,7 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    gap: 31px;
+    gap: 20px;
 }
 
 .user-img-info {

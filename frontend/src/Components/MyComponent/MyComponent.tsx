@@ -1,30 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import './myComponent.css';
-import { DashboardType} from '../../types/thingsboardTypes';
 import { getCurrentUser } from '../../api/loginApi';
 
-import { saveDashboard } from '../../api/dashboardApi';
 import {
   getAllWidgetsBundles,
   getWidgetsBundles,
 } from '../../api/widgetsBundleAPI';
 
-
 import { getImages } from '../../api/imageAPIs';
 
-
 const MyComponent: React.FC = () => {
-  // State for dashboard creation
-  const [dashboardTitle, setDashboardTitle] = useState<string>('');
-  const [dashboardError, setDashboardError] = useState<string | null>(null);
-
   // State for widget bundles
   const [widgetBundles, setWidgetBundles] = useState<any[]>([]);
   const [loadingWidgetBundles, setLoadingWidgetBundles] =
     useState<boolean>(false);
   const [currentWidgetPage, setCurrentWidgetPage] = useState<number>(0);
   const [totalWidgetPages, setTotalWidgetPages] = useState<number>(0);
-
 
   // Fetch widget bundles with parameters
   const fetchAllWidgetBundles = async () => {
@@ -38,8 +29,6 @@ const MyComponent: React.FC = () => {
       setLoadingWidgetBundles(false);
     }
   };
-
-  
 
   // Fetch widget bundles with parameters
   const fetchWidgetBundles = async (page: number) => {
@@ -60,20 +49,6 @@ const MyComponent: React.FC = () => {
     }
   };
 
-  // Handle dashboard creation
-  const handleCreateDashboard = async () => {
-    try {
-      const newDashboard: DashboardType = {
-        title: dashboardTitle,
-      };
-      await saveDashboard(newDashboard);
-      setDashboardTitle('');
-      alert('Dashboard created successfully!');
-    } catch (error) {
-      setDashboardError('Failed to create dashboard');
-    }
-  };
-
   const handleGetAll = async () => {
     fetchAllWidgetBundles();
     fetchWidgetBundles(currentWidgetPage);
@@ -82,13 +57,12 @@ const MyComponent: React.FC = () => {
 
     const params = {
       pageSize: 10000,
-      page: 0
-    }
+      page: 0,
+    };
 
-    const imageResponse = await getImages(params)
-    console.log(imageResponse.data)
+    const imageResponse = await getImages(params);
+    console.log(imageResponse.data);
   };
-
 
   const handlePageChangeWidgets = (page: number) => {
     if (page >= 0 && page < totalWidgetPages) {
@@ -109,20 +83,6 @@ const MyComponent: React.FC = () => {
     <div className="menu-data mycomponent">
       <h1>MyComponent</h1>
       <button onClick={handleGetAll}>Get Data</button>
-
-      {/* Create Dashboard */}
-      <div>
-        <h2>Create Dashboard</h2>
-        <input
-          type="text"
-          value={dashboardTitle}
-          onChange={(e) => setDashboardTitle(e.target.value)}
-          placeholder="Dashboard Title"
-        />
-        <button onClick={handleCreateDashboard}>Create Dashboard</button>
-        {dashboardError && <p>{dashboardError}</p>}
-      </div>
-
 
       {/* Widget Bundles List */}
       <div>
@@ -157,8 +117,5 @@ const MyComponent: React.FC = () => {
     </div>
   );
 };
-
-
-
 
 export default MyComponent;

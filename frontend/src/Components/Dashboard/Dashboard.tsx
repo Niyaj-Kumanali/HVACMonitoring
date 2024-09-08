@@ -1,77 +1,185 @@
-// src/components/Dashboard.tsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import GridLayout, { Layout } from 'react-grid-layout';
-import { useParams } from 'react-router-dom'; // Import useParams
-import './Dashboard.css';
+import { useParams } from 'react-router-dom';
+import './styles/Dashboard.css'; // Ensure this is correctly imported
 import Widget from './Widget';
 import DashboardHeader from './DashboardHeader';
-import { Container, Box } from '@mui/material';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
+import AddWidget from '../Add-Widget/AddWidget';
+import Box from '@mui/material/Box';
+import DashboardSettings from './DashboardSettings';
 
+const GRID_WIDTH = 1500; // Total width of the grid
+const NUM_COLUMNS = 15; // Number of columns
+const ROW_HEIGHT = 50; // Height of each row
 
 const Dashboard: React.FC = () => {
-  const { dashboardId } = useParams(); // Get dashboardId from the URL params
+  const { dashboardId } = useParams();
   const dispatch = useDispatch();
+  const gridLayoutRef = useRef<HTMLDivElement | null>(null);
 
-  const storedLayout = useSelector((state: RootState) => state.layout[dashboardId || ""] || []); // Get layout for specific dashboardId
-  const [layout, setLocalLayout] = useState<Layout[]>(storedLayout);
+  const storedLayout = useSelector(
+    (state: RootState) =>
+      state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
+  );
+
+  const [layout, setLocalLayout] = useState<Layout[]>(storedLayout?.layout);
   const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [isSettingClicked, setIsSettingClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    setLocalLayout(storedLayout); // Update local layout when stored layout changes
+    if (storedLayout.layout) {
+      setLocalLayout(storedLayout?.layout);
+    }
   }, [storedLayout]);
 
-  const onAddWidget = () => {
+  const onAddWidget = (deviceId: string) => {
     const newWidget: Layout = {
       i: `widget-${layout.length}`,
       x: 0,
-      y: Math.max(...layout.map((item) => item.y || 0)) + 4,
-      w: 8,
-      h: 3,
-      minW: 5,
-      minH: 5,
+      y: Math.max(...layout.map((item) => item.y + item.h || 0)) + 1,
+      w: 4,
+      h: 6,
+      minW: 4,
+      minH: 6,
+      maxW: 12,
+      maxH: 12,
     };
+
     const updatedLayout = [...layout, newWidget];
     setLocalLayout(updatedLayout);
-    dispatch(setLayout(dashboardId, updatedLayout)); // Save layout for specific dashboardId
+    dispatch(
+      setLayout(dashboardId, {
+        ...storedLayout,
+        layout: updatedLayout,
+        defaultDevice: deviceId,
+      })
+    );
   };
 
   const onToggleEdit = () => {
     setIsEditable((prev) => !prev);
   };
 
+  const validateLayout = (newLayout: Layout[]) => {
+    return newLayout.map((item) => ({
+      ...item,
+      x: Math.min(item.x, NUM_COLUMNS - item.w),
+    }));
+  };
+
   const onLayoutChange = (newLayout: Layout[]) => {
-    setLocalLayout(newLayout);
-    dispatch(setLayout(dashboardId, newLayout)); // Save layout for specific dashboardId
+    const validatedLayout = validateLayout(newLayout);
+    setLocalLayout(validatedLayout);
+    dispatch(
+      setLayout(dashboardId, { ...storedLayout, layout: validatedLayout })
+    );
+  };
+
+  const calculateGridLines = () => {
+    if (!gridLayoutRef.current) return;
+
+    const containerWidth = gridLayoutRef.current.offsetWidth;
+    const containerHeight = gridLayoutRef.current.offsetHeight;
+
+    // Calculate column width
+    const columnWidth = containerWidth / NUM_COLUMNS;
+
+    // Calculate number of horizontal lines
+    const numHorizontalLines = Math.ceil(containerHeight / ROW_HEIGHT);
+
+    return {
+      columnWidth,
+      numHorizontalLines,
+    };
+  };
+
+  const { columnWidth, numHorizontalLines } = calculateGridLines() || {
+    columnWidth: 0,
+    numHorizontalLines: 0,
   };
 
   return (
-    <Container maxWidth="xl" className="dashboard-container menu-data">
-      <DashboardHeader onToggleEdit={onToggleEdit} onAddWidget={onAddWidget} isEditable={isEditable} />
-      <Box mt={3} className="layout-container">
-        <GridLayout
-          className="layout"
-          layout={layout}
-          cols={12}
-          rowHeight={50}
-          width={1200}
-          isDraggable={isEditable}
-          isResizable={isEditable}
-          onLayoutChange={onLayoutChange}
-          margin={[10, 10]}
-          containerPadding={[10, 10]}
-        >
-          {layout.map((item) => (
-            <div key={item.i} data-grid={item} className="widget-container">
-              <Widget />
-            </div>
-          ))}
-        </GridLayout>
-      </Box>
-    </Container>
+    <div className="dashboard-container menu-data">
+      {}
+
+      {isClicked ? (
+        <AddWidget onAdd={onAddWidget} onClose={() => setIsClicked(false)} />
+      ) : (
+        <>
+          <DashboardHeader
+            onToggleEdit={onToggleEdit}
+            onAddWidget={() => setIsClicked(true)}
+            isEditable={isEditable}
+            onSettingClicked={setIsSettingClicked}
+          />
+          {isSettingClicked ? (
+            <DashboardSettings onSettingClicked={setIsSettingClicked} />
+          ) : (
+            <Box
+              height="100%"
+              className="layout-container"
+              ref={gridLayoutRef}
+              style={{ position: 'relative' }}
+            >
+              <div className="grid-lines-overlay">
+                {Array.from({ length: NUM_COLUMNS + 1 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="grid-line vertical-line"
+                    style={{
+                      left: columnWidth * i,
+                      top: 0,
+                      height: '106%', // Span entire height of the container
+                      width: '1px', // Adjust thickness if needed
+                      backgroundColor: '#ccc', // Adjust color if needed
+                    }}
+                  />
+                ))}
+                {Array.from({ length: numHorizontalLines + 1 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="grid-line horizontal-line"
+                    style={{
+                      top: ROW_HEIGHT * i,
+                      left: 0,
+                      width: '100%',
+                      height: '1px', // Adjust thickness if needed
+                      backgroundColor: '#ccc', // Adjust color if needed
+                    }}
+                  />
+                ))}
+              </div>
+              <GridLayout
+                className="layout"
+                layout={layout}
+                cols={NUM_COLUMNS}
+                rowHeight={ROW_HEIGHT}
+                width={GRID_WIDTH}
+                isDraggable={isEditable}
+                isResizable={isEditable}
+                onLayoutChange={onLayoutChange}
+                onResizeStop={onLayoutChange}
+                onDragStop={onLayoutChange}
+              >
+                {layout.map((item) => (
+                  <div
+                    key={item.i}
+                    data-grid={item}
+                    className="widget-container"
+                  >
+                    <Widget widgetId={item.i} />
+                  </div>
+                ))}
+              </GridLayout>
+            </Box>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 
