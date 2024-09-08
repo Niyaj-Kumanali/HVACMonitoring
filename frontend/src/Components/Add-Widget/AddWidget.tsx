@@ -13,16 +13,19 @@ import {
   Typography,
 } from '@mui/material';
 
-import { Device } from '../../types/thingsboardTypes';
+import { chartTypes, Device } from '../../types/thingsboardTypes';
 import { getTenantDevices } from '../../api/deviceApi';
 
 interface AddWidgetProps {
-  onAdd: (deviceName: string) => void;
+  onAdd: (deviceName: string, chart: chartTypes) => void;
   onClose: () => void;
 }
 
+const charts: chartTypes[] = ['Line', 'Bar', 'Area']
+
 const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
+  const [selectedChart, setSelectedChart] = useState<chartTypes>('Line');
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +48,7 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
 
   const handleAdd = () => {
     if (selectedDevice) {
-      onAdd(selectedDevice); // Pass device ID to onAdd
+      onAdd(selectedDevice, selectedChart); // Pass device ID to onAdd
       onClose(); // Close the dialog after adding
     }
   };
@@ -59,6 +62,7 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : (
+          <>
           <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
             <InputLabel id="device-select-label">Select Device</InputLabel>
             <Select
@@ -74,6 +78,23 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
               ))}
             </Select>
           </FormControl>
+          <FormControl variant="outlined" size="small" style={{ minWidth: 200 }}>
+            <InputLabel id="chart-select-label">Select Chart</InputLabel>
+            <Select
+              labelId="chart-select-label"
+              value={selectedChart}
+              onChange={(e) => setSelectedChart(e.target.value as chartTypes)}
+              label="Select Chart"
+            >
+              {charts.map((chart: chartTypes, index: number) => (
+                <MenuItem key={index} value={chart}>
+                  {chart}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          </>
+          
         )}
       </DialogContent>
       <DialogActions>

@@ -10,9 +10,11 @@ import { setLayout } from '../../Redux/Action/layoutActions';
 import AddWidget from '../Add-Widget/AddWidget';
 import Box from '@mui/material/Box';
 import DashboardSettings from './DashboardSettings';
+import { chartTypes, WidgetLayout } from '../../types/thingsboardTypes';
+import { v4 as uuid4 } from 'uuid';
 
 const GRID_WIDTH = 1500; // Total width of the grid
-const NUM_COLUMNS = 15; // Number of columns
+const NUM_COLUMNS = 14; // Number of columns
 const ROW_HEIGHT = 50; // Height of each row
 
 const Dashboard: React.FC = () => {
@@ -25,20 +27,20 @@ const Dashboard: React.FC = () => {
       state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
   );
 
-  const [layout, setLocalLayout] = useState<Layout[]>(storedLayout?.layout);
+  const [layout, setLocalLayout] = useState<Layout[]>(storedLayout.layout);
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [isSettingClicked, setIsSettingClicked] = useState<boolean>(false);
 
   useEffect(() => {
     if (storedLayout.layout) {
-      setLocalLayout(storedLayout?.layout);
+      setLocalLayout(storedLayout.layout);
     }
   }, [storedLayout]);
 
-  const onAddWidget = (deviceId: string) => {
-    const newWidget: Layout = {
-      i: `widget-${layout.length}`,
+  const onAddWidget = (deviceId: string, selectedChart: chartTypes) => {
+    const newWidget: WidgetLayout = {
+      i: `widget-${uuid4()}`,
       x: 0,
       y: Math.max(...layout.map((item) => item.y + item.h || 0)) + 1,
       w: 4,
@@ -47,15 +49,18 @@ const Dashboard: React.FC = () => {
       minH: 6,
       maxW: 12,
       maxH: 12,
+      chart: selectedChart,
+      defaultDevice: deviceId,
     };
 
-    const updatedLayout = [...layout, newWidget];
+    const updatedLayout: WidgetLayout[] = [...layout, newWidget];
+
+    console.log(updatedLayout);
     setLocalLayout(updatedLayout);
     dispatch(
       setLayout(dashboardId, {
         ...storedLayout,
         layout: updatedLayout,
-        defaultDevice: deviceId,
       })
     );
   };
@@ -64,7 +69,7 @@ const Dashboard: React.FC = () => {
     setIsEditable((prev) => !prev);
   };
 
-  const validateLayout = (newLayout: Layout[]) => {
+  const validateLayout = (newLayout: WidgetLayout[]) => {
     return newLayout.map((item) => ({
       ...item,
       x: Math.min(item.x, NUM_COLUMNS - item.w),
@@ -72,13 +77,21 @@ const Dashboard: React.FC = () => {
   };
 
   const onLayoutChange = (newLayout: Layout[]) => {
-    const validatedLayout = validateLayout(newLayout);
-    setLocalLayout(validatedLayout);
+    // Validate the new layout
+    const validatedLayout: WidgetLayout[] = validateLayout(newLayout);
+
+    // Preserve widget state
+    const updatedWidgets = layout.map((widget) => {
+      const newWidget = validatedLayout.find((w) => w.i === widget.i);
+      return newWidget ? { ...widget, ...newWidget } : widget;
+    });
+
+    // Update the layout with preserved widget state
+    setLocalLayout(updatedWidgets);
     dispatch(
-      setLayout(dashboardId, { ...storedLayout, layout: validatedLayout })
+      setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
     );
   };
-
   const calculateGridLines = () => {
     if (!gridLayoutRef.current) return;
 
@@ -165,13 +178,18 @@ const Dashboard: React.FC = () => {
                 onResizeStop={onLayoutChange}
                 onDragStop={onLayoutChange}
               >
-                {layout.map((item) => (
+                {layout.map((item: WidgetLayout) => (
                   <div
                     key={item.i}
                     data-grid={item}
                     className="widget-container"
                   >
-                    <Widget widgetId={item.i} />
+                    <Widget
+                        widgetId={item.i}
+                        deviceId={item.defaultDevice || ''}
+                        chartType={item.chart || 'Line'}
+                      />
+                    
                   </div>
                 ))}
               </GridLayout>

@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './styles/widget.css'
 import {
+  chartTypes,
   Device,
   TelemetryData,
   TelemetryQueryParams,
+  WidgetLayout,
 } from '../../types/thingsboardTypes';
 import {
   getLatestTimeseries,
@@ -27,12 +29,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 
-interface widgetProps {
+interface WidgetProps {
   widgetId: string;
+  deviceId: string;
+  chartType: chartTypes;
 }
 
-const Widget: React.FC<widgetProps> = ({ widgetId }) => {
-
+const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   const { dashboardId } = useParams(); // Get dashboardId from the URL params
   const dispatch = useDispatch();
 
@@ -40,9 +43,10 @@ const Widget: React.FC<widgetProps> = ({ widgetId }) => {
     (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
   );
 
-  const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last hour
+  const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
+  const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last 5 minutes
   const [endDate, setEndDate] = useState<number>(Date.now());
-  const [selectedDevice, setSelectedDevice] = useState<string>(storedLayout?.defaultDevice);
+  const [selectedDevice, setSelectedDevice] = useState<string>(deviceId);
   const [sensors, setSensors] = useState<string[]>([]);
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [telemetryData, setTelemetryData] = useState<TelemetryData>({});
@@ -50,16 +54,19 @@ const Widget: React.FC<widgetProps> = ({ widgetId }) => {
     useState<TelemetryData>({});
   const [devices, setDevices] = useState<Device[]>([]);
 
-
-
   useEffect(() => {
-    const { startDate: layoutStartDate, endDate: layoutEndDate } =
-      storedLayout.dateRange || {};
+    const { startDate: layoutStartDate, endDate: layoutEndDate } = storedLayout.dateRange || {};
     if (layoutStartDate && layoutEndDate) {
       setStartDate(layoutStartDate);
       setEndDate(layoutEndDate);
     }
-  }, [storedLayout]);
+
+    storedLayout.layout.forEach((item: WidgetLayout) => {
+      if (item.i === widgetId) {
+        setSelectedChart(item?.chart || 'Line');
+      }
+    });
+  }, [storedLayout, widgetId]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
@@ -135,7 +142,7 @@ const Widget: React.FC<widgetProps> = ({ widgetId }) => {
     };
 
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors, startDate, endDate]);
+  }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit]);
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
@@ -185,8 +192,8 @@ const Widget: React.FC<widgetProps> = ({ widgetId }) => {
   }, [selectedSensors, telemetryData]);
 
   const renderChart = useMemo(() => {
-    return <LineChartWidget data={filteredTelemetryData} />;
-  }, [filteredTelemetryData]);
+    return <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />;
+  }, [filteredTelemetryData, selectedChart]);
 
   const handleLayoutDelete = () => {
     const updatedLayout = storedLayout.layout.filter((item) => item.i !== widgetId);

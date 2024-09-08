@@ -1,14 +1,15 @@
 // src/redux/reducers/layoutReducer.ts
-import { Layout } from 'react-grid-layout';
 import { SET_LAYOUT } from '../Action/layoutActions';
+import { chartTypes, WidgetLayout } from '../../types/thingsboardTypes';
 export interface DashboardLayoutOptions {
-  layout: Layout[];
+  layout: WidgetLayout[];
   dateRange: {
     startDate: any,
     endDate: any
   };
   defaultDevice: string;
   limit: number;
+  chart: chartTypes;
 }
 
 export interface LayoutState {
