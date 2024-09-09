@@ -7,6 +7,7 @@ import "./Header.css";
 // import "../Menu-bar/Menubar.css";
 import { getCurrentUser } from "../../api/loginApi";
 import MenuIcon from '@mui/icons-material/Menu';
+import logo from '../../assets/UrjalinksLogo_03.png'
 
 
 const Header: React.FC = () => {
@@ -58,10 +59,11 @@ const Header: React.FC = () => {
             <div className="menu-items">
                 <MenuIcon className="menuicon"/>
             </div>
-            <div className="logo">Myoorja</div>
+            {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
             
             <Link to="/dashboard" className="link link2 homelink">
-                <li>Home</li>
+                {/* <li>Home</li> */}
+                <div className="logo"><div><img src={logo} alt="logo" /></div></div>
             </Link>
             <div className="account">
                 <li className="user-email">

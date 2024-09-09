@@ -31,7 +31,6 @@ interface Vehicle {
 
 const AddDevice = () => {
   const [loading, setLoading] = useState(false);
-  const [admin, setAdmin] = useState('');
   const [action, setAction] = useState('');
   const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
   const [vehicle, setVehicle] = useState<Vehicle[]>([]);
@@ -70,9 +69,6 @@ const AddDevice = () => {
     fetchWarehousesAndVehicles();
   }, []);
 
-  const handleAdminChange = (event: SelectChangeEvent) => {
-    setAdmin(event.target.value);
-  };
 
   const handleActionChange = (event: SelectChangeEvent) => {
     setAction(event.target.value);
@@ -107,12 +103,12 @@ const AddDevice = () => {
   const handleClick = async () => {
     setLoading(true);
 
-    if(deviceInfo.name === "" || deviceInfo.type === ""){
-        setLoading(false);
-        setMessage('Fill the requiered fields!');
-        setSnackbarType('error');
-        setOpen(true)
-        return
+    if (deviceInfo.name === "" || deviceInfo.type === "") {
+      setLoading(false);
+      setMessage('Fill the requiered fields!');
+      setSnackbarType('error');
+      setOpen(true)
+      return
     }
 
     try {
@@ -123,7 +119,6 @@ const AddDevice = () => {
         setDeviceInfo({
           type: 'default',
         });
-        setAdmin('');
         setAction('');
         setLoading(false);
         setMessage('Device added successfully!');
@@ -204,7 +199,7 @@ const AddDevice = () => {
                     id="warehouse-select"
                     value={deviceInfo.label}
                     label="Select Warehouse"
-                    onChange={(e) => setDeviceInfo(prev => ({...prev, label: e.target.value}))}
+                    onChange={(e) => setDeviceInfo(prev => ({ ...prev, label: e.target.value }))}
                     className="form-control-inner"
                   >
                     {warehouse.map((wh, index) => (
@@ -224,7 +219,7 @@ const AddDevice = () => {
                     value={deviceInfo.label}
                     label="Select Vehicle"
                     onChange={(e) =>
-                        setDeviceInfo((prev) => ({ ...prev, label: e.target.value }))}
+                      setDeviceInfo((prev) => ({ ...prev, label: e.target.value }))}
                     className="form-control-inner"
                   >
                     {vehicle.map((veh, index) => (
@@ -249,26 +244,6 @@ const AddDevice = () => {
                   required
                 />
               </Box>
-              <label htmlFor="" className="label">
-                Admin
-              </label>
-              <FormControl className="form-control">
-                <InputLabel id="admin-label">Select User</InputLabel>
-                <Select
-                  labelId="admin-label"
-                  id="admin-select"
-                  value={admin}
-                  label="Select User"
-                  onChange={handleAdminChange}
-                  className="form-control-inner"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="Admin1">Admin1</MenuItem>
-                  <MenuItem value="Admin2">Admin2</MenuItem>
-                </Select>
-              </FormControl>
               <label htmlFor="" className="label">
                 Action
               </label>

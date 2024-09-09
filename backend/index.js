@@ -35,7 +35,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${process.env.PORT || 2000}`,
+                url: `http://3.111.205.170:${process.env.PORT || 2000}`,
             },
         ],
     },

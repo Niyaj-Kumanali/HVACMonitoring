@@ -92,28 +92,8 @@ const Dashboard: React.FC = () => {
       setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
     );
   };
-  const calculateGridLines = () => {
-    if (!gridLayoutRef.current) return;
 
-    const containerWidth = gridLayoutRef.current.offsetWidth;
-    const containerHeight = gridLayoutRef.current.offsetHeight;
 
-    // Calculate column width
-    const columnWidth = containerWidth / NUM_COLUMNS;
-
-    // Calculate number of horizontal lines
-    const numHorizontalLines = Math.ceil(containerHeight / ROW_HEIGHT);
-
-    return {
-      columnWidth,
-      numHorizontalLines,
-    };
-  };
-
-  const { columnWidth, numHorizontalLines } = calculateGridLines() || {
-    columnWidth: 0,
-    numHorizontalLines: 0,
-  };
 
   return (
     <div className="dashboard-container menu-data">
@@ -133,34 +113,6 @@ const Dashboard: React.FC = () => {
             ref={gridLayoutRef}
             style={{ position: 'relative' }}
           >
-            <div className="grid-lines-overlay">
-              {Array.from({ length: NUM_COLUMNS + 1 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="grid-line vertical-line"
-                  style={{
-                    left: columnWidth * i,
-                    top: 0,
-                    height: '106%', // Span entire height of the container
-                    width: '1px', // Adjust thickness if needed
-                    backgroundColor: '#ccc', // Adjust color if needed
-                  }}
-                />
-              ))}
-              {Array.from({ length: numHorizontalLines + 1 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="grid-line horizontal-line"
-                  style={{
-                    top: ROW_HEIGHT * i,
-                    left: 0,
-                    width: '100%',
-                    height: '1px', // Adjust thickness if needed
-                    backgroundColor: '#ccc', // Adjust color if needed
-                  }}
-                />
-              ))}
-            </div>
             <GridLayout
               className="layout"
               layout={layout}

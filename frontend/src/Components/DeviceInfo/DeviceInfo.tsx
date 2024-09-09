@@ -60,7 +60,6 @@ const DeviceInfo: React.FC = () => {
   });
   // const [loading, setLoading] = useState(false);
 
-  const [admin, setAdmin] = useState('');
   const [action, setAction] = useState('');
   const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
   const [vehicle, setVehicle] = useState<Vehicle[]>([]);
@@ -147,8 +146,6 @@ const DeviceInfo: React.FC = () => {
     }
   };
 
-  const handleAdminChange = (event: SelectChangeEvent) =>
-    setAdmin(event.target.value);
   const handleActionChange = (event: SelectChangeEvent) =>
     setAction(event.target.value);
 
@@ -423,22 +420,6 @@ const DeviceInfo: React.FC = () => {
                   required
                 />
               </Box>
-              <label className="label">Admin</label>
-              <FormControl className="form-control">
-                <InputLabel id="admin-label">Select User</InputLabel>
-                <Select
-                  labelId="admin-label"
-                  id="admin-select"
-                  value={admin}
-                  label="Select User"
-                  onChange={handleAdminChange}
-                  className="form-control-inner"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                </Select>
-              </FormControl>
               <label className="label">Action</label>
               <FormControl className="form-control">
                 <InputLabel id="action-label">Select Action</InputLabel>
