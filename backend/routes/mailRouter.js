@@ -17,6 +17,62 @@ const transporter = nodemailer.createTransport({
   secure: true
 });
 
+
+/**
+ * @swagger
+ * /sendresetemail:
+ *   post:
+ *     summary: Send a password reset email
+ *     tags: [Authentication]
+ *     description: Sends an email with a password reset link to the user, containing the reset token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email address of the user requesting the password reset.
+ *                 example: user@example.com
+ *               resetToken:
+ *                 type: string
+ *                 description: The reset token to be included in the email link.
+ *                 example: abc12345resetToken
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset email sent successfully.
+ *       400:
+ *         description: Email and reset token are required.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email and reset token are required.
+ *       500:
+ *         description: Failed to send email.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send email.
+ */
+
 // Define the route to send the reset password email
 router.post('/sendresetemail', async (req, res) => {
   const { email, resetToken } = req.body;

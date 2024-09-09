@@ -23,6 +23,7 @@ import {
   Select,
   Toolbar,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LineChartWidget from './Charts/LineChartWidget';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -242,7 +243,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
           </Select>
         </FormControl>
         <Button className="delete-button" onClick={handleLayoutDelete}>
-          Delete
+          <DeleteIcon />
         </Button>
       </Toolbar>
       {renderChart}
