@@ -63,5 +63,11 @@
 .user-img-info .img img {
     transition: opacity 0.3s ease-in-out;
 }
+.user-cont{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
 

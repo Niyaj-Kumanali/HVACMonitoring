@@ -61,7 +61,7 @@ const Header: React.FC = () => {
             </div>
             {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
             
-            <Link to="/dashboard" className="link link2 homelink">
+            <Link to="/dashboards" className="link link2 homelink">
                 {/* <li>Home</li> */}
                 <div className="logo"><div><img src={logo} alt="logo" /></div></div>
             </Link>

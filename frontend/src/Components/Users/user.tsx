@@ -5,7 +5,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteUser, getUserById, getUsers, saveUser } from "../../api/userApi";
-import { Snackbar, SnackbarCloseReason, SnackbarContent } from "@mui/material";
+import { Button, Snackbar, SnackbarCloseReason, SnackbarContent } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import { set_usersCount } from "../../Redux/Action/Action";
@@ -28,6 +28,7 @@ const User = () => {
     const devicecountdispatch = useDispatch();
     const { email } = useParams<{ email: string }>();
     const [user, setUser] = useState<UserType | undefined>();
+    const [isEdit, setIsEdit] = useState(true)
 
     const fetchUserData = async () => {
         try {
@@ -109,6 +110,7 @@ const User = () => {
                     setTimeout(() => {
                         setLoading(false);
                         setOpen(false);
+                        setIsEdit(true)
                     }, 1000);
                 } else {
                     throw new Error('Failed to update user');
@@ -151,12 +153,15 @@ const User = () => {
                     </div>
                 </header>
                 <main className="accountinfo-main">
+
                     <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
                         <TextField
                             fullWidth
                             label="Email"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
+                            inputProps={{readOnly: isEdit}}
                         />
                     </Box>
                     <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
@@ -165,6 +170,8 @@ const User = () => {
                             label="First Name"
                             value={firstName}
                             onChange={(e) => setFirstname(e.target.value)}
+                            required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </Box>
                     <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
@@ -173,6 +180,8 @@ const User = () => {
                             label="Last Name"
                             value={lastName}
                             onChange={(e) => setLastname(e.target.value)}
+                            required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </Box>
                     <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
@@ -181,6 +190,8 @@ const User = () => {
                             label="Phone Number"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
+                            required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </Box>
                     <Box sx={{ width: '100%', maxWidth: '100%', backgroundColor: "#ebebeb", marginBottom: '10px' }}>
@@ -193,32 +204,41 @@ const User = () => {
                         />
                     </Box>
                     <div className="accountinfo-savebtn-delt-btn">
-                        <LoadingButton
-                            size="small"
-                            color="secondary"
-                            onClick={handleClick}
-                            loading={loading}
-                            loadingPosition="start"
-                            startIcon={<SaveIcon />}
-                            variant="contained"
-                            disabled={loadingDelete}
-                            sx={{ width: '150px', height: '50px' }}
-                        >
-                            <span>Update</span>
-                        </LoadingButton>
-                        <LoadingButton
-                            size="small"
-                            color="error"
-                            onClick={handleDeleteUser}
-                            loading={loadingDelete}
-                            loadingPosition="start"
-                            startIcon={<DeleteIcon />}
-                            variant="contained"
-                            disabled={loading}
-                            sx={{ width: '150px', height: '50px' }}
-                        >
-                            <span>Delete</span>
-                        </LoadingButton>
+                        {
+                            isEdit ? (
+                                <Button variant="contained" onClick={() => setIsEdit(false)} sx={{ width: '150px', height: '50px' }}>Edit</Button>
+                            ) : (
+                                <>
+                                    <LoadingButton
+                                        size="small"
+                                        color="secondary"
+                                        onClick={handleClick}
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        startIcon={<SaveIcon />}
+                                        variant="contained"
+                                        disabled={loadingDelete}
+                                        sx={{ width: '150px', height: '50px' }}
+                                    >
+                                        <span>Update</span>
+                                    </LoadingButton>
+                                    <LoadingButton
+                                        size="small"
+                                        color="error"
+                                        onClick={handleDeleteUser}
+                                        loading={loadingDelete}
+                                        loadingPosition="start"
+                                        startIcon={<DeleteIcon />}
+                                        variant="contained"
+                                        disabled={loading}
+                                        sx={{ width: '150px', height: '50px' }}
+                                    >
+                                        <span>Delete</span>
+                                    </LoadingButton>
+                                </>
+                            )
+                        }
+                        
                     </div>
                 </main>
             </div>

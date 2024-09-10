@@ -1,5 +1,9 @@
 .devices{
     padding : 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content:space-between !important;
+    gap: 20px;
 }
 .devices h2{
     margin-bottom : 20px;
@@ -11,12 +15,12 @@
     padding: 0;
     margin: 0;
     list-style-type: none;
-    gap: 10px;
+    gap: 15px;
     cursor: pointer;
     align-items: center;
 }
 
-.devices ul li {
+.devices .device-ul li {
     width: 49%;
     box-sizing: border-box;
     border-radius: 5px;
@@ -25,6 +29,11 @@
     justify-content:space-between;
     padding: 0;
     background-color: #fff;
+    height: 125px !important;
+}
+.devices ul li span{
+    display: flex;
+    align-items:center;
 }
 .delete-icon{
     color: rgb(213, 13, 13);

@@ -9,3 +9,9 @@
     align-items: center;
     justify-content: center;
 }
+.warehouses-cont{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

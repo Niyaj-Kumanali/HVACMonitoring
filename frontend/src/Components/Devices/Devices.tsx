@@ -13,6 +13,7 @@ import SnackbarContent from '@mui/material/SnackbarContent';
 import { useDispatch } from "react-redux";
 import { set_DeviceCount } from "../../Redux/Action/Action";
 import { useNavigate } from "react-router-dom";
+import Paginations from "../Pagination/Paginations";
 
 const Devices: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);
@@ -96,7 +97,7 @@ const Devices: React.FC = () => {
         return (
             <>
                 <h2>Devices</h2>
-                <ul>
+                <ul className="device-ul">
                     {devices.map((device, index) => (
                         <li key={index}>
                             <span className="deviceName" onClick={() => navigate(`/device/${device.id?.id}`)}>{device.name}</span>
@@ -113,14 +114,19 @@ const Devices: React.FC = () => {
                         </li>
                     ))}
                 </ul>
+                <div className="pagination">
+                    <Paginations/>
+                </div>
             </>
         );
     };
 
     return (
         <div className="menu-data">
-            <div className="devices">
-                {renderContent()}
+            <div>
+                <div className="devices">
+                    {renderContent()}
+                </div>
             </div>
             <Snackbar
                 open={open}
