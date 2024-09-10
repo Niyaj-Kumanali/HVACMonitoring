@@ -457,7 +457,13 @@ router.get('/averages', async (req, res) => {
 
     const result = await client.query(query, [id]);
 
-    res.json(result.rows);
+    // Transform the result into the desired format
+    const transformedResult = result.rows.reduce((acc, row) => {
+      acc[row.key] = row.avg_combined_v;
+      return acc;
+    }, {});
+
+    res.json(transformedResult);
   } catch (error) {
     console.error('Error executing query', error.stack);
     res.status(500).json({ error: 'Internal Server Error' });
