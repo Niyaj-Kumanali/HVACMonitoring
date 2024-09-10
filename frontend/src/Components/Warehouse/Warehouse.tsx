@@ -59,6 +59,7 @@ const Warehouse: React.FC = () => {
     const [locationInfo, setLocationInfo] = useState<any>({});
     const [buttonvisible, setButtonVisible] = useState(false);
 
+
     
     const navigate = useNavigate();
     const warehousecountDispatch = useDispatch();
@@ -93,6 +94,10 @@ const Warehouse: React.FC = () => {
         }, 1000); 
     };
 
+
+    // const fetchAllWarehouseDevices = async () => {
+
+    // }
 
 
     const handleReset = () => {
@@ -142,7 +147,6 @@ const Warehouse: React.FC = () => {
         e.preventDefault();
 
         setLoading(true);
-
 
         try {
 

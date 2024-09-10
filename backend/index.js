@@ -50,15 +50,18 @@ import warehouseRouter from './routes/warehouseRoute.js';
 import coolantRouter from './routes/coolantRoute.js';
 import sensorRouter from './routes/sensorRoute.js';
 import vehicleRouter from './routes/vehicleRoute.js';
-import postgres from './routes/postgresRoute.js'
-import mailRouter from './routes/mailRouter.js'
+import postgres from './routes/postgresRoute.js';
+import mailRouter from './routes/mailRouter.js';
+import influxRoute from './routes/influxRoute.js'
+
 
 app.use('/warehouse', warehouseRouter);
 app.use('/coolant', coolantRouter);
 app.use('/sensor', sensorRouter);
 app.use('/vehicle', vehicleRouter);
-app.use('/postgres', postgres)
-app.use('/mailservice', mailRouter)
+app.use('/postgres', postgres);
+app.use('/mailservice', mailRouter);
+app.use('/influx', influxRoute);
 
 
 

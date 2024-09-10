@@ -142,20 +142,67 @@ router.get('/getallvehicle', async(req, res) => {
  *       500:
  *         description: Error retrieving vehicles
  */
+// router.get('/getallvehicle/:userId', async (req, res) => {
+//     try {
+//         const { userId } = req.params;
+//         const getallvehicle = await vehicle.find({ userId });
+
+//         if (getallvehicle.length === 0) {
+//             return res.status(204).json({ message: 'No vehicles found for the current userId' });
+//         }
+
+//         res.status(200).json(getallvehicle);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error retrieving vehicle data', error });
+//     }
+// });
 router.get('/getallvehicle/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const getallvehicle = await vehicle.find({ userId });
 
-        if (getallvehicle.length === 0) {
-            return res.status(204).json({ message: 'No vehicles found for the current userId' });
+        // Get the page and pageSize from the query parameters, defaulting to 1 and 10 respectively
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+
+        // Calculate the skip value (how many records to skip)
+        const skip = (page - 1) * pageSize;
+
+        // Get the total count of vehicles for the user (for pagination metadata)
+        const total = await vehicle.countDocuments({ userId });
+
+        // Get the paginated vehicles
+        const getAllVehicle = await vehicle.find({ userId })
+            .skip(skip)
+            .limit(pageSize);
+
+        // Respond with an empty array if no vehicles are found
+        if (getAllVehicle.length === 0) {
+            return res.status(200).json({
+                vehicles: [],
+                pagination: {
+                    totalRecords: total,
+                    currentPage: page,
+                    totalPages: Math.ceil(total / pageSize),
+                    pageSize: pageSize
+                }
+            });
         }
 
-        res.status(200).json(getallvehicle);
+        // Respond with vehicles and pagination metadata
+        res.status(200).json({
+            vehicles: getAllVehicle,
+            pagination: {
+                totalRecords: total,
+                currentPage: page,
+                totalPages: Math.ceil(total / pageSize),
+                pageSize: pageSize
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving vehicle data', error });
     }
 });
+
 
 /**
  * @swagger

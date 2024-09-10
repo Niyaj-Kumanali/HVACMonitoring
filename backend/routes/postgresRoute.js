@@ -426,4 +426,51 @@ router.post('/resetpassword', async (req, res) => {
   }
 });
 
+
+router.get('/averages', async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Id is required' });
+  }
+
+  const client = createClient();
+
+  try {
+    await client.connect();
+
+    const query = `
+      SELECT
+          kd.key,
+          AVG(COALESCE(dbl_v, 0) + COALESCE(long_v, 0)) AS avg_combined_v
+      FROM
+          device AS d
+      JOIN ts_kv AS ts ON d.id = ts.entity_id
+      JOIN key_dictionary AS kd ON kd.key_id = ts.key
+      WHERE
+          d.label = $1
+      GROUP BY
+          kd.key
+      ORDER BY
+          kd.key;
+    `;
+
+    const result = await client.query(query, [id]);
+
+    // Transform the result into the desired format
+    const transformedResult = result.rows.reduce((acc, row) => {
+      acc[row.key] = row.avg_combined_v;
+      return acc;
+    }, {});
+
+    res.json(transformedResult);
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    await client.end();
+  }
+});
+
+
 export default router;
