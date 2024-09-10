@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import "./Warehouse.css";
-import { getCurrentUser } from "../../api/loginApi";
 import Loader from "../Loader/Loader";
-import { mongoAPI } from "../../api/MongoAPIInstance";
-import { useDispatch } from "react-redux";
+import { getAllWarehouseByUserId, getLocationByLatsAndLongs } from "../../api/MongoAPIInstance";
+import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif"
 import Paginations from "../Pagination/Paginations";
+import { RootState } from "../../Redux/Reducer";
+
 
 
 interface Warehouse {
@@ -31,14 +32,12 @@ const Warehouses = () => {
     const [loading, setLoader] = useState(true);
     const warehousecountDispatch = useDispatch();
     const [message, setMessage] = useState("");
+    const currentUser = useSelector((state: RootState) => state.user.user)
 
 
     const fetchAllWarehouses = async () => {
         try {
-            const currentUser = await getCurrentUser();
-
-            const response = await mongoAPI.get(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
-
+            const response = await getAllWarehouseByUserId(currentUser.id?.id || '');
             setTimeout(() => {
                 if (response.data.length === 0) {
                     setMessage("No Warehouse Found");
@@ -67,7 +66,7 @@ const Warehouses = () => {
     useEffect(() => {
         const fetchLocationInfo = async (latitude: string, longitude: string, warehouseId: string) => {
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+                const response = await getLocationByLatsAndLongs(latitude, longitude);
                 if (!response.ok) {
                     throw new Error('Failed to fetch location data');
                 }

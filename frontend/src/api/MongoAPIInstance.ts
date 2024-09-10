@@ -39,6 +39,11 @@ export const updateWarehouseByWarehouseId = async (warehouseId: string) => {
   return response;
 };
 
+export const getLocationByLatsAndLongs = async (latitude: string, longitude: string) => {
+  const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+  return response
+}
+
 
 // 3.111.205.170
 // localhost

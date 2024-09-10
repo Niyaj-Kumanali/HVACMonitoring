@@ -4,7 +4,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import { deleteWarehouseByWarehouseId, mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import { useDispatch } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
@@ -69,7 +69,7 @@ const Warehouse: React.FC = () => {
 
         setTimeout(async () => {
             try {
-                await mongoAPI.delete(`/warehouse/deletewarehouse/${warehouse.warehouse_id}`);
+                await deleteWarehouseByWarehouseId(warehouse.warehouseId);
                 fetchAllWarehouses();
 
                 setOpen(true);
@@ -94,10 +94,6 @@ const Warehouse: React.FC = () => {
         }, 1000); 
     };
 
-
-    // const fetchAllWarehouseDevices = async () => {
-
-    // }
 
 
     const handleReset = () => {

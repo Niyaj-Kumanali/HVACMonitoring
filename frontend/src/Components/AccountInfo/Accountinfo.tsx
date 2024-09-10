@@ -4,42 +4,25 @@ import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import "./Accountinfo.css";
-import { getCurrentUser } from "../../api/loginApi";
 import { saveUser } from "../../api/userApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Reducer";
 
 const Accountinfo = () => {
-    const [username, setUsername] = useState<string>("");
-    const [firstName, setFirstname] = useState<string>("");
-    const [lastName, setLastname] = useState<string>("");
-    const [phone, setPhone] = useState<string>("");
+    const currentUser = useSelector((state: RootState)=> state.user.user)
+    const [username, setUsername] = useState<string>(currentUser.email || "");
+    const [firstName, setFirstname] = useState<string>(currentUser.firstName || "");
+    const [lastName, setLastname] = useState<string>(currentUser.lastName || "");
+    const [phone, setPhone] = useState<string>(currentUser.phone || "");
     const [loading, setLoading] = useState<boolean>(false);
-    const [authority, setAuthority] = useState<string>("");
-    const [user, setUser] = useState<any>("");
+    const [authority, setAuthority] = useState<string>(currentUser.authority || "");
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await getCurrentUser();
-                const userData = response.data;
-                setUsername(userData.email || "");
-                setFirstname(userData.firstName || "");
-                setLastname(userData.lastName || "");
-                setPhone(userData.phone || "");
-                setAuthority(userData.authority || "");
-                setUser(userData);
-            } catch (error) {
-                console.error('Failed to fetch user data', error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
 
     const handleClick = async () => {
         setLoading(true);
 
         const updateUser = {
-            ...user,
+            ...currentUser,
             email: username,
             firstName: firstName,
             lastName: lastName,
@@ -71,7 +54,7 @@ const Accountinfo = () => {
                     </div>
                     <div className="accountinfo-lastlogin">
                         <p>Last Login</p>
-                        <p>{formatDate(user.additionalInfo?.lastLoginTs)}</p>
+                        <p>{formatDate(currentUser?.additionalInfo?.lastLoginTs || Date.now())}</p>
                     </div>
                 </header>
                 <main className="accountinfo-main">
