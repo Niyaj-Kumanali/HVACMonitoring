@@ -169,7 +169,7 @@ const Locations = () => {
       ) : (
         <div className="map-container">
           <h1>Locations of warehouses</h1>
-          <div id="map" style={{ height: '100vh', width: '100%' }}></div>
+          <div className="map" id="map" style={{ height: '100vh', width: '100%' }}></div>
         </div>
       )}
     </div>

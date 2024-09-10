@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import {
   Button,
+  IconButton,
   Snackbar,
   SnackbarCloseReason,
   SnackbarContent,
@@ -51,8 +52,8 @@ const DeviceInfo: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string>('');
   console.log(accessToken);
 
+  const [isEdit, setIsEdit] = useState(true)
 
-  
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState<Device>({
@@ -170,7 +171,7 @@ const DeviceInfo: React.FC = () => {
   const handleVehicleChange = (event: SelectChangeEvent) => {
     setDeviceInfo((prev) => ({ ...prev, label: event.target.value }));
   };
-  
+
 
   const handleClick = async () => {
     setLoadingSave(true);
@@ -193,6 +194,7 @@ const DeviceInfo: React.FC = () => {
         setMessage('Device Updated successfully!');
         setSnackbarType('success');
         setOpen(true);
+        setIsEdit(true)
       }, 500);
     } catch (error) {
       console.log('Failed to create device');
@@ -351,6 +353,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.name || ''}
                   required
+                  inputProps={{ readOnly: isEdit }}
                 />
               </Box>
               <label className="label">Location</label>
@@ -363,6 +366,8 @@ const DeviceInfo: React.FC = () => {
                   label="Select Location"
                   onChange={handleLabelChange}
                   className="form-control-inner"
+                  required
+                  inputProps={{ readOnly: isEdit }}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -381,6 +386,8 @@ const DeviceInfo: React.FC = () => {
                     label="Select Warehouse"
                     onChange={handleWarehouseChange}
                     className="form-control-inner"
+                    required
+                    inputProps={{ readOnly: isEdit }}
                   >
                     {warehouse.map((wh, index) => (
                       <MenuItem key={index} value={wh.warehouse_id}>
@@ -400,6 +407,8 @@ const DeviceInfo: React.FC = () => {
                     label="Select Vehicle"
                     onChange={handleVehicleChange}
                     className="form-control-inner"
+                    required
+                    inputProps={{ readOnly: isEdit }}
                   >
                     {vehicle.map((veh, index) => (
                       <MenuItem key={index} value={veh.vehicle_id}>
@@ -418,6 +427,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.type || ''}
                   required
+                  inputProps={{ readOnly: isEdit }}
                 />
               </Box>
               <label className="label">Action</label>
@@ -430,6 +440,8 @@ const DeviceInfo: React.FC = () => {
                   label="Select Action"
                   onChange={handleActionChange}
                   className="form-control-inner"
+                  required
+                  inputProps={{ readOnly: isEdit }}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -439,34 +451,39 @@ const DeviceInfo: React.FC = () => {
                 </Select>
               </FormControl>
               <div className="accountinfo-savebtn-delete-btn">
-                <LoadingButton
-                  size="small"
-                  color="secondary"
-                  onClick={handleClick}
-                  loading={loadingSave}
-                  loadingPosition="start"
-                  startIcon={<SaveIcon />}
-                  variant="contained"
-                  disabled={loadingDelete}
+                {isEdit ? <Button className="btn-save" variant="contained" onClick={() => setIsEdit(false)}>Edit</Button> :
+                  <>
+                    <LoadingButton
+                      size="small"
+                      color="secondary"
+                      onClick={handleClick}
+                      loading={loadingSave}
+                      loadingPosition="start"
+                      startIcon={<SaveIcon />}
+                      variant="contained"
+                      disabled={loadingDelete}
 
-                  className="btn-save"
-                >
-                  <span>Save</span>
-                </LoadingButton>
-                <LoadingButton
-                  size="small"
-                  color="error"
-                  onClick={handleDeleteDevice}
-                  loading={loadingDelete}
-                  loadingPosition="start"
-                  startIcon={<DeleteIcon />}
-                  variant="contained"
-                  disabled={loadingSave}
+                      className="btn-save"
+                    >
+                      <span>Save</span>
+                    </LoadingButton>
+                    <LoadingButton
+                      size="small"
+                      color="error"
+                      onClick={handleDeleteDevice}
+                      loading={loadingDelete}
+                      loadingPosition="start"
+                      startIcon={<DeleteIcon />}
+                      variant="contained"
+                      disabled={loadingSave}
 
-                  className="btn-save"
-                >
-                  <span>Delete</span>
-                </LoadingButton>
+                      className="btn-save"
+                    >
+                      <span>Delete</span>
+                    </LoadingButton>
+
+                  </>
+                }
               </div>
             </form>
           </div>

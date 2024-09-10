@@ -6,7 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif"
+import Paginations from "../Pagination/Paginations";
 import { RootState } from "../../Redux/Reducer";
+
 
 
 interface Warehouse {
@@ -90,21 +92,24 @@ const Warehouses = () => {
             <div className="menu-data">{message}</div>
         ) : (
             <div className="menu-data">
-                <div className="warehouses">
-                    {allWarehouses.map((warehouse) => (
-                        <Link to={`/warehouse/${warehouse.warehouse_id}`} state={warehouse} className="userinfo" key={warehouse._id}>
-                            <div className="user-img-info">
-                                <div className="img">
-                                    <img src={warehouseimg} className="personicon" />
+                        <div className="warehouses-cont">
+                    <div className="warehouses">
+                        {allWarehouses.map((warehouse) => (
+                            <Link to={`/warehouse/${warehouse.warehouse_id}`} state={warehouse} className="userinfo" key={warehouse._id}>
+                                <div className="user-img-info">
+                                    <div className="img">
+                                        <img src={warehouseimg} className="personicon" />
+                                    </div>
+                                    <div className="status">
+                                        <p className="username">{warehouse.warehouse_name}</p>
+                                        <p>{warehouse.warehouse_id}</p>
+                                        <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
+                                    </div>
                                 </div>
-                                <div className="status">
-                                    <p className="username">{warehouse.warehouse_name}</p>
-                                    <p>{warehouse.warehouse_id}</p>
-                                    <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        ))}
+                    </div>
+                    <Paginations />
                 </div>
             </div>
         )

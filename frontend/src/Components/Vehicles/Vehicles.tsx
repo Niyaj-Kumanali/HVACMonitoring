@@ -8,6 +8,7 @@ import { getCurrentUser } from "../../api/loginApi";
 import VehicleLoader from "../Loader/VehicleLoader";
 import { Link } from "react-router-dom";
 import truckimage from "../../assets/truck.gif"
+import Paginations from "../Pagination/Paginations";
 
 interface VehicleDimensions {
     length: string;
@@ -75,26 +76,29 @@ const Vehicles = () => {
             <div className="menu-data">{message}</div>
         ) : (
             <div className="menu-data">
-                <div className="warehouses">
-                    {allVehicles.map((vehicle, index) => (
-                        <Link className="userinfo" key={index} to={`/vehicle/${vehicle.vehicle_id}`}>
-                            <div className="user-img-info">
-                                <div className="img">
-                                    <img src={truckimage} className="personicon" alt="Truck Icon" />
+                <div className="warehouses-cont">
+                    <div className="warehouses">
+                        {allVehicles.map((vehicle, index) => (
+                            <Link className="userinfo" key={index} to={`/vehicle/${vehicle.vehicle_id}`}>
+                                <div className="user-img-info">
+                                    <div className="img">
+                                        <img src={truckimage} className="personicon" alt="Truck Icon" />
+                                    </div>
+                                    <div className="status">
+                                        <p className="username">{vehicle.vehicle_name}</p>
+                                        <p>{vehicle.vehicle_number}</p>
+                                        <p className="driver-name">Driver: {vehicle.Driver_details.driver_name}</p>
+                                        <p className="driver-contact">Contact: {vehicle.Driver_details.driver_contact_no}</p>
+                                        <p className="licence-id">Licence ID: {vehicle.Driver_details.licence_id}</p>
+                                        <p className="cooling-units">Cooling Units: {vehicle.cooling_units || "N/A"}</p>
+                                        <p className="sensors">Sensors: {vehicle.sensors || "N/A"}</p>
+                                    </div>
                                 </div>
-                                <div className="status">
-                                    <p className="username">{vehicle.vehicle_name}</p>
-                                    <p>{vehicle.vehicle_number}</p>
-                                    <p className="driver-name">Driver: {vehicle.Driver_details.driver_name}</p>
-                                    <p className="driver-contact">Contact: {vehicle.Driver_details.driver_contact_no}</p>
-                                    <p className="licence-id">Licence ID: {vehicle.Driver_details.licence_id}</p>
-                                    <p className="cooling-units">Cooling Units: {vehicle.cooling_units || "N/A"}</p>
-                                    <p className="sensors">Sensors: {vehicle.sensors || "N/A"}</p>
-                                </div>
-                            </div>
 
-                        </Link>
-                    ))}
+                            </Link>
+                        ))}
+                    </div>
+                    <Paginations/>
                 </div>
             </div>
         )

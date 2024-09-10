@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "../Add-Warehouse/Addwarehouse.css";
-import { FormControl, Snackbar, SnackbarCloseReason, SnackbarContent, TextField } from '@mui/material';
+import { Button, FormControl, Snackbar, SnackbarCloseReason, SnackbarContent, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
@@ -43,6 +43,7 @@ const AddVehicle: React.FC = () => {
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState("");
     const { vehicleid } = useParams();
+    const [isEdit, setIsEdit] = useState(true);
 
     const [formData, setFormData] = useState<VehicleData>({
         vehicle_number: '',
@@ -190,6 +191,7 @@ const AddVehicle: React.FC = () => {
                 setOpen(true);
                 setSnackbarType('success');
                 setMessage(vehicleid ? 'Vehicle Updated Successfully' : 'Vehicle Added Successfully');
+                setIsEdit(true)
                 if (vehicleid) {
                     fetchAllVehicles();
                 }
@@ -256,6 +258,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -268,6 +271,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -281,6 +285,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -294,6 +299,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -307,6 +313,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -319,6 +326,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -332,6 +340,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -344,6 +353,7 @@ const AddVehicle: React.FC = () => {
                             disabled={submitted}
                             className='textfieldss'
                             required
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -356,6 +366,7 @@ const AddVehicle: React.FC = () => {
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
+                            inputProps={{ readOnly: isEdit }}
                         />
                     </FormControl>
 
@@ -368,37 +379,44 @@ const AddVehicle: React.FC = () => {
                             onChange={handleChange}
                             disabled={submitted}
                             className='textfieldss'
+                            inputProps={{readOnly:isEdit}}
                         />
                     </FormControl>
 
                     <div className='sub-btn-flex'>
-                        <LoadingButton
-                            size="small"
-                            type="submit"
-                            color="secondary"
-                            loading={loading}
-                            loadingPosition="start"
-                            startIcon={<SaveIcon />}
-                            variant="contained"
-                            disabled={deleteloading}
-                            className="btn-save"
-                        >
-                            <span>Update</span>
-                        </LoadingButton>
-                        
-                        <LoadingButton
-                            size="small"
-                            color="error"
-                            loading={deleteloading}
-                            loadingPosition="start"
-                            startIcon={<DeleteIcon />}
-                            variant="contained"
-                            disabled={loading}
-                            className="btn-save"
-                            onClick={handleVehicleDelete}
-                        >
-                            <span>Delete</span>
-                        </LoadingButton>
+                        {
+                            isEdit ? (<Button className="btn-save" variant='contained' onClick={()=>setIsEdit(false)}>Edit</Button>):(
+                                <>
+                                    <LoadingButton
+                                        size="small"
+                                        type="submit"
+                                        color="secondary"
+                                        loading={loading}
+                                        loadingPosition="start"
+                                        startIcon={<SaveIcon />}
+                                        variant="contained"
+                                        disabled={deleteloading}
+                                        className="btn-save"
+                                    >
+                                        <span>Update</span>
+                                    </LoadingButton>
+                                
+                                    <LoadingButton
+                                        size="small"
+                                        color="error"
+                                        loading={deleteloading}
+                                        loadingPosition="start"
+                                        startIcon={<DeleteIcon />}
+                                        variant="contained"
+                                        disabled={loading}
+                                        className="btn-save"
+                                        onClick={handleVehicleDelete}
+                                    >
+                                        <span>Delete</span>
+                                    </LoadingButton>
+                                </>
+                            )
+                        }
                     </div>
                 </form>
             </div>

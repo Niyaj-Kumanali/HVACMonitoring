@@ -89,6 +89,10 @@ li {
     font-size: 18px;
 }
 
+.menuu{
+    cursor: pointer;
+}
+
 .visible {
     position: absolute;
     top: 55px;
