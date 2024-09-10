@@ -32,9 +32,9 @@ const Devices: React.FC = () => {
             setErrorMessage(null);
 
             const params = {
-                pageSize: 10,
+                pageSize: 20,
                 page: page,
-                type: 'default',
+                // type: 'default',
                 textSearch: '',
                 sortProperty: 'name',
                 sortOrder: 'ASC',

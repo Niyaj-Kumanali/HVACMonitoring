@@ -52,6 +52,7 @@ const Warehouse: React.FC = () => {
     const [loadingg, setLoadingg] = useState(false);
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState("");
+    console.log(warehouse.warehouse_id)
 
     
     const navigate = useNavigate();
@@ -87,6 +88,10 @@ const Warehouse: React.FC = () => {
         }, 1000); 
     };
 
+
+    // const fetchAllWarehouseDevices = async () => {
+
+    // }
 
 
     const handleReset = () => {
@@ -136,7 +141,6 @@ const Warehouse: React.FC = () => {
         e.preventDefault();
 
         setLoading(true);
-
 
         try {
 
