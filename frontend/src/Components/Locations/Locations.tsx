@@ -36,17 +36,12 @@ const Locations = () => {
       // Filter for unique locations by comparing latitude and longitude
       const uniqueLocations = response.data.reduce(
         (acc: { latitude: string; longitude: string }[], warehouse: Warehouse) => {
-          const isLocationUnique = !acc.some(
-            (location) =>
-              location.latitude === warehouse.latitude &&
-              location.longitude === warehouse.longitude
-          );
-          if (isLocationUnique) {
+          
             acc.push({
               latitude: warehouse.latitude,
               longitude: warehouse.longitude,
             });
-          }
+          
           return acc;
         },
         []
@@ -87,7 +82,7 @@ const Locations = () => {
     uniqueLocations.forEach((location) => {
       fetchLocationInfo(location.latitude, location.longitude);
     });
-  }, [uniqueLocations]);
+  }, []);
 
   // Initialize the map and set markers for warehouse locations
   useEffect(() => {

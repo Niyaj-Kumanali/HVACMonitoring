@@ -145,20 +145,69 @@ router.get('/getallwarehouse', async (req, res) => {
  *       500:
  *         description: Error retrieving warehouse data
  */
+// router.get('/getallwarehouse/:userId', async (req, res) => {
+//     try {
+//         const { userId } = req.params;
+//         const getAllWarehouse = await warehouse.find({ userId });
+
+//         if (getAllWarehouse.length === 0) {
+//             return res.status(204).json({ statusText: 'Warehouse not found' });
+//         }
+
+//         res.status(200).json(getAllWarehouse);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error retrieving warehouse data', error });
+//     }
+// });
+
 router.get('/getallwarehouse/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const getAllWarehouse = await warehouse.find({ userId });
 
+        // Get the page and pageSize from the query parameters, defaulting to 1 and 10 respectively
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+
+        // Calculate the skip value (how many records to skip)
+        const skip = (page - 1) * pageSize;
+
+        // Get the total count of warehouses for the user (for pagination metadata)
+        const total = await warehouse.countDocuments({ userId });
+
+        // Get the paginated warehouses
+        const getAllWarehouse = await warehouse.find({ userId })
+            .skip(skip)
+            .limit(pageSize);
+
+        // Respond with an empty array if no warehouses are found
         if (getAllWarehouse.length === 0) {
-            return res.status(204).json({ statusText: 'Warehouse not found' });
+            return res.status(200).json({
+                warehouses: [],
+                pagination: {
+                    totalRecords: total,
+                    currentPage: page,
+                    totalPages: Math.ceil(total / pageSize),
+                    pageSize: pageSize
+                }
+            });
         }
 
-        res.status(200).json(getAllWarehouse);
+        // Respond with warehouses and pagination metadata
+        res.status(200).json({
+            warehouses: getAllWarehouse,
+            pagination: {
+                totalRecords: total,
+                currentPage: page,
+                totalPages: Math.ceil(total / pageSize),
+                pageSize: pageSize
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving warehouse data', error });
     }
 });
+
+
 
 /**
  * @swagger
