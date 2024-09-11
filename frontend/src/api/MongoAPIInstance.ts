@@ -54,27 +54,28 @@ export const getAllVehiclesByUserId = async (userId: string = "") => {
 };
 
 export const addVehicle = async () => {
-  const response = await mongoAPI.post(`/warehouse/addwarehouse`);
+  const response = await mongoAPI.post(`/vehicle/addvehicle`);
   return response;
 };
 
 export const getAllVehicles = async () => {
-  const response = await mongoAPI.get(`/warehouse/getallwarehouse`);
+  const response = await mongoAPI.get(`/vehicle/getallvehicle`);
   return response;
 };
 
 export const getVehicleByVehicleId = async (vehicleId: string = "") => {
-  const response = await mongoAPI.get(`/warehouse/getwarehouse/${vehicleId}`);
+  const response = await mongoAPI.get(`/vehicle/getbyvehicleid/${vehicleId}`);
+  
   return response;
 };
 
 export const deleteVehicleByVehicleId = async (vehicleId: string = "") => {
-  const response = await mongoAPI.delete(`/warehouse/deletewarehouse/${vehicleId}`);
+  const response = await mongoAPI.delete(`/vehicle/deletevehicle/${vehicleId}`);
   return response;
 };
 
 export const updateVehicleByVehicleId = async (vehicleId: string = "") => {
-  const response = await mongoAPI.put(`/warehouse/updatewarehouse/${vehicleId}`);
+  const response = await mongoAPI.put(`/vehicle/updatevehicle/${vehicleId}`);
   return response;
 };
 

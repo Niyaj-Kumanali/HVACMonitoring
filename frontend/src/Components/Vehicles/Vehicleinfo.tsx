@@ -74,8 +74,8 @@ const AddVehicle: React.FC = () => {
         try {
             const response = await getVehicleByVehicleId(vehicleid);
             setFormData({
-                vehicle_number: response.data.vehicle_number || '',
-                vehicle_name: response.data.vehicle_name || '',
+                vehicle_number: response.data.data.vehicle_number || '',
+                vehicle_name: response.data.data.vehicle_name || '',
                 vehicle_dimensions: {
                     length: response.data.vehicle_dimensions?.length.toString() || '',
                     width: response.data.vehicle_dimensions?.width.toString() || '',
