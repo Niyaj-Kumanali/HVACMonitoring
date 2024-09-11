@@ -90,7 +90,6 @@ const AddDevice = () => {
       const params: DeviceQueryParams = {
         pageSize: 10,
         page: page,
-        type: 'default',
       };
 
       const response = await getTenantDevices(params);

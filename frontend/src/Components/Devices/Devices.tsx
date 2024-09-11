@@ -41,9 +41,8 @@ const Devices: React.FC = () => {
             const params = {
                 pageSize: 10,
                 page: page,
-                textSearch: '',
-                sortProperty: 'name',
-                sortOrder: 'ASC',
+                sortProperty: 'createdTime',
+                sortOrder: 'DESC',
             };
 
             const response = await getTenantDeviceInfos(params);

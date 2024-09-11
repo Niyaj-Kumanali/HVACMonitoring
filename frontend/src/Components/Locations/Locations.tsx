@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import L from 'leaflet';
 import './Locations.css';
 import 'leaflet/dist/leaflet.css';
-import { getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
+import { getAllWarehouseByUserId, getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
 import Loader from '../Loader/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
@@ -59,9 +59,7 @@ const Locations = () => {
   useEffect(() => {
     const fetchLocationInfo = async (latitude: string, longitude: string) => {
       try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
-        );
+        const response = await getLocationByLatsAndLongs(latitude, longitude); 
         if (!response.ok) {
           throw new Error('Failed to fetch location data');
         }

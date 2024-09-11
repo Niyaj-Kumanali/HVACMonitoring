@@ -31,7 +31,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DeviceInfo.css';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import {
+  getAllVehiclesByUserId,
+  getAllWarehouseByUserId,
+  getVehicleByVehicleId,
+  getWarehouseByWarehouseId,
+  mongoAPI,
+} from '../../api/MongoAPIInstance';
 
 interface Warehouse {
   warehouse_id: string;
@@ -51,7 +57,7 @@ const DeviceInfo: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string>('');
   console.log(accessToken);
 
-  const [isEdit, setIsEdit] = useState(true)
+  const [isEdit, setIsEdit] = useState(true);
 
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -86,23 +92,18 @@ const DeviceInfo: React.FC = () => {
     fetchDeviceInfo();
   }, [deviceId]);
 
-
   const fetchAllWarehouses = async () => {
     try {
-      const response = await mongoAPI.get(
-        `/warehouse/getallwarehouse/${user.id.id}`
-      );
-      setWarehouse(response.data);
+      const response = await getAllWarehouseByUserId(user.id?.id);
+      setWarehouse(response.data.data);
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
     }
   };
   const fetchAllVehicles = async () => {
     try {
-      const response = await mongoAPI.get(
-        `/vehicle/getallvehicle/${user.id.id}`
-      );
-      setVehicle(response.data);
+      const response = await getAllVehiclesByUserId(user.id?.id);
+      setVehicle(response.data.data);
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
     }
@@ -116,7 +117,6 @@ const DeviceInfo: React.FC = () => {
       const responseForCreds = await getDeviceCredentialsByDeviceId(
         deviceId || ''
       );
-      console.log(responseForCreds.data);
       setAccessToken(responseForCreds.data.credentialsId);
     } catch (error) {
       console.error('Error fetching device info:', error);
@@ -171,10 +171,8 @@ const DeviceInfo: React.FC = () => {
     setDeviceInfo((prev) => ({ ...prev, label: event.target.value }));
   };
 
-
   const handleClick = async () => {
     setLoadingSave(true);
-
 
     if (deviceInfo.name === '' || deviceInfo.type === '') {
       // setLoading(false);
@@ -193,7 +191,7 @@ const DeviceInfo: React.FC = () => {
         setMessage('Device Updated successfully!');
         setSnackbarType('success');
         setOpen(true);
-        setIsEdit(true)
+        setIsEdit(true);
       }, 500);
     } catch (error) {
       console.log('Failed to create device');
@@ -206,7 +204,6 @@ const DeviceInfo: React.FC = () => {
     }
   };
 
-
   const handleDeleteDevice = async () => {
     setLoadingDelete(true);
 
@@ -216,12 +213,11 @@ const DeviceInfo: React.FC = () => {
         setLoadingDelete(false);
         setOpen(true);
         setMessage('Device Deleted');
-        setSnackbarType("success");
+        setSnackbarType('success');
 
         setTimeout(() => {
-          navigate("/devices");
+          navigate('/devices');
         }, 900);
-
       }, 900);
     } catch (error) {
       console.error('Failed to delete device', error);
@@ -230,7 +226,7 @@ const DeviceInfo: React.FC = () => {
         setLoadingDelete(false);
         setOpen(true);
         setMessage('Failed to delete device');
-        setSnackbarType("error");
+        setSnackbarType('error');
       }, 500);
     }
   };
@@ -450,7 +446,15 @@ const DeviceInfo: React.FC = () => {
                 </Select>
               </FormControl>
               <div className="accountinfo-savebtn-delete-btn">
-                {isEdit ? <Button className="btn-save" variant="contained" onClick={() => setIsEdit(false)}>Edit</Button> :
+                {isEdit ? (
+                  <Button
+                    className="btn-save"
+                    variant="contained"
+                    onClick={() => setIsEdit(false)}
+                  >
+                    Edit
+                  </Button>
+                ) : (
                   <>
                     <LoadingButton
                       size="small"
@@ -461,7 +465,6 @@ const DeviceInfo: React.FC = () => {
                       startIcon={<SaveIcon />}
                       variant="contained"
                       disabled={loadingDelete}
-
                       className="btn-save"
                     >
                       <span>Save</span>
@@ -475,14 +478,12 @@ const DeviceInfo: React.FC = () => {
                       startIcon={<DeleteIcon />}
                       variant="contained"
                       disabled={loadingSave}
-
                       className="btn-save"
                     >
                       <span>Delete</span>
                     </LoadingButton>
-
                   </>
-                }
+                )}
               </div>
             </form>
           </div>

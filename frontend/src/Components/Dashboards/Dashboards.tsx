@@ -33,7 +33,7 @@ import {
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getAllVehiclesByUserId, getAllWarehouseByUserId, mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 
 const Dashboard = () => {
@@ -65,15 +65,10 @@ const Dashboard = () => {
       const params: DeviceQueryParams = {
         pageSize: 10,
         page: page,
-        type: 'default',
-        textSearch: '',
-        sortProperty: 'name',
-        sortOrder: 'ASC',
       };
 
       const response = await getTenantDevices(params);
-      const devices = response.data.data || [];
-      dispatch(set_DeviceCount(devices.length >= 1 ? devices.length : 0));
+      dispatch(set_DeviceCount(response.data.totalElements || 0));
     } catch (error) {
       console.error('Failed to fetch devices', error);
     }
@@ -82,10 +77,8 @@ const Dashboard = () => {
   const fetchAllVehicles = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await mongoAPI.get(
-          `vehicle/getallvehicle/${currentuser.id.id}`
-        );
-        dispatch(set_vehicle_count(response.data.length));
+        const response = await getAllVehiclesByUserId(currentuser.id?.id);
+        dispatch(set_vehicle_count(response.data.data.length));
       }
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
@@ -95,9 +88,7 @@ const Dashboard = () => {
   const fetchAllWarehouses = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await mongoAPI.get(
-          `/warehouse/getallwarehouse/${currentuser.id.id}`
-        );
+        const response = await getAllWarehouseByUserId(currentuser.id?.id);
         dispatch(set_warehouse_count(response.data.data.length));
       }
     } catch (error) {

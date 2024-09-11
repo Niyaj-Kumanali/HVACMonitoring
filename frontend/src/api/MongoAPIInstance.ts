@@ -14,8 +14,8 @@ export const getAllWarehouseByUserId = async (userId: string = "") => {
   return response;
 };
 
-export const addWarehouse = async () => {
-  const response = await mongoAPI.post(`/warehouse/addwarehouse`);
+export const addWarehouse = async (data:any) => {
+  const response = await mongoAPI.post(`/warehouse/addwarehouse`, data);
   return response;
 };
 
@@ -53,8 +53,8 @@ export const getAllVehiclesByUserId = async (userId: string = "") => {
   return response;
 };
 
-export const addVehicle = async () => {
-  const response = await mongoAPI.post(`/vehicle/addvehicle`);
+export const addVehicle = async (data:any) => {
+  const response = await mongoAPI.post(`/vehicle/addvehicle`, data);
   return response;
 };
 
