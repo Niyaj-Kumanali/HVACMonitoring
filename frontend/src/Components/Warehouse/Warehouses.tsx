@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link, useNavigate } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif";
-import Paginations from "../Pagination/Paginations";
 import { RootState } from "../../Redux/Reducer";
 
 interface Warehouse {
@@ -33,7 +32,8 @@ const Warehouses = () => {
     const currentUser = useSelector((state: RootState) => state.user.user);
     const [pageCount, setPageCount] = useState<number>(1);
     const navigate = useNavigate(); // For programmatic navigation
-
+    console.log(pageCount)
+    
     const fetchAllWarehouses = async () => {
         try {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '');

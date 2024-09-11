@@ -1,15 +1,13 @@
 // src/redux/reducers/layoutReducer.ts
 import { SET_LAYOUT } from '../Action/layoutActions';
-import { chartTypes, WidgetLayout } from '../../types/thingsboardTypes';
+import { WidgetLayout } from '../../types/thingsboardTypes';
 export interface DashboardLayoutOptions {
-  layout: WidgetLayout[];
-  dateRange: {
-    startDate: any,
-    endDate: any
+  layout?: WidgetLayout[];
+  dateRange?: {
+    startDate: any;
+    endDate: any;
   };
-  defaultDevice: string;
-  limit: number;
-  chart: chartTypes;
+  limit?: number;
 }
 
 export interface LayoutState {

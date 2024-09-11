@@ -29,7 +29,8 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
-import { postLayout } from '../../api/MongoAPIInstance';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 
 interface WidgetProps {
   widgetId: string;
@@ -41,9 +42,6 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   const { dashboardId } = useParams(); // Get dashboardId from the URL params
   const dispatch = useDispatch();
 
-  const storedLayout = useSelector(
-    (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
-  );
 
   const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
   const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last 5 minutes
@@ -56,6 +54,18 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
     useState<TelemetryData>({});
   const [devices, setDevices] = useState<Device[]>([]);
 
+  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
+
+  useEffect(()=> {
+    const fetchDashboard = async () => {
+      const response = await getLayout(dashboardId)
+      setStoredLayout(response.data)
+      console.log(response.data)
+    }
+    fetchDashboard()
+  }, [])
+
+
   useEffect(() => {
     const { startDate: layoutStartDate, endDate: layoutEndDate } = storedLayout.dateRange || {};
     if (layoutStartDate && layoutEndDate) {
@@ -63,7 +73,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
       setEndDate(layoutEndDate);
     }
 
-    storedLayout.layout.forEach((item: WidgetLayout) => {
+    (storedLayout?.layout || []).forEach((item: WidgetLayout) => {
       if (item.i === widgetId) {
         setSelectedChart(item?.chart || 'Line');
       }
@@ -198,8 +208,8 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   }, [filteredTelemetryData, selectedChart]);
 
   const handleLayoutDelete = async () => {
-    const updatedLayout = storedLayout.layout.filter((item) => item.i !== widgetId);
-    if (updatedLayout.length !== storedLayout.layout.length) {
+    const updatedLayout = (storedLayout?.layout || []).filter((item) => item.i !== widgetId);
+    if (updatedLayout.length !== (storedLayout?.layout || []).length) {
       dispatch(setLayout(dashboardId, {
         ...storedLayout,
         layout: updatedLayout

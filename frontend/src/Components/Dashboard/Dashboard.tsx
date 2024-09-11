@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import GridLayout, { Layout } from 'react-grid-layout';
 import { useParams } from 'react-router-dom';
 import './styles/Dashboard.css'; // Ensure this is correctly imported
 import Widget from './Widget';
 import DashboardHeader from './DashboardHeader';
-import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import AddWidget from '../Add-Widget/AddWidget';
 import Box from '@mui/material/Box';
@@ -24,10 +23,6 @@ const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
   const gridLayoutRef = useRef<HTMLDivElement | null>(null);
 
-  // const storedLayout = useSelector(
-  //   (state: RootState) =>
-  //     state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
-  // );
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [isSettingClicked, setIsSettingClicked] = useState<boolean>(false);

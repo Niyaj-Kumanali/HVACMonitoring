@@ -34,9 +34,6 @@ import './DeviceInfo.css';
 import {
   getAllVehiclesByUserId,
   getAllWarehouseByUserId,
-  getVehicleByVehicleId,
-  getWarehouseByWarehouseId,
-  mongoAPI,
 } from '../../api/MongoAPIInstance';
 
 interface Warehouse {

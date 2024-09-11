@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Box, Button } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
-import { Layout } from 'react-grid-layout';
 import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 interface DashboardSettingsProps {
     onSettingClicked: (value: boolean) => void;
