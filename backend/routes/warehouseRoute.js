@@ -233,6 +233,7 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
 router.get('/getwarehouse/:warehouse_id', async (req, res) => {
     try {
         const { warehouse_id } = req.params;
+        console.log(warehouse_id)
         const getWarehouse = await warehouse.findOne({ warehouse_id });
 
         if (!getWarehouse) {
