@@ -40,7 +40,7 @@ const Warehouses = () => {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '');
             console.log(response)
             setTimeout(() => {
-                if (response.data.length === 0) {
+                if (response.data.data.length === 0) {
                     setMessage("No Warehouse Found");
                     warehousecountDispatch(set_warehouse_count(0));
                 } else {
