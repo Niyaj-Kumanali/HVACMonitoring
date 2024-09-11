@@ -3,8 +3,6 @@ import "../Warehouse/Warehouse.css";
 import { mongoAPI } from "../../api/MongoAPIInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
-// import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { getCurrentUser } from "../../api/loginApi";
 import VehicleLoader from "../Loader/VehicleLoader";
 import { Link } from "react-router-dom";
 import truckimage from "../../assets/truck.gif"
@@ -43,7 +41,7 @@ const Vehicles = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.data.id.id}`);
+            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.id?.id || ""}`);
             if (response.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
                 setMessage("No Vehicle Found");
