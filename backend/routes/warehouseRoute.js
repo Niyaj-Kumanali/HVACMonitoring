@@ -180,13 +180,11 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
     // Respond with an empty array if no warehouses are found
     if (getAllWarehouse.length === 0) {
       return res.status(200).json({
-        warehouses: [],
-        pagination: {
-          totalRecords: total,
-          currentPage: page,
-          totalPages: Math.ceil(total / pageSize),
-          pageSize: pageSize,
-        },
+        data: [],
+        totalRecords: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / pageSize),
+        pageSize: pageSize,
       });
     }
 

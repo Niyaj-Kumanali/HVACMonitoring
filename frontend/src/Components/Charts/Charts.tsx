@@ -24,7 +24,6 @@ import "./Charts.css";
 import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Reducer";
-import { Root } from "react-dom/client";
 
 interface Warehouse {
     warehouse_id: string;
@@ -66,7 +65,7 @@ const Charts = () => {
         try {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || "");
             setTimeout(() => {
-                setWarehouse(response.data);
+                setWarehouse(response.data.data);
                 setLoading(false);
             }, 700);
         } catch (error) {

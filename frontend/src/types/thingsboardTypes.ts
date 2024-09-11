@@ -190,3 +190,22 @@ export interface LayoutState {
 }
 
 export type chartTypes = 'Line' | 'Bar' | 'Area';
+
+
+export interface WarehouseDimensions {
+  length: string;
+  width: string;
+  height: string;
+}
+
+export interface WarehouseData {
+  warehouse_name: string;
+  latitude: string;
+  longitude: string;
+  warehouse_dimensions: WarehouseDimensions;
+  energy_resource: string;
+  cooling_units: string | null;
+  sensors: string | null;
+  userId: string;
+  email: string;
+}
