@@ -84,7 +84,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
         selectedSensors.length > 0
           ? selectedSensors.join(',')
           : sensors.join(','),
-      startTs: startDate || Date.now() - 300000, // last five minutes
+      startTs: startDate || Date.now() - 300000,
       endTs: endDate || Date.now(),
       limit: storedLayout.limit || 100,
       orderBy: 'ASC',

@@ -38,17 +38,22 @@ const Vehicles = () => {
     const [loading, setLoading] = useState(true);
     const vehicleCountDispatch = useDispatch();
     const [message, setMessage] = useState("");
+    const [pageCount, setPageCount] = useState(0);
+    const [currentpage, setCurrentpage] = useState(1);
 
-    const fetchAllVehicles = async () => {
+    const fetchAllVehicles = async (page:any, pageSize:any) => {
         try {
-            const response = await getAllVehiclesByUserId(currentUser.id?.id)
+            const response = await getAllVehiclesByUserId(currentUser.id?.id, page, pageSize)
             if (response.data.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
                 setMessage("No Vehicle Found");
             } else {
                 setAllVehicles(response.data.data);
                 setMessage("");
-                vehicleCountDispatch(set_vehicle_count(response.data.data.length));
+                setPageCount(response.data.totalPages)
+                setCurrentpage(response.data.currentPage)
+                console.log(response.data);
+                vehicleCountDispatch(set_vehicle_count(response.data.totalRecords));
             }
             setTimeout(() => {
                 setLoading(false);
@@ -63,10 +68,17 @@ const Vehicles = () => {
         }
     };
 
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        event.preventDefault();
+        setCurrentpage(page);
+        fetchAllVehicles(page, 12);
+    };
+
+
 
     useEffect(() => {
-        fetchAllVehicles();
-    }, []);
+        fetchAllVehicles(currentpage, 12);
+    }, [currentpage]);
 
     return (
         loading ? (
@@ -97,7 +109,7 @@ const Vehicles = () => {
                             </Link>
                         ))}
                     </div>
-                    {/* <Paginations/> */}
+                        <Paginations pageCount={pageCount} page={currentpage} handlePageChange={handlePageChange}/>
                 </div>
             </div>
         )

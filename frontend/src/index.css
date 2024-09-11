@@ -10,4 +10,8 @@ body{
     background-color: #ebebeb;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 

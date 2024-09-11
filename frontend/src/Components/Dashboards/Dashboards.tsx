@@ -78,7 +78,7 @@ const Dashboard = () => {
     try {
       if (currentuser?.id?.id) {
         const response = await getAllVehiclesByUserId(currentuser.id?.id);
-        dispatch(set_vehicle_count(response.data.data.length));
+        dispatch(set_vehicle_count(response.data.totalRecords));
       }
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
