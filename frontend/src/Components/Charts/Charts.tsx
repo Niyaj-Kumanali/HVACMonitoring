@@ -9,8 +9,7 @@ import {
     Checkbox,
     FormControlLabel
 } from "@mui/material";
-import { getCurrentUser } from "../../api/loginApi";
-import { mongoAPI } from "../../api/MongoAPIInstance";
+import { getAllWarehouseByUserId } from "../../api/MongoAPIInstance";
 import { getFilteredDevices } from "../../api/deviceApi";
 import { getLatestTimeseries } from "../../api/telemetryAPIs";
 import Table from '@mui/material/Table';
@@ -23,6 +22,9 @@ import { useTheme } from '@mui/material/styles';
 import { LineChart } from '@mui/x-charts/LineChart';
 import "./Charts.css";
 import Loader from "../Loader/Loader";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Reducer";
+import { Root } from "react-dom/client";
 
 interface Warehouse {
     warehouse_id: string;
@@ -47,6 +49,7 @@ interface TelemetryData {
 }
 
 const Charts = () => {
+    const currentUser = useSelector((state:RootState) => state.user.user)
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>("");
     const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
     const [devices, setDevices] = useState<Device[]>([]);
@@ -61,8 +64,7 @@ const Charts = () => {
 
     const fetchAllWarehouses = async () => {
         try {
-            const currentUser = await getCurrentUser();
-            const response = await mongoAPI.get<Warehouse[]>(`/warehouse/getallwarehouse/${currentUser.data.id.id}`);
+            const response = await getAllWarehouseByUserId(currentUser.id?.id || "");
             setTimeout(() => {
                 setWarehouse(response.data);
                 setLoading(false);

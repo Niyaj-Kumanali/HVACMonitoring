@@ -38,13 +38,14 @@ const Warehouses = () => {
     const fetchAllWarehouses = async () => {
         try {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '');
+            console.log(response)
             setTimeout(() => {
                 if (response.data.length === 0) {
                     setMessage("No Warehouse Found");
                     warehousecountDispatch(set_warehouse_count(0));
                 } else {
-                    setAllWarehouses(response.data);
-                    warehousecountDispatch(set_warehouse_count(response.data.length));
+                    setAllWarehouses(response.data.data);
+                    warehousecountDispatch(set_warehouse_count(response.data.data.length));
                 }
                 setLoader(false);
             }, 800)

@@ -79,24 +79,21 @@ const router = express.Router();
  *         description: Warehouse already exists
  */
 router.post('/addwarehouse', async (req, res) => {
-    try {
-        const existingWarehouse = await warehouse.findOne({
-            $or: [
-                {warehouse_id: req.body.warehouse_id}
+  try {
+    const existingWarehouse = await warehouse.findOne({
+      $or: [{ warehouse_id: req.body.warehouse_id }],
+    });
 
-            ]
-        });
-
-        if (existingWarehouse) {
-            return res.status(409).send({ message: 'Warehouse already exists' });
-        }
-
-        const newWarehouse = new warehouse(req.body);
-        await newWarehouse.save();
-        res.status(201).send(newWarehouse);
-    } catch (error) {
-        res.status(400).send(error);
+    if (existingWarehouse) {
+      return res.status(409).send({ message: 'Warehouse already exists' });
     }
+
+    const newWarehouse = new warehouse(req.body);
+    await newWarehouse.save();
+    res.status(201).send(newWarehouse);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 /**
@@ -112,16 +109,16 @@ router.post('/addwarehouse', async (req, res) => {
  *         description: Error retrieving warehouse data
  */
 router.get('/getallwarehouse', async (req, res) => {
-    try {
-        const getAllWarehouse = await warehouse.find();
+  try {
+    const getAllWarehouse = await warehouse.find();
 
-        if (!getAllWarehouse) {
-            return res.status(404).json({ message: 'Warehouse not found' });
-        }
-        res.status(200).json(getAllWarehouse);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving warehouse data', error });
+    if (!getAllWarehouse) {
+      return res.status(404).json({ message: 'Warehouse not found' });
     }
+    res.status(200).json(getAllWarehouse);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
 });
 
 /**
@@ -161,53 +158,50 @@ router.get('/getallwarehouse', async (req, res) => {
 // });
 
 router.get('/getallwarehouse/:userId', async (req, res) => {
-    try {
-        const { userId } = req.params;
+  try {
+    const { userId } = req.params;
 
-        // Get the page and pageSize from the query parameters, defaulting to 1 and 10 respectively
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = parseInt(req.query.pageSize) || 10;
+    // Get the page and pageSize from the query parameters, defaulting to 1 and 10 respectively
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
 
-        // Calculate the skip value (how many records to skip)
-        const skip = (page - 1) * pageSize;
+    // Calculate the skip value (how many records to skip)
+    const skip = (page - 1) * pageSize;
 
-        // Get the total count of warehouses for the user (for pagination metadata)
-        const total = await warehouse.countDocuments({ userId });
+    // Get the total count of warehouses for the user (for pagination metadata)
+    const total = await warehouse.countDocuments({ userId });
 
-        // Get the paginated warehouses
-        const getAllWarehouse = await warehouse.find({ userId })
-            .skip(skip)
-            .limit(pageSize);
+    // Get the paginated warehouses
+    const getAllWarehouse = await warehouse
+      .find({ userId })
+      .skip(skip)
+      .limit(pageSize);
 
-        // Respond with an empty array if no warehouses are found
-        if (getAllWarehouse.length === 0) {
-            return res.status(200).json({
-                warehouses: [],
-                pagination: {
-                    totalRecords: total,
-                    currentPage: page,
-                    totalPages: Math.ceil(total / pageSize),
-                    pageSize: pageSize
-                }
-            });
-        }
-
-        // Respond with warehouses and pagination metadata
-        res.status(200).json({
-            warehouses: getAllWarehouse,
-            pagination: {
-                totalRecords: total,
-                currentPage: page,
-                totalPages: Math.ceil(total / pageSize),
-                pageSize: pageSize
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving warehouse data', error });
+    // Respond with an empty array if no warehouses are found
+    if (getAllWarehouse.length === 0) {
+      return res.status(200).json({
+        warehouses: [],
+        pagination: {
+          totalRecords: total,
+          currentPage: page,
+          totalPages: Math.ceil(total / pageSize),
+          pageSize: pageSize,
+        },
+      });
     }
+
+    // Respond with warehouses and pagination metadata
+    res.status(200).json({
+      data: getAllWarehouse,
+      totalRecords: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / pageSize),
+      pageSize: pageSize,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
 });
-
-
 
 /**
  * @swagger
@@ -231,18 +225,18 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
  *         description: Error retrieving warehouse data
  */
 router.get('/getwarehouse/:warehouse_id', async (req, res) => {
-    try {
-        const { warehouse_id } = req.params;
-        console.log(warehouse_id)
-        const getWarehouse = await warehouse.findOne({ warehouse_id });
+  try {
+    const { warehouse_id } = req.params;
+    console.log(warehouse_id);
+    const getWarehouse = await warehouse.findOne({ warehouse_id });
 
-        if (!getWarehouse) {
-            return res.status(404).json({ message: 'Warehouse not found' });
-        }
-        res.status(200).json(getWarehouse);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving warehouse data', error });
+    if (!getWarehouse) {
+      return res.status(404).json({ message: 'Warehouse not found' });
     }
+    res.status(200).json(getWarehouse);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
 });
 
 /**
@@ -267,21 +261,19 @@ router.get('/getwarehouse/:warehouse_id', async (req, res) => {
  *         description: Error deleting warehouse
  */
 router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
-    try {
-        const { warehouse_id } = req.params;
-        const result = await warehouse.findOneAndDelete({ warehouse_id });
+  try {
+    const { warehouse_id } = req.params;
+    const result = await warehouse.findOneAndDelete({ warehouse_id });
 
-        if (!result) {
-            return res.status(204).send({ message: 'Warehouse not found' });
-        }
-
-        res.status(200).send({ message: 'Warehouse deleted successfully' });
-    } catch (error) {
-        res.status(500).send({ message: 'Error deleting warehouse', error });
+    if (!result) {
+      return res.status(204).send({ message: 'Warehouse not found' });
     }
+
+    res.status(200).send({ message: 'Warehouse deleted successfully' });
+  } catch (error) {
+    res.status(500).send({ message: 'Error deleting warehouse', error });
+  }
 });
-
-
 
 /**
  * @swagger
@@ -306,27 +298,26 @@ router.delete('/deletewarehouse/:warehouse_id', async (req, res) => {
  */
 // Update a warehouse by warehouse_id
 router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
-    try {
-        const { warehouse_id } = req.params;
-        const updateData = req.body;
+  try {
+    const { warehouse_id } = req.params;
+    const updateData = req.body;
 
-        // Find the warehouse by warehouse_id and update it
-        const updatedWarehouse = await warehouse.findOneAndUpdate(
-            { warehouse_id },
-            updateData,
-            { new: true } // Return the updated document
-        );
+    // Find the warehouse by warehouse_id and update it
+    const updatedWarehouse = await warehouse.findOneAndUpdate(
+      { warehouse_id },
+      updateData,
+      { new: true } // Return the updated document
+    );
 
-        if (!updatedWarehouse) {
-            return res.status(204).json({ message: 'Warehouse not found' });
-        }
-
-        res.status(200).json(updatedWarehouse);
-    } catch (error) {
-        console.error("Error updating warehouse:", error);
-        res.status(500).json({ message: 'Internal Server Error', error });
+    if (!updatedWarehouse) {
+      return res.status(204).json({ message: 'Warehouse not found' });
     }
-});
 
+    res.status(200).json(updatedWarehouse);
+  } catch (error) {
+    console.error('Error updating warehouse:', error);
+    res.status(500).json({ message: 'Internal Server Error', error });
+  }
+});
 
 export default router;
