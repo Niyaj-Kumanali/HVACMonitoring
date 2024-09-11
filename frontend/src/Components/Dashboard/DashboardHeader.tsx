@@ -21,6 +21,8 @@ import { useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -45,11 +47,19 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
 
-  const storedLayout = useSelector(
-    (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
-  );
+  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
 
-  const handleRangeChange = (event: any) => {
+  useEffect(()=> {
+    const fetchDashboard = async () => {
+      const response = await getLayout(dashboardId)
+      setStoredLayout(response.data)
+      console.log(response.data)
+    }
+    fetchDashboard()
+  }, [])
+
+
+  const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;
     setSelectedRange(value);
     let newDateRange: { startDate: number; endDate: number } | undefined;
@@ -103,10 +113,14 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           dateRange: newDateRange
         })
       );
+      await postLayout(dashboardId, {
+        ...storedLayout,
+        dateRange: newDateRange
+      })
     }
   };
 
-  const handleDateRangeConfirm = () => {
+  const handleDateRangeConfirm = async () => {
     setOpenDatePicker(false);
     if (startDate && endDate) {
       dispatch(
@@ -118,6 +132,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           },
         })
       );
+      await postLayout(dashboardId, {
+        ...storedLayout,
+        dateRange: {
+          startDate: startDate.getTime(),
+          endDate: endDate.getTime(),
+        },
+      })
     }
   };
 

@@ -53,6 +53,7 @@ import vehicleRouter from './routes/vehicleRoute.js';
 import postgres from './routes/postgresRoute.js';
 import mailRouter from './routes/mailRouter.js';
 import influxRoute from './routes/influxRoute.js'
+import dashboard from './routes/dashboard.js'
 
 
 app.use('/warehouse', warehouseRouter);
@@ -62,6 +63,7 @@ app.use('/vehicle', vehicleRouter);
 app.use('/postgres', postgres);
 app.use('/mailservice', mailRouter);
 app.use('/influx', influxRoute);
+app.use('/dashboard', dashboard);
 
 
 
