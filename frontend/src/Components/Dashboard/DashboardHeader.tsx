@@ -140,11 +140,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   return (
     <>
       <AppBar position="static">
-        <Toolbar className="toolbar">
+        <Toolbar style={{backgroundColor: '#2BC790', height: '6vh'}} className="toolbar">
           <Box className="toolbar-left"></Box>
 
           <Box className="toolbar-right">
-            <FormControl variant="outlined" className="form-control">
+            <FormControl  variant="outlined" className="form-control">
               <InputLabel id="realtime-label">Realtime</InputLabel>
               <Select
                 labelId="realtime-label"
@@ -154,6 +154,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 sx={{
                   color: 'white',
                 }}
+                style={{ height: '5vh'}} 
               >
                 <MenuItem value="last-1-minute">Last 1 Minute</MenuItem>
                 <MenuItem value="last-5-minutes">Last 5 Minutes</MenuItem>

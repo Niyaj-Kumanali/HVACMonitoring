@@ -185,7 +185,7 @@ const Dashboard = () => {
   return (
     <>
       <div className="menu-data dashboard">
-        <AppBar position="static">
+        <AppBar style={{backgroundColor: '#2BC790'}} position="static">
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
               Dashboard Management
