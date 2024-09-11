@@ -64,7 +64,7 @@ const Menubar = () => {
                     <li><CableIcon className="speedicon" />Devices <span className="count">{deviceCount}</span></li>
                 </Link>}
                 <Link to="/locations" className="link">
-                    <li><LocationOnIcon className="speedicon" />Locations <span className="count">3</span></li>
+                    <li><LocationOnIcon className="speedicon" />Locations <span className="count">10.67K</span></li>
                 </Link>
                 <Link to="/warehouses" className="link">
                     <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span></li>
