@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../Warehouse/Warehouse.css";
 import { mongoAPI } from "../../api/MongoAPIInstance";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
 // import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { getCurrentUser } from "../../api/loginApi";
@@ -9,6 +9,7 @@ import VehicleLoader from "../Loader/VehicleLoader";
 import { Link } from "react-router-dom";
 import truckimage from "../../assets/truck.gif"
 import Paginations from "../Pagination/Paginations";
+import { RootState } from "../../Redux/Reducer";
 
 interface VehicleDimensions {
     length: string;
@@ -33,6 +34,7 @@ interface VehicleData {
 }
 
 const Vehicles = () => {
+    const currentUser = useSelector((state: RootState)=> state.user.user)
 
     const [allVehicles, setAllVehicles] = useState<VehicleData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -41,7 +43,6 @@ const Vehicles = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const currentUser = await getCurrentUser();
             const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.data.id.id}`);
             if (response.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
