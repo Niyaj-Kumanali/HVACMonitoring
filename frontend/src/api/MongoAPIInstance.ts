@@ -59,8 +59,8 @@ export const getLocationByLatsAndLongs = async (latitude: string , longitude: st
 
 // vehicle apis
 
-export const getAllVehiclesByUserId = async (userId: string = "") => {
-  const response = await mongoAPI.get(`vehicle/getallvehicle/${userId}`);
+export const getAllVehiclesByUserId = async (userId: string = "", page: any = 0, pageSize = 12) => {
+  const response = await mongoAPI.get(`vehicle/getallvehicle/${userId}?pageSize=${pageSize}&page=${page}`);
   return response;
 };
 

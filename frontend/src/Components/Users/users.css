@@ -72,7 +72,7 @@
 /* users.css */
 .user-cont {
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
     width: 100%;
 }
 

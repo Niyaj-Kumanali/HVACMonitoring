@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { getAllWarehouseByUserId } from "../../api/MongoAPIInstance";
 import { getFilteredDevices } from "../../api/deviceApi";
-import { getLatestTimeseries } from "../../api/telemetryAPIs";
+import {  getTimeseries, getTimeseriesKeys } from "../../api/telemetryAPIs";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -47,8 +47,9 @@ interface TelemetryData {
     value: number[];
 }
 
+
 const Charts = () => {
-    const currentUser = useSelector((state:RootState) => state.user.user)
+    const currentUser = useSelector((state: RootState) => state.user.user)
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>("");
     const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
     const [devices, setDevices] = useState<Device[]>([]);
@@ -98,7 +99,7 @@ const Charts = () => {
             const newSelection = prevSelected.includes(value)
                 ? prevSelected.filter(t => t !== value)
                 : [...prevSelected, value];
-    
+
             // Ensure at least one checkbox is selected
             return newSelection.length > 0 ? newSelection : prevSelected;
         });
@@ -107,7 +108,20 @@ const Charts = () => {
     const getTelemetryData = async (): Promise<any | null> => {
         if (selectedDevice) {
             try {
-                const response = await getLatestTimeseries("DEVICE", selectedDevice);
+
+                const keyresponse = await getTimeseriesKeys('DEVICE', selectedDevice);
+
+                const params:any = {
+                    keys:
+                        keyresponse.data.join(','),
+                    startTs: Date.now() - 300000, // last five minutes
+                    endTs: Date.now(),
+                    limit: 100,
+                    orderBy: 'ASC',
+                };
+
+                const response = await getTimeseries("DEVICE", selectedDevice, params);
+                console.log(response)
                 return response.data;
             } catch (error) {
                 console.error("Failed to fetch telemetry data:", error);
@@ -140,18 +154,18 @@ const Charts = () => {
             const telemetryData = await getTelemetryData();
 
             if (telemetryData && Object.keys(telemetryData).length !== 0) {
-                setData(prev => ({
-                    ts: [...(prev?.ts || []), ...(telemetryData.temperature?.map((t: any) => formatDate(t.ts)) || [])],
-                    value: [...(prev?.value || []), ...(telemetryData.temperature?.map((t: any) => t.value) || [])],
-                }));
-                setHumidity(prev => ({
-                    ts: [...(prev?.ts || []), ...(telemetryData.humidity?.map((t: any) => formatDate(t.ts)) || [])],
-                    value: [...(prev?.value || []), ...(telemetryData.humidity?.map((t: any) => t.value) || [])],
-                }));
-                setPower(prev => ({
-                    ts: [...(prev?.ts || []), ...(telemetryData.power?.map((t: any) => formatDate(t.ts)) || [])],
-                    value: [...(prev?.value || []), ...(telemetryData.power?.map((t: any) => t.value) || [])],
-                }));
+                setData({
+                    ts: [...(telemetryData.temperature?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(telemetryData.temperature?.map((t: any) => t.value) || [])],
+                });
+                setHumidity({
+                    ts: [...(telemetryData.humidity?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(telemetryData.humidity?.map((t: any) => t.value) || [])],
+                });
+                setPower({
+                    ts: [...(telemetryData.power?.map((t: any) => formatDate(t.ts)) || [])],
+                    value: [...(telemetryData.power?.map((t: any) => t.value) || [])],
+                });
             } else {
                 setData(null);
                 setHumidity(null);
