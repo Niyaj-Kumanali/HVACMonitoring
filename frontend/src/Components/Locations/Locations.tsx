@@ -31,7 +31,7 @@ const Locations = () => {
   // Fetch all warehouses
   const fetchAllWarehouses = async () => {
     try {
-      const response = await getAllWarehouseByUserId(user.id?.id || "");
+      const response = await getAllWarehouseByUserId(user.id?.id);
 
       // Filter for unique locations by comparing latitude and longitude
       const uniqueLocations = response.data.data.reduce(

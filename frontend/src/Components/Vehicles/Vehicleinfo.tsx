@@ -5,7 +5,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getVehicleByVehicleId, mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import "./Vehicles.css"
@@ -66,30 +66,15 @@ const AddVehicle: React.FC = () => {
 
     useEffect(() => {
         if (vehicleid) {
-            fetchAllVehicles();
+            fetchVehicleById();
         }
     }, [vehicleid]);
 
-    const fetchAllVehicles = async () => {
+    const fetchVehicleById = async () => {
         try {
-            const response = await mongoAPI.get(`/vehicle/getbyvehicleid/${vehicleid}`);
+            const response = await getVehicleByVehicleId(vehicleid);
             setFormData({
-                vehicle_number: response.data.vehicle_number || '',
-                vehicle_name: response.data.vehicle_name || '',
-                vehicle_dimensions: {
-                    length: response.data.vehicle_dimensions?.length.toString() || '',
-                    width: response.data.vehicle_dimensions?.width.toString() || '',
-                    height: response.data.vehicle_dimensions?.height.toString() || '',
-                },
-                Driver_details: {
-                    driver_name: response.data.Driver_details?.driver_name || '',
-                    driver_contact_no: response.data.Driver_details?.driver_contact_no.toString() || '',
-                    licence_id: response.data.Driver_details?.licence_id || '',
-                },
-                cooling_units: response.data.cooling_units?.toString() || null,
-                sensors: response.data.sensors?.toString() || null,
-                userId: response.data.userId || '',
-                email: response.data.email || ''
+                ...response.data
             });
         } catch (error) {
             console.error("Failed to fetch vehicle:", error);
@@ -193,7 +178,7 @@ const AddVehicle: React.FC = () => {
                 setMessage(vehicleid ? 'Vehicle Updated Successfully' : 'Vehicle Added Successfully');
                 setIsEdit(true)
                 if (vehicleid) {
-                    fetchAllVehicles();
+                    fetchVehicleById();
                 }
             }, 1000);
 

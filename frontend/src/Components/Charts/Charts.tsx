@@ -24,7 +24,6 @@ import "./Charts.css";
 import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Reducer";
-import { Root } from "react-dom/client";
 
 interface Warehouse {
     warehouse_id: string;

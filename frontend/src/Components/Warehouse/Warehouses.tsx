@@ -100,12 +100,7 @@ const Warehouses = () => {
                 <div className="warehouses-cont">
                     <div className="warehouses">
                         {allWarehouses.map((warehouse) => (
-                            <a
-                                href={`/warehouse/${warehouse.warehouse_id}`} // keep the href as fallback, but prevent default on click
-                                className="userinfo"
-                                key={warehouse._id}
-                                onClick={(e) => handleWarehouseClick(e, warehouse)}
-                            >
+                            <Link to={`/warehouse/${warehouse.warehouse_id}`} className="userinfo" key={warehouse._id} onClick={(e) => handleWarehouseClick(e, warehouse)}>
                                 <div className="user-img-info">
                                     <div className="img">
                                         <img src={warehouseimg} className="personicon" />
