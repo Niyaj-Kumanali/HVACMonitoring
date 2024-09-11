@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../Warehouse/Warehouse.css";
-import { mongoAPI } from "../../api/MongoAPIInstance";
+import { getAllVehiclesByUserId, mongoAPI } from "../../api/MongoAPIInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { set_vehicle_count } from "../../Redux/Action/Action";
 import VehicleLoader from "../Loader/VehicleLoader";
@@ -41,7 +41,8 @@ const Vehicles = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const response = await mongoAPI.get(`vehicle/getallvehicle/${currentUser.id?.id || ""}`);
+            const response = await getAllVehiclesByUserId(currentUser.id?.id)
+            console.log(response.data)
             if (response.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
                 setMessage("No Vehicle Found");

@@ -5,7 +5,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { mongoAPI } from '../../api/MongoAPIInstance';
+import { getVehicleByVehicleId, mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import "./Vehicles.css"
@@ -72,7 +72,7 @@ const AddVehicle: React.FC = () => {
 
     const fetchAllVehicles = async () => {
         try {
-            const response = await mongoAPI.get(`/vehicle/getbyvehicleid/${vehicleid}`);
+            const response = await getVehicleByVehicleId(vehicleid);
             setFormData({
                 vehicle_number: response.data.vehicle_number || '',
                 vehicle_name: response.data.vehicle_name || '',
