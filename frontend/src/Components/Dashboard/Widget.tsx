@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './styles/widget.css'
+import './styles/widget.css';
 import {
   chartTypes,
   Device,
@@ -26,10 +26,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import LineChartWidget from './Charts/LineChartWidget';
 import { useParams } from 'react-router-dom';
-import { useDispatch} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
-import { getLayout, postLayout } from '../../api/MongoAPIInstance';
-import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
+import { charts } from '../Add-Widget/AddWidget';
 
 interface WidgetProps {
   widgetId: string;
@@ -41,6 +41,9 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   const { dashboardId } = useParams(); // Get dashboardId from the URL params
   const dispatch = useDispatch();
 
+  const storedLayout = useSelector(
+    (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
+  );
 
   const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
   const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last 5 minutes
@@ -53,31 +56,20 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
     useState<TelemetryData>({});
   const [devices, setDevices] = useState<Device[]>([]);
 
-  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
-
-  useEffect(()=> {
-    const fetchDashboard = async () => {
-      const response = await getLayout(dashboardId)
-      setStoredLayout(response.data)
-      console.log(response.data)
-    }
-    fetchDashboard()
-  }, [])
-
-
   useEffect(() => {
-    const { startDate: layoutStartDate, endDate: layoutEndDate } = storedLayout.dateRange || {};
+    const { startDate: layoutStartDate, endDate: layoutEndDate } =
+      storedLayout.dateRange || {};
     if (layoutStartDate && layoutEndDate) {
       setStartDate(layoutStartDate);
       setEndDate(layoutEndDate);
     }
 
-    (storedLayout?.layout || []).forEach((item: WidgetLayout) => {
+    (storedLayout.layout || []).forEach((item: WidgetLayout) => {
       if (item.i === widgetId) {
         setSelectedChart(item?.chart || 'Line');
       }
     });
-  }, [widgetId]);
+  }, [storedLayout, widgetId]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
@@ -170,10 +162,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
           (acc, key) => {
             return {
               ...acc,
-              [key]: [
-                ...(telemetryData[key] || []),
-                ...latestData[key],
-              ],
+              [key]: [...(telemetryData[key] || []), ...latestData[key]],
             };
           },
           telemetryData
@@ -203,26 +192,43 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   }, [selectedSensors, telemetryData]);
 
   const renderChart = useMemo(() => {
-    return <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />;
+    return (
+      <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />
+    );
   }, [filteredTelemetryData, selectedChart]);
 
   const handleLayoutDelete = async () => {
-    const updatedLayout = (storedLayout?.layout || []).filter((item) => item.i !== widgetId);
-    if (updatedLayout.length !== (storedLayout?.layout || []).length) {
-      dispatch(setLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout
-      }));
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout
-      })
+    const updatedLayout = (storedLayout.layout || []).filter(
+      (item) => item.i !== widgetId
+    );
+    if (updatedLayout.length !== storedLayout.layout?.length) {
+      dispatch(
+        setLayout(dashboardId, {
+          ...storedLayout,
+          layout: updatedLayout,
+        })
+      );
     }
   };
 
   return (
     <div className="widget">
       <Toolbar className="widget-header">
+      <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
+          <InputLabel id="chart-select-label">Select Chart</InputLabel>
+          <Select
+            labelId="chart-select-label"
+            value={selectedChart}
+            onChange={(e) => setSelectedChart(e.target.value as chartTypes)}
+            label="Select Chart"
+          >
+            {charts.map((chart: chartTypes, index: number) => (
+              <MenuItem key={index} value={chart}>
+                {chart}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
           <InputLabel id="device-select-label">Select Device</InputLabel>
           <Select
@@ -244,7 +250,12 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
             labelId="sensor-select-label"
             multiple
             value={selectedSensors}
-            onChange={(e) => setSelectedSensors(e.target.value as string[])}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              if (value.length > 0) {
+                setSelectedSensors(value);
+              }
+            }}
             renderValue={(selected) => (selected as string[]).join(', ')}
             label="Select Sensors"
           >

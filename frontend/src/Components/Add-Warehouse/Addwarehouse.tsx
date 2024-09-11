@@ -163,8 +163,8 @@ const AddWarehouse: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const response = await getAllWarehouseByUserId(currentUser.id?.id);
-      warehousecountDispatch(set_warehouse_count(response.data.length));
+      const response = await getAllWarehouseByUserId(currentUser.id?.id, undefined);
+      warehousecountDispatch(set_warehouse_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
     }

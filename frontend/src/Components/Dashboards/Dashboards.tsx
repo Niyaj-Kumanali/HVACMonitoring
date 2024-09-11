@@ -54,7 +54,7 @@ const Dashboard = () => {
         page: 0,
       };
       const userData = await getUsers(params);
-      dispatch(set_usersCount(userData.data.data.length));
+      dispatch(set_usersCount(userData.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch user data', error);
     }
@@ -77,8 +77,8 @@ const Dashboard = () => {
   const fetchAllVehicles = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await getAllVehiclesByUserId(currentuser.id?.id);
-        dispatch(set_vehicle_count(response.data.totalRecords));
+        const response = await getAllVehiclesByUserId(currentuser.id?.id, undefined);
+        dispatch(set_vehicle_count(response.data.totalElements));
       }
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
@@ -88,8 +88,8 @@ const Dashboard = () => {
   const fetchAllWarehouses = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await getAllWarehouseByUserId(currentuser.id?.id);
-        dispatch(set_warehouse_count(response.data.data.length));
+        const response = await getAllWarehouseByUserId(currentuser.id?.id, undefined);
+        dispatch(set_warehouse_count(response.data.totalElements));
       }
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);

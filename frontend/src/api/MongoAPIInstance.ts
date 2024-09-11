@@ -9,6 +9,10 @@ export const mongoAPI: AxiosInstance = axios.create({
   },
 });
 
+
+// 3.111.205.170
+// localhost
+
 export const postLayout = async (dashboardId: string = "", layout: DashboardLayoutOptions) => {
   const response = await mongoAPI.post(`/dashboard/addwidget/${dashboardId}`, layout);
   return response
@@ -20,8 +24,8 @@ export const getLayout = async (dashboardId: string = "") => {
 }
 
 
-export const getAllWarehouseByUserId = async (userId: string = "") => {
-  const response = await mongoAPI.get(`/warehouse/getallwarehouse/${userId}`);
+export const getAllWarehouseByUserId = async (userId: string = "", params: any) => {
+  const response = await mongoAPI.get(`/warehouse/getallwarehouse/${userId}`, {params: params});
   return response;
 };
 
@@ -59,8 +63,8 @@ export const getLocationByLatsAndLongs = async (latitude: string , longitude: st
 
 // vehicle apis
 
-export const getAllVehiclesByUserId = async (userId: string = "", page: any = 0, pageSize = 12) => {
-  const response = await mongoAPI.get(`vehicle/getallvehicle/${userId}?pageSize=${pageSize}&page=${page}`);
+export const getAllVehiclesByUserId = async (userId: string = "", params: any) => {
+  const response = await mongoAPI.get(`vehicle/getallvehicle/${userId}`, {params: params});
   return response;
 };
 
@@ -93,5 +97,3 @@ export const updateVehicleByVehicleId = async (vehicleId: string = "") => {
 
 
 
-// 3.111.205.170
-// localhost

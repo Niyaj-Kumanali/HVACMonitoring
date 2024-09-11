@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   LineChart,
   Line,
@@ -71,7 +71,13 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
   // Function to get color for a series based on its index
   const getColor = (index: number) => colorPalette[index % colorPalette.length];
 
-  const renderChart = () => {
+  // Memoized renderChart function
+  const renderChart = useMemo(() => {
+    console.log(groupedData)
+    // if (seriesKeys.length === 0 || groupedData.length === 0) {
+    //   return <div>No data available</div>;
+    // }
+
     switch (chartType) {
       case 'Line':
         return (
@@ -82,7 +88,9 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip />
+            <Tooltip 
+              labelFormatter={(label) => `${new Date(label)}`}
+            />
             <Legend
               layout="horizontal"
               align="left"
@@ -112,7 +120,9 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip />
+            <Tooltip 
+              labelFormatter={(label) => `${new Date(label)}`}
+            />
             <Legend
               layout="horizontal"
               align="left"
@@ -138,7 +148,9 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip />
+            <Tooltip 
+              labelFormatter={(label) => `${new Date(label)}`}
+            />
             <Legend
               layout="horizontal"
               align="left"
@@ -158,12 +170,12 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
           </AreaChart>
         );
 
-      // default:
-      //   return null; // Return null if chartType is not valid
+      default:
+        return <div>Unsupported chart type</div>;
     }
-  };
+  }, [chartType, groupedData, seriesKeys]);
 
-  return <ResponsiveContainer width="99%" height="80%">{renderChart()}</ResponsiveContainer>;
+  return <ResponsiveContainer width="99%" height="80%">{renderChart}</ResponsiveContainer>;
 };
 
 export default LineChartWidget;

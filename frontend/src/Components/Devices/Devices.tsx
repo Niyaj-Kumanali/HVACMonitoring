@@ -26,13 +26,11 @@ const Devices: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        fetchDevices(undefined, 0);
-    }, []);
+        fetchDevices(currentPage-1);
+    }, [currentPage]);
 
-    const fetchDevices = async (event?: React.FormEvent | React.MouseEvent, page: number = 0): Promise<void> => {
-        if (event) {
-            event.preventDefault();
-        }
+    const fetchDevices = async (page: number = 0): Promise<void> => {
+
 
         try {
             setLoadingDevices(true);
@@ -46,6 +44,7 @@ const Devices: React.FC = () => {
             };
 
             const response = await getTenantDeviceInfos(params);
+            console.log(response.data)
             
 
             setTimeout(() => {
@@ -61,17 +60,12 @@ const Devices: React.FC = () => {
         }
     };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        event.preventDefault();
-        setCurrentPage(page);
-        fetchDevices(undefined, page - 1);
-    };
 
     const handleDelete = async (id: string = ''): Promise<void> => {
         try {
             await deleteDevice(id);
             handleClick();
-            fetchDevices(undefined, 0);
+            fetchDevices(currentPage-1);
         } catch (error) {
             console.error('Failed to delete device', error);
             setErrorMessage("Problem deleting device");
@@ -94,9 +88,9 @@ const Devices: React.FC = () => {
     };
 
     const renderContent = () => {
-        if (loadingDevices) {
-            return <Loader />;
-        }
+        // if (loadingDevices) {
+        //     return <Loader />;
+        // }
 
         if (errorMessage) {
             return <div className="error-message">{errorMessage}</div>;
@@ -127,7 +121,7 @@ const Devices: React.FC = () => {
                     ))}
                 </ul>
                 <div className="pagination">
-                    <Paginations pageCount={pageCount} page={currentPage} handlePageChange={handlePageChange} /> {/* Passing handlePageChange */}
+                    <Paginations pageCount={pageCount} onPageChange={setCurrentPage} /> {/* Passing handlePageChange */}
                 </div>
             </>
         );
