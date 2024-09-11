@@ -29,6 +29,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
+import { postLayout } from '../../api/MongoAPIInstance';
 
 interface WidgetProps {
   widgetId: string;
@@ -196,13 +197,17 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
     return <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />;
   }, [filteredTelemetryData, selectedChart]);
 
-  const handleLayoutDelete = () => {
+  const handleLayoutDelete = async () => {
     const updatedLayout = storedLayout.layout.filter((item) => item.i !== widgetId);
     if (updatedLayout.length !== storedLayout.layout.length) {
       dispatch(setLayout(dashboardId, {
         ...storedLayout,
         layout: updatedLayout
       }));
+      await postLayout(dashboardId, {
+        ...storedLayout,
+        layout: updatedLayout
+      })
     }
   };
 

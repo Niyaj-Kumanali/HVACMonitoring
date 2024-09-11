@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Box, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { Layout } from 'react-grid-layout';
+import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 interface DashboardSettingsProps {
     onSettingClicked: (value: boolean) => void;
 }
@@ -11,10 +14,17 @@ interface DashboardSettingsProps {
 const DashboardSettings: React.FC<DashboardSettingsProps> = ({onSettingClicked}) => {
   const { dashboardId } = useParams();
   const dispatch = useDispatch();
-  const storedLayout = useSelector(
-    (state: RootState) =>
-      state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
-  );
+  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
+
+  useEffect(()=> {
+    const fetchDashboard = async () => {
+      const response = await getLayout(dashboardId)
+      setStoredLayout(response.data)
+      console.log(response.data)
+    }
+    fetchDashboard()
+  }, [])
+
   const [limit, setLimit] = useState<number>(storedLayout.limit || 1000); // Default limit
 
   // Handle change in input field
@@ -26,11 +36,15 @@ const DashboardSettings: React.FC<DashboardSettingsProps> = ({onSettingClicked})
     }
   };
 
-  const handleSubmit = () =>  {
+  const handleSubmit = async () =>  {
     dispatch(setLayout(dashboardId, {
         ...storedLayout,
         limit: limit
     }));
+    await postLayout(dashboardId, {
+      ...storedLayout,
+      limit: limit
+  })
     onSettingClicked(false)
   }
 

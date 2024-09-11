@@ -12,6 +12,8 @@ import Box from '@mui/material/Box';
 import DashboardSettings from './DashboardSettings';
 import { chartTypes, WidgetLayout } from '../../types/thingsboardTypes';
 import { v4 as uuid4 } from 'uuid';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 
 const GRID_WIDTH = 1500; // Total width of the grid
 const NUM_COLUMNS = 14; // Number of columns
@@ -22,15 +24,26 @@ const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
   const gridLayoutRef = useRef<HTMLDivElement | null>(null);
 
-  const storedLayout = useSelector(
-    (state: RootState) =>
-      state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
-  );
-
-  const [layout, setLocalLayout] = useState<Layout[]>(storedLayout.layout);
+  // const storedLayout = useSelector(
+  //   (state: RootState) =>
+  //     state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
+  // );
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [isSettingClicked, setIsSettingClicked] = useState<boolean>(false);
+
+  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
+  const [layout, setLocalLayout] = useState<Layout[]>([]);
+
+  useEffect(()=> {
+    const fetchDashboard = async () => {
+      const response = await getLayout(dashboardId)
+      setStoredLayout(response.data)
+      setLocalLayout(response.data.layout)
+      console.log(response.data)
+    }
+    fetchDashboard()
+  }, [])
 
   useEffect(() => {
     if (storedLayout.layout) {
@@ -38,7 +51,7 @@ const Dashboard: React.FC = () => {
     }
   }, [storedLayout]);
 
-  const onAddWidget = (deviceId: string, selectedChart: chartTypes) => {
+  const onAddWidget = async (deviceId: string, selectedChart: chartTypes) => {
     const newWidget: WidgetLayout = {
       i: `widget-${uuid4()}`,
       x: 0,
@@ -55,13 +68,19 @@ const Dashboard: React.FC = () => {
 
     const updatedLayout: WidgetLayout[] = [...layout, newWidget];
 
+    // JSON.stringify(dashboardId)
+
     console.log(updatedLayout);
     setLocalLayout(updatedLayout);
+    const layoutBody = {
+      ...storedLayout,
+      layout: updatedLayout,
+    }
+    const response = await postLayout(dashboardId, layoutBody)
+    console.log(response)
+
     dispatch(
-      setLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout,
-      })
+      setLayout(dashboardId, layoutBody)
     );
   };
 
@@ -76,7 +95,7 @@ const Dashboard: React.FC = () => {
     }));
   };
 
-  const onLayoutChange = (newLayout: Layout[]) => {
+  const onLayoutChange = async (newLayout: Layout[]) => {
     // Validate the new layout
     const validatedLayout: WidgetLayout[] = validateLayout(newLayout);
 
@@ -91,6 +110,7 @@ const Dashboard: React.FC = () => {
     dispatch(
       setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
     );
+    await postLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
   };
 
 

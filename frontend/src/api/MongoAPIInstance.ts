@@ -1,12 +1,23 @@
 import axios, { AxiosInstance } from 'axios';
+import { DashboardLayoutOptions } from '../Redux/Reducer/layoutReducer';
 
 export const mongoAPI: AxiosInstance = axios.create({
 
-  baseURL: 'http://3.111.205.170:2000',
+  baseURL: 'http://localhost:2000',
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+export const postLayout = async (dashboardId: string = "", layout: DashboardLayoutOptions) => {
+  const response = await mongoAPI.post(`/dashboard/addwidget/${dashboardId}`, layout);
+  return response
+}
+
+export const getLayout = async (dashboardId: string = "") => {
+  const response = await mongoAPI.get(`/dashboard/getwidget/${dashboardId}`)
+  return response
+}
 
 
 export const getAllWarehouseByUserId = async (userId: string = "") => {
