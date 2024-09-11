@@ -4,7 +4,7 @@ import Loader from "../Loader/Loader";
 import { getAllWarehouseByUserId, getLocationByLatsAndLongs } from "../../api/MongoAPIInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif";
 import Paginations from "../Pagination/Paginations";
 import { RootState } from "../../Redux/Reducer";
@@ -111,7 +111,7 @@ const Warehouses = () => {
                                         <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
                                     </div>
                                 </div>
-                            </a>
+                            </Link>
                         ))}
                     </div>
                     {/* <Paginations pageCount={pageCount} /> */}

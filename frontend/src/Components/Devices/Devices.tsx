@@ -26,7 +26,7 @@ const Devices: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        fetchDevices(undefined, 0);  // Fetch devices on mount
+        fetchDevices(undefined, 0);
     }, []);
 
     const fetchDevices = async (event?: React.FormEvent | React.MouseEvent, page: number = 0): Promise<void> => {
@@ -47,11 +47,12 @@ const Devices: React.FC = () => {
             };
 
             const response = await getTenantDeviceInfos(params);
-            setPageCount(response.data.totalPages);
-            setDevices(response.data.data || []);
-            deviceCountDispatch(set_DeviceCount(response.data.totalElements));
+            
 
             setTimeout(() => {
+                setPageCount(response.data.totalPages);
+                setDevices(response.data.data || []);
+                deviceCountDispatch(set_DeviceCount(response.data.totalElements));
                 setLoadingDevices(false);
             }, 500);
         } catch (error) {

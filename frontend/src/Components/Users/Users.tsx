@@ -5,7 +5,7 @@ import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";
 import { set_usersCount } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
-import userimage from "../../assets/user.gif"
+import userimage from "../../assets/user.gif";
 import Paginations from "../Pagination/Paginations";
 
 interface AdditionalInfo {
@@ -25,35 +25,35 @@ const AddCustomer: React.FC = () => {
     const [loading, setLoader] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const usercountdispatch = useDispatch();
-    const [pageCount, setPageCount] = useState<number>(1)
-    const [currentPage, setCurrentPage] = useState(0);
+    const [pageCount, setPageCount] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(0); // Zero-based index
 
-    const fetchUserData = async () => {
+    const fetchUserData = async (page: number) => {
+        setLoader(true);  // Show loader when starting to fetch data
         try {
             const params = {
-                pageSize: 10,
-                page: 0
+                pageSize: 12,
+                page: page
             };
             const userData = await getUsers(params);
             setTimeout(() => {
                 setUserdata(userData.data.data);
-                setPageCount(userData.data.totalPages)
-                console.log(userData.data.totalPages)
-                usercountdispatch(set_usersCount(userData.data.data.length));
-                setLoader(false);
-            }, 800);
+                setPageCount(userData.data.totalPages);
+                usercountdispatch(set_usersCount(userData.data.totalElements));
+                setLoader(false); // Hide loader after data is fetched
+            }, 500);
         } catch (error) {
-            console.error('Failed to fetch user data', error);
+            console.error("Failed to fetch user data", error);
             setTimeout(() => {
                 setErrorMessage("Problem fetching user data");
                 setLoader(false);
-            }, 800);
+            }, 500);
         }
     };
 
     useEffect(() => {
-        fetchUserData();
-    }, [usercountdispatch]);
+        fetchUserData(currentPage);
+    }, [currentPage]);
 
     const formatDate = (timestamp: number) => {
         const date = new Date(timestamp);
@@ -62,8 +62,8 @@ const AddCustomer: React.FC = () => {
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         event.preventDefault();
-        setCurrentPage(page);
-        fetchUserData();
+        setLoader(true);
+        setCurrentPage(page - 1);
     };
 
     const renderContent = () => {
@@ -98,7 +98,11 @@ const AddCustomer: React.FC = () => {
                             </Link>
                         ))}
                     </div>
-                    <Paginations pageCount={pageCount} page={currentPage} handlePageChange={handlePageChange}/>
+                    <Paginations
+                        pageCount={pageCount}
+                        page={currentPage + 1}
+                        handlePageChange={handlePageChange}
+                    />
                 </div>
             </div>
         );
