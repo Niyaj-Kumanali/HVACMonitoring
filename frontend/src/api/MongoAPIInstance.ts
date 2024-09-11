@@ -34,8 +34,8 @@ export const deleteWarehouseByWarehouseId = async (warehouseId: string = "") => 
   return response;
 };
 
-export const updateWarehouseByWarehouseId = async (warehouseId: string = "") => {
-  const response = await mongoAPI.put(`/warehouse/updatewarehouse/${warehouseId}`);
+export const updateWarehouseByWarehouseId = async (warehouseId: string = "", data: any) => {
+  const response = await mongoAPI.put(`/warehouse/updatewarehouse/${warehouseId}`, data);
   return response;
 };
 

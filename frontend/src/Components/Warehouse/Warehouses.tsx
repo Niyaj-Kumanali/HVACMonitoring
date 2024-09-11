@@ -96,7 +96,7 @@ const Warehouses = () => {
                         <div className="warehouses-cont">
                     <div className="warehouses">
                         {allWarehouses.map((warehouse) => (
-                            <Link to={`/warehouse/${warehouse.warehouse_id}`} state={warehouse} className="userinfo" key={warehouse._id}>
+                            <Link to={`/warehouse/${warehouse.warehouse_id}`} className="userinfo" key={warehouse._id}>
                                 <div className="user-img-info">
                                     <div className="img">
                                         <img src={warehouseimg} className="personicon" />
