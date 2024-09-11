@@ -43,13 +43,13 @@ const Vehicles = () => {
         try {
             const response = await getAllVehiclesByUserId(currentUser.id?.id)
             console.log(response.data)
-            if (response.data.length === 0) {
+            if (response.data.data.length === 0) {
                 vehicleCountDispatch(set_vehicle_count(0));
                 setMessage("No Vehicle Found");
             } else {
-                setAllVehicles(response.data);
+                setAllVehicles(response.data.data);
                 setMessage("");
-                vehicleCountDispatch(set_vehicle_count(response.data.length));
+                vehicleCountDispatch(set_vehicle_count(response.data.data.length));
             }
             setTimeout(() => {
                 setLoading(false);
