@@ -33,7 +33,7 @@ import {
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
-import { getAllVehiclesByUserId, getAllWarehouseByUserId, mongoAPI } from '../../api/MongoAPIInstance';
+import { getAllVehiclesByUserId, getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 
 const Dashboard = () => {

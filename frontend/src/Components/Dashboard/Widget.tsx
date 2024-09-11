@@ -26,8 +26,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import LineChartWidget from './Charts/LineChartWidget';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../Redux/Reducer';
+import { useDispatch} from 'react-redux';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
