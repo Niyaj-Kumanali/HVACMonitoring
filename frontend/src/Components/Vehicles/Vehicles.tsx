@@ -98,7 +98,7 @@ const Vehicles = () => {
                             </Link>
                         ))}
                     </div>
-                    <Paginations/>
+                    {/* <Paginations/> */}
                 </div>
             </div>
         )

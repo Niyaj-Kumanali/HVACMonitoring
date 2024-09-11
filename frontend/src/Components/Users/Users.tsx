@@ -25,35 +25,45 @@ const AddCustomer: React.FC = () => {
     const [loading, setLoader] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const usercountdispatch = useDispatch();
+    const [pageCount, setPageCount] = useState<number>(1)
+    const [currentPage, setCurrentPage] = useState(0);
+
+    const fetchUserData = async () => {
+        try {
+            const params = {
+                pageSize: 10,
+                page: 0
+            };
+            const userData = await getUsers(params);
+            setTimeout(() => {
+                setUserdata(userData.data.data);
+                setPageCount(userData.data.totalPages)
+                console.log(userData.data.totalPages)
+                usercountdispatch(set_usersCount(userData.data.data.length));
+                setLoader(false);
+            }, 800);
+        } catch (error) {
+            console.error('Failed to fetch user data', error);
+            setTimeout(() => {
+                setErrorMessage("Problem fetching user data");
+                setLoader(false);
+            }, 800);
+        }
+    };
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const params = {
-                    pageSize: 16,
-                    page: 0
-                };
-                const userData = await getUsers(params);
-                setTimeout(() => {
-                    setUserdata(userData.data.data);
-                    usercountdispatch(set_usersCount(userData.data.data.length));
-                    setLoader(false);
-                }, 800);
-            } catch (error) {
-                console.error('Failed to fetch user data', error);
-                setTimeout(() => {
-                    setErrorMessage("Problem fetching user data");
-                    setLoader(false);
-                }, 800);
-            }
-        };
-
         fetchUserData();
     }, [usercountdispatch]);
 
     const formatDate = (timestamp: number) => {
         const date = new Date(timestamp);
         return date.toLocaleString();
+    };
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        event.preventDefault();
+        setCurrentPage(page);
+        fetchUserData();
     };
 
     const renderContent = () => {
@@ -88,7 +98,7 @@ const AddCustomer: React.FC = () => {
                             </Link>
                         ))}
                     </div>
-                    <Paginations/>
+                    <Paginations pageCount={pageCount} page={currentPage} handlePageChange={handlePageChange}/>
                 </div>
             </div>
         );

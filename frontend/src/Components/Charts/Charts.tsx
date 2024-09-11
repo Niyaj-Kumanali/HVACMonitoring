@@ -66,7 +66,7 @@ const Charts = () => {
         try {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || "");
             setTimeout(() => {
-                setWarehouse(response.data);
+                setWarehouse(response.data.data);
                 setLoading(false);
             }, 700);
         } catch (error) {

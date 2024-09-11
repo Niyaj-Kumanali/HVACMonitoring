@@ -4,12 +4,10 @@ import Loader from "../Loader/Loader";
 import { getAllWarehouseByUserId, getLocationByLatsAndLongs } from "../../api/MongoAPIInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
-import { Link } from "react-router-dom";
-import warehouseimg from "../../assets/warehouse.gif"
+import { useNavigate } from "react-router-dom";
+import warehouseimg from "../../assets/warehouse.gif";
 import Paginations from "../Pagination/Paginations";
 import { RootState } from "../../Redux/Reducer";
-
-
 
 interface Warehouse {
     _id: string;
@@ -19,7 +17,7 @@ interface Warehouse {
     latitude: string;
     longitude: string;
     userId: string;
-    email: string
+    email: string;
 }
 
 interface LocationInfo {
@@ -32,31 +30,32 @@ const Warehouses = () => {
     const [loading, setLoader] = useState(true);
     const warehousecountDispatch = useDispatch();
     const [message, setMessage] = useState("");
-    const currentUser = useSelector((state: RootState) => state.user.user)
-
+    const currentUser = useSelector((state: RootState) => state.user.user);
+    const [pageCount, setPageCount] = useState<number>(1);
+    const navigate = useNavigate(); // For programmatic navigation
 
     const fetchAllWarehouses = async () => {
         try {
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '');
-            console.log(response)
+            console.log(response.data);
             setTimeout(() => {
-                if (response.data.length === 0) {
+                if (response.data.data.length === 0) {
                     setMessage("No Warehouse Found");
                     warehousecountDispatch(set_warehouse_count(0));
                 } else {
                     setAllWarehouses(response.data.data);
+                    setPageCount(response.data.totalPages)
                     warehousecountDispatch(set_warehouse_count(response.data.data.length));
                 }
                 setLoader(false);
-            }, 800)
-            
+            }, 800);
         } catch (error) {
             console.error("Failed to fetch warehouses:", error);
             setTimeout(() => {
                 setMessage("Problem Fetching Warehouses");
                 warehousecountDispatch(set_warehouse_count(0));
                 setLoader(false);
-            }, 800)
+            }, 800);
         }
     };
 
@@ -86,6 +85,11 @@ const Warehouses = () => {
         });
     }, [allWarehouses]);
 
+    const handleWarehouseClick = (e: React.MouseEvent, warehouse: Warehouse) => {
+        e.preventDefault(); 
+        navigate(`/warehouse/${warehouse.warehouse_id}`, { state: warehouse }); 
+    };
+
     return (
         loading ? (
             <Loader />
@@ -93,10 +97,15 @@ const Warehouses = () => {
             <div className="menu-data">{message}</div>
         ) : (
             <div className="menu-data">
-                        <div className="warehouses-cont">
+                <div className="warehouses-cont">
                     <div className="warehouses">
                         {allWarehouses.map((warehouse) => (
-                            <Link to={`/warehouse/${warehouse.warehouse_id}`} state={warehouse} className="userinfo" key={warehouse._id}>
+                            <a
+                                href={`/warehouse/${warehouse.warehouse_id}`} // keep the href as fallback, but prevent default on click
+                                className="userinfo"
+                                key={warehouse._id}
+                                onClick={(e) => handleWarehouseClick(e, warehouse)}
+                            >
                                 <div className="user-img-info">
                                     <div className="img">
                                         <img src={warehouseimg} className="personicon" />
@@ -107,10 +116,10 @@ const Warehouses = () => {
                                         <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
                                     </div>
                                 </div>
-                            </Link>
+                            </a>
                         ))}
                     </div>
-                    <Paginations />
+                    {/* <Paginations pageCount={pageCount} /> */}
                 </div>
             </div>
         )

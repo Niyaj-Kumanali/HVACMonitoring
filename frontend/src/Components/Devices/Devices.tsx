@@ -22,26 +22,32 @@ const Devices: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const deviceCountDispatch = useDispatch();
     const navigate = useNavigate();
+    const [pageCount, setPageCount] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        fetchDevices(0);
+        fetchDevices(undefined, 0);  // Fetch devices on mount
     }, []);
 
-    const fetchDevices = async (page: number): Promise<void> => {
+    const fetchDevices = async (event?: React.FormEvent | React.MouseEvent, page: number = 0): Promise<void> => {
+        if (event) {
+            event.preventDefault();
+        }
+
         try {
             setLoadingDevices(true);
             setErrorMessage(null);
 
             const params = {
-                pageSize: 20,
+                pageSize: 10,
                 page: page,
-                // type: 'default',
                 textSearch: '',
                 sortProperty: 'name',
                 sortOrder: 'ASC',
             };
 
             const response = await getTenantDeviceInfos(params);
+            setPageCount(response.data.totalPages);
             setDevices(response.data.data || []);
             deviceCountDispatch(set_DeviceCount(response.data.totalElements));
 
@@ -55,11 +61,17 @@ const Devices: React.FC = () => {
         }
     };
 
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        event.preventDefault();
+        setCurrentPage(page);
+        fetchDevices(undefined, page - 1);
+    };
+
     const handleDelete = async (id: string = ''): Promise<void> => {
         try {
             await deleteDevice(id);
             handleClick();
-            fetchDevices(0);
+            fetchDevices(undefined, 0);
         } catch (error) {
             console.error('Failed to delete device', error);
             setErrorMessage("Problem deleting device");
@@ -75,7 +87,7 @@ const Devices: React.FC = () => {
         reason?: SnackbarCloseReason,
     ) => {
         if (reason === 'clickaway') {
-            event
+            event.preventDefault();
             return;
         }
         setOpen(false);
@@ -115,7 +127,7 @@ const Devices: React.FC = () => {
                     ))}
                 </ul>
                 <div className="pagination">
-                    <Paginations/>
+                    <Paginations pageCount={pageCount} page={currentPage} handlePageChange={handlePageChange} /> {/* Passing handlePageChange */}
                 </div>
             </>
         );
