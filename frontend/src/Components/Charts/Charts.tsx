@@ -64,7 +64,11 @@ const Charts = () => {
 
     const fetchAllWarehouses = async () => {
         try {
-            const response = await getAllWarehouseByUserId(currentUser.id?.id || "");
+            const params =  {
+                pageSize: 100,
+                page: 0
+            }
+            const response = await getAllWarehouseByUserId(currentUser.id?.id || "", params);
             setTimeout(() => {
                 setWarehouse(response.data.data);
                 setLoading(false);

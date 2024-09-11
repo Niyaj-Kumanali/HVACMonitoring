@@ -60,11 +60,6 @@ const AddCustomer: React.FC = () => {
         return date.toLocaleString();
     };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        event.preventDefault();
-        setLoader(true);
-        setCurrentPage(page - 1);
-    };
 
     const renderContent = () => {
         if (loading) {
@@ -100,8 +95,7 @@ const AddCustomer: React.FC = () => {
                     </div>
                     <Paginations
                         pageCount={pageCount}
-                        page={currentPage + 1}
-                        handlePageChange={handlePageChange}
+                        onPageChange={setCurrentPage}
                     />
                 </div>
             </div>

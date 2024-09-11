@@ -2,7 +2,6 @@ import "./Devices.css";
 import { useEffect, useState } from 'react';
 import { Device } from '../../types/thingsboardTypes';
 import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
-import Loader from "../Loader/Loader";
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
@@ -88,9 +87,9 @@ const Devices: React.FC = () => {
     };
 
     const renderContent = () => {
-        // if (loadingDevices) {
-        //     return <Loader />;
-        // }
+        if (loadingDevices) {
+            // return <Loader />;
+        }
 
         if (errorMessage) {
             return <div className="error-message">{errorMessage}</div>;

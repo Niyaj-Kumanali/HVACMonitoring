@@ -14,6 +14,7 @@ const Paginations: React.FC<PaginationProps> = ({ pageCount, onPageChange }) => 
 
     // Handle page change
     const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+        event.preventDefault();
         setCurrentPage(page);  // Update the current page in the state
         onPageChange(page);    // Notify the parent about the page change
     };
