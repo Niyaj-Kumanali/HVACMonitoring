@@ -3,7 +3,7 @@ import { DashboardLayoutOptions } from '../Redux/Reducer/layoutReducer';
 
 export const mongoAPI: AxiosInstance = axios.create({
 
-  baseURL: 'http://localhost:2000',
+  baseURL: 'http://3.111.205.170:2000',
   headers: {
     'Content-Type': 'application/json',
   },
