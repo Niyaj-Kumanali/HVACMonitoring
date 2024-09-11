@@ -77,7 +77,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
         setSelectedChart(item?.chart || 'Line');
       }
     });
-  }, [storedLayout, widgetId]);
+  }, [widgetId]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
