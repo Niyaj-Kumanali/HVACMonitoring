@@ -98,7 +98,7 @@ const Dashboard = () => {
         const response = await mongoAPI.get(
           `/warehouse/getallwarehouse/${currentuser.id.id}`
         );
-        dispatch(set_warehouse_count(response.data.length));
+        dispatch(set_warehouse_count(response.data.data.length));
       }
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);

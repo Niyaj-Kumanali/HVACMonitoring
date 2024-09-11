@@ -148,8 +148,8 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: '*', // Catch-all route
-    element: <PageNotFound />, // Define this component to show a 404 page
+    path: '*', 
+    element: <PageNotFound />,
   },
 ]);
 
