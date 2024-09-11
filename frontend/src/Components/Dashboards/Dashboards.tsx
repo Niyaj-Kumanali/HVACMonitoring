@@ -120,14 +120,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // Fetch current user
         const response = await getCurrentUser();
         dispatch(set_User(response.data));
 
         if (response.data?.id?.id) {
           dispatch(set_Authority(response.data.authority));
 
-          // Fetch dashboards, user data, devices, vehicles, and warehouses
           await Promise.all([
             fetchDashboards(0),
             fetchUserData(),
