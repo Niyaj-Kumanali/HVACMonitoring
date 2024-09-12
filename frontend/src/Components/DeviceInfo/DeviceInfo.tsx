@@ -91,10 +91,10 @@ const DeviceInfo: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const params =  {
+      const params = {
         pageSize: 100,
-        page: 0
-    }
+        page: 0,
+      };
       const response = await getAllWarehouseByUserId(user.id?.id, params);
       setWarehouse(response.data.data);
     } catch (error) {
@@ -103,10 +103,10 @@ const DeviceInfo: React.FC = () => {
   };
   const fetchAllVehicles = async () => {
     try {
-      const params =  {
+      const params = {
         pageSize: 100,
-        page: 0
-    }
+        page: 0,
+      };
       const response = await getAllVehiclesByUserId(user.id?.id, params);
       setVehicle(response.data.data);
     } catch (error) {
@@ -250,37 +250,19 @@ const DeviceInfo: React.FC = () => {
     setDeviceInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCopyAccessToken = () => {
-    console.log(navigator)
-    navigator.clipboard
-      .writeText(accessToken)
-      .then(() => {
-        setMessage('Access Token copied to clipboard!');
-        setSnackbarType('success');
-        setOpen(true);
-      })
-      .catch((error) => {
-        console.error('Failed to copy access token:', error);
-        setMessage('Failed to copy access token');
-        setSnackbarType('error');
-        setOpen(true);
-      });
-  };
-
-  const handleCopyId = () => {
-    navigator.clipboard
-      .writeText(deviceId || '')
-      .then(() => {
-        setMessage('Device ID copied to clipboard!');
-        setSnackbarType('success');
-        setOpen(true);
-      })
-      .catch((error) => {
-        console.error('Failed to copy Device ID:', error);
-        setMessage('Failed to copy Device ID');
-        setSnackbarType('error');
-        setOpen(true);
-      });
+  const handleCopy = async (text: string) => {
+    console.log(navigator);
+    try {
+      await navigator.clipboard.writeText(text);
+      setMessage('Copied to clipboard!');
+      setSnackbarType('success');
+    } catch (error) {
+      console.error('Failed to copy:', error);
+      setMessage('Failed to copy to clipboard!');
+      setSnackbarType('error');
+    } finally {
+      setOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -309,7 +291,7 @@ const DeviceInfo: React.FC = () => {
                   <Button
                     variant="outlined" // Use 'outlined' for a transparent background
                     color="primary" // Sets the text and border color
-                    onClick={handleCopyId}
+                    onClick={() => handleCopy(deviceId || '')}
                     startIcon={<ShareIcon />}
                     sx={{
                       ml: 2,
@@ -328,7 +310,7 @@ const DeviceInfo: React.FC = () => {
                   <Button
                     variant="outlined" // Use 'outlined' for a transparent background
                     color="primary" // Sets the text and border color
-                    onClick={handleCopyAccessToken}
+                    onClick={() => handleCopy(accessToken)}
                     startIcon={<ShareIcon />}
                     sx={{
                       ml: 2,
@@ -519,30 +501,6 @@ const DeviceInfo: React.FC = () => {
           </Snackbar>
         </div>
       )}
-      <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            color: 'white',
-          }}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarType === 'success' ? (
-                <CheckIcon style={{ marginRight: '8px' }} />
-              ) : (
-                <ErrorIcon style={{ marginRight: '8px' }} />
-              )}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar>
     </>
   );
 };
