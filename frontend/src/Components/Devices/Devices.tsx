@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { set_DeviceCount } from "../../Redux/Action/Action";
 import { useNavigate } from "react-router-dom";
 import Paginations from "../Pagination/Paginations";
+import Loader from "../Loader/Loader";
 
 const Devices: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);

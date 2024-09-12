@@ -14,21 +14,24 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   deleteWarehouseByWarehouseId,
+  getAllWarehouseByUserId,
   getWarehouseByWarehouseId,
   mongoAPI,
   updateWarehouseByWarehouseId,
 } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   WarehouseData,
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
+import { RootState } from '../../Redux/Reducer';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
+  const currentUser = useSelector((state: RootState) => state.user.user)
 
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
@@ -79,25 +82,19 @@ const Warehouse: React.FC = () => {
         const response = await deleteWarehouseByWarehouseId(warehouseid);
         console.log(response);
         fetchAllWarehouses();
-
-        setOpen(true);
         setSnackbarType('success');
         setMessage('Warehouse Deleted Successfully');
-
-        setTimeout(() => {
-          setLoadingg(false);
-          navigate('/warehouses');
-        }, 500);
       } catch (error) {
         console.error('Error deleting warehouse:', error);
-        setOpen(true);
         setSnackbarType('error');
         setMessage('Failed to Delete Warehouse');
-
+      }
+      finally {
+        setOpen(true);
         setTimeout(() => {
           setLoadingg(false);
           navigate('/warehouses');
-        }, 1000);
+        }, 700);
       }
     }, 1000);
   };
@@ -201,16 +198,8 @@ const Warehouse: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const currentUser = await getCurrentUser();
-
-      const response = await mongoAPI.get(
-        `/warehouse/getallwarehouse/${currentUser.data.id.id}`
-      );
-      if (response.data.length === 0) {
-        warehousecountDispatch(set_warehouse_count(0));
-      } else {
-        warehousecountDispatch(set_warehouse_count(response.data.length));
-      }
+      const response = await getAllWarehouseByUserId(currentUser.id?.id, undefined)
+      warehousecountDispatch(set_warehouse_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
       warehousecountDispatch(set_warehouse_count(0));
@@ -231,23 +220,23 @@ const Warehouse: React.FC = () => {
 
   useEffect(() => {
     const fetchLocationInfo = async (latitude: string, longitude: string, warehouseId: string) => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch location data');
-            }
-
-            const data: Location = await response.json();
-            setLocationInfo({[warehouseId]: data });
-        } catch (err: any) {
-            console.log(`Error fetching location for warehouse ${warehouseId}:`, err.message);
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch location data');
         }
+
+        const data: Location = await response.json();
+        setLocationInfo({ [warehouseId]: data });
+      } catch (err: any) {
+        console.log(`Error fetching location for warehouse ${warehouseId}:`, err.message);
+      }
     };
 
     if (formData.latitude && formData.longitude) {
-        fetchLocationInfo(formData.latitude, formData.longitude, warehouseid || "");
+      fetchLocationInfo(formData.latitude, formData.longitude, warehouseid || "");
     }
-}, [formData]);
+  }, [formData]);
 
   return (
     <div className="menu-data">
