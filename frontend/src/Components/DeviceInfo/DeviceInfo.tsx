@@ -251,6 +251,7 @@ const DeviceInfo: React.FC = () => {
   };
 
   const handleCopyAccessToken = () => {
+    console.log(navigator)
     navigator.clipboard
       .writeText(accessToken)
       .then(() => {
