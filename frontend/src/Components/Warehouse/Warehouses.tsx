@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link, useNavigate } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif";
-import Paginations from "../Pagination/Paginations";
 import { RootState } from "../../Redux/Reducer";
+import Paginations from "../Pagination/Paginations";
 
 interface Warehouse {
     _id: string;
@@ -33,10 +33,15 @@ const Warehouses = () => {
     const currentUser = useSelector((state: RootState) => state.user.user);
     const [pageCount, setPageCount] = useState<number>(1);
     const navigate = useNavigate(); // For programmatic navigation
-
-    const fetchAllWarehouses = async () => {
+    const [currentpage, setCurrentpage] = useState(1);    
+    const fetchAllWarehouses = async (page: any, pageSize: any) => {
         try {
-            const response = await getAllWarehouseByUserId(currentUser.id?.id || '');
+            const params = {
+                pageSize: pageSize,
+                page: page,
+              };
+              console.log(params);
+            const response = await getAllWarehouseByUserId(currentUser.id?.id || '', params);
             console.log(response.data);
             setTimeout(() => {
                 if (response.data.data.length === 0) {
@@ -45,7 +50,7 @@ const Warehouses = () => {
                 } else {
                     setAllWarehouses(response.data.data);
                     setPageCount(response.data.totalPages)
-                    warehousecountDispatch(set_warehouse_count(response.data.data.length));
+                    warehousecountDispatch(set_warehouse_count(response.data.totalElements));
                 }
                 setLoader(false);
             }, 800);
@@ -60,8 +65,8 @@ const Warehouses = () => {
     };
 
     useEffect(() => {
-        fetchAllWarehouses();
-    }, []);
+        fetchAllWarehouses(currentpage-1, 12);
+    }, [currentpage]);
 
     useEffect(() => {
         const fetchLocationInfo = async (latitude: string, longitude: string, warehouseId: string) => {
@@ -114,7 +119,7 @@ const Warehouses = () => {
                             </Link>
                         ))}
                     </div>
-                    {/* <Paginations pageCount={pageCount} /> */}
+                    <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
                 </div>
             </div>
         )

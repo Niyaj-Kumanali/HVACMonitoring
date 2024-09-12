@@ -2,7 +2,6 @@ import "./Devices.css";
 import { useEffect, useState } from 'react';
 import { Device } from '../../types/thingsboardTypes';
 import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
-import Loader from "../Loader/Loader";
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,10 +27,10 @@ const Devices: React.FC = () => {
 
 
     useEffect(() => {
-        fetchDevices(undefined, 0);
-    }, []);
+        fetchDevices(currentPage-1);
+    }, [currentPage]);
 
-    const fetchDevices = async (event?: React.FormEvent | React.MouseEvent, page: number = 0): Promise<void> => {
+    const fetchDevices = async (page: number = 0): Promise<void> => {
 
         try {
             setLoadingDevices(true);
@@ -64,17 +63,12 @@ const Devices: React.FC = () => {
         }
     };
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-        event.preventDefault();
-        setCurrentPage(page);
-        fetchDevices(undefined, page - 1);
-    };
 
     const handleDelete = async (id: string = ''): Promise<void> => {
         try {
             await deleteDevice(id);
             handleClick();
-            fetchDevices(undefined, 0);
+            fetchDevices(currentPage-1);
         } catch (error) {
             console.error('Failed to delete device', error);
             setErrorMessage("Problem deleting device");
@@ -130,7 +124,7 @@ const Devices: React.FC = () => {
                     ))}
                 </ul>
                 <div className="pagination">
-                    <Paginations pageCount={pageCount} page={currentPage} handlePageChange={handlePageChange} /> {/* Passing handlePageChange */}
+                    <Paginations pageCount={pageCount} onPageChange={setCurrentPage} /> {/* Passing handlePageChange */}
                 </div>
             </>
         );

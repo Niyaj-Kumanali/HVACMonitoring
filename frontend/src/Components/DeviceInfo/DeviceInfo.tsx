@@ -34,9 +34,6 @@ import './DeviceInfo.css';
 import {
   getAllVehiclesByUserId,
   getAllWarehouseByUserId,
-  getVehicleByVehicleId,
-  getWarehouseByWarehouseId,
-  mongoAPI,
 } from '../../api/MongoAPIInstance';
 
 interface Warehouse {
@@ -94,7 +91,11 @@ const DeviceInfo: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const response = await getAllWarehouseByUserId(user.id?.id);
+      const params =  {
+        pageSize: 100,
+        page: 0
+    }
+      const response = await getAllWarehouseByUserId(user.id?.id, params);
       setWarehouse(response.data.data);
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
@@ -102,7 +103,11 @@ const DeviceInfo: React.FC = () => {
   };
   const fetchAllVehicles = async () => {
     try {
-      const response = await getAllVehiclesByUserId(user.id?.id);
+      const params =  {
+        pageSize: 100,
+        page: 0
+    }
+      const response = await getAllVehiclesByUserId(user.id?.id, params);
       setVehicle(response.data.data);
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);

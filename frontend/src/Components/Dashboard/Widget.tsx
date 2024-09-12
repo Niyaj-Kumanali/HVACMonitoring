@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './styles/widget.css'
+import './styles/widget.css';
 import {
   chartTypes,
   Device,
@@ -29,7 +29,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
-import { postLayout } from '../../api/MongoAPIInstance';
+import { charts } from '../Add-Widget/AddWidget';
 
 interface WidgetProps {
   widgetId: string;
@@ -57,13 +57,14 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   const [devices, setDevices] = useState<Device[]>([]);
 
   useEffect(() => {
-    const { startDate: layoutStartDate, endDate: layoutEndDate } = storedLayout.dateRange || {};
+    const { startDate: layoutStartDate, endDate: layoutEndDate } =
+      storedLayout.dateRange || {};
     if (layoutStartDate && layoutEndDate) {
       setStartDate(layoutStartDate);
       setEndDate(layoutEndDate);
     }
 
-    storedLayout.layout.forEach((item: WidgetLayout) => {
+    (storedLayout.layout || []).forEach((item: WidgetLayout) => {
       if (item.i === widgetId) {
         setSelectedChart(item?.chart || 'Line');
       }
@@ -161,10 +162,7 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
           (acc, key) => {
             return {
               ...acc,
-              [key]: [
-                ...(telemetryData[key] || []),
-                ...latestData[key],
-              ],
+              [key]: [...(telemetryData[key] || []), ...latestData[key]],
             };
           },
           telemetryData
@@ -194,26 +192,43 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   }, [selectedSensors, telemetryData]);
 
   const renderChart = useMemo(() => {
-    return <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />;
+    return (
+      <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />
+    );
   }, [filteredTelemetryData, selectedChart]);
 
   const handleLayoutDelete = async () => {
-    const updatedLayout = storedLayout.layout.filter((item) => item.i !== widgetId);
-    if (updatedLayout.length !== storedLayout.layout.length) {
-      dispatch(setLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout
-      }));
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout
-      })
+    const updatedLayout = (storedLayout.layout || []).filter(
+      (item) => item.i !== widgetId
+    );
+    if (updatedLayout.length !== storedLayout.layout?.length) {
+      dispatch(
+        setLayout(dashboardId, {
+          ...storedLayout,
+          layout: updatedLayout,
+        })
+      );
     }
   };
 
   return (
     <div className="widget">
       <Toolbar className="widget-header">
+      <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
+          <InputLabel id="chart-select-label">Select Chart</InputLabel>
+          <Select
+            labelId="chart-select-label"
+            value={selectedChart}
+            onChange={(e) => setSelectedChart(e.target.value as chartTypes)}
+            label="Select Chart"
+          >
+            {charts.map((chart: chartTypes, index: number) => (
+              <MenuItem key={index} value={chart}>
+                {chart}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
           <InputLabel id="device-select-label">Select Device</InputLabel>
           <Select
@@ -235,7 +250,12 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
             labelId="sensor-select-label"
             multiple
             value={selectedSensors}
-            onChange={(e) => setSelectedSensors(e.target.value as string[])}
+            onChange={(e) => {
+              const value = e.target.value as string[];
+              if (value.length > 0) {
+                setSelectedSensors(value);
+              }
+            }}
             renderValue={(selected) => (selected as string[]).join(', ')}
             label="Select Sensors"
           >

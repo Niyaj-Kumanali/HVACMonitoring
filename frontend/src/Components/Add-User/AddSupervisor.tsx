@@ -30,7 +30,7 @@ const AddSupervisor = () => {
                 page: 0
             }
             const userData = await getUsers(params);
-            devicecountdispatch(set_usersCount(userData.data.data.length));
+            devicecountdispatch(set_usersCount(userData.data.totalElements));
         } catch (error) {
             console.error('Failed to fetch user data', error);
         }

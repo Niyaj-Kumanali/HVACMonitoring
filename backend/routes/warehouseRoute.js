@@ -161,15 +161,28 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Get the page and pageSize from the query parameters, defaulting to 1 and 10 respectively
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    const page = parseInt(req.query.page) || 0;
+    const pageSize = parseInt(req.query.pageSize) ||  12;
+    console.log(page, pageSize);
 
     // Calculate the skip value (how many records to skip)
-    const skip = (page - 1) * pageSize;
+    const skip = page * pageSize;
 
     // Get the total count of warehouses for the user (for pagination metadata)
-    const total = await warehouse.countDocuments({ userId });
+    const totalElements = await warehouse.countDocuments({ userId });
+
+    // Calculate totalPages and check if the requested page is out of range
+    const totalPages = Math.ceil(totalElements / pageSize);
+
+    // If the requested page is out of range, return empty data
+    if (page >= totalPages) {
+      return res.status(200).json({
+        data: [],
+        hasNext: false,
+        totalElements,
+        totalPages,
+      });
+    }
 
     // Get the paginated warehouses
     const getAllWarehouse = await warehouse
@@ -177,29 +190,22 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
       .skip(skip)
       .limit(pageSize);
 
-    // Respond with an empty array if no warehouses are found
-    if (getAllWarehouse.length === 0) {
-      return res.status(200).json({
-        data: [],
-        totalRecords: total,
-        currentPage: page,
-        totalPages: Math.ceil(total / pageSize),
-        pageSize: pageSize,
-      });
-    }
+    // Check if there is a next page
+    const hasNext = page < totalPages - 1;
 
-    // Respond with warehouses and pagination metadata
+    // Respond with warehouses, pagination metadata, and hasNext flag
     res.status(200).json({
       data: getAllWarehouse,
-      totalRecords: total,
-      currentPage: page,
-      totalPages: Math.ceil(total / pageSize),
-      pageSize: pageSize,
+      hasNext,
+      totalElements,
+      totalPages,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving warehouse data', error });
   }
 });
+
+
 
 /**
  * @swagger

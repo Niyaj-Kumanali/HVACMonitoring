@@ -21,7 +21,7 @@ interface AddWidgetProps {
   onClose: () => void;
 }
 
-const charts: chartTypes[] = ['Line', 'Bar', 'Area'];
+export const charts: chartTypes[] = ['Line', 'Bar', 'Area'];
 
 const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');

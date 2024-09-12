@@ -5,19 +5,17 @@
     justify-content:space-between !important;
     gap: 20px;
 }
-.devices h2{
-    margin-bottom : 20px;
-}
+
 .devices ul {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+    align-items: center;
     padding: 0;
     margin: 0;
     list-style-type: none;
     gap: 15px;
     cursor: pointer;
-    align-items: center;
 }
 
 .devices .device-ul li {
@@ -29,7 +27,7 @@
     justify-content:space-between;
     padding: 0;
     background-color: #fff;
-    height: 125px !important;
+    height: 125px;
 }
 .devices ul li span{
     display: flex;

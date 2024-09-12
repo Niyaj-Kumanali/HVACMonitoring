@@ -165,8 +165,8 @@ const AddVehicle: React.FC = () => {
 
   const fetchAllVehicles = async () => {
     try {
-      const response = await getAllVehiclesByUserId(currentUser.id?.id);
-      vehicleCountDispatch(set_vehicle_count(response.data.data.length));
+      const response = await getAllVehiclesByUserId(currentUser.id?.id, undefined);
+      vehicleCountDispatch(set_vehicle_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
     }

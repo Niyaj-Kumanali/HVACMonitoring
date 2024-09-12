@@ -15,27 +15,22 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
-import { getLayout, postLayout } from '../../api/MongoAPIInstance';
-import { DashboardLayoutOptions } from '../../Redux/Reducer/layoutReducer';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
   onAddWidget: () => void;
   isEditable: boolean;
-  onSettingClicked: (clicked: any) => any;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onToggleEdit,
   onAddWidget,
   isEditable,
-  onSettingClicked
 }) => {
   const [selectedRange, setSelectedRange] = useState<string>('last-5-minutes');
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
@@ -46,18 +41,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
-
-  const [storedLayout, setStoredLayout] = useState<DashboardLayoutOptions>({})
-
-  useEffect(()=> {
-    const fetchDashboard = async () => {
-      const response = await getLayout(dashboardId)
-      setStoredLayout(response.data)
-      console.log(response.data)
-    }
-    fetchDashboard()
-  }, [])
-
+  const storedLayout = useSelector(
+    (state: RootState) => state.dashboardLayout[dashboardId || '']
+  );
 
   const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;
@@ -110,13 +96,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       dispatch(
         setLayout(dashboardId, {
           ...storedLayout,
-          dateRange: newDateRange
+          dateRange: newDateRange,
         })
       );
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        dateRange: newDateRange
-      })
     }
   };
 
@@ -132,13 +114,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           },
         })
       );
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        dateRange: {
-          startDate: startDate.getTime(),
-          endDate: endDate.getTime(),
-        },
-      })
     }
   };
 
@@ -165,13 +140,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   return (
     <>
       <AppBar position="static">
-        <Toolbar className="toolbar">
-          <Box className="toolbar-left">
-
-          </Box>
+        <Toolbar style={{backgroundColor: '#2BC790', height: '6vh'}} className="toolbar">
+          <Box className="toolbar-left"></Box>
 
           <Box className="toolbar-right">
-            <FormControl variant="outlined" className="form-control">
+            <FormControl  variant="outlined" className="form-control">
               <InputLabel id="realtime-label">Realtime</InputLabel>
               <Select
                 labelId="realtime-label"
@@ -180,8 +153,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 label="Realtime"
                 sx={{
                   color: 'white',
-                  
                 }}
+                style={{ height: '5vh'}} 
               >
                 <MenuItem value="last-1-minute">Last 1 Minute</MenuItem>
                 <MenuItem value="last-5-minutes">Last 5 Minutes</MenuItem>
@@ -209,13 +182,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             >
               {isEditable ? 'Save' : 'Edit'}
             </Button>
-
-            <IconButton
-              color="inherit"
-              onClick={() => onSettingClicked((prev: any) => !prev)}
-            >
-              <SettingsIcon />
-            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
@@ -255,7 +221,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </div>
         </div>
       )}
-
     </>
   );
 };
