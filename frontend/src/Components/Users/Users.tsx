@@ -26,28 +26,32 @@ const AddCustomer: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const usercountdispatch = useDispatch();
     const [pageCount, setPageCount] = useState<number>(1);
-    const [currentPage, setCurrentPage] = useState<number>(0); // Zero-based index
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [initialLoad, setInitialLoad] = useState(true);
 
     const fetchUserData = async (page: number) => {
-        setLoader(true);  // Show loader when starting to fetch data
         try {
+            setLoader(true); 
             const params = {
                 pageSize: 12,
                 page: page
             };
             const userData = await getUsers(params);
-            setTimeout(() => {
-                setUserdata(userData.data.data);
-                setPageCount(userData.data.totalPages);
-                usercountdispatch(set_usersCount(userData.data.totalElements));
-                setLoader(false); // Hide loader after data is fetched
-            }, 500);
+
+            setUserdata(userData.data.data);
+            setPageCount(userData.data.totalPages);
+            usercountdispatch(set_usersCount(userData.data.totalElements));
         } catch (error) {
             console.error("Failed to fetch user data", error);
+            setErrorMessage("Problem fetching user data");
+        } finally {
             setTimeout(() => {
-                setErrorMessage("Problem fetching user data");
                 setLoader(false);
-            }, 500);
+                if (initialLoad) {
+                    setInitialLoad(false);
+                }
+            } , 500)
+            
         }
     };
 
@@ -62,12 +66,11 @@ const AddCustomer: React.FC = () => {
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         event.preventDefault();
-        setLoader(true);
         setCurrentPage(page - 1);
     };
 
     const renderContent = () => {
-        if (loading) {
+        if (loading && initialLoad) {
             return <Loader />;
         }
 

@@ -24,15 +24,14 @@ const Devices: React.FC = () => {
     const navigate = useNavigate();
     const [pageCount, setPageCount] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const [initialLoad, setInitialLoad] = useState(true);
+
 
     useEffect(() => {
         fetchDevices(undefined, 0);
     }, []);
 
     const fetchDevices = async (event?: React.FormEvent | React.MouseEvent, page: number = 0): Promise<void> => {
-        if (event) {
-            event.preventDefault();
-        }
 
         try {
             setLoadingDevices(true);
@@ -46,18 +45,22 @@ const Devices: React.FC = () => {
             };
 
             const response = await getTenantDeviceInfos(params);
-            
-
-            setTimeout(() => {
-                setPageCount(response.data.totalPages);
-                setDevices(response.data.data || []);
-                deviceCountDispatch(set_DeviceCount(response.data.totalElements));
-                setLoadingDevices(false);
-            }, 500);
+            setPageCount(response.data.totalPages);
+            setDevices(response.data.data || []);
+            deviceCountDispatch(set_DeviceCount(response.data.totalElements));
+            setLoadingDevices(false);
         } catch (error) {
             console.error('Failed to fetch devices', error);
             setErrorMessage("Problem fetching devices data");
             setLoadingDevices(false);
+        } finally {
+            setTimeout(() => {
+                if (initialLoad) {
+                    setInitialLoad(false);
+                }
+                setLoadingDevices(false)
+            }, 500);
+
         }
     };
 
@@ -94,7 +97,7 @@ const Devices: React.FC = () => {
     };
 
     const renderContent = () => {
-        if (loadingDevices) {
+        if (loadingDevices && initialLoad) {
             return <Loader />;
         }
 

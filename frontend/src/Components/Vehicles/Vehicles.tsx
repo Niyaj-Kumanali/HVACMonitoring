@@ -57,7 +57,7 @@ const Vehicles = () => {
             }
             setTimeout(() => {
                 setLoading(false);
-            }, 1000);
+            }, 700);
         } catch (error) {
             console.error("Failed to fetch vehicles:", error);
             vehicleCountDispatch(set_vehicle_count(0));
