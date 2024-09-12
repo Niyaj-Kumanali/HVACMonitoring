@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 
 // MUI Components
-import { TextField, Button, Box, IconButton } from '@mui/material';
+import { TextField, Box, IconButton } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 interface Warehouse {

@@ -20,6 +20,7 @@
     "@mui/x-charts": "^7.16.0",
     "@mui/x-date-pickers": "^7.16.0",
     "@mui/x-date-pickers-pro": "^7.16.0",
+    "@types/leaflet.markercluster": "^1.5.4",
     "@types/node": "^22.5.4",
     "@types/pg": "^8.11.8",
     "axios": "^1.7.7",

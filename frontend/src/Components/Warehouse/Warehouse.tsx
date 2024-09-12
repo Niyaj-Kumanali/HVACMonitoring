@@ -17,10 +17,8 @@ import {
   getAllWarehouseByUserId,
   getLocationByLatsAndLongs,
   getWarehouseByWarehouseId,
-  mongoAPI,
   updateWarehouseByWarehouseId,
 } from '../../api/MongoAPIInstance';
-import { getCurrentUser } from '../../api/loginApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -28,6 +26,7 @@ import {
   WarehouseData,
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
+import { RootState } from '../../Redux/Reducer';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
@@ -230,12 +229,12 @@ const Warehouse: React.FC = () => {
       try {
         const response = await getLocationByLatsAndLongs(latitude, longitude);
         console.log(response);
-        // if (!response.ok) {
-        //     throw new Error('Failed to fetch location data');
-        // }
+        if (!response.ok) {
+            throw new Error('Failed to fetch location data');
+        }
 
-        // const data: Location = await response.json();
-        // setLocationInfo({[warehouseId]: data });
+        const data: Location = await response.json();
+        setLocationInfo({[warehouseId]: data });
       } catch (err: any) {
         console.log(
           `Error fetching location for warehouse ${warehouseId}:`,
