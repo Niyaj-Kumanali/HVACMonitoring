@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import GridLayout, { Layout } from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useParams } from 'react-router-dom';
-import './styles/Dashboard.css'; // Ensure this is correctly imported
+import './styles/Dashboard.css';
 import Widget from './Widget';
 import DashboardHeader from './DashboardHeader';
 import { setLayout } from '../../Redux/Action/layoutActions';
@@ -13,9 +13,13 @@ import { v4 as uuid4 } from 'uuid';
 import { RootState } from '../../Redux/Reducer';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 
-const GRID_WIDTH = 1500; // Total width of the grid
-const NUM_COLUMNS = 14; // Number of columns
-const ROW_HEIGHT = 50; // Height of each row
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+const GRID_WIDTH = 1500;
+
+// Breakpoints and columns
+const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
+const cols = { lg: 14, md: 10, sm: 8, xs: 6, xxs: 4 };
 
 const Dashboard: React.FC = () => {
   const { dashboardId } = useParams();
@@ -30,21 +34,44 @@ const Dashboard: React.FC = () => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const [localLayout, setLocalLayout] = useState<Layout[]>([]);
+  const [rowHeight, setRowHeight] = useState<number>(50); // Dynamically adjusted row height
+  const [gridWidth, setGridWidth] = useState<number>(GRID_WIDTH); // Dynamic grid width for zoom handling
 
-  useEffect(()=> {
+  useEffect(() => {
     const fetchDashboardLayout = async () => {
-      const response = await getLayout(dashboardId)
-      setLocalLayout(response.data.layout)
-    }
+      const response = await getLayout(dashboardId);
+      setLocalLayout(response.data.layout);
+    };
 
-    fetchDashboardLayout()
-  }, [])
+    fetchDashboardLayout();
+  }, [dashboardId]);
 
   useEffect(() => {
     if (storedLayout.layout) {
       setLocalLayout(storedLayout.layout);
     }
   }, [storedLayout]);
+
+  // Adjust row height and grid width based on zoom level and screen size
+  useEffect(() => {
+    const handleResizeAndZoom = () => {
+      const zoomLevel = window.outerWidth / window.innerWidth;
+
+      // Adjust grid width and rowHeight dynamically based on zoom level
+      const adjustedRowHeight = Math.max(Math.floor((window.innerHeight / 20) * zoomLevel), 30);
+      const adjustedGridWidth = GRID_WIDTH * zoomLevel;
+
+      setRowHeight(adjustedRowHeight); // Adjust row height based on zoom
+      setGridWidth(adjustedGridWidth); // Adjust grid width based on zoom
+    };
+
+    handleResizeAndZoom(); // Initial calculation
+    window.addEventListener('resize', handleResizeAndZoom); // Recalculate on window resize and zoom
+
+    return () => {
+      window.removeEventListener('resize', handleResizeAndZoom);
+    };
+  }, []);
 
   const onAddWidget = async (deviceId: string, selectedChart: chartTypes) => {
     const newWidget: WidgetLayout = {
@@ -55,7 +82,7 @@ const Dashboard: React.FC = () => {
       h: 6,
       minW: 4,
       minH: 6,
-      maxW: NUM_COLUMNS,
+      maxW: cols.lg,
       maxH: 12,
       chart: selectedChart,
       defaultDevice: deviceId,
@@ -77,18 +104,17 @@ const Dashboard: React.FC = () => {
       const layoutBody = {
         ...storedLayout,
         layout: localLayout,
-      }; 
-      
+      };
+
       dispatch(setLayout(dashboardId, layoutBody));
-      await postLayout(dashboardId, layoutBody)
-      
+      await postLayout(dashboardId, layoutBody);
     }
   };
 
   const validateLayout = (newLayout: WidgetLayout[]) => {
     return newLayout.map((item) => ({
       ...item,
-      x: Math.min(item.x, NUM_COLUMNS - item.w),
+      x: Math.min(item.x, cols.lg - item.w),
     }));
   };
 
@@ -120,17 +146,19 @@ const Dashboard: React.FC = () => {
           ref={gridLayoutRef}
           style={{ position: 'relative' }}
         >
-          <GridLayout
+          <ResponsiveGridLayout
             className="layout"
-            layout={localLayout}
-            cols={NUM_COLUMNS}
-            rowHeight={ROW_HEIGHT}
-            width={GRID_WIDTH}
+            layouts={{ lg: localLayout }}
+            breakpoints={breakpoints}
+            cols={cols}
+            rowHeight={rowHeight} // Dynamic row height
+            maxRows={10}
             isDraggable={isEditable}
             isResizable={isEditable}
             onLayoutChange={onLayoutChange}
             onResizeStop={onLayoutChange}
             onDragStop={onLayoutChange}
+            width={gridWidth} // Dynamic grid width based on zoom
           >
             {localLayout.map((item: WidgetLayout) => (
               <div key={item.i} data-grid={item} className="widget-container">
@@ -141,7 +169,7 @@ const Dashboard: React.FC = () => {
                 />
               </div>
             ))}
-          </GridLayout>
+          </ResponsiveGridLayout>
         </Box>
         {isClicked && (
           <AddWidget onAdd={onAddWidget} onClose={() => setIsClicked(false)} />
