@@ -19,6 +19,7 @@ import {
   getWarehouseByWarehouseId,
   updateWarehouseByWarehouseId,
 } from '../../api/MongoAPIInstance';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -30,8 +31,7 @@ import { RootState } from '../../Redux/Reducer';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
-  const currentUser = useSelector((state: RootState) => state.user.user);
-
+  const currentUser = useSelector((state: RootState) => state.user.user)
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
     latitude: '',
@@ -81,25 +81,19 @@ const Warehouse: React.FC = () => {
         const response = await deleteWarehouseByWarehouseId(warehouseid);
         console.log(response);
         fetchAllWarehouses();
-
-        setOpen(true);
         setSnackbarType('success');
         setMessage('Warehouse Deleted Successfully');
-
-        setTimeout(() => {
-          setLoadingg(false);
-          navigate('/warehouses');
-        }, 500);
       } catch (error) {
         console.error('Error deleting warehouse:', error);
-        setOpen(true);
         setSnackbarType('error');
         setMessage('Failed to Delete Warehouse');
-
+      }
+      finally {
+        setOpen(true);
         setTimeout(() => {
           setLoadingg(false);
           navigate('/warehouses');
-        }, 1000);
+        }, 700);
       }
     }, 1000);
   };
@@ -201,6 +195,7 @@ const Warehouse: React.FC = () => {
         currentUser.id?.id,
         undefined
       );
+
       warehousecountDispatch(set_warehouse_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
@@ -240,11 +235,11 @@ const Warehouse: React.FC = () => {
           `Error fetching location for warehouse ${warehouseId}:`,
           err.message
         );
-        setLocationInfo({ [warehouseId]: 'Not found' });
       }
     };
 
     if (formData.latitude && formData.longitude) {
+
       fetchLocationInfo(
         formData.latitude,
         formData.longitude,
