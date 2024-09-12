@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                 setTimeout(() => {
                     setState(prevState => ({ ...prevState, open: false }));
                     navigate('/dashboards', { state: username });
-                }, 500);
+                }, 700);
             }, 1000);
 
         } catch (error) {

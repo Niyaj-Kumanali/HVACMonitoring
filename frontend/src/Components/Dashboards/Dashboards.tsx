@@ -33,8 +33,13 @@ import {
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
-import { getAllVehiclesByUserId, getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
+import {
+  getAllVehiclesByUserId,
+  getAllWarehouseByUserId,
+} from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
 const Dashboard = () => {
   const currentuser = useSelector((state: any) => state.user.user);
@@ -77,7 +82,10 @@ const Dashboard = () => {
   const fetchAllVehicles = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await getAllVehiclesByUserId(currentuser.id?.id, undefined);
+        const response = await getAllVehiclesByUserId(
+          currentuser.id?.id,
+          undefined
+        );
         dispatch(set_vehicle_count(response.data.totalElements));
       }
     } catch (error) {
@@ -88,7 +96,10 @@ const Dashboard = () => {
   const fetchAllWarehouses = async () => {
     try {
       if (currentuser?.id?.id) {
-        const response = await getAllWarehouseByUserId(currentuser.id?.id, undefined);
+        const response = await getAllWarehouseByUserId(
+          currentuser.id?.id,
+          undefined
+        );
         dispatch(set_warehouse_count(response.data.totalElements));
       }
     } catch (error) {
@@ -156,9 +167,8 @@ const Dashboard = () => {
     }
   };
   const handleEdit = async (dashboardId: string = '') => {
-    navigate(`/dashboard/edit/${dashboardId}`)
+    navigate(`/dashboard/edit/${dashboardId}`);
   };
-
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -178,14 +188,13 @@ const Dashboard = () => {
   };
 
   const handleAddDashboard = () => {
-    // Handle logic to add a new dashboard
     navigate(`/dashboard`);
   };
 
   return (
     <>
       <div className="menu-data dashboard">
-        <AppBar style={{backgroundColor: '#2BC790'}} position="static">
+        <AppBar style={{ backgroundColor: '#2BC790' }} position="static">
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
               Dashboard Management
@@ -195,9 +204,9 @@ const Dashboard = () => {
               onClick={handleAddDashboard}
               style={{
                 borderRadius: '50%',
-                height: '40px', // Adjust the height to your preference
-                width: '40px', // Make the width equal to the height
-                minWidth: '40px', // Ensure the button is not resized               
+                height: '40px', 
+                width: '40px', 
+                minWidth: '40px',
               }}
             >
               <AddIcon />
@@ -222,8 +231,10 @@ const Dashboard = () => {
                       {dashboard.title}
                     </span>
                     <div>
-                      <IconButton aria-label="edit"
-                      onClick={()=> handleEdit(dashboard.id?.id)}>
+                      <IconButton
+                        aria-label="edit"
+                        onClick={() => handleEdit(dashboard.id?.id)}
+                      >
                         <EditIcon className="edit-icon" />
                       </IconButton>
                       <IconButton

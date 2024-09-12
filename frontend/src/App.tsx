@@ -6,8 +6,6 @@ import Header from './Components/Header/Header';
 import { useEffect, useState, useRef } from 'react';
 import Loader from './Components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
 
 const App = () => {
   const navigate = useNavigate();
@@ -22,9 +20,9 @@ const App = () => {
 
       if (!token || token !== accesstoken) {
         navigate('/login');
-      } 
-
-      setLoading(false);
+      } else {
+        setLoading(false);
+      }
     };
 
     validateToken();
@@ -32,10 +30,14 @@ const App = () => {
 
   useEffect(() => {
     let lastActivity = Date.now();
+
     const checkActivity = () => {
       const now = Date.now();
       if (now - lastActivity > 600000) {
         localStorage.clear();
+        setLoading(true);
+
+        setLoading(false);
         navigate('/login');
       }
     };
@@ -76,7 +78,7 @@ const App = () => {
           timeout={500}
           nodeRef={nodeRef}
         >
-          <Outlet/>
+          <Outlet />
         </CSSTransition>
       </TransitionGroup>
     </>

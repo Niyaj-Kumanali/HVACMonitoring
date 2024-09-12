@@ -14,12 +14,14 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   deleteWarehouseByWarehouseId,
+  getAllWarehouseByUserId,
+  getLocationByLatsAndLongs,
   getWarehouseByWarehouseId,
   mongoAPI,
   updateWarehouseByWarehouseId,
 } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -29,6 +31,7 @@ import {
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
+  const currentUser = useSelector((state: RootState) => state.user.user);
 
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
@@ -153,26 +156,20 @@ const Warehouse: React.FC = () => {
     setLoading(true);
 
     try {
-      const currentUser = await getCurrentUser();
       const convertedData = {
         ...formData,
-        latitude: parseFloat(formData.latitude || '0'),
-        longitude: parseFloat(formData.longitude || '0'),
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
         warehouse_dimensions: {
-          length: parseFloat(formData.warehouse_dimensions?.length || '0'),
-          width: parseFloat(formData.warehouse_dimensions?.width || '0'),
-          height: parseFloat(formData.warehouse_dimensions?.height || '0'),
+          length: parseFloat(formData.warehouse_dimensions?.length),
+          width: parseFloat(formData.warehouse_dimensions?.width),
+          height: parseFloat(formData.warehouse_dimensions?.height),
         },
         cooling_units: Number(formData.cooling_units),
         sensors: Number(formData.sensors),
-        userId: currentUser.data.id.id,
-        email: currentUser.data.email,
+        userId: currentUser.id?.id,
+        email: currentUser.email,
       };
-
-      await mongoAPI.put(
-        `warehouse/updatewarehouse/${warehouseid}`,
-        JSON.stringify(convertedData)
-      );
 
       await updateWarehouseByWarehouseId(
         warehouseid,
@@ -201,16 +198,11 @@ const Warehouse: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const currentUser = await getCurrentUser();
-
-      const response = await mongoAPI.get(
-        `/warehouse/getallwarehouse/${currentUser.data.id.id}`
+      const response = await getAllWarehouseByUserId(
+        currentUser.id?.id,
+        undefined
       );
-      if (response.data.length === 0) {
-        warehousecountDispatch(set_warehouse_count(0));
-      } else {
-        warehousecountDispatch(set_warehouse_count(response.data.length));
-      }
+      warehousecountDispatch(set_warehouse_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
       warehousecountDispatch(set_warehouse_count(0));
@@ -230,24 +222,37 @@ const Warehouse: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchLocationInfo = async (latitude: string, longitude: string, warehouseId: string) => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch location data');
-            }
+    const fetchLocationInfo = async (
+      latitude: string,
+      longitude: string,
+      warehouseId: string
+    ) => {
+      try {
+        const response = await getLocationByLatsAndLongs(latitude, longitude);
+        console.log(response);
+        // if (!response.ok) {
+        //     throw new Error('Failed to fetch location data');
+        // }
 
-            const data: Location = await response.json();
-            setLocationInfo({[warehouseId]: data });
-        } catch (err: any) {
-            console.log(`Error fetching location for warehouse ${warehouseId}:`, err.message);
-        }
+        // const data: Location = await response.json();
+        // setLocationInfo({[warehouseId]: data });
+      } catch (err: any) {
+        console.log(
+          `Error fetching location for warehouse ${warehouseId}:`,
+          err.message
+        );
+        setLocationInfo({ [warehouseId]: 'Not found' });
+      }
     };
 
     if (formData.latitude && formData.longitude) {
-        fetchLocationInfo(formData.latitude, formData.longitude, warehouseid || "");
+      fetchLocationInfo(
+        formData.latitude,
+        formData.longitude,
+        warehouseid || ''
+      );
     }
-}, [formData]);
+  }, [formData]);
 
   return (
     <div className="menu-data">
@@ -266,7 +271,7 @@ const Warehouse: React.FC = () => {
                   Location
                   <p>
                     :{' '}
-                    {locationInfo[warehouseid || ""]?.display_name ||
+                    {locationInfo[warehouseid || '']?.display_name ||
                       'Loading location...'}
                   </p>
                 </h3>

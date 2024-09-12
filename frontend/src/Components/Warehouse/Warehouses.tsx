@@ -40,9 +40,7 @@ const Warehouses = () => {
                 pageSize: pageSize,
                 page: page,
               };
-              console.log(params);
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '', params);
-            console.log(response.data);
             setTimeout(() => {
                 if (response.data.data.length === 0) {
                     setMessage("No Warehouse Found");
