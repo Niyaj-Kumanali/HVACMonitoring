@@ -16,29 +16,9 @@ import './Addvehicle.css';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
+import { DriverDetails, VehicleData, VehicleDimensions } from '../../types/thingsboardTypes';
 
-export interface VehicleDimensions {
-  length: string;
-  width: string;
-  height: string;
-}
 
-export interface DriverDetails {
-  driver_name: string;
-  driver_contact_no: string;
-  licence_id: string;
-}
-
-export interface VehicleData {
-  vehicle_number: string;
-  vehicle_name: string;
-  vehicle_dimensions: VehicleDimensions;
-  Driver_details: DriverDetails;
-  cooling_units: string | null; // Set as string or null
-  sensors: string | null; // Set as string or null
-  userId: string;
-  email: string;
-}
 
 const AddVehicle: React.FC = () => {
   const currentUser = useSelector((state: RootState) => state.user.user);

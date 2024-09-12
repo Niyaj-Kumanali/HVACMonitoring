@@ -53,12 +53,12 @@ const AddDevice = () => {
       const warehouseResponse = await mongoAPI.get(
         `/warehouse/getallwarehouse/${currentUser.data.id.id}`
       );
-      setWarehouse(warehouseResponse.data);
+      setWarehouse(warehouseResponse.data.data);
 
       const vehicleResponse = await mongoAPI.get(
         `/vehicle/getallvehicle/${currentUser.data.id.id}`
       );
-      setVehicle(vehicleResponse.data);
+      setVehicle(vehicleResponse.data.data);
     } catch (error) {
       console.error('Failed to fetch warehouses or vehicles:', error);
     }

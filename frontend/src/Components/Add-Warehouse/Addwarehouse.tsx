@@ -11,28 +11,13 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { getAllWarehouseByUserId, mongoAPI } from '../../api/MongoAPIInstance';
+import { addWarehouse, getAllWarehouseByUserId, mongoAPI } from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
+import { WarehouseData, WarehouseDimensions } from '../../types/thingsboardTypes';
 
-interface WarehouseDimensions {
-  length: string;
-  width: string;
-  height: string;
-}
 
-interface WarehouseData {
-  warehouse_name: string;
-  latitude: string;
-  longitude: string;
-  warehouse_dimensions: WarehouseDimensions;
-  energy_resource: string;
-  cooling_units: string | null; // Set as string or null
-  sensors: string | null; // Set as string or null
-  userId: string;
-  email: string;
-}
 
 const AddWarehouse: React.FC = () => {
   const [formData, setFormData] = useState<WarehouseData>({
@@ -134,10 +119,9 @@ const AddWarehouse: React.FC = () => {
     console.log(JSON.stringify(convertedData));
 
     try {
-      const response = await mongoAPI.post(
-        'warehouse/addwarehouse',
-        JSON.stringify(convertedData)
-      );
+  
+        const response = await addWarehouse(JSON.stringify(convertedData))
+      
       console.log('Warehouse added:', response.data);
 
       setTimeout(() => {

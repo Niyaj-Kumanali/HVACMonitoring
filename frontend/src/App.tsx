@@ -5,8 +5,6 @@ import './App.css';
 import Header from './Components/Header/Header';
 import { useEffect,  useRef } from 'react';
 import { useSelector } from 'react-redux';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
 
 const App = () => {
   const navigate = useNavigate();
@@ -21,11 +19,11 @@ const App = () => {
       if (!token || token !== accesstoken) {
         navigate('/login');
       } 
+
     };
 
     validateToken();
   }, [navigate, accesstoken]);
-
 
 
   return (
@@ -46,6 +44,7 @@ const App = () => {
             <Outlet />
           </div>
           
+
         </CSSTransition>
       </TransitionGroup>
     </>
