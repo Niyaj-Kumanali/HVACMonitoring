@@ -52,7 +52,6 @@ const DeviceInfo: React.FC = () => {
   const deviceCountDispatch = useDispatch();
   const user = useSelector((state: any) => state.user.user);
   const [accessToken, setAccessToken] = useState<string>('');
-  console.log(accessToken);
 
   const [isEdit, setIsEdit] = useState(true);
 
@@ -263,6 +262,7 @@ const DeviceInfo: React.FC = () => {
     } finally {
       setOpen(true);
     }
+    console.log(text)
   };
 
   useEffect(() => {
