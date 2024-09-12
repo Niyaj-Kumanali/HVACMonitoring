@@ -30,12 +30,18 @@
     animation: slideOut 0.3s ease-in forwards;
 }
 
+.App {
+    display: flex;
+    width: 100vw;
+}
+
 
 .menu-data {
-    position: absolute;
-    left: 275px;
-    width: calc(100% - 275px);
-    top: 61px;
+    /* position: absolute; */
+    /* left: 275px; */
+    /* width: calc(100% - 275px); */
+    /* top: 61px; */
+    width: 80%;
     overflow-y: auto;
     box-sizing: border-box;
     height: calc(100vh - 65px);
@@ -45,7 +51,7 @@
 
 @media screen and (max-width: 700px) {
     .menu-data{
-        transform:translateX(-274px);
+        /* transform:translateX(-274px); */
         width: 100%;
         border: 1px solid black;
     }

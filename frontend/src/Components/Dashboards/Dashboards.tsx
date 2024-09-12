@@ -40,14 +40,17 @@ import {
 import { getCurrentUser } from '../../api/loginApi';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import Paginations from '../Pagination/Paginations';
 
-const Dashboard = () => {
+const Dashboards = () => {
   const currentuser = useSelector((state: any) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoader] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>('');
+  const [pageCount, setPageCount] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -111,14 +114,14 @@ const Dashboard = () => {
   const fetchDashboards = async (page: number) => {
     try {
       const params: DashboardQueryParams = {
-        pageSize: 10,
+        pageSize: 12,
         page: page,
-        textSearch: '',
         sortProperty: 'title',
         sortOrder: 'ASC',
       };
       const response = await getTenantDashboards(params);
       setDashboards(response.data.data ?? []);
+      setPageCount(response.data.totalPages)
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
       setError('No Dashboard Found');
@@ -138,7 +141,7 @@ const Dashboard = () => {
           dispatch(set_Authority(response.data.authority));
 
           await Promise.all([
-            fetchDashboards(0),
+            fetchDashboards(currentPage-1),
             fetchUserData(),
             fetchDevices(0),
             fetchAllVehicles(),
@@ -155,13 +158,13 @@ const Dashboard = () => {
     };
 
     fetchAllData();
-  }, [dispatch, currentuser?.id?.id]);
+  }, [dispatch, currentuser?.id?.id, currentPage]);
 
   const handleDelete = async (dashboardId: string = '') => {
     try {
       await deleteDashboard(dashboardId);
       setOpen(true);
-      fetchDashboards(0);
+      fetchDashboards(currentPage-1);
     } catch (error) {
       console.error('Failed to delete dashboard', error);
     }
@@ -193,7 +196,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="menu-data dashboard">
+      <div className="menu-data">
         <AppBar style={{ backgroundColor: '#2BC790' }} position="static">
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -204,8 +207,8 @@ const Dashboard = () => {
               onClick={handleAddDashboard}
               style={{
                 borderRadius: '50%',
-                height: '40px', 
-                width: '40px', 
+                height: '40px',
+                width: '40px',
                 minWidth: '40px',
               }}
             >
@@ -214,23 +217,23 @@ const Dashboard = () => {
           </Toolbar>
         </AppBar>
 
-        <div className="devices">
+        <div className="dashboards">
           {loading ? (
             <Loader />
           ) : showError ? (
             <div>{error}</div>
           ) : (
             <>
-              <h2>Dashboards</h2>
               <ul>
                 {dashboards.map((dashboard, index) => (
-                  <li key={index}>
+                  <li key={index} className="dashboardListItem">
                     <span
                       onClick={() => handleDashboardClick(dashboard.id?.id)}
+                      className="title"
                     >
                       {dashboard.title}
                     </span>
-                    <div>
+                    <div className="button-container">
                       <IconButton
                         aria-label="edit"
                         onClick={() => handleEdit(dashboard.id?.id)}
@@ -247,9 +250,14 @@ const Dashboard = () => {
                   </li>
                 ))}
               </ul>
+              <Paginations
+                pageCount={pageCount}
+                onPageChange={setCurrentPage}
+              />
             </>
           )}
         </div>
+
         <Snackbar
           open={open}
           autoHideDuration={2000}
@@ -272,4 +280,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboards;

@@ -92,7 +92,7 @@ const Devices: React.FC = () => {
 
     const renderContent = () => {
         if (loadingDevices && initialLoad) {
-            // return <Loader />;
+            return <Loader />;
         }
 
         if (errorMessage) {

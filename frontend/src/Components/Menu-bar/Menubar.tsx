@@ -5,7 +5,7 @@ import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import CableIcon from '@mui/icons-material/Cable';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GroupIcon from '@mui/icons-material/Group';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 import AddIcon from '@mui/icons-material/Add';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
