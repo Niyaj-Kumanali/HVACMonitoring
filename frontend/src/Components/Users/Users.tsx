@@ -26,7 +26,7 @@ const AddCustomer: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const usercountdispatch = useDispatch();
     const [pageCount, setPageCount] = useState<number>(1);
-    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [initialLoad, setInitialLoad] = useState(true);
 
     const fetchUserData = async (page: number) => {
@@ -56,7 +56,7 @@ const AddCustomer: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchUserData(currentPage);
+        fetchUserData(currentPage - 1);
     }, [currentPage]);
 
     const formatDate = (timestamp: number) => {

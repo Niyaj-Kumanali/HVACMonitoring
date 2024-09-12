@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { set_DeviceCount } from "../../Redux/Action/Action";
 import { useNavigate } from "react-router-dom";
 import Paginations from "../Pagination/Paginations";
+import Loader from "../Loader/Loader";
 
 const Devices: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);
@@ -47,7 +48,6 @@ const Devices: React.FC = () => {
             setPageCount(response.data.totalPages);
             setDevices(response.data.data || []);
             deviceCountDispatch(set_DeviceCount(response.data.totalElements));
-            setLoadingDevices(false);
         } catch (error) {
             console.error('Failed to fetch devices', error);
             setErrorMessage("Problem fetching devices data");

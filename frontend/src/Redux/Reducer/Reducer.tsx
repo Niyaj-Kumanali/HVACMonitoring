@@ -3,6 +3,7 @@ import { User } from "../../types/thingsboardTypes";
 interface Userstate {
     accesstoken: string | null;
     user: User
+    menubar: boolean
 }
 
 const initial_state: any = {
@@ -12,7 +13,8 @@ const initial_state: any = {
     warehousecount: 0,
     deviceCount :0,
     vehicle :0,
-    authority: "CUSTOMER_USER"
+    authority: "CUSTOMER_USER",
+    menubar : false
 }
 
 const userReducer = (state = initial_state, action: any): Userstate => {
@@ -54,6 +56,12 @@ const userReducer = (state = initial_state, action: any): Userstate => {
             return {
                 ...state,
                 authority: action.payload
+            }
+
+        case "SET_MENUBAR":
+            return {
+                ...state,
+                menubar : action.payload
             }
         default:
             return state;

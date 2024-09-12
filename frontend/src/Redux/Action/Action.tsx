@@ -49,3 +49,10 @@ export const set_Authority = (authority: String) => {
     }
 }
 
+export const set_Menubaropen = (menubar : boolean) => {
+    return {
+        type : 'SET_MENUBAR',
+        payload:menubar
+    }
+}
+

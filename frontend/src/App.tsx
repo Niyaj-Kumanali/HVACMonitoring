@@ -3,8 +3,7 @@ import Menubar from './Components/Menu-bar/Menubar';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './App.css';
 import Header from './Components/Header/Header';
-import { useEffect, useState, useRef } from 'react';
-import Loader from './Components/Loader/Loader';
+import { useEffect,  useRef } from 'react';
 import { useSelector } from 'react-redux';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -12,7 +11,6 @@ import 'react-resizable/css/styles.css';
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
   const accesstoken = useSelector((state: any) => state.user.accesstoken);
   const nodeRef = useRef(null);
 
@@ -23,49 +21,16 @@ const App = () => {
       if (!token || token !== accesstoken) {
         navigate('/login');
       } 
-
-      setLoading(false);
     };
 
     validateToken();
   }, [navigate, accesstoken]);
 
-  useEffect(() => {
-    let lastActivity = Date.now();
-    const checkActivity = () => {
-      const now = Date.now();
-      if (now - lastActivity > 600000) {
-        localStorage.clear();
-        navigate('/login');
-      }
-    };
 
-    const handleActivity = () => {
-      lastActivity = Date.now();
-    };
-
-    window.addEventListener('click', handleActivity);
-    window.addEventListener('keydown', handleActivity);
-    window.addEventListener('mousemove', handleActivity);
-
-    const intervalId = setInterval(checkActivity, 60000);
-
-    return () => {
-      window.removeEventListener('click', handleActivity);
-      window.removeEventListener('keydown', handleActivity);
-      window.removeEventListener('mousemove', handleActivity);
-      clearInterval(intervalId);
-    };
-  }, [navigate]);
-
-  if (loading) {
-    return <Loader />;
-  }
 
   return (
     <>
       <Header />
-      <Menubar />
       <TransitionGroup component={null}>
         <CSSTransition
           key={location.pathname}
@@ -73,10 +38,14 @@ const App = () => {
             enter: 'page-enter',
             exit: 'page-exit',
           }}
-          timeout={500}
+          timeout={0}
           nodeRef={nodeRef}
         >
-          <Outlet/>
+          <div>
+            <Menubar />
+            <Outlet />
+          </div>
+          
         </CSSTransition>
       </TransitionGroup>
     </>
