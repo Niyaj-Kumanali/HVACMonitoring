@@ -48,7 +48,8 @@ const AddCustomer: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchUserData(currentPage-1);
+        fetchUserData(currentPage - 1);
+
     }, [currentPage]);
 
     const formatDate = (timestamp: number) => {

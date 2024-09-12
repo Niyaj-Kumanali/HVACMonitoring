@@ -23,12 +23,12 @@ const Paginations: React.FC<PaginationProps> = ({ pageCount, onPageChange }) => 
         <div className="pagination">
             <Stack spacing={2} className="pagination">
                 <Pagination
-                    count={pageCount}           // Total number of pages
-                    page={currentPage}          // Current active page
-                    variant="outlined"          // Outlined style
-                    color="primary"             // Color of pagination
-                    size="large"                // Size of the pagination component
-                    onChange={handleChangePage} // Handle page change
+                    count={pageCount}
+                    page={currentPage}
+                    variant="outlined"        
+                    color="primary"
+                    size="large" 
+                    onChange={handleChangePage}
                 />
             </Stack>
         </div>

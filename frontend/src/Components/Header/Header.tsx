@@ -8,6 +8,8 @@ import "./Header.css";
 import { getCurrentUser } from "../../api/loginApi";
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../assets/UrjalinksLogo_03.png'
+import { useDispatch } from "react-redux";
+import { set_Menubaropen } from "../../Redux/Action/Action";
 
 
 const Header: React.FC = () => {
@@ -52,12 +54,21 @@ const Header: React.FC = () => {
         fetchUserData();
     }, []);
 
+    const [menubarOpen, setMenuBarOpen] = useState(false);
+
+    const menubarDispatch = useDispatch();
+
+    const handleMenubarOpen = () => {
+        setMenuBarOpen(menubarOpen ? false : true)
+        menubarDispatch(set_Menubaropen(menubarOpen ? false : true))
+    }
+
 
 
     return (
         <div className="header">
-            <div className="menu-items">
-                <MenuIcon className="menuicon"/>
+            <div className="menu-items" onClick={handleMenubarOpen}>
+                <MenuIcon className="menuicon" />
             </div>
             {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
             

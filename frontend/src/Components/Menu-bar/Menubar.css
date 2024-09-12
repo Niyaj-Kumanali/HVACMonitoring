@@ -1,74 +1,118 @@
+.menu-icon {
+    font-size: 30px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
 .side-bar {
     height: calc(100vh - 65px);
     width: 275px;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     overflow-x: hidden;
     overflow-y: auto;
-    transition: width 0.3s ease, transform 0.3s ease;
+    transition: transform 0.3s ease, width 0.3s ease;
     z-index: 100;
     position: relative;
     background-color: white;
+    transform: translateX(0);
 }
 
-.Menu{
+.sidebar-collapsed {
+    transform: translateX(-275px);
+}
+#side-bar {
+    height: calc(100vh - 65px);
+    width: 275px;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: transform 0.3s ease, width 0.3s ease;
+    z-index: 100;
+    position: relative;
+    background-color: white;
+    transform: translateX(0);
+}
+
+.sidebar2 {
+    height: calc(100vh - 65px);
+    width: 275px;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: transform 0.3s ease, width 0.3s ease;
+    z-index: 100;
+    position: relative;
+    background-color: white;
+    transform: translateX(-275px);
+    /* Ensure sidebar is hidden */
+}
+
+.sidebar3{
+    transform: translateX(0);
+}
+
+.Menu {
     width: 100%;
     text-align: center;
     padding: 10px 0px;
-    background-color:#2BC790;
+    background-color: #2BC790;
     color: white;
-    font-size:18px;
+    font-size: 18px;
     position: sticky;
     top: 0;
     z-index: 100;
 }
-.side-bar ul li{
+
+.side-bar ul li , .sidebar2 ul li{
     padding: 14px 14px 14px 12px;
     font-weight: 400;
     display: flex;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 10;
     background-color: #fff;
     cursor: pointer;
 }
-.user-selection{
+
+.user-selection {
     display: flex;
     flex-direction: column;
 }
 
-.toggle-user{
-    display:none;
+.toggle-user {
+    display: none;
 }
 
-
-
-
-.user-selection-link{
-    padding:20px;
+.user-selection-link {
+    padding: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     width: 100%;
     text-align: left;
     color: black;
-    font-size:16px;
+    font-size: 16px;
     background-color: white;
 }
-.speedicon{
-    font-size:28px !important;
+
+.speedicon {
+    font-size: 28px !important;
 }
-.link, a{
-    color:black !important;
+
+.link,
+a {
+    color: black !important;
     text-decoration: none;
     list-style-type: none;
     position: relative;
 }
 
-.quick-action{
-    font-size:17px;
+.quick-action {
+    font-size: 17px;
     font-weight: 500;
 }
-.count{
+
+.count {
     padding: 0px 8px;
     border-radius: 10px;
     position: absolute;
@@ -77,12 +121,8 @@
     color: white;
     font-size: 15px;
 }
+
 html {
     scroll-behavior: smooth;
 }
 
-@media screen and (max-width: 700px) {
-    .side-bar{
-        display: none;
-    }
-}

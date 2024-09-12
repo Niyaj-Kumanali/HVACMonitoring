@@ -48,7 +48,6 @@ const Devices: React.FC = () => {
             setPageCount(response.data.totalPages);
             setDevices(response.data.data || []);
             deviceCountDispatch(set_DeviceCount(response.data.totalElements));
-            setLoadingDevices(false);
         } catch (error) {
             console.error('Failed to fetch devices', error);
             setErrorMessage("Problem fetching devices data");
