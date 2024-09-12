@@ -13,6 +13,7 @@ import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { formatNumber } from "../../Utility/utility_functions";
 
 const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
@@ -58,22 +59,22 @@ const Menubar = () => {
                     <li><PieChartIcon className="speedicon" />Charts</li>
                 </Link>
                 <Link to="/actions" className="link">
-                    <li><ElectricBoltIcon className="speedicon" />Actions <span className="count">3</span></li>
+                    <li><ElectricBoltIcon className="speedicon" />Actions <span className="count">{formatNumber(3)}</span></li>
                 </Link>
                 {currentuser == 'TENANT_ADMIN' && <Link to="/devices" className="link">
-                    <li><CableIcon className="speedicon" />Devices <span className="count">{deviceCount}</span></li>
+                    <li><CableIcon className="speedicon" />Devices <span className="count">{formatNumber(deviceCount)}</span></li>
                 </Link>}
                 <Link to="/locations" className="link">
-                    <li><LocationOnIcon className="speedicon" />Locations <span className="count">10.67K</span></li>
+                    <li><LocationOnIcon className="speedicon" />Locations <span className="count">{formatNumber(1500)}</span></li>
                 </Link>
                 <Link to="/warehouses" className="link">
-                    <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span></li>
+                    <li><WarehouseIcon className="speedicon" />Warehouses <span className="count">{formatNumber(warehousecount)}</span></li>
                 </Link>
                 <Link to="/vehicles" className="link">
-                    <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">{vehicleCount}</span></li>
+                    <li><LocalShippingIcon className="speedicon" />Vehicles <span className="count">{formatNumber(vehicleCount)}</span></li>
                 </Link>
                 <Link to="/users" className="link">
-                    <li><GroupIcon className="speedicon" />Users <span className="count">{userCount}</span></li>
+                    <li><GroupIcon className="speedicon" />Users <span className="count">{formatNumber(userCount)}</span></li>
                 </Link>
                 <li className="quick-action">Quick Actions</li>
                 <div ref={hideref}>

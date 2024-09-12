@@ -47,9 +47,7 @@ const Vehicles = () => {
         pageSize: pageSize,
         page: page,
       };
-      console.log(params);
       const response = await getAllVehiclesByUserId(currentUser.id?.id, params);
-      console.log(response.data);
       if (response.data.data.length === 0) {
         vehicleCountDispatch(set_vehicle_count(0));
         setMessage('No Vehicle Found');
