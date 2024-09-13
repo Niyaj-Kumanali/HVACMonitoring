@@ -52,21 +52,21 @@ const Menubar = () => {
     useEffect(() => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
+    }, [menubaropen, dispatch]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menubarRef.current && !menubarRef.current.contains(event.target as Node)) {
+                if (menubaropen) {
+                    dispatch(set_Menubaropen(false));
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);  // Add the listener globally
+
+        return () => document.removeEventListener('mousedown', handleClickOutside);  // Cleanup the listener on component unmount
     }, [menubaropen]);
-
-    // useEffect(() => {
-    //     const handleClickOutside = (event: MouseEvent) => {
-    //         if (menubarRef.current && !menubarRef.current.contains(event.target as Node)) {
-    //             if (menubaropen) {
-    //                 dispatch(set_Menubaropen(false));  // Close the sidebar
-    //             }
-    //         }
-    //     };
-
-    //     document.addEventListener('mousedown', handleClickOutside);  // Add the listener globally
-
-    //     return () => document.removeEventListener('mousedown', handleClickOutside);  // Cleanup the listener on component unmount
-    // }, [menubaropen, dispatch]);
 
 
     const handleLinkClick = (path: string) => {

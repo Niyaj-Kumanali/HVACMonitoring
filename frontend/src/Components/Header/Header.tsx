@@ -54,7 +54,7 @@ const Header: React.FC = () => {
         fetchUserData();
     }, []);
 
-    const [menubarOpen, setMenuBarOpen] = useState(false);
+    const [menubarOpen, setMenuBarOpen] = useState<Boolean>(false);
 
     const menubarDispatch = useDispatch();
 
@@ -62,6 +62,7 @@ const Header: React.FC = () => {
         setMenuBarOpen(menubarOpen ? false : true)
         menubarDispatch(set_Menubaropen(menubarOpen ? false : true))
     }
+
 
 
 
