@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './PageNotFound.css';
 import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 const PageNotFound: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('light');
@@ -10,14 +11,18 @@ const PageNotFound: React.FC = () => {
     if (currentTheme === 'dark') {
       root.style.setProperty('--bg-color', '#ebebeb');
       root.style.setProperty('--text-color', '#000');
-      root.style.setProperty('--button-text-color', '#000');
       setCurrentTheme('light');
     } else {
       root.style.setProperty('--bg-color', '#050505');
       root.style.setProperty('--text-color', '#fff');
-      root.style.setProperty('--button-text-color', '#fff');
       setCurrentTheme('dark');
     }
+  };
+
+  const handleBackToHome = () => {
+    const root = document.documentElement;
+    root.style.setProperty('--bg-color', '#ebebeb');
+    root.style.setProperty('--text-color', '#000');
   };
 
   return (
@@ -42,20 +47,20 @@ const PageNotFound: React.FC = () => {
           to="/dashboards"
           aria-label="back to home"
           title="back to home"
-          onClick={() => setCurrentTheme('light')}
+          onClick={handleBackToHome}
         >
           back to home
         </Link>
       </div>
 
-      <button
+      <Button
         className="color-switcher"
         data-theme-color-switch
         aria-label="Switch Theme"
         onClick={handleThemeSwitch}
       >
         {currentTheme === 'light' ? '🌙' : '☀️'}
-      </button>
+      </Button>
     </main>
   );
 };
