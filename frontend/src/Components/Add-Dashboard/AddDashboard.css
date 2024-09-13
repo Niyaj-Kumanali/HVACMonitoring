@@ -1,44 +1,45 @@
 .add-dashboard {
     margin: 20px;
-    padding: 20px;
-    background-color: white;
-    min-width: 400px;
-    max-width: 50%;
+    padding: 40px;
+    background-color: #fff;
+    max-width: 55%;
+    min-width: 440px;
     border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2), -3px -3px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: max-content;
 }
 
 .add-dashboard .label {
-    font-size: 18px !important;
-    margin-bottom: 8px !important;
-    display: inline-block;
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: block;
 }
 
 .add-dashboard .text-field-box {
     width: 100%;
-    background-color: #ebebeb;
+    background-color: #f5f5f5;
     margin-bottom: 20px;
+    border-radius: 4px;
 }
 
 .add-dashboard .form-control {
     margin-bottom: 20px;
-    display: block;
-    width: 100%;
-    background-color: #ebebeb;
-}
-
-.add-dashboard .form-control-inner {
     width: 100%;
 }
 
 .add-dashboard .accountinfo-savebtn {
-    text-align: start !important;
-    margin-top: 30px !important;
-    padding: 10px 0 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start;
 }
 
-.add-dashboard .btn-save {
-    width: 150px;
-    height: 50px;
+.add-dashboard .btn-save-add-dashboard {
+    width: 180px;
+    height: 55px;
+    font-size: 14px;
 }
 
 .add-dashboard form {
@@ -46,5 +47,18 @@
 }
 
 .add-dashboard .MuiFormControl-root {
-    margin-top: 0px !important;
+    margin-top: 0;
+}
+
+@media screen and (max-width: 700px) {
+    .add-dashboard {
+        padding: 20px;
+        min-width: 290px;
+        max-width: 88%;
+    }
+
+    .add-dashboard .btn-save-add-dashboard {
+        width: 100%;
+        height: 45px;
+    }
 }

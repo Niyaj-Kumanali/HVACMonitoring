@@ -1,7 +1,7 @@
 /* General Styles */
 .header {
     width: 100%;
-    padding: 20px 40px;
+    padding: 20px 30px;
     display: flex;
     gap: 25px;
     background-color: #2BC790;
@@ -157,14 +157,21 @@ li {
     }
 }
 
+@media screen and (max-width: 320px) {
+    .header{
+        min-width: 345px;
+    }
+}
+
 @media screen and (max-width: 370px) {
     .menuu {
         width: 50px;
-        border: 1px solid black;
     }
 
     .logo {
         width: 140px;
-        border: 1px solid black;
     }
+        .header {
+            min-width: 345px;
+        }
 }

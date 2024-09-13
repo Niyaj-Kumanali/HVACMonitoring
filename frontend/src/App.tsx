@@ -23,7 +23,7 @@ const App = () => {
       if (token) {
         try {
           const decodedToken: any = jwtDecode(token);
-          const currentTime = Date.now() / 1000; // Current time in seconds
+          const currentTime = Date.now() / 1000;
 
           if (decodedToken.exp < currentTime) {
             localStorage.removeItem('token');
@@ -56,7 +56,7 @@ const App = () => {
           timeout={0}
           nodeRef={nodeRef}
         >
-          <div ref={nodeRef}>
+          <div>
             <Menubar />
             <Outlet />
           </div>

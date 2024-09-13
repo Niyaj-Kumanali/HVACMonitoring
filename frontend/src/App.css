@@ -35,6 +35,29 @@
     width: 100vw;
 }
 
+.menu-data::-webkit-scrollbar {
+    width: 1px;
+}
+
+.menu-data::-webkit-scrollbar-track {
+    background: #f4f6f9;
+}
+
+.menu-data::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.menu-data::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* For Firefox */
+.menu-data {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) #f4f6f9;
+}
+
 
 .menu-data {
     position: absolute;
@@ -49,10 +72,19 @@
     justify-content: flex-start;
 }
 
+
+
+@media screen and (max-width: 1200px) {
+    .menu-data {
+        transform: translateX(-25px);
+        width: calc(100% - 250px);
+    }
+}
+
 @media screen and (max-width: 700px) {
-    .menu-data{
-        transform:translateX(-274px);
-        width: 100%;
+    .menu-data {
+        transform: translateX(-276px);
+        width: 100%
     }
 }
 
