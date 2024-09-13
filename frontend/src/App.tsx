@@ -5,9 +5,9 @@ import './App.css';
 import Header from './Components/Header/Header';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { set_Accesstoken } from './Redux/Action/Action';
-
+import React from 'react';
 
 const App = () => {
   const navigate = useNavigate();
@@ -24,7 +24,6 @@ const App = () => {
         try {
           const decodedToken: any = jwtDecode(token);
           const currentTime = Date.now() / 1000;
-
           if (decodedToken.exp < currentTime) {
             localStorage.removeItem('token');
             navigate('/login');
@@ -66,4 +65,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default React.memo(App);
