@@ -56,7 +56,7 @@ const App = () => {
           timeout={0}
           nodeRef={nodeRef}
         >
-          <div className='App' ref={nodeRef}>
+          <div ref={nodeRef}>
             <Menubar />
             <Outlet />
           </div>

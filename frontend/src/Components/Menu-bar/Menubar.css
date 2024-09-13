@@ -6,7 +6,7 @@
 
 .side-bar {
     height: calc(100vh - 65px);
-    /* width: 275px; */
+    width: 275px !important;
     width: 20%;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     overflow-x: hidden;
@@ -20,6 +20,7 @@
 
 .sidebar-collapsed {
     transform: translateX(-275px);
+    
 }
 #side-bar {
     height: calc(100vh - 65px);
