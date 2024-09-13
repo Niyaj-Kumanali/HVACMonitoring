@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Button,
   Box,
   SnackbarContent,
@@ -13,8 +9,7 @@ import {
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getUsers } from '../../api/userApi';
-import { DashboardType, User } from '../../types/thingsboardTypes';
+import { DashboardType } from '../../types/thingsboardTypes';
 import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './AddDashboard.css';  // Ensure you import the CSS file
@@ -22,8 +17,6 @@ import './AddDashboard.css';  // Ensure you import the CSS file
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assignedCustomer, setAssignedCustomer] = useState('');
-  const [customers, setCustomers] = useState<User[]>([]);
   const [message, setMessage] = useState('');
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
   const [open, setOpen] = useState(false);
@@ -76,18 +69,6 @@ const AddDashboard: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const getCustomers = async () => {
-      const params = {
-        pageSize: 1000,
-        page: 0,
-      };
-      const response = await getUsers(params);
-      setCustomers(response.data.data);
-    };
-
-    getCustomers();
-  }, []);
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
