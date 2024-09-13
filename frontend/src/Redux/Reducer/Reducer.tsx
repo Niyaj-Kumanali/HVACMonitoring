@@ -8,7 +8,7 @@ interface Userstate {
 
 const initial_state: any = {
     user: null ,
-    accesstoken: null,
+    accesstoken: localStorage.getItem('token') || null,
     usercount: 0,
     warehousecount: 0,
     deviceCount :0,

@@ -1,5 +1,8 @@
-// import { v1 as uuidv1 } from 'uuid';
+export const formatNumber = (num: number) => {
+  const formatter = new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    compactDisplay: 'short',
+  });
 
-// export const generateUUIDv1 = () => {
-//   return uuidv1();
-// };
+  return formatter.format(num);
+};

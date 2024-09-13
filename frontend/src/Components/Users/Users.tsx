@@ -7,18 +7,10 @@ import { set_usersCount } from "../../Redux/Action/Action";
 import { Link } from "react-router-dom";
 import userimage from "../../assets/user.gif";
 import Paginations from "../Pagination/Paginations";
+import { User } from "../../types/thingsboardTypes";
 
-interface AdditionalInfo {
-    lastLoginTs?: number;
-}
 
-interface User {
-    id: {
-        id: string;
-    };
-    email: string;
-    additionalInfo: AdditionalInfo;
-}
+
 
 const AddCustomer: React.FC = () => {
     const [userdata, setUserdata] = useState<User[]>([]);
@@ -57,6 +49,7 @@ const AddCustomer: React.FC = () => {
 
     useEffect(() => {
         fetchUserData(currentPage - 1);
+
     }, [currentPage]);
 
     const formatDate = (timestamp: number) => {
@@ -84,7 +77,7 @@ const AddCustomer: React.FC = () => {
                 <div className="user-cont">
                     <div className="user">
                         {userdata.map((user, index) => (
-                            <Link to={`/user/${user.id.id}`} className="userinfo" key={index} state={user}>
+                            <Link to={`/user/${user.id?.id}`} className="userinfo" key={index} state={user}>
                                 <div className="user-img-info">
                                     <div className="img">
                                         <img src={userimage} className="personicon static-img" alt="User Static" />
@@ -92,7 +85,7 @@ const AddCustomer: React.FC = () => {
                                     </div>
                                     <div className="status">
                                         <p className="username">{user.email}</p>
-                                        <p>{user.additionalInfo.lastLoginTs ? formatDate(user.additionalInfo.lastLoginTs) : "No Login Found"}</p>
+                                        <p>{user.additionalInfo?.lastLoginTs ? formatDate(user.additionalInfo.lastLoginTs) : "No Login Found"}</p>
                                     </div>
                                 </div>
                             </Link>

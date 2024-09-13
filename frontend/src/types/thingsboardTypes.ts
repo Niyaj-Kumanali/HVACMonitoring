@@ -209,3 +209,41 @@ export interface WarehouseData {
   userId: string;
   email: string;
 }
+
+export interface VehicleDimensions {
+  length: string;
+  width: string;
+  height: string;
+}
+
+export interface DriverDetails {
+  driver_name: string;
+  driver_contact_no: string;
+  licence_id: string;
+}
+
+export interface VehicleData {
+  vehicle_number: string;
+  vehicle_name: string;
+  vehicle_dimensions: VehicleDimensions;
+  Driver_details: DriverDetails;
+  cooling_units: string | null; // Set as string or null
+  sensors: string | null; // Set as string or null
+  userId: string;
+  email: string;
+}
+
+export interface Warehouse {
+  _id: string;
+  warehouse_id: string;
+  warehouse_name: string;
+  location: string;
+  latitude: string;
+  longitude: string;
+  userId: string;
+  email: string;
+}
+
+export interface LocationInfo {
+  display_name: string;
+}

@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
             breakpoints={breakpoints}
             cols={cols}
             rowHeight={rowHeight} // Dynamic row height
-            maxRows={10}
+            maxRows={25}
             isDraggable={isEditable}
             isResizable={isEditable}
             onLayoutChange={onLayoutChange}

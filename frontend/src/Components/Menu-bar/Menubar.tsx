@@ -5,16 +5,17 @@ import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import CableIcon from '@mui/icons-material/Cable';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GroupIcon from '@mui/icons-material/Group';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AddToQueueIcon from '@mui/icons-material/AddToQueue';
 import AddIcon from '@mui/icons-material/Add';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { set_Menubaropen } from "../../Redux/Action/Action";
 import { RootState } from "../../Redux/Reducer";
+
+import { useEffect, useRef, useState } from "react";
 
 const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
@@ -106,6 +107,7 @@ const Menubar = () => {
                 <li onClick={() => handleLinkClick('/users')}>
                     <GroupIcon className="speedicon" />Users <span className="count">{userCount}</span>
                 </li>
+
                 <li className="quick-action">Quick Actions</li>
                 <div ref={hideref}>
                     <li onClick={() => handleLinkClick('/addDevice')}>

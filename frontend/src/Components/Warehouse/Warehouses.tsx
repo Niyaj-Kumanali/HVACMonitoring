@@ -8,21 +8,9 @@ import { Link, useNavigate } from "react-router-dom";
 import warehouseimg from "../../assets/warehouse.gif";
 import { RootState } from "../../Redux/Reducer";
 import Paginations from "../Pagination/Paginations";
+import { Warehouse, LocationInfo } from "../../types/thingsboardTypes";
 
-interface Warehouse {
-    _id: string;
-    warehouse_id: string;
-    warehouse_name: string;
-    location: string;
-    latitude: string;
-    longitude: string;
-    userId: string;
-    email: string;
-}
 
-interface LocationInfo {
-    display_name: string;
-}
 
 const Warehouses = () => {
     const [allWarehouses, setAllWarehouses] = useState<Warehouse[]>([]);
@@ -33,16 +21,14 @@ const Warehouses = () => {
     const currentUser = useSelector((state: RootState) => state.user.user);
     const [pageCount, setPageCount] = useState<number>(1);
     const navigate = useNavigate(); // For programmatic navigation
-    const [currentpage, setCurrentpage] = useState(1);    
+    const [currentpage, setCurrentpage] = useState(1);     
     const fetchAllWarehouses = async (page: any, pageSize: any) => {
         try {
             const params = {
                 pageSize: pageSize,
                 page: page,
               };
-              console.log(params);
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '', params);
-            console.log(response.data);
             setTimeout(() => {
                 if (response.data.data.length === 0) {
                     setMessage("No Warehouse Found");
