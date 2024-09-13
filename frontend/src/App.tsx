@@ -23,8 +23,7 @@ const App = () => {
       if (token) {
         try {
           const decodedToken: any = jwtDecode(token);
-          const currentTime = Date.now() / 1000; // Current time in seconds
-          console.log(decodedToken.exp);
+          const currentTime = Date.now() / 1000;
           if (decodedToken.exp < currentTime) {
             localStorage.removeItem('token');
             navigate('/login');

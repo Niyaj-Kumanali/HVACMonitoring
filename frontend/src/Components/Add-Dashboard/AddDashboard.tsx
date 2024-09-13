@@ -109,88 +109,72 @@ const AddDashboard: React.FC = () => {
   const snackbarIcon = snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />;
 
   return (
-    <Box
-      className="add-dashboard menu-data"
-      component="form"
-      onSubmit={handleSubmit}
-    >
-      <label htmlFor="" className="label">
-        Title
-      </label>
-      <Box className="text-field-box">
-        <TextField
-          fullWidth
-          label="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </Box>
-
-      <label htmlFor="" className="label">
-        Description
-      </label>
-      <Box className="text-field-box">
-        <TextField
-          fullWidth
-          label="Description"
-          multiline
-          minRows={4}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </Box>
-
-      <FormControl className="form-control">
-        <InputLabel id="assignedCustomer-label">Assigned Customer</InputLabel>
-        <Select
-          labelId="assignedCustomer-label"
-          id="assignedCustomer"
-          value={assignedCustomer}
-          label="Assigned Customer"
-          onChange={(e) => setAssignedCustomer(e.target.value)}
-          className="form-control-inner"
+    <>
+      <div className="dashboard-app-data">
+        <Box
+          className="add-dashboard menu-data"
+          component="form"
+          onSubmit={handleSubmit}
         >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          {customers.map((customer: User) => (
-            <MenuItem key={customer.id?.id} value={customer.email}>
-              {customer.email}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          <label htmlFor="" className="label">
+            Title
+          </label>
+          <Box className="text-field-box">
+            <TextField
+              fullWidth
+              label="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </Box>
 
-      <Box className="accountinfo-savebtn">
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className="btn-save"
-        >
-          {buttonText}
-        </Button>
-      </Box>
+          <label htmlFor="" className="label">
+            Description
+          </label>
+          <Box className="text-field-box">
+            <TextField
+              fullWidth
+              label="Description"
+              multiline
+              minRows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Box>
 
-      <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={snackbarStyles}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarIcon}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar>
-    </Box>
+          <Box className="accountinfo-savebtn">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              className="btn-save-add-dashboard"
+            >
+              {buttonText}
+            </Button>
+          </Box>
+
+          <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            style={{ marginTop: '64px' }}
+          >
+            <SnackbarContent
+              style={snackbarStyles}
+              message={
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                  {snackbarIcon}
+                  {message}
+                </span>
+              }
+            />
+          </Snackbar>
+        </Box>
+      </div>
+    </>
+    
   );
 };
 

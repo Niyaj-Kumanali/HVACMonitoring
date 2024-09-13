@@ -204,7 +204,7 @@ const Charts = () => {
                     <div className="chart">
                         <h2>Charts</h2>
                         <FormControl className="form-control">
-                            <InputLabel id="warehouse-label">Select Warehouse</InputLabel>
+                            <InputLabel className="input-label-select" id="warehouse-label">Select Warehouse</InputLabel>
                             <Select
                                 labelId="warehouse-label"
                                 id="warehouse-select"
@@ -228,7 +228,6 @@ const Charts = () => {
                                             <TableRow>
                                                 <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Select</TableCell>
                                                 <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Device Name</TableCell>
-                                                <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>ID</TableCell>
                                                 <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Status</TableCell>
                                                 <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Last Updated</TableCell>
                                             </TableRow>
@@ -244,8 +243,7 @@ const Charts = () => {
                                                         />
                                                     </TableCell>
                                                     <TableCell component="th" scope="row" className="tablecell"><p>{device.name}</p></TableCell>
-                                                    <TableCell align="right" className="tablecell"><p>{device.id.id}</p></TableCell>
-                                                    <TableCell align="right" className="tablecell"><p>{device.status}</p></TableCell>
+                                                    <TableCell align="right" className="tablecell"><p>{device.active ? "online" : "offline"}</p></TableCell>
                                                     <TableCell align="right" className="tablecell"><p>{new Date(device.createdTime).toLocaleString()}</p></TableCell>
                                                 </TableRow>
                                             ))}
@@ -277,6 +275,7 @@ const Charts = () => {
                                             series={seriesData}
                                             xAxis={[{ scaleType: 'point', data: data?.ts || [] }]}
                                             grid={{ vertical: true, horizontal: true }}
+                                            className="linechart-graph"
                                         />
                                     ) : (
                                         <p>No valid data available for the selected device.</p>

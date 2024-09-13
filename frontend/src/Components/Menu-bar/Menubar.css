@@ -1,27 +1,74 @@
-.menu-icon {
-    font-size: 30px;
-    cursor: pointer;
-    margin: 0 10px;
+/* Overall container styling */
+html {
+    scroll-behavior: smooth;
+    font-family: 'Poppins', sans-serif;
+}
+.side-bar::-webkit-scrollbar,
+.sidebar2::-webkit-scrollbar,
+.sidebar3::-webkit-scrollbar {
+    width: 1px;
 }
 
+.side-bar::-webkit-scrollbar-track,
+.sidebar2::-webkit-scrollbar-track,
+.sidebar3::-webkit-scrollbar-track {
+    background: #f4f6f9;
+}
+
+.side-bar::-webkit-scrollbar-thumb,
+.sidebar2::-webkit-scrollbar-thumb,
+.sidebar3::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.side-bar::-webkit-scrollbar-thumb:hover,
+.sidebar2::-webkit-scrollbar-thumb:hover,
+.sidebar3::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* For Firefox */
+.side-bar,
+.sidebar2,
+.sidebar3 {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) #f4f6f9;
+}
+.Menu {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0px;
+    background-color: #2bc790;
+    /* Cool blue */
+    color: white;
+    font-size: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    /* Add subtle shadow */
+    font-weight: bold;
+}
+
+/* Sidebar styling */
 .side-bar {
     height: calc(100vh - 65px);
     width: 275px !important;
     width: 20%;
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
     overflow-x: hidden;
     overflow-y: auto;
+    background-color: #f4f6f9;
+    /* Light background for sidebar */
     transition: transform 0.3s ease, width 0.3s ease;
     z-index: 100;
     position: relative;
-    background-color: white;
     transform: translateX(0);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    /* Subtle box shadow */
 }
 
-.sidebar-collapsed {
-    transform: translateX(-275px);
-    
-}
 #side-bar {
     height: calc(100vh - 65px);
     width: 275px;
@@ -35,6 +82,11 @@
     transform: translateX(0);
 }
 
+.sidebar-collapsed {
+    transform: translateX(-275px);
+}
+
+/* Sidebar when collapsed */
 .sidebar2 {
     height: calc(100vh - 65px);
     width: 275px;
@@ -49,56 +101,51 @@
     /* Ensure sidebar is hidden */
 }
 
-.sidebar3{
+/* Sidebar on full width */
+.sidebar3 {
     transform: translateX(0);
 }
 
-.Menu {
-    width: 100%;
-    text-align: center;
-    padding: 10px 0px;
-    background-color: #2BC790;
-    color: white;
-    font-size: 18px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.side-bar ul li , .sidebar2 ul li{
+/* Sidebar list items */
+.side-bar ul li,
+.sidebar2 ul li {
     padding: 14px 14px 14px 12px;
-    font-weight: 400;
+    font-weight: 450;
+    font-size: 1.1rem;
     display: flex;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    position: relative;
-    z-index: 10;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     background-color: #fff;
     cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
-.user-selection {
-    display: flex;
-    flex-direction: column;
+.side-bar ul li:hover,
+.sidebar2 ul li:hover {
+    background-color: #2bc790;
+    color: white;
 }
 
-.toggle-user {
-    display: none;
-}
-
-.user-selection-link {
-    padding: 20px;
+.quick-action {
+    font-size: 17px;
+    font-weight: 500;
+    color: #555;
+    padding: 10px 15px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    width: 100%;
-    text-align: left;
-    color: black;
-    font-size: 16px;
-    background-color: white;
 }
 
 .speedicon {
     font-size: 28px !important;
+    color: #2bc790;
+    transition: color 0.3s ease;
+}
+
+.side-bar ul li:hover .speedicon,
+#side-bar ul li:hover .speedicon {
+    color: white !important;
 }
 
 .link,
@@ -106,25 +153,63 @@ a {
     color: black !important;
     text-decoration: none;
     list-style-type: none;
-    position: relative;
-}
-
-.quick-action {
-    font-size: 17px;
-    font-weight: 500;
 }
 
 .count {
-    padding: 0px 8px;
+    padding: 2px 10px;
     border-radius: 10px;
-    position: absolute;
-    right: 35px;
-    background-color: #2BC790;
+    background-color: #2bc790;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
+    position: absolute;
+    right: 25px;
+    font-weight: bold;
 }
 
-html {
-    scroll-behavior: smooth;
+.user-selection {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    transition: max-height 0.3s ease;
 }
 
+.toggle-user {
+    max-height: 0;
+    overflow: hidden;
+}
+
+.toggle-user-open {
+    max-height: 200px;
+}
+
+.user-selection-link {
+    padding: 14px;
+    background-color: #f4f6f9;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-selection-link:hover {
+    background-color: #dcefff;
+}
+
+.menu-icon {
+    font-size: 30px;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+}
+
+.menu-icon:hover {
+    transform: rotate(90deg);
+}
+
+@media screen and (max-width:1200px){
+    .side-bar{
+        width: 250px !important;
+    }
+    .side-bar ul li, .sidebar2 ul li{
+        font-size: 1rem;
+    }
+}

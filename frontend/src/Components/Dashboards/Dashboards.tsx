@@ -197,9 +197,9 @@ const Dashboards = () => {
   return (
     <>
       <div className="menu-data">
-        <AppBar style={{ backgroundColor: '#2BC790' }} position="static">
+        <AppBar style={{ backgroundColor: '#2BC790' }} position="static" className='app-bar-dashboard'>
           <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
+            <Typography variant="h6" style={{ flexGrow: 1 }} className='typography'>
               Dashboard Management
             </Typography>
             <Button
@@ -225,30 +225,32 @@ const Dashboards = () => {
           ) : (
             <>
               <ul>
-                {dashboards.map((dashboard, index) => (
-                  <li key={index} className="dashboardListItem">
-                    <span
-                      onClick={() => handleDashboardClick(dashboard.id?.id)}
-                      className="title"
-                    >
-                      {dashboard.title}
-                    </span>
-                    <div className="button-container">
-                      <IconButton
-                        aria-label="edit"
-                        onClick={() => handleEdit(dashboard.id?.id)}
-                      >
-                        <EditIcon className="edit-icon" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="delete"
-                        onClick={() => handleDelete(dashboard.id?.id)}
-                      >
-                        <DeleteIcon className="delete-icon" />
-                      </IconButton>
-                    </div>
-                  </li>
-                ))}
+                <div className="dashboard-cont">
+                      {dashboards.map((dashboard, index) => (
+                        <li key={index} className="dashboardListItem">
+                          <span
+                            onClick={() => handleDashboardClick(dashboard.id?.id)}
+                            className="title"
+                          >
+                            {dashboard.title}
+                          </span>
+                          <div className="button-container">
+                            <IconButton
+                              aria-label="edit"
+                              onClick={() => handleEdit(dashboard.id?.id)}
+                            >
+                              <EditIcon className="edit-icon" />
+                            </IconButton>
+                            <IconButton
+                              aria-label="delete"
+                              onClick={() => handleDelete(dashboard.id?.id)}
+                            >
+                              <DeleteIcon className="delete-icon" />
+                            </IconButton>
+                          </div>
+                        </li>
+                      ))}
+                </div>
               </ul>
               <Paginations
                 pageCount={pageCount}
