@@ -65,13 +65,12 @@ const Login: React.FC = () => {
     });
 
 
-    const handleLogin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setLoading(true);
 
         try {
             const token = await login(username, password);
-            localStorage.setItem('token', token);
             dispatch(set_Accesstoken(token));
 
             setTimeout(() => {
