@@ -67,8 +67,6 @@ const AddWarehouse: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    // Handle dimension updates
     if (name.startsWith('warehouse_dimensions.')) {
       const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
       setFormData({
@@ -79,7 +77,6 @@ const AddWarehouse: React.FC = () => {
         },
       });
     } else {
-      // Handle number inputs
       if (name === 'cooling_units' || name === 'sensors') {
         const numericValue = parseInt(value, 10);
         if (numericValue >= 0 || value === '') {

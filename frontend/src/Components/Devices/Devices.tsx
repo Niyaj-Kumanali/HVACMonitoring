@@ -105,8 +105,8 @@ const Devices: React.FC = () => {
 
         return (
             <>
-                <h2>Devices</h2>
                 <ul className="device-ul">
+                    <h2>Devices</h2>
                     {devices.map((device, index) => (
                         <li key={index}>
                             <span className="deviceName" onClick={() => navigate(`/device/${device.id?.id}`)}>{device.name}</span>

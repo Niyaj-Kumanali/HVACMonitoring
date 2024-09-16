@@ -1,4 +1,3 @@
-/* Overall container styling */
 html {
     scroll-behavior: smooth;
     font-family: 'Poppins', sans-serif;
@@ -28,7 +27,6 @@ html {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* For Firefox */
 .side-bar,
 .sidebar2,
 .sidebar3 {
@@ -40,18 +38,15 @@ html {
     text-align: center;
     padding: 10px 0px;
     background-color: #2bc790;
-    /* Cool blue */
     color: white;
     font-size: 18px;
     position: sticky;
     top: 0;
     z-index: 100;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    /* Add subtle shadow */
     font-weight: bold;
 }
 
-/* Sidebar styling */
 .side-bar {
     height: calc(100vh - 65px);
     width: 275px !important;
@@ -60,17 +55,14 @@ html {
     overflow-x: hidden;
     overflow-y: auto;
     background-color: #f4f6f9;
-    /* Light background for sidebar */
     transition: transform 0.3s ease, width 0.3s ease;
     z-index: 100;
     position: relative;
     transform: translateX(0);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    /* Subtle box shadow */
 }
 
 #side-bar {
-    height: calc(100vh - 65px);
+    height: calc(100vh - 62px);
     width: 275px;
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     overflow-x: hidden;
@@ -86,7 +78,6 @@ html {
     transform: translateX(-275px);
 }
 
-/* Sidebar when collapsed */
 .sidebar2 {
     height: calc(100vh - 65px);
     width: 275px;
@@ -98,15 +89,12 @@ html {
     position: relative;
     background-color: white;
     transform: translateX(-275px);
-    /* Ensure sidebar is hidden */
 }
 
-/* Sidebar on full width */
 .sidebar3 {
     transform: translateX(0);
 }
 
-/* Sidebar list items */
 .side-bar ul li,
 .sidebar2 ul li {
     padding: 14px 14px 14px 12px;

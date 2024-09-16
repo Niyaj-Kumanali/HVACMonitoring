@@ -4,6 +4,11 @@
     flex-direction: column;
     justify-content:space-between !important;
     gap: 20px;
+    height: 89.8vh;
+}
+.device-ul h2{
+    width: 100%;
+    margin-bottom: 15px;
 }
 
 .devices ul {
@@ -14,7 +19,7 @@
     padding: 0;
     margin: 0;
     list-style-type: none;
-    gap: 15px;
+    gap: 10px;
     cursor: pointer;
 }
 
@@ -27,7 +32,9 @@
     justify-content:space-between;
     padding: 0;
     background-color: #fff;
-    height: 125px;
+    height: 13.3vh;
+    font-size: 1.15em;
+    transition: all 0.2s ease;
 }
 .devices ul li span{
     display: flex;
@@ -58,4 +65,35 @@
     align-items: center;
     justify-content: flex-end;
     padding: 18px;
+}
+
+@media screen and (max-width: 850px){
+    .devices {
+        width: 570px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .devices {
+        width: 100%;
+    }
+    .devices .device-ul li {
+        width: 100vw;
+        height: 13.3vh;
+    }
+}
+
+@media screen and (max-width: 1050px){
+    .devices .device-ul li {
+        width: 48%;
+    }
+}
+@media screen and (max-width: 500px){
+    .devices {
+        padding: 8px;
+    }
+    .devices .device-ul li{
+        width: 100vw;
+        height: 8vh;
+    }
 }
