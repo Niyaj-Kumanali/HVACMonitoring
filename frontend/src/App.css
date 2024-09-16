@@ -1,84 +1,99 @@
-@keyframes slideIn {
-    from {
-        transform: translateX(20%);
-        opacity: 0;
-    }
+:root {
+  --slide-in-duration: 0.3s;
+  --slide-out-duration: 0.3s;
+  --slide-in-distance: 20%;
+  --slide-out-distance: -70%;
+  --scrollbar-width: 1px;
+  --scrollbar-bg: #f4f6f9;
+  --scrollbar-thumb-bg: rgba(0, 0, 0, 0.1);
+  --scrollbar-thumb-hover-bg: rgba(0, 0, 0, 0.1);
+  --menu-left: 275px;
+  --menu-top: 61px;
+  --menu-height: calc(100vh - 65px);
+  --menu-width: calc(100% - 275px);
+  --menu-width-small: calc(100% - 250px);
+  --menu-width-mobile: 100%;
+  --transform-x-medium: -25px;
+  --transform-x-large: -276px;
+}
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+@keyframes slideIn {
+  from {
+    transform: translateX(var(--slide-in-distance));
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
 
-    to {
-        transform: translateX(-70%);
-        opacity: 0;
-    }
+  to {
+    transform: translateX(var(--slide-out-distance));
+    opacity: 0;
+  }
 }
 
 .page-enter {
-    animation: slideIn 0.3s ease-out forwards;
+  animation: slideIn var(--slide-in-duration) ease-out forwards;
 }
 
 .page-exit {
-    animation: slideOut 0.3s ease-in forwards;
+  animation: slideOut var(--slide-out-duration) ease-in forwards;
 }
 
 .App {
-    display: flex;
-    width: 100vw;
+  display: flex;
+  width: 100vw;
 }
 
 .menu-data::-webkit-scrollbar {
-    width: 1px;
+  width: var(--scrollbar-width);
 }
 
 .menu-data::-webkit-scrollbar-track {
-    background: #f4f6f9;
+  background: var(--scrollbar-bg);
 }
 
 .menu-data::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+  background-color: var(--scrollbar-thumb-bg);
+  border-radius: 10px;
 }
 
 .menu-data::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--scrollbar-thumb-hover-bg);
 }
 
 /* For Firefox */
 .menu-data {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.1) #f4f6f9;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-bg);
 }
-
 
 .menu-data {
-    position: absolute;
-    left: 275px;
-    width: calc(100% - 275px);
-    top: 61px;
-    /* width: 80%; */
-    overflow-y: auto;
-    box-sizing: border-box;
-    height: calc(100vh - 65px);
-    display: inline-flex;
-    justify-content: flex-start;
+  position: absolute;
+  left: var(--menu-left);
+  width: var(--menu-width);
+  top: var(--menu-top);
+  overflow-y: auto;
+  box-sizing: border-box;
+  height: var(--menu-height);
+  display: inline-flex;
+  justify-content: flex-start;
 }
 
-
-
 @media screen and (max-width: 1200px) {
-    .menu-data {
-        transform: translateX(-25px);
-        width: calc(100% - 250px);
-    }
+  .menu-data {
+    transform: translateX(var(--transform-x-medium));
+    width: var(--menu-width-small);
+  }
 }
 
 @media screen and (max-width: 700px) {
@@ -87,4 +102,3 @@
         width: 100%;
     }
 }
-

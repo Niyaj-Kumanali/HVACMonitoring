@@ -16,6 +16,7 @@ import { set_Menubaropen } from "../../Redux/Action/Action";
 import { RootState } from "../../Redux/Reducer";
 
 import { useEffect, useRef, useState } from "react";
+import { formatNumber } from "../../Utility/utility_functions";
 
 const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
@@ -88,24 +89,24 @@ const Menubar = () => {
                     <PieChartIcon className="speedicon" />Charts
                 </li>
                 <li onClick={() => handleLinkClick('/actions')}>
-                    <ElectricBoltIcon className="speedicon" />Actions <span className="count">3</span>
+                    <ElectricBoltIcon className="speedicon" />Actions <span className="count">{formatNumber(3)}</span>
                 </li>
                 {currentuser === 'TENANT_ADMIN' && (
                     <li onClick={() => handleLinkClick('/devices')}>
-                        <CableIcon className="speedicon" />Devices <span className="count">{deviceCount}</span>
+                        <CableIcon className="speedicon" />Devices <span className="count">{formatNumber(deviceCount)}</span>
                     </li>
                 )}
                 <li onClick={() => handleLinkClick('/locations')}>
-                    <LocationOnIcon className="speedicon" />Locations <span className="count">10.67K</span>
+                    <LocationOnIcon className="speedicon" />Locations <span className="count">{formatNumber(warehousecount)}</span>
                 </li>
                 <li onClick={() => handleLinkClick('/warehouses')}>
-                    <WarehouseIcon className="speedicon" />Warehouses <span className="count">{warehousecount}</span>
+                    <WarehouseIcon className="speedicon" />Warehouses <span className="count">{formatNumber(warehousecount)}</span>
                 </li>
                 <li onClick={() => handleLinkClick('/vehicles')}>
-                    <LocalShippingIcon className="speedicon" />Vehicles <span className="count">{vehicleCount}</span>
+                    <LocalShippingIcon className="speedicon" />Vehicles <span className="count">{formatNumber(vehicleCount)}</span>
                 </li>
                 <li onClick={() => handleLinkClick('/users')}>
-                    <GroupIcon className="speedicon" />Users <span className="count">{userCount}</span>
+                    <GroupIcon className="speedicon" />Users <span className="count">{formatNumber(userCount)}</span>
                 </li>
 
                 <li className="quick-action">Quick Actions</li>
