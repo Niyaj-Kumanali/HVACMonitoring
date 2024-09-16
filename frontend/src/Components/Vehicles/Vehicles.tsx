@@ -98,26 +98,18 @@ const Vehicles = () => {
                 </div>
                 <div className="status">
                   <p className="username">{vehicle.vehicle_name}</p>
-                  <p>{vehicle.vehicle_number}</p>
-                  <p className="driver-name">
-                    Driver: {vehicle.Driver_details.driver_name}
+                  <p >{vehicle.vehicle_number}</p>
+                  <p >
+                    {vehicle.Driver_details.driver_name}
                   </p>
-                  <p className="driver-contact">
-                    Contact: {vehicle.Driver_details.driver_contact_no}
-                  </p>
-                  <p className="licence-id">
-                    Licence ID: {vehicle.Driver_details.licence_id}
-                  </p>
-                  <p className="cooling-units">
-                    Cooling Units: {vehicle.cooling_units || 'N/A'}
-                  </p>
-                  <p className="sensors">Sensors: {vehicle.sensors || 'N/A'}</p>
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
+          <div className="vehicle-pagination">
+            <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
+          </div>
       </div>
     </div>
   );

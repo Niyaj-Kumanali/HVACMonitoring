@@ -91,10 +91,12 @@ const AddCustomer: React.FC = () => {
                             </Link>
                         ))}
                     </div>
-                    <Paginations
-                        pageCount={pageCount}
-                        onPageChange={setCurrentPage}
-                    />
+                    <div className="user-pagination">
+                        <Paginations
+                            pageCount={pageCount}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
                 </div>
             </div>
         );

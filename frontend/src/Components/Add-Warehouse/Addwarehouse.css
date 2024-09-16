@@ -11,6 +11,8 @@
 .warehouse{
     border-radius: 10px;
     margin: 20px !important;
+    min-width: 430px !important;
+    max-width: 100%;
 }
 
 .sensor-form {
@@ -76,7 +78,7 @@
 
 .warehouse {
     min-width: 400px;
-    max-width: 50%;
+    max-width: 55%;
     height: auto;
     padding: 20px;
     background-color: white;
@@ -136,4 +138,16 @@
 
 .sensors-coolent {
     margin-top: 15px !important;
+}
+@media screen and (max-width:500px){
+    .warehouse{
+        margin: 0 !important;
+        min-width:340px !important;
+        max-width: 100%;
+    }
+}
+@media screen and (max-width:700px) {
+    .warehouse{
+        max-width: 100%;
+    }
 }

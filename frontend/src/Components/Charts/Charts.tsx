@@ -203,7 +203,7 @@ const Charts = () => {
                 <div className="charts">
                     <div className="chart">
                         <h2>Charts</h2>
-                        <FormControl className="form-control">
+                            <FormControl className="form-control">
                             <InputLabel className="input-label-select" id="warehouse-label">Select Warehouse</InputLabel>
                             <Select
                                 labelId="warehouse-label"
@@ -214,7 +214,7 @@ const Charts = () => {
                                 className="form-control-inner"
                             >
                                 {warehouse.map((wh) => (
-                                    <MenuItem key={wh.warehouse_id} value={wh.warehouse_id}>
+                                    <MenuItem  key={wh.warehouse_id} value={wh.warehouse_id}>
                                         {wh.warehouse_name}
                                     </MenuItem>
                                 ))}

@@ -97,8 +97,8 @@
 }
 
 @media screen and (max-width: 700px) {
-  .menu-data {
-    transform: translateX(var(--transform-x-large));
-    width: var(--menu-width-mobile);
-  }
+    .menu-data {
+        transform: translateX(-275px);
+        width: 100%;
+    }
 }

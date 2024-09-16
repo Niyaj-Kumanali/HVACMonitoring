@@ -98,7 +98,6 @@ const Warehouses = () => {
                                     </div>
                                     <div className="status">
                                         <p className="username">{warehouse.warehouse_name}</p>
-                                        <p>{warehouse.warehouse_id}</p>
                                         <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
                                     </div>
                                 </div>

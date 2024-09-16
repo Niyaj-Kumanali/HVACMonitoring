@@ -1,5 +1,6 @@
 .user{
     width: 100%;
+    min-width: 430px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -31,13 +32,11 @@
     position: relative;
     z-index: 10;
 }
-.status{
+.userinfo .user-img-info .status{
     width: 60%;
-    height:90%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 5px;
 }
 .personicon{
     width: 80% !important;
@@ -53,7 +52,8 @@
     align-items: center;
 }
 .username{
-    font-size: 20px;
+    font-size: 1.1em !important;
+    overflow: hidden;
 }
 .accountinfo-savebtn-delt-btn{
     display:flex;
@@ -69,10 +69,11 @@
     flex-direction: column;
     justify-content: space-between;
 }
-/* users.css */
+.user-cont .user-pagination{
+    margin-bottom: 25px;
+}
 .user-cont {
     position: relative;
-    /* overflow: hidden; */
     width: 100%;
 }
 
@@ -82,18 +83,15 @@
     position: relative;
     width: 100%;
     transition: transform 0.5s ease;
-    /* Use ease for smoother transitions */
 }
 
 .slide-right {
     transform: translateX(100%);
-    /* Slide in from the right */
     animation: slideInFromRight 0.5s ease forwards;
 }
 
 .slide-left {
     transform: translateX(-100%);
-    /* Slide in from the left */
     animation: slideInFromLeft 0.5s ease forwards;
 }
 
@@ -122,5 +120,76 @@
     text-align: center;
     margin-top: 20px;
     color: red;
+}
+@media screen and (max-width:500px){
+    .user-cont{
+        height: max-content;
+    }
+    .userinfo {
+        width: 100%;
+        height: 130px;
+    }
+    .username{
+        font-size:1.1em !important;
+    }
+    .status{
+        gap: 8px;
+    }
+    .user{
+        padding: 10px;
+        gap: 8px;
+    }
+    .user-cont .user-pagination{
+        margin: 10px ;
+    }
+}
+@media screen and (max-width:700px) {
+    .userinfo {
+        width: 100%;
+        height:16vh;
+    }
+    .status {
+        padding:0 0 0 30px;
+        gap: 8px;
+    }
+    .user {
+        padding: 10px;
+        gap: 10px;
+    }
+    .user-cont .user-pagination {
+        margin: 50px;
+        min-height: 100px !important;
+    }
+    .user-cont{
+        min-height: 100%;
+        max-height: 100%;
+    }
+}
+@media screen and (max-width:1330px) {
+    .userinfo {
+        width: 48.9%;
+    }
+}
+@media screen and (max-width:1250px) {
+    .userinfo {
+        width: 48.5%;
+    }
+}
+@media screen and (max-width:980px) {
+    .userinfo {
+        width: 100%;
+        height:14vh;
+    }
+    .status {
+        padding: 0 0 0 20px;
+        gap: 10px;
+    }
+    .user {
+        gap: 10px;
+    }
+    .personicon{
+        border-radius: 50% !important;
+        width: 100px !important;
+    }
 }
 
