@@ -88,6 +88,10 @@
   display: inline-flex;
   justify-content: flex-start;
 }
+a{
+  outline: none !important;
+}
+
 
 @media screen and (max-width: 1200px) {
   .menu-data {
@@ -102,3 +106,5 @@
         width: 100%;
     }
 }
+
+

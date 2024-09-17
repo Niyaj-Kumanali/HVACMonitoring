@@ -141,7 +141,7 @@
 }
 @media screen and (max-width:500px){
     .warehouse{
-        margin: 0 !important;
+        margin: 0 0 50px 0 !important;
         min-width:340px !important;
         max-width: 100%;
     }

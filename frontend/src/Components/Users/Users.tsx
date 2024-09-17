@@ -4,12 +4,11 @@ import { getUsers } from "../../api/userApi";
 import Loader from "../Loader/Loader";
 import { useDispatch } from "react-redux";
 import { set_usersCount } from "../../Redux/Action/Action";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import userimage from "../../assets/user.gif";
 import Paginations from "../Pagination/Paginations";
 import { User } from "../../types/thingsboardTypes";
-
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 
 const AddCustomer: React.FC = () => {
@@ -20,6 +19,7 @@ const AddCustomer: React.FC = () => {
     const [pageCount, setPageCount] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [initialLoad, setInitialLoad] = useState(true);
+    const navigate = useNavigate();
 
     const fetchUserData = async (page: number) => {
         try {
@@ -57,6 +57,9 @@ const AddCustomer: React.FC = () => {
         return date.toLocaleString();
     };
 
+    const goBack = () => {
+        navigate(-1);
+    };
 
 
     const renderContent = () => {
@@ -75,22 +78,31 @@ const AddCustomer: React.FC = () => {
         return (
             <div className="menu-data">
                 <div className="user-cont">
-                    <div className="user">
-                        {userdata.map((user, index) => (
-                            <Link to={`/user/${user.id?.id}`} className="userinfo" key={index} state={user}>
-                                <div className="user-img-info">
-                                    <div className="img">
-                                        <img src={userimage} className="personicon static-img" alt="User Static" />
-                                        <img src={userimage} className="personicon animated-img" alt="User Animated" />
+                    <div>
+                        <div >
+                            <h2 className="pageHeaders">
+                                <KeyboardBackspaceIcon onClick={goBack} />
+                                Users
+                            </h2>
+                        </div>
+                        <div className="warehouses">
+                            {userdata.map((user, index) => (
+                                <Link to={`/user/${user.id?.id}`} className="userinfo" key={index} state={user}>
+                                    <div className="user-img-info">
+                                        <div className="img">
+                                            <img src={userimage} className="personicon static-img" alt="User Static" />
+                                            <img src={userimage} className="personicon animated-img" alt="User Animated" />
+                                        </div>
+                                        <div className="status">
+                                            <p className="username">{user.email}</p>
+                                            <p>{user.additionalInfo?.lastLoginTs ? formatDate(user.additionalInfo.lastLoginTs) : "No Login Found"}</p>
+                                        </div>
                                     </div>
-                                    <div className="status">
-                                        <p className="username">{user.email}</p>
-                                        <p>{user.additionalInfo?.lastLoginTs ? formatDate(user.additionalInfo.lastLoginTs) : "No Login Found"}</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
+                    
                     <div className="user-pagination">
                         <Paginations
                             pageCount={pageCount}

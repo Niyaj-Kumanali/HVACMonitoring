@@ -30,7 +30,7 @@
 }
 
 .dashboards {
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;

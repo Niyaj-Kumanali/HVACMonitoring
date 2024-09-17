@@ -14,6 +14,7 @@ import { set_DeviceCount } from "../../Redux/Action/Action";
 import { useNavigate } from "react-router-dom";
 import Paginations from "../Pagination/Paginations";
 import Loader from "../Loader/Loader";
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 const Devices: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);
@@ -26,13 +27,11 @@ const Devices: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [initialLoad, setInitialLoad] = useState(true);
 
-
     useEffect(() => {
-        fetchDevices(currentPage-1);
+        fetchDevices(currentPage - 1);
     }, [currentPage]);
 
     const fetchDevices = async (page: number = 0): Promise<void> => {
-
         try {
             setLoadingDevices(true);
             setErrorMessage(null);
@@ -51,24 +50,21 @@ const Devices: React.FC = () => {
         } catch (error) {
             console.error('Failed to fetch devices', error);
             setErrorMessage("Problem fetching devices data");
-            setLoadingDevices(false);
         } finally {
             setTimeout(() => {
                 if (initialLoad) {
                     setInitialLoad(false);
                 }
-                setLoadingDevices(false)
+                setLoadingDevices(false);
             }, 500);
-
         }
     };
-
 
     const handleDelete = async (id: string = ''): Promise<void> => {
         try {
             await deleteDevice(id);
             handleClick();
-            fetchDevices(currentPage-1);
+            fetchDevices(currentPage - 1);
         } catch (error) {
             console.error('Failed to delete device', error);
             setErrorMessage("Problem deleting device");
@@ -90,52 +86,55 @@ const Devices: React.FC = () => {
         setOpen(false);
     };
 
-    const renderContent = () => {
-        if (loadingDevices && initialLoad) {
-            return <Loader />;
-        }
-
-        if (errorMessage) {
-            return <div className="error-message">{errorMessage}</div>;
-        }
-
-        if (devices.length === 0) {
-            return <div className="no-devices-message">No devices available</div>;
-        }
-
-        return (
-            <>
-                <ul className="device-ul">
-                    <h2>Devices</h2>
-                    {devices.map((device, index) => (
-                        <li key={index}>
-                            <span className="deviceName" onClick={() => navigate(`/device/${device.id?.id}`)}>{device.name}</span>
-                            <div>
-                                <IconButton aria-label="edit" onClick={() => navigate(`/device/${device.id?.id}`)}>
-                                    <EditIcon className="edit-icon" />
-                                </IconButton>
-                                <IconButton
-                                    aria-label="delete"
-                                    onClick={() => handleDelete(device.id?.id)}>
-                                    <DeleteIcon className="delete-icon" />
-                                </IconButton>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-                <div className="pagination">
-                    <Paginations pageCount={pageCount} onPageChange={setCurrentPage} /> {/* Passing handlePageChange */}
-                </div>
-            </>
-        );
+    const goBack = () => {
+        navigate(-1);
     };
 
     return (
         <div className="menu-data">
-            <div>
-                <div className="devices">
-                    {renderContent()}
-                </div>
+            <div className="devices">
+                    {loadingDevices && initialLoad ? (
+                        <Loader />
+                    ) : (
+                        <>
+                            <div>
+                                <h2 className="devicesH2"><KeyboardBackspaceIcon onClick={goBack} />Devices</h2>
+                            {errorMessage ? (
+                                <div className="error-message">{errorMessage}</div>
+                            ) : (
+                                <>
+                                    {devices.length === 0 ? (
+                                        <div className="no-devices-message">No devices available</div>
+                                    ) : (
+                                        <>
+                                            <ul className="device-ul">
+                                                {devices.map((device, index) => (
+                                                    <li key={index}>
+                                                        <span className="deviceName" onClick={() => navigate(`/device/${device.id?.id}`)}>{device.name}</span>
+                                                        <div>
+                                                            <IconButton aria-label="edit" onClick={() => navigate(`/device/${device.id?.id}`)}>
+                                                                <EditIcon className="edit-icon" />
+                                                            </IconButton>
+                                                            <IconButton
+                                                                aria-label="delete"
+                                                                onClick={() => handleDelete(device.id?.id)}>
+                                                                <DeleteIcon className="delete-icon" />
+                                                            </IconButton>
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            
+                                        </>
+                                    )}
+                                </>
+                            )}
+                            </div>
+                            <div className="pagination">
+                                <Paginations pageCount={pageCount} onPageChange={setCurrentPage} />
+                            </div>
+                        </>
+                    )}
             </div>
             <Snackbar
                 open={open}

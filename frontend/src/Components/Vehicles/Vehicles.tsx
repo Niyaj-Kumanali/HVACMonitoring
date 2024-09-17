@@ -4,10 +4,12 @@ import { getAllVehiclesByUserId } from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import VehicleLoader from '../Loader/VehicleLoader';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import truckimage from '../../assets/truck.gif';
 import Paginations from '../Pagination/Paginations';
 import { RootState } from '../../Redux/Reducer';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+
 
 interface VehicleDimensions {
   length: string;
@@ -40,6 +42,7 @@ const Vehicles = () => {
   const [message, setMessage] = useState('');
   const [pageCount, setPageCount] = useState(0);
   const [currentpage, setCurrentpage] = useState(1);
+  const navigate = useNavigate();
 
   const fetchAllVehicles = async (page: any, pageSize: any) => {
     try {
@@ -70,6 +73,10 @@ const Vehicles = () => {
     }
   };
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
   useEffect(() => {
     fetchAllVehicles(currentpage - 1, 12);
   }, [currentpage]);
@@ -81,32 +88,41 @@ const Vehicles = () => {
   ) : (
     <div className="menu-data">
       <div className="warehouses-cont">
-        <div className="warehouses">
-          {allVehicles.map((vehicle, index) => (
-            <Link
-              className="userinfo"
-              key={index}
-              to={`/vehicle/${vehicle.vehicle_id}`}
-            >
-              <div className="user-img-info">
-                <div className="img">
-                  <img
-                    src={truckimage}
-                    className="personicon"
-                    alt="Truck Icon"
-                  />
-                </div>
-                <div className="status">
-                  <p className="username">{vehicle.vehicle_name}</p>
-                  <p >{vehicle.vehicle_number}</p>
-                  <p >
-                    {vehicle.Driver_details.driver_name}
-                  </p>
-                </div>
+        <div>
+              <div >
+                <h2 className="pageHeaders">
+                  <KeyboardBackspaceIcon onClick={goBack} />
+                  Vehicles
+                </h2>
               </div>
-            </Link>
-          ))}
+              <div className="warehouses">
+                {allVehicles.map((vehicle, index) => (
+                  <Link
+                    className="userinfo"
+                    key={index}
+                    to={`/vehicle/${vehicle.vehicle_id}`}
+                  >
+                    <div className="user-img-info">
+                      <div className="img">
+                        <img
+                          src={truckimage}
+                          className="personicon"
+                          alt="Truck Icon"
+                        />
+                      </div>
+                      <div className="status">
+                        <p className="username">{vehicle.vehicle_name}</p>
+                        <p >{vehicle.vehicle_number}</p>
+                        <p >
+                          {vehicle.Driver_details.driver_name}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
         </div>
+        
           <div className="vehicle-pagination">
             <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
           </div>
