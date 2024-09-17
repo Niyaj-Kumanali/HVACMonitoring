@@ -35,6 +35,7 @@
     "recharts": "^2.12.7",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+    "swagger-ui-dist": "^5.17.14",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

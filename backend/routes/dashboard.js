@@ -2,6 +2,79 @@ import express from 'express';
 import Dashboards from '../schemas/dashboards_metadata.js'; // Ensure path is correct
 const router = express.Router();
 
+
+/**
+ * @swagger
+ * /addwidget/{dashboardId}:
+ *   post:
+ *     summary: Add or update widget layout for a dashboard
+ *     tags: [Dashboards]
+ *     description: Adds or updates the layout options for a dashboard identified by the `dashboardId`. If the dashboard exists, its layout options are updated; if not, a new dashboard is created with the given layout options.
+ *     parameters:
+ *       - in: path
+ *         name: dashboardId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the dashboard to add or update the widget layout for.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               layoutOptions:
+ *                 type: object
+ *                 description: The layout options for the dashboard.
+ *                 example:
+ *                   widgets: [
+ *                     {
+ *                       id: "widget1",
+ *                       type: "chart",
+ *                       position: { x: 0, y: 0, w: 6, h: 4 }
+ *                     },
+ *                     {
+ *                       id: "widget2",
+ *                       type: "table",
+ *                       position: { x: 6, y: 0, w: 6, h: 4 }
+ *                     }
+ *                   ]
+ *     responses:
+ *       200:
+ *         description: Dashboard layouts updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Dashboard layouts updated successfully
+ *       201:
+ *         description: New dashboard and layouts created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: New dashboard and layouts created successfully
+ *       500:
+ *         description: Error processing request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error processing request
+ *                 error:
+ *                   type: string
+ *                   example: Detailed error message
+ */
 router.post("/addwidget/:dashboardId", async (req, res) => {
     try {
         const { dashboardId } = req.params;
@@ -30,6 +103,68 @@ router.post("/addwidget/:dashboardId", async (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /getwidget/{dashboardId}:
+ *   get:
+ *     summary: Retrieve widget layout for a dashboard
+ *     tags: [Dashboards]
+ *     description: Retrieves the layout options for a dashboard identified by the `dashboardId`. Returns the layout options if found, otherwise returns a 404 status.
+ *     parameters:
+ *       - in: path
+ *         name: dashboardId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the dashboard to retrieve the widget layout for.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the dashboard layout options.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 layoutOptions:
+ *                   type: object
+ *                   description: The layout options for the dashboard.
+ *                   example:
+ *                     widgets: [
+ *                       {
+ *                         id: "widget1",
+ *                         type: "chart",
+ *                         position: { x: 0, y: 0, w: 6, h: 4 }
+ *                       },
+ *                       {
+ *                         id: "widget2",
+ *                         type: "table",
+ *                         position: { x: 6, y: 0, w: 6, h: 4 }
+ *                       }
+ *                     ]
+ *       404:
+ *         description: Dashboard not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Dashboard not found
+ *       500:
+ *         description: Error fetching the dashboard.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error fetching the dashboard
+ *                 error:
+ *                   type: string
+ *                   example: Detailed error message
+ */
 router.get("/getwidget/:dashboardId", async (req, res) => {
     try {
         const { dashboardId } = req.params;

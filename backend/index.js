@@ -33,11 +33,11 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API documentation for warehouse and vehical management",
         },
-        servers: [
-            {
-                url: `http://3.111.205.170:${process.env.PORT || 2000}`,
-            },
-        ],
+        // servers: [
+        //     {
+        //         url: `http://3.111.205.170:${process.env.PORT || 2000}`,
+        //     },
+        // ],
     },
     apis: ['./routes/*.js'], // Path to the API docs
 };
