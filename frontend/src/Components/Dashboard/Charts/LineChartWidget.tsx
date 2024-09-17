@@ -30,7 +30,9 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
   data,
   chartType,
 }) => {
-  const [groupedData, setGroupedData] = useState<Array<Record<string, any>>>([]);
+  const [groupedData, setGroupedData] = useState<Array<Record<string, any>>>(
+    []
+  );
   const seriesKeys = Object.keys(data);
 
   useEffect(() => {
@@ -51,20 +53,32 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
       }));
     });
 
+
+    const sortedData = formattedData.sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
+
     // Group the formatted data by timestamp
-    const groupedData = formattedData.reduce((acc: Array<Record<string, any>>, curr) => {
-      const existing = acc.find((item) => item.name === curr.name);
-      if (existing) {
-        Object.assign(existing, curr);
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
+    const groupedData = sortedData.reduce(
+      (acc: Array<Record<string, any>>, curr) => {
+        const existing = acc.find((item) => item.name === curr.name);
+        if (existing) {
+          Object.assign(existing, curr);
+        } else {
+          acc.push(curr);
+        }
+        return acc;
+      },
+      []
+    );
+
+
 
     setGroupedData(groupedData);
-  }, [data, seriesKeys]);
+  }, [data]);
 
+  // useEffect(() => {
+  //   console.log('New data received:', data);
+  //   console.log('Grouped data:', groupedData);
+  // }, [data, groupedData]);
   // Fixed color palette
   const colorPalette = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#a4de6c'];
 
@@ -73,7 +87,6 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
 
   // Memoized renderChart function
   const renderChart = useMemo(() => {
-
     switch (chartType) {
       case 'Line':
         return (
@@ -84,9 +97,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -116,9 +127,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -144,9 +153,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -171,7 +178,11 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
     }
   }, [chartType, groupedData, seriesKeys]);
 
-  return <ResponsiveContainer width="99%" height="80%">{renderChart}</ResponsiveContainer>;
+  return (
+    <ResponsiveContainer width="99%" height="80%">
+      {renderChart}
+    </ResponsiveContainer>
+  );
 };
 
 export default LineChartWidget;

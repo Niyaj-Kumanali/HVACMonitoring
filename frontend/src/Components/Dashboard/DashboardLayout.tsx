@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './styles/widget.css';
+import './styles/DashboardLayout.css';
 import {
   chartTypes,
   Device,
@@ -38,7 +38,11 @@ interface WidgetProps {
   chartType: chartTypes;
 }
 
-const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
+const DashboardLayout: React.FC<WidgetProps> = ({
+  widgetId,
+  deviceId,
+  chartType,
+}) => {
   const { dashboardId } = useParams(); // Get dashboardId from the URL params
   const dispatch = useDispatch();
 
@@ -77,93 +81,79 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
     return response.data;
   };
 
-  const fetchTimeseriesData = async (
-    deviceId: string,
-    selectedSensors: string[],
-    sensors: string[]
-  ) => {
-    const params: TelemetryQueryParams = {
-      keys:
-        selectedSensors.length > 0
-          ? selectedSensors.join(',')
-          : sensors.join(','),
-      startTs: startDate || Date.now() - 300000,
-      endTs: endDate || Date.now(),
-      limit: storedLayout.limit || 100,
-      orderBy: 'ASC',
-    };
-
-    const response = await getTimeseries('DEVICE', deviceId, params);
-    return response.data;
-  };
-
-  const fetchLatestTelemetryData = async (
-    deviceId: string,
-    selectedSensors: string[],
-    sensors: string[]
-  ) => {
-    const response = await getLatestTimeseries(
-      'DEVICE',
-      deviceId,
-      selectedSensors.length > 0 ? selectedSensors : sensors
-    );
-    return response.data;
-  };
-
+  // Fetch devices and set the sensors when the component mounts
   useEffect(() => {
-    const fetchAllDevices = async () => {
-      const params = {
-        pageSize: 1000000,
-        page: 0,
-      };
-      const response = await getTenantDevices(params);
-      setDevices(response.data.data);
+    const fetchInitialData = async () => {
+      try {
+        const params = { pageSize: 1000000, page: 0 };
+        const response = await getTenantDevices(params);
+        const deviceList = response.data.data;
+        setDevices(deviceList);
+
+        const selectedDevice = deviceId || deviceList[0]?.id?.id || '';
+        setSelectedDevice(selectedDevice);
+
+        const keys = await fetchTimeseriesKeys(selectedDevice);
+        setSensors(keys);
+        setSelectedSensors(keys); // Initially, select all sensors
+      } catch (error) {
+        console.error('Failed to fetch devices or sensors:', error);
+      }
     };
 
-    fetchAllDevices();
-  }, []);
+    fetchInitialData();
+  }, [deviceId]);
+
 
   useEffect(() => {
     const fetchTelemetryData = async () => {
-      if (!selectedDevice) return;
+      if (!selectedDevice || sensors.length === 0) return;
 
       try {
-        const keys = await fetchTimeseriesKeys(selectedDevice);
-        setSensors(keys);
-        setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
+        const params: TelemetryQueryParams = {
+          keys:
+            selectedSensors.length > 0
+              ? selectedSensors.join(',')
+              : sensors.join(','),
+          startTs: startDate || Date.now() - 300000,
+          endTs: endDate || Date.now(),
+          limit: storedLayout.limit || 100,
+          orderBy: 'ASC',
+        };
 
-        const telemetryData = await fetchTimeseriesData(
-          selectedDevice,
-          selectedSensors,
-          keys
-        );
-        setTelemetryData(telemetryData);
+        const response = await getTimeseries('DEVICE', deviceId, params);
+        setTelemetryData(response.data);
       } catch (error) {
         console.error('Failed to fetch telemetry data', error);
-        setSensors([]);
-        setSelectedSensors([]);
       }
     };
 
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit]);
+  }, [
+    selectedDevice,
+    selectedSensors,
+    startDate,
+    endDate,
+    sensors,
+    storedLayout.limit,
+  ]);
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
-      if (!selectedDevice) return;
+    const fetchLatestTelemetryData = async () => {
+      if (!selectedDevice || sensors.length === 0) return;
 
       try {
-        const keys = await fetchTimeseriesKeys(selectedDevice);
-        const latestData = await fetchLatestTelemetryData(
-          selectedDevice,
-          selectedSensors,
-          keys
+        const response = await getLatestTimeseries(
+          'DEVICE',
+          deviceId,
+          selectedSensors.length > 0 ? selectedSensors : sensors
         );
-        const updatedTelemetryData = Object.keys(latestData).reduce(
+        
+        const updatedTelemetryData = Object.keys(response.data).reduce(
           (acc, key) => {
             return {
               ...acc,
-              [key]: [...(telemetryData[key] || []), ...latestData[key]],
+              [key]: [...(telemetryData[key] || []), ...response.data[key]],
             };
           },
           telemetryData
@@ -173,11 +163,10 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
       } catch (error) {
         console.error('Failed to fetch latest telemetry data', error);
       }
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
     };
+    const intervalId = setInterval(fetchLatestTelemetryData, 5000);
+
+    return () => clearInterval(intervalId);
   }, [selectedDevice, selectedSensors, telemetryData]);
 
   useEffect(() => {
@@ -282,4 +271,4 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
   );
 };
 
-export default Widget;
+export default DashboardLayout;

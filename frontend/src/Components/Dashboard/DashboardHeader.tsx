@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   AppBar,
@@ -21,7 +21,6 @@ import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
 import { uuid } from '../../Utility/utility_functions';
 import { CheckCircleOutline } from '@mui/icons-material';
-import { postLayout } from '../../api/MongoAPIInstance';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -48,9 +47,22 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     (state: RootState) => state.dashboardLayout[dashboardId || '']
   );
 
-  const handleRangeChange = async (event: any) => {
+  console.log("first")
+
+  const handleRangeChange = (event: any) => {
+    console.log(event.target.value, openDatePicker);
     const value = event.target.value as string;
+
+    if (value === selectedRange && value === 'custom-range') {
+      // Temporarily reset to force re-triggering the onChange event
+      setSelectedRange('');
+      setTimeout(() => setSelectedRange('custom-range'), 0);
+      setOpenDatePicker(true); // Reopen the date picker
+      return;
+    }
+
     setSelectedRange(value);
+
     if (value === 'custom-range') {
       setOpenDatePicker(true);
     } else {
@@ -118,16 +130,12 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             dateRange: newDateRange,
           })
         );
-
-        await postLayout(dashboardId, {
-          ...storedLayout,
-          dateRange: newDateRange,
-        })
+        
       }
     }
   };
 
-  const handleDateRangeConfirm = async () => {
+  const handleDateRangeConfirm = () => {
     // setOpenDatePicker(false);
     if (startDate && endDate) {
       dispatch(
@@ -139,14 +147,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           },
         })
       );
-
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        dateRange: {
-          startDate: startDate,
-          endDate: endDate,
-        },
-      })
     }
   };
 

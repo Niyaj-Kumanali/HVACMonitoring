@@ -78,10 +78,10 @@
 }
 
 .menu-data {
-  position: absolute;
-  left: var(--menu-left);
+  position: absolute !important;
+  left: var(--menu-left) !important;
   width: var(--menu-width);
-  top: var(--menu-top);
+  top: var(--menu-top) !important;
   overflow-y: auto;
   box-sizing: border-box;
   height: var(--menu-height);

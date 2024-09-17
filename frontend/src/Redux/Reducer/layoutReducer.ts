@@ -6,6 +6,7 @@ export interface DashboardLayoutOptions {
   dateRange?: {
     startDate: any;
     endDate: any;
+    range?: string;
   };
   limit?: number;
 }
