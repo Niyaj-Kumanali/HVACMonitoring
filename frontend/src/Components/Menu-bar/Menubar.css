@@ -54,7 +54,7 @@ html {
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: #f4f6f9;
+    background-color: white;
     transition: transform 0.3s ease, width 0.3s ease;
     z-index: 100;
     position: relative;

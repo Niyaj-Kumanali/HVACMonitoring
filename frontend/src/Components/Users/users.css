@@ -1,12 +1,11 @@
 .user{
-    width: 100%;
+    width: 100px;
     min-width: 430px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 25px;
     border-radius: 10px;
+    border: 1px solid black;
 }
 .userinfo{
     width: 32%;
@@ -27,8 +26,8 @@
 
 .user-img-info .img{
     width: 30%;
-    height: 90%;
-    border-radius: 50%;
+    height: 100%;
+    /* border-radius: 50%; */
     position: relative;
     z-index: 10;
 }

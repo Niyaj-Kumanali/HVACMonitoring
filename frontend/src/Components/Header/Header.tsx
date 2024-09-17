@@ -11,7 +11,7 @@ import logo from '../../assets/UrjalinksLogo_03.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_Menubaropen } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 const Header: React.FC = () => {
   const [toggle, setToggle] = useState<string>('hidden');
@@ -67,7 +67,7 @@ const Header: React.FC = () => {
           className="menu-items"
           onClick={() => {menubarDispatch(set_Menubaropen(false))}}
         >
-          <KeyboardBackspaceIcon className="menuicon" />
+          <MenuOpenIcon className="menuicon" />
         </div>
       ) : (
         <div

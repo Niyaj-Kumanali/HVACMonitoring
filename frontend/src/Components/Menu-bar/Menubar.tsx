@@ -1,7 +1,7 @@
 import "./Menubar.css";
 import SpeedIcon from '@mui/icons-material/Speed';
 import PieChartIcon from '@mui/icons-material/PieChart';
-import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+// import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import CableIcon from '@mui/icons-material/Cable';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GroupIcon from '@mui/icons-material/Group';
@@ -88,9 +88,9 @@ const Menubar = () => {
                 <li onClick={() => handleLinkClick('/charts')}>
                     <PieChartIcon className="speedicon" />Charts
                 </li>
-                <li onClick={() => handleLinkClick('/actions')}>
+                {/* <li onClick={() => handleLinkClick('/actions')}>
                     <ElectricBoltIcon className="speedicon" />Actions <span className="count">{formatNumber(3)}</span>
-                </li>
+                </li> */}
                 {currentuser === 'TENANT_ADMIN' && (
                     <li onClick={() => handleLinkClick('/devices')}>
                         <CableIcon className="speedicon" />Devices <span className="count">{formatNumber(deviceCount)}</span>
@@ -110,26 +110,26 @@ const Menubar = () => {
                 </li>
 
                 <li className="quick-action">Quick Actions</li>
+                <div className="link add-user-link" onClick={() => setIsUserSelectionOpen(!isUserSelectionOpen)}>
+                    <li><PersonAddAlt1Icon className="speedicon" />Add User</li>
+                    <div className={`user-selection ${isUserSelectionOpen ? 'toggle-user-open' : 'toggle-user'}`} ref={userSelectionRef}>
+                        <li onClick={() => handleLinkClick('/addSupervisor')}>Add Supervisor</li>
+                        <li onClick={() => handleLinkClick('/addCustomer')}>Add Customer</li>
+                    </div>
+                </div>
                 <div ref={hideref}>
                     <li onClick={() => handleLinkClick('/addDevice')}>
                         <AddToQueueIcon className="speedicon" />Add Device
                     </li>
-                    <li onClick={() => handleLinkClick('/addAction')}>
+                    {/* <li onClick={() => handleLinkClick('/addAction')}>
                         <AddIcon className="speedicon" />Add Action
-                    </li>
+                    </li> */}
                     <li onClick={() => handleLinkClick('/addWarehouse')}>
                         <AddIcon className="speedicon" />Add Warehouse
                     </li>
                     <li onClick={() => handleLinkClick('/addVehicle')}>
                         <AddIcon className="speedicon" />Add Vehicle
                     </li>
-                    <div className="link add-user-link" onClick={() => setIsUserSelectionOpen(!isUserSelectionOpen)}>
-                        <li><PersonAddAlt1Icon className="speedicon" />Add User</li>
-                        <div className={`user-selection ${isUserSelectionOpen ? 'toggle-user-open' : 'toggle-user'}`} ref={userSelectionRef}>
-                            <li onClick={() => handleLinkClick('/addSupervisor')}>Add Supervisor</li>
-                            <li onClick={() => handleLinkClick('/addCustomer')}>Add Customer</li>
-                        </div>
-                    </div>
                 </div>
                 <li onClick={() => handleLinkClick('/testComponent')}>
                     <PersonAddAlt1Icon className="speedicon" />My Component

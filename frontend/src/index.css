@@ -13,5 +13,17 @@ body{
 html {
     scroll-behavior: smooth;
 }
-
-
+.pageHeaders{
+    padding: 10px;
+    margin:10px;
+    background-color: white;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 0fr 0fr;
+    grid-gap: 30px;
+}
+@media screen and (max-width:500px) {
+    .pageHeaders {
+        margin: 5px;
+    }
+}

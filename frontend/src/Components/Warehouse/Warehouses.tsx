@@ -9,7 +9,7 @@ import warehouseimg from "../../assets/warehouse.gif";
 import { RootState } from "../../Redux/Reducer";
 import Paginations from "../Pagination/Paginations";
 import { Warehouse, LocationInfo } from "../../types/thingsboardTypes";
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 
 const Warehouses = () => {
@@ -81,6 +81,10 @@ const Warehouses = () => {
         navigate(`/warehouse/${warehouse.warehouse_id}`, { state: warehouse }); 
     };
 
+    const goBack = () => {
+        navigate(-1);
+    };
+
     return (
         loading ? (
             <Loader />
@@ -89,21 +93,30 @@ const Warehouses = () => {
         ) : (
             <div className="menu-data">
                 <div className="warehouses-cont">
-                    <div className="warehouses">
-                        {allWarehouses.map((warehouse) => (
-                            <Link to={`/warehouse/${warehouse.warehouse_id}`} className="userinfo" key={warehouse._id} onClick={(e) => handleWarehouseClick(e, warehouse)}>
-                                <div className="user-img-info">
-                                    <div className="img">
-                                        <img src={warehouseimg} className="personicon" />
+                    <div>
+                        <div >
+                            <h2 className="pageHeaders">
+                                <KeyboardBackspaceIcon onClick={goBack} />
+                                Warehouses
+                            </h2>
+                        </div>
+                        <div className="warehouses">
+                            {allWarehouses.map((warehouse) => (
+                                <Link to={`/warehouse/${warehouse.warehouse_id}`} className="userinfo" key={warehouse._id} onClick={(e) => handleWarehouseClick(e, warehouse)}>
+                                    <div className="user-img-info">
+                                        <div className="img">
+                                            <img src={warehouseimg} className="personicon" />
+                                        </div>
+                                        <div className="status">
+                                            <p className="username">{warehouse.warehouse_name}</p>
+                                            <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
+                                        </div>
                                     </div>
-                                    <div className="status">
-                                        <p className="username">{warehouse.warehouse_name}</p>
-                                        <p className="location">{locationInfo[warehouse._id]?.display_name || "Loading location..."}</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
+                    
                     <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
                 </div>
             </div>

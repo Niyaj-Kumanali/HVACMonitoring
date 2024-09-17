@@ -16,6 +16,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
 
 import Loader from '../Loader/Loader';
@@ -71,6 +72,7 @@ const DeviceInfo: React.FC = () => {
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
     'success'
   );
+  
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
@@ -277,6 +279,10 @@ const DeviceInfo: React.FC = () => {
     return () => clearTimeout(loaderTimeout);
   }, []);
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       {loaders ? (
@@ -286,7 +292,7 @@ const DeviceInfo: React.FC = () => {
           <div className="add-device">
             <form>
               <div className="header-container">
-                <label className="label">Device Info</label>
+                  <label className="label"><KeyboardBackspaceIcon onClick={goBack} />Device Info</label>
                 <div className="buttons">
                   <Button
                     variant="outlined" // Use 'outlined' for a transparent background
