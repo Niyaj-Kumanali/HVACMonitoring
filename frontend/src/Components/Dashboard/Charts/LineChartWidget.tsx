@@ -73,10 +73,6 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
 
   // Memoized renderChart function
   const renderChart = useMemo(() => {
-    console.log(groupedData)
-    // if (seriesKeys.length === 0 || groupedData.length === 0) {
-    //   return <div>No data available</div>;
-    // }
 
     switch (chartType) {
       case 'Line':

@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import { charts } from '../Add-Widget/AddWidget';
+import { postLayout } from '../../api/MongoAPIInstance';
 
 interface WidgetProps {
   widgetId: string;
@@ -208,13 +209,18 @@ const Widget: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
           layout: updatedLayout,
         })
       );
+
+      await postLayout(dashboardId, {
+        ...storedLayout,
+        layout: updatedLayout,
+      });
     }
   };
 
   return (
     <div className="widget">
       <Toolbar className="widget-header">
-      <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
+        <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
           <InputLabel id="chart-select-label">Select Chart</InputLabel>
           <Select
             labelId="chart-select-label"

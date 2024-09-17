@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   AppBar,
@@ -20,6 +19,9 @@ import { useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
+import { uuid } from '../../Utility/utility_functions';
+import { CheckCircleOutline } from '@mui/icons-material';
+import { postLayout } from '../../api/MongoAPIInstance';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -34,10 +36,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 }) => {
   const [selectedRange, setSelectedRange] = useState<string>('last-5-minutes');
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [startDate, setStartDate] = useState<number>(
+    new Date().getTime() - 60000
+  );
+  const [endDate, setEndDate] = useState<number>(new Date().getTime());
 
-  const datePickerRef = useRef<HTMLDivElement>(null);
 
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
@@ -48,113 +51,194 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;
     setSelectedRange(value);
-    let newDateRange: { startDate: number; endDate: number } | undefined;
+    if (value === 'custom-range') {
+      setOpenDatePicker(true);
+    } else {
+      setOpenDatePicker(false);
+      let newDateRange: { startDate: number; endDate: number } | undefined;
 
-    switch (value) {
-      case 'last-1-minute':
-        newDateRange = { startDate: Date.now() - 60000, endDate: Date.now() };
-        break;
-      case 'last-5-minutes':
-        newDateRange = { startDate: Date.now() - 300000, endDate: Date.now() };
-        break;
-      case 'last-15-minutes':
-        newDateRange = { startDate: Date.now() - 900000, endDate: Date.now() };
-        break;
-      case 'last-30-minutes':
-        newDateRange = { startDate: Date.now() - 1800000, endDate: Date.now() };
-        break;
-      case 'last-1-hour':
-        newDateRange = { startDate: Date.now() - 3600000, endDate: Date.now() };
-        break;
-      case 'last-2-hours':
-        newDateRange = { startDate: Date.now() - 7200000, endDate: Date.now() };
-        break;
-      case 'last-1-day':
-        newDateRange = {
-          startDate: Date.now() - 86400000,
-          endDate: Date.now(),
-        };
-        break;
-      case 'last-7-days':
-        newDateRange = {
-          startDate: Date.now() - 604800000,
-          endDate: Date.now(),
-        };
-        break;
-      case 'last-30-days':
-        newDateRange = {
-          startDate: Date.now() - 2592000000,
-          endDate: Date.now(),
-        };
-        break;
-      case 'custom-range':
-        setOpenDatePicker(true);
-        return;
-    }
+      switch (value) {
+        case 'last-1-minute':
+          newDateRange = { startDate: Date.now() - 60000, endDate: Date.now() };
+          break;
+        case 'last-5-minutes':
+          newDateRange = {
+            startDate: Date.now() - 300000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-15-minutes':
+          newDateRange = {
+            startDate: Date.now() - 900000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-30-minutes':
+          newDateRange = {
+            startDate: Date.now() - 1800000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-1-hour':
+          newDateRange = {
+            startDate: Date.now() - 3600000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-2-hours':
+          newDateRange = {
+            startDate: Date.now() - 7200000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-1-day':
+          newDateRange = {
+            startDate: Date.now() - 86400000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-7-days':
+          newDateRange = {
+            startDate: Date.now() - 604800000,
+            endDate: Date.now(),
+          };
+          break;
+        case 'last-30-days':
+          newDateRange = {
+            startDate: Date.now() - 2592000000,
+            endDate: Date.now(),
+          };
+          break;
+      }
 
-    if (newDateRange) {
-      dispatch(
-        setLayout(dashboardId, {
+      if (newDateRange) {
+        dispatch(
+          setLayout(dashboardId, {
+            ...storedLayout,
+            dateRange: newDateRange,
+          })
+        );
+
+        await postLayout(dashboardId, {
           ...storedLayout,
           dateRange: newDateRange,
         })
-      );
+      }
     }
   };
 
   const handleDateRangeConfirm = async () => {
-    setOpenDatePicker(false);
+    // setOpenDatePicker(false);
     if (startDate && endDate) {
       dispatch(
         setLayout(dashboardId, {
           ...storedLayout,
           dateRange: {
-            startDate: startDate.getTime(),
-            endDate: endDate.getTime(),
+            startDate: startDate,
+            endDate: endDate,
           },
         })
       );
+
+      await postLayout(dashboardId, {
+        ...storedLayout,
+        dateRange: {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      })
     }
   };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      datePickerRef.current &&
-      !datePickerRef.current.contains(event.target as Node)
-    ) {
-      setOpenDatePicker(false);
-    }
-  };
-
-  useEffect(() => {
-    if (openDatePicker) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [openDatePicker]);
 
   return (
     <>
       <AppBar position="static">
-        <Toolbar style={{backgroundColor: '#2BC790', height: '6vh'}} className="toolbar">
+        <Toolbar
+          style={{ backgroundColor: '#2BC790', height: '6vh' }}
+          className="toolbar"
+        >
           <Box className="toolbar-left"></Box>
 
           <Box className="toolbar-right">
-            <FormControl  variant="outlined" className="form-control">
-              <InputLabel id="realtime-label">Realtime</InputLabel>
+            {openDatePicker && (
+              <div className="date-fields">
+                <div className="input-container">
+                  <label htmlFor="date-start">Start Date</label>
+                  <input
+                    type="date"
+                    id="date-start"
+                    className="date-field"
+                    value={
+                      new Date(startDate)?.toISOString().split('T')[0] || ''
+                    }
+                    onChange={(e) =>
+                      setStartDate(new Date(e.target.value).getTime())
+                    }
+                  />
+                </div>
+                <div className="input-container">
+                  <label htmlFor="date-end">End Date</label>
+                  <input
+                    type="date"
+                    id="date-end"
+                    className="date-field"
+                    value={new Date(endDate)?.toISOString().split('T')[0] || ''}
+                    onChange={(e) =>
+                      setEndDate(new Date(e.target.value).getTime())
+                    }
+                  />
+                </div>
+                <IconButton>
+                  <CheckCircleOutline sx={{color: 'white'}} onClick={handleDateRangeConfirm} />
+                </IconButton>
+              </div>
+            )}
+            <FormControl
+              variant="outlined"
+              className="form-control"
+              size="small"
+              sx={{
+                background: 'transparent',
+              }}
+            >
+              <InputLabel
+                id="realtime-label"
+                sx={{
+                  color: 'white',
+                  '&.Mui-focused': {
+                    color: 'white',
+                  },
+                  '&:hover': {
+                    color: 'blue',
+                  },
+                }}
+              >
+                Realtime
+              </InputLabel>
               <Select
+                key={uuid()}
                 labelId="realtime-label"
                 value={selectedRange}
                 onChange={handleRangeChange}
                 label="Realtime"
                 sx={{
                   color: 'white',
+                  '&.Mui-focused': {
+                    color: 'white',
+                  },
+                  '&:hover': {
+                    color: 'blue',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'white',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'white',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'blue',
+                  },
                 }}
-                style={{ height: '5vh'}} 
               >
                 <MenuItem value="last-1-minute">Last 1 Minute</MenuItem>
                 <MenuItem value="last-5-minutes">Last 5 Minutes</MenuItem>
@@ -185,42 +269,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </Box>
         </Toolbar>
       </AppBar>
-
-      {openDatePicker && (
-        <div className="datepicker-dialog" ref={datePickerRef}>
-          <div className="datepicker-header">Select Date Range</div>
-          <div className="datepicker-body">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date as Date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="MM/dd/yyyy"
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date as Date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="MM/dd/yyyy"
-            />
-          </div>
-          <div className="datepicker-footer">
-            <Button variant="outlined" onClick={() => setOpenDatePicker(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDateRangeConfirm}
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

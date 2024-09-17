@@ -18,39 +18,56 @@
   gap: 10px;
 }
 
+/* RESET FORM ELEMENTS */
+.input-container input[type='date'],
+.input-container input[type='text'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
 
-
-.datepicker-dialog {
-  position: absolute;
-  top: 60px; /* Adjusted top position */
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  border: 1px solid #ddd;
+/* INPUT CONTAINER  */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  padding: 20px;
-  max-width: 400px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #fff;
+}
+
+.input-container label {
+  position: relative;
   width: 100%;
+  font-family: 'Segoe UI';
+  font-weight: 600;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: white;
+  margin-left: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.input-container input {
+  position: relative;
+  align-items: center;
+  font-family: 'Lekton', Arial, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: white;
 }
 
-.datepicker-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.datepicker-body {
+.date-fields {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
-
-.datepicker-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-

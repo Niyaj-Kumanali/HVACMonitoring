@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom';
 import './styles/Dashboard.css';
 import Widget from './Widget';
 import DashboardHeader from './DashboardHeader';
-import { setLayout } from '../../Redux/Action/layoutActions';
 import AddWidget from '../Add-Widget/AddWidget';
 import Box from '@mui/material/Box';
 import { chartTypes, WidgetLayout } from '../../types/thingsboardTypes';
 import { v4 as uuid4 } from 'uuid';
 import { RootState } from '../../Redux/Reducer';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { setLayout } from '../../Redux/Action/layoutActions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -90,12 +90,12 @@ const Dashboard: React.FC = () => {
 
     const updatedLayout: WidgetLayout[] = [...localLayout, newWidget];
     setLocalLayout(updatedLayout);
-    const layoutBody = {
-      ...storedLayout,
-      layout: updatedLayout,
-    };
+    // const layoutBody = {
+    //   ...storedLayout,
+    //   layout: updatedLayout,
+    // };
 
-    dispatch(setLayout(dashboardId, layoutBody));
+    // dispatch(setLayout(dashboardId, layoutBody));
   };
 
   const onToggleEdit = async () => {
@@ -127,9 +127,9 @@ const Dashboard: React.FC = () => {
     });
 
     setLocalLayout(updatedWidgets);
-    dispatch(
-      setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
-    );
+    // dispatch(
+    //   setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
+    // );
   };
 
   return (

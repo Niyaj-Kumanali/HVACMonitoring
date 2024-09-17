@@ -1,103 +1,113 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import LogoutIcon from '@mui/icons-material/Logout';
-import "./Header.css";
+import './Header.css';
 // import "../Menu-bar/Menubar.css";
-import { getCurrentUser } from "../../api/loginApi";
+import { getCurrentUser } from '../../api/loginApi';
 import MenuIcon from '@mui/icons-material/Menu';
-import logo from '../../assets/UrjalinksLogo_03.png'
-import { useDispatch } from "react-redux";
-import { set_Menubaropen } from "../../Redux/Action/Action";
-
+import logo from '../../assets/UrjalinksLogo_03.png';
+import { useDispatch, useSelector } from 'react-redux';
+import { set_Menubaropen } from '../../Redux/Action/Action';
+import { RootState } from '../../Redux/Reducer';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 const Header: React.FC = () => {
-    const [toggle, setToggle] = useState<string>("hidden");
-    const navigate = useNavigate();
-    const menuRef = useRef<HTMLDivElement>(null);
-    const[email, setEmail] = useState<string | undefined>("");
+  const [toggle, setToggle] = useState<string>('hidden');
+  const navigate = useNavigate();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState<string | undefined>('');
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setToggle("hidden");
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const handleVisible = (): void => {
-        setToggle((prev) => (prev === "hidden" ? "visible" : "hidden"));
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setToggle('hidden');
+      }
     };
 
-    const handleLogout = () => {
-        localStorage.clear();
-        navigate("/login");
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleVisible = (): void => {
+    setToggle((prev) => (prev === 'hidden' ? 'visible' : 'hidden'));
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setEmail(userData.data.email);
+      } catch (error) {
+        console.error('Failed to fetch user data', error);
+      }
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userData = await getCurrentUser();
-                setEmail(userData.data.email);
-            } catch (error) {
-                console.error('Failed to fetch user data', error);
-            }
-        };
+    fetchUserData();
+  }, []);
 
-        fetchUserData();
-    }, []);
+  const menuState = useSelector((state: RootState) => state.user.menubar);
+  console.log(menuState)
 
-    const [menubarOpen, setMenuBarOpen] = useState<Boolean>(false);
+  const menubarDispatch = useDispatch();
 
-    const menubarDispatch = useDispatch();
-
-    const handleMenubarOpen = () => {
-        setMenuBarOpen(menubarOpen ? false : true)
-        menubarDispatch(set_Menubaropen(menubarOpen ? false : true))
-    }
-
-
-
-
-    return (
-        <div className="header">
-            <div className="menu-items" onClick={handleMenubarOpen}>
-                <MenuIcon className="menuicon" />
-            </div>
-            {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
-            
-            <Link to="/dashboards" className="link link2 homelink">
-                {/* <li>Home</li> */}
-                <div className="logo"><div><img src={logo} alt="logo" /></div></div>
-            </Link>
-            <div className="account">
-                <li className="user-email">
-                    <AccountCircleIcon className="accounticon" />
-                    <span>{email}</span>
-                </li>
-                <li className="menuu" onClick={handleVisible}>
-                    <MoreVertIcon />
-                    <div className={`menu ${toggle}`} ref={menuRef}>
-                        <Link className="link2"  to="/accountinfo">
-                            <AccountCircleIcon />
-                            <span>Account</span>
-                        </Link>
-                        <Link className="link2" to="" onClick={handleLogout}>
-                            <LogoutIcon />
-                            <span>Logout</span>
-                        </Link>
-                    </div>
-                </li>
-            </div>
+  return (
+    <div className="header">
+      {menuState ? (
+        <div
+          className="menu-items"
+          onClick={() => {menubarDispatch(set_Menubaropen(false))}}
+        >
+          <KeyboardBackspaceIcon className="menuicon" />
         </div>
-    );
+      ) : (
+        <div
+          className="menu-items"
+          onClick={() => {menubarDispatch(set_Menubaropen(true))}}
+        >
+          <MenuIcon className="menuicon" />
+        </div>
+      )}
+      {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
+
+      <Link to="/dashboards" className="link link2 homelink">
+        {/* <li>Home</li> */}
+        <div className="logo">
+          <div>
+            <img src={logo} alt="logo" />
+          </div>
+        </div>
+      </Link>
+      <div className="account">
+        <li className="user-email">
+          <AccountCircleIcon className="accounticon" />
+          <span>{email}</span>
+        </li>
+        <li className="menuu" onClick={handleVisible}>
+          <MoreVertIcon />
+          <div className={`menu ${toggle}`} ref={menuRef}>
+            <Link className="link2" to="/accountinfo">
+              <AccountCircleIcon />
+              <span>Account</span>
+            </Link>
+            <Link className="link2" to="" onClick={handleLogout}>
+              <LogoutIcon />
+              <span>Logout</span>
+            </Link>
+          </div>
+        </li>
+      </div>
+    </div>
+  );
 };
 
 export default Header;
