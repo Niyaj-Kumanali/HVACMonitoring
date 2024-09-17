@@ -427,6 +427,55 @@ router.post('/resetpassword', async (req, res) => {
 });
 
 
+
+/**
+ * @swagger
+ * /averages:
+ *   get:
+ *     summary: Get average combined values for keys
+ *     tags: [Analytics]
+ *     description: Retrieves the average combined values of `dbl_v` and `long_v` from the `device` table, grouped by key from the `key_dictionary` table, filtered by device label.
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The label of the device to filter the results by.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the average combined values for keys.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               additionalProperties:
+ *                 type: number
+ *                 description: The average combined value for each key.
+ *                 example: 
+ *                   key1: 10.5
+ *                   key2: 20.3
+ *       400:
+ *         description: The `id` parameter is required.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Id is required
+ *       500:
+ *         description: Internal Server Error occurred while executing the query.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
 router.get('/averages', async (req, res) => {
   const { id } = req.query;
 

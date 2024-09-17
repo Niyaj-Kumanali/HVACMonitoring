@@ -1,6 +1,6 @@
 import express from 'express';
-import { InfluxDB, Point } from '@influxdata/influxdb-client';
-import bodyParser from 'body-parser';
+import { InfluxDB } from '@influxdata/influxdb-client';
+
 const router = express.Router();
 
 // InfluxDB configuration
@@ -13,23 +13,20 @@ const bucket = "sample_bucket";
 const client = new InfluxDB({ url, token });
 const queryApi = client.getQueryApi(org); // Initialize query API
 
-// Express route to query data
+// Express route to query data with pagination
 router.get('/data', async (req, res) => {
   try {
-    const { sensor_id } = req.query;
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 records per page if not specified
 
-    // Validate sensor_id parameter
-    if (!sensor_id) {
-      return res.status(400).json({ message: "sensor_id query parameter is required" });
-    }
-
-    // InfluxDB query to retrieve data
+    // InfluxDB query to retrieve data with pagination
     const query = `
       from(bucket: "${bucket}")
         |> range(start: -30d) // Fetch data for the last 30 days
-        |> filter(fn: (r) => r["_measurement"] == "iot_measurement")
-        |> filter(fn: (r) => r["sensor_id"] == "${sensor_id}")
-        |> keep(columns: ["_time", "_value", "_field", "sensor_id"])
+        |> filter(fn: (r) => r["_measurement"] == "PI")
+        |> keep(columns: ["_time", "_value", "_field", "sensor_Type"])
+        |> limit(n: ${limit}, offset: ${(page - 1) * limit})
     `;
 
     // Execute the query
@@ -38,10 +35,10 @@ router.get('/data', async (req, res) => {
       next: (row, tableMeta) => {
         const o = tableMeta.toObject(row);
         data.push({
-          time: o._time,
-          field: o._field,
-          value: o._value,
-          sensor_id: o.sensor_id,
+          time: o._time,  // ISO 8601 date string
+          value: o._value,  // Numeric value
+          field: o._field,  // Field name
+          sensor_Type: o.sensor_Type,  // Sensor type
         });
       },
       error: (error) => {
@@ -57,7 +54,5 @@ router.get('/data', async (req, res) => {
     res.status(500).json({ message: 'Failed to query data from InfluxDB' });
   }
 });
-
-
 
 export default router;
