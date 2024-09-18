@@ -122,25 +122,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     return response.data;
   };
 
-  const fetchTimeseriesData = async (
-    deviceId: string,
-    selectedSensors: string[],
-    sensors: string[]
-  ) => {
-    const params: TelemetryQueryParams = {
-      keys:
-        selectedSensors.length > 0
-          ? selectedSensors.join(',')
-          : sensors.join(','),
-      startTs: startDate || Date.now() - 300000,
-      endTs: endDate || Date.now(),
-      limit: storedLayout.limit || 100,
-      orderBy: 'ASC',
-    };
-
-    const response = await getTimeseries('DEVICE', deviceId, params);
-    return response.data;
-  };
 
   const fetchLatestTelemetryData = async (
     deviceId: string,
