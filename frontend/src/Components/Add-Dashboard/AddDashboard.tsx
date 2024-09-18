@@ -84,7 +84,7 @@ const AddDashboard: React.FC = () => {
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
-    // event.preventDefault();
+    event
     if (reason === 'clickaway') {
       return;
     }
