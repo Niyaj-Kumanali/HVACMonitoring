@@ -13,6 +13,7 @@ import { DashboardType } from '../../types/thingsboardTypes';
 import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './AddDashboard.css';  // Ensure you import the CSS file
+import { postLayout } from '../../api/MongoAPIInstance';
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -52,7 +53,16 @@ const AddDashboard: React.FC = () => {
         await saveDashboard({ ...response.data, ...newDashboard });
         setMessage('Dashboard updated successfully!');
       } else {
-        await saveDashboard(newDashboard);
+        const response = await saveDashboard(newDashboard);
+        const dashboardId = response.data.id.id 
+        await postLayout(dashboardId, {
+          layout: [],
+          dateRange: {
+            startDate: null,
+            endDate: null,
+            range: null
+          }
+        })
         setMessage('Dashboard created successfully!');
       }
       setSnackbarType('success');
@@ -74,7 +84,7 @@ const AddDashboard: React.FC = () => {
     event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
-    event.preventDefault();
+    // event.preventDefault();
     if (reason === 'clickaway') {
       return;
     }

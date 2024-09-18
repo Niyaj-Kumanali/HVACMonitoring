@@ -163,7 +163,6 @@ router.get('/getallvehicle/:userId', async (req, res) => {
     // Get the page and pageSize from the request body, defaulting to 0 and 12 respectively
     const page = parseInt(req.query.page) || 0;
     const pageSize = parseInt(req.query.pageSize) ||  12;
-    console.log(page, pageSize);
 
     // Calculate the skip value (how many records to skip)
     const skip = page * pageSize;

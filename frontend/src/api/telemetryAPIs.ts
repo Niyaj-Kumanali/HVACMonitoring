@@ -76,7 +76,7 @@ export const getAttributeKeysByScope = async (
 export const getTimeseriesKeys = async (
   entityType: string,
   entityId: string
-) => {
+)=> {
   const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/timeseries`);
   return response;
 };

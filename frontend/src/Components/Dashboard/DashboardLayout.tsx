@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import { charts } from '../Add-Widget/AddWidget';
-import { postLayout } from '../../api/MongoAPIInstance';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 
 interface WidgetProps {
   widgetId: string;
@@ -38,7 +38,11 @@ interface WidgetProps {
   chartType: chartTypes;
 }
 
-const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType }) => {
+const DashboardLayout: React.FC<WidgetProps> = ({
+  widgetId,
+  deviceId,
+  chartType,
+}) => {
   const { dashboardId } = useParams(); // Get dashboardId from the URL params
   const dispatch = useDispatch();
 
@@ -58,11 +62,52 @@ const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType 
   const [devices, setDevices] = useState<Device[]>([]);
 
   useEffect(() => {
-    const { startDate: layoutStartDate, endDate: layoutEndDate } =
-      storedLayout.dateRange || {};
-    if (layoutStartDate && layoutEndDate) {
-      setStartDate(layoutStartDate);
-      setEndDate(layoutEndDate);
+    const fetchInitialData = async () => {
+      try {
+        const params = {
+          pageSize: 1000000,
+          page: 0,
+        };
+        const response = await getTenantDevices(params);
+        setDevices(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch devices', error);
+      }
+
+      try {
+        const response = await getLayout(dashboardId);
+        const currentWidget = response.data.layout.map((item: WidgetLayout) =>
+          item.i == widgetId ? item : undefined
+        )[0];
+        if (currentWidget.selectedDevice) {
+          setSelectedDevice(currentWidget.selectedDevice || deviceId);
+        }
+        if (currentWidget.chart) {
+          setSelectedChart(currentWidget.chart);
+        }
+        if (currentWidget.selectedSensors.length > 0) {
+          setSelectedSensors(currentWidget.selectedSensors);
+        }
+        if (
+          response.data.dateRange.startDate &&
+          response.data.dateRange.endDate
+        ) {
+          setStartDate(response.data.dateRange.startDate);
+          setEndDate(response.data.dateRange.endDate);
+        }
+      } catch (error) {
+        console.error('Failed to fetch widget');
+      }
+    };
+
+    fetchInitialData();
+  }, []);
+
+  useEffect(() => {
+    const { startDate, endDate } = storedLayout.dateRange || {};
+    if (startDate && endDate) {
+      setStartDate(startDate);
+      setEndDate(endDate);
     }
 
     (storedLayout.layout || []).forEach((item: WidgetLayout) => {
@@ -111,19 +156,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType 
   };
 
   useEffect(() => {
-    const fetchAllDevices = async () => {
-      const params = {
-        pageSize: 1000000,
-        page: 0,
-      };
-      const response = await getTenantDevices(params);
-      setDevices(response.data.data);
-    };
-
-    fetchAllDevices();
-  }, []);
-
-  useEffect(() => {
     const fetchTelemetryData = async () => {
       if (!selectedDevice) return;
 
@@ -132,52 +164,66 @@ const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType 
         setSensors(keys);
         setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
 
-        const telemetryData = await fetchTimeseriesData(
-          selectedDevice,
-          selectedSensors,
-          keys
-        );
-        setTelemetryData(telemetryData);
+        const params: TelemetryQueryParams = {
+          keys:
+            selectedSensors.length > 0
+              ? selectedSensors.join(',')
+              : keys.join(','),
+          startTs: startDate || Date.now() - 300000,
+          endTs: endDate || Date.now(),
+          limit: storedLayout.limit || 100,
+          orderBy: 'ASC',
+        };
+
+        const response = await getTimeseries('DEVICE', deviceId, params);
+        setTelemetryData(response.data);
       } catch (error) {
         console.error('Failed to fetch telemetry data', error);
-        setSensors([]);
-        setSelectedSensors([]);
       }
     };
 
-    fetchTelemetryData();
+    try {
+      fetchTelemetryData();
+    } catch (error) {
+      console.error('Failed to fetch telemetry data', error);
+    }
   }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit]);
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
-      if (!selectedDevice) return;
+    try {
+      const intervalId = setInterval(async () => {
+        if (!selectedDevice) return;
+  
+        try {
+          const keys = await fetchTimeseriesKeys(selectedDevice);
+          const latestData = await fetchLatestTelemetryData(
+            selectedDevice,
+            selectedSensors,
+            keys
+          );
+          const updatedTelemetryData = Object.keys(latestData).reduce(
+            (acc, key) => {
+              return {
+                ...acc,
+                [key]: [...(telemetryData[key] || []), ...latestData[key]],
+              };
+            },
+            telemetryData
+          );
+  
+          setTelemetryData(updatedTelemetryData);
+        } catch (error) {
+          console.error('Failed to fetch latest telemetry data', error);
+        }
+      }, 5000);
+  
+      return () => {
+        clearInterval(intervalId);
+      };
+    } catch (error) {
+      console.error('Failed to fetch latest telemetry data', error);
+    }
 
-      try {
-        const keys = await fetchTimeseriesKeys(selectedDevice);
-        const latestData = await fetchLatestTelemetryData(
-          selectedDevice,
-          selectedSensors,
-          keys
-        );
-        const updatedTelemetryData = Object.keys(latestData).reduce(
-          (acc, key) => {
-            return {
-              ...acc,
-              [key]: [...(telemetryData[key] || []), ...latestData[key]],
-            };
-          },
-          telemetryData
-        );
-
-        setTelemetryData(updatedTelemetryData);
-      } catch (error) {
-        console.error('Failed to fetch latest telemetry data', error);
-      }
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
   }, [selectedDevice, selectedSensors, telemetryData]);
 
   useEffect(() => {
@@ -202,18 +248,33 @@ const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType 
     const updatedLayout = (storedLayout.layout || []).filter(
       (item) => item.i !== widgetId
     );
-    if (updatedLayout.length !== storedLayout.layout?.length) {
-      dispatch(
-        setLayout(dashboardId, {
+    const layoutBody = {
+      ...storedLayout,
+      layout: updatedLayout,
+    };
+    dispatch(setLayout(dashboardId, layoutBody));
+    await postLayout(dashboardId, layoutBody);
+  };
+
+  const handleSensorChange = async (e: any) => {
+    const value = e.target.value as string[];
+    if (value.length > 0) {
+      setSelectedSensors(value);
+
+      try {
+        const response = await getLayout(dashboardId);
+        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+          item.i == widgetId ? { ...item, selectedSensors: value } : item
+        );
+        const layoutBody = {
           ...storedLayout,
           layout: updatedLayout,
-        })
-      );
-
-      await postLayout(dashboardId, {
-        ...storedLayout,
-        layout: updatedLayout,
-      });
+        };
+        dispatch(setLayout(dashboardId, layoutBody));
+        await postLayout(dashboardId, layoutBody);
+      } catch (err) {
+        console.error('Failed to set sensors', err);
+      }
     }
   };
 
@@ -256,12 +317,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({ widgetId, deviceId, chartType 
             labelId="sensor-select-label"
             multiple
             value={selectedSensors}
-            onChange={(e) => {
-              const value = e.target.value as string[];
-              if (value.length > 0) {
-                setSelectedSensors(value);
-              }
-            }}
+            onChange={handleSensorChange}
             renderValue={(selected) => (selected as string[]).join(', ')}
             label="Select Sensors"
           >

@@ -85,17 +85,17 @@ const Dashboard: React.FC = () => {
       maxW: cols.lg,
       maxH: 12,
       chart: selectedChart,
-      defaultDevice: deviceId,
+      selectedDevice: deviceId,
     };
 
     const updatedLayout: WidgetLayout[] = [...localLayout, newWidget];
     setLocalLayout(updatedLayout);
-    // const layoutBody = {
-    //   ...storedLayout,
-    //   layout: updatedLayout,
-    // };
+    const layoutBody = {
+      ...storedLayout,
+      layout: updatedLayout,
+    };
 
-    // dispatch(setLayout(dashboardId, layoutBody));
+    dispatch(setLayout(dashboardId, layoutBody));
   };
 
   const onToggleEdit = async () => {
@@ -127,9 +127,12 @@ const Dashboard: React.FC = () => {
     });
 
     setLocalLayout(updatedWidgets);
-    // dispatch(
-    //   setLayout(dashboardId, { ...storedLayout, layout: updatedWidgets })
-    // );
+    const layoutBody = { ...storedLayout, layout: updatedWidgets }
+    dispatch(
+      setLayout(dashboardId, layoutBody)
+    );
+
+    await postLayout(dashboardId, layoutBody);
   };
 
   return (
@@ -164,7 +167,7 @@ const Dashboard: React.FC = () => {
               <div key={item.i} data-grid={item} className="widget-container">
                 <DashboardLayout
                   widgetId={item.i}
-                  deviceId={item.defaultDevice || ''}
+                  deviceId={item.selectedDevice || ''}
                   chartType={item.chart || 'Line'}
                 />
               </div>

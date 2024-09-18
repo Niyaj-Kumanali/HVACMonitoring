@@ -14,12 +14,12 @@ export const mongoAPI: AxiosInstance = axios.create({
 // localhost
 
 export const postLayout = async (dashboardId: string = "", layout: DashboardLayoutOptions) => {
-  const response = await mongoAPI.post(`/dashboard/addwidget/${dashboardId}`, layout);
+  const response = await mongoAPI.post(`/dashboard/saveDashboardLayout/${dashboardId}`, layout);
   return response
 }
 
 export const getLayout = async (dashboardId: string = "") => {
-  const response = await mongoAPI.get(`/dashboard/getwidget/${dashboardId}`)
+  const response = await mongoAPI.get(`/dashboard/getDashboardLayout/${dashboardId}`)
   return response
 }
 

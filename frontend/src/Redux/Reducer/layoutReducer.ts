@@ -2,11 +2,11 @@
 import { SET_LAYOUT } from '../Action/layoutActions';
 import { WidgetLayout } from '../../types/thingsboardTypes';
 export interface DashboardLayoutOptions {
-  layout?: WidgetLayout[];
-  dateRange?: {
+  layout: WidgetLayout[];
+  dateRange: {
     startDate: any;
     endDate: any;
-    range?: string;
+    range: any;
   };
   limit?: number;
 }

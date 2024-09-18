@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   AppBar,
@@ -21,7 +21,7 @@ import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
 import { uuid } from '../../Utility/utility_functions';
 import { CheckCircleOutline } from '@mui/icons-material';
-import { postLayout } from '../../api/MongoAPIInstance';
+import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -34,12 +34,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onAddWidget,
   isEditable,
 }) => {
-  const [selectedRange, setSelectedRange] = useState<string>('last-5-minutes');
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<number>(
-    new Date().getTime() - 60000
-  );
-  const [endDate, setEndDate] = useState<number>(new Date().getTime());
+
+  const [dateRange, setDateRange] = useState({
+    startDate: new Date().getTime() - 300000,
+    endDate: new Date().getTime(),
+    range: 'last-5-minutes'
+  })
 
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
@@ -47,9 +48,28 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     (state: RootState) => state.dashboardLayout[dashboardId || '']
   );
 
+
+  useEffect(()=> {
+    const fetchInitialData = async()=>{
+        const response = await getLayout(dashboardId);
+        if(response.data.dateRange){
+          setDateRange(response.data.dateRange)
+        }
+        if(response.data.dateRange.range === 'custom-range'){
+          setOpenDatePicker(true)
+        }
+    }
+
+    fetchInitialData()
+
+  }, [])
+
   const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;
-    setSelectedRange(value);
+    setDateRange(prev => ({
+      ...prev,
+      range: value
+    }));
     if (value === 'custom-range') {
       setOpenDatePicker(true);
     } else {
@@ -136,20 +156,20 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   };
 
   const handleDateRangeConfirm = async () => {
-    if (startDate && endDate) {
+    if (dateRange.startDate && dateRange.endDate) {
 
       const layoutBody = {
         ...storedLayout,
         dateRange: {
           ...storedLayout.dateRange,
-          startDate: startDate,
-          endDate: endDate,
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+          range: 'custom-range'
         },
       }
       dispatch(
         setLayout(dashboardId, layoutBody)
       );
-
       await postLayout(dashboardId, layoutBody);
     }
   };
@@ -173,10 +193,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     id="date-start"
                     className="date-field"
                     value={
-                      new Date(startDate)?.toISOString().split('T')[0] || ''
+                      new Date(dateRange.startDate)?.toISOString().split('T')[0] || ''
                     }
                     onChange={(e) =>
-                      setStartDate(new Date(e.target.value).getTime())
+                      setDateRange(prev => ({
+                        ...prev, 
+                        startDate: new Date(e.target.value).getTime()
+                      }))
                     }
                   />
                 </div>
@@ -186,9 +209,12 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     type="date"
                     id="date-end"
                     className="date-field"
-                    value={new Date(endDate)?.toISOString().split('T')[0] || ''}
+                    value={new Date(dateRange.endDate)?.toISOString().split('T')[0] || ''}
                     onChange={(e) =>
-                      setEndDate(new Date(e.target.value).getTime())
+                      setDateRange(prev => ({
+                        ...prev, 
+                        endDate: new Date(e.target.value).getTime()
+                      }))
                     }
                   />
                 </div>
@@ -225,7 +251,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <Select
                 key={uuid()}
                 labelId="realtime-label"
-                value={selectedRange}
+                value={dateRange.range}
                 onChange={handleRangeChange}
                 label="Realtime"
                 sx={{

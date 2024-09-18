@@ -7,7 +7,7 @@ const widgetLayoutSchema = new mongoose.Schema({
     w: { type: Number, required: false },  // Width of the widget
     h: { type: Number, required: false },  // Height of the widget
     i: { type: String, required: false },  // Widget ID
-    defaultDevice: { type: String },      // Optional default device
+    selectedDevice: { type: String },      // Optional default device
     selectedSensors: { type: [String], default: [] },  // Selected sensors (array of strings)
     chart: { type: String, enum: ['Line', 'Bar', 'Area'], required: false }  // Chart type
 });
@@ -15,16 +15,15 @@ const widgetLayoutSchema = new mongoose.Schema({
 // Define the date range schema (matches dateRange in DashboardLayoutOptions)
 const dateRangeSchema = new mongoose.Schema({
     startDate: { type: Date, required: false },  // Start date of the range
-    endDate: { type: Date, required: false }  // End date of the range
+    endDate: { type: Date, required: false },  // End date of the range
+    range: { type: String, required: false}
 });
 
 // Define the DashboardLayoutOptions schema (matches DashboardLayoutOptions interface)
 const dashboardLayoutOptionsSchema = new mongoose.Schema({
     layout: { type: [widgetLayoutSchema], required: false },  // Array of widget layouts
     dateRange: { type: dateRangeSchema, required: false },  // Date range object
-    defaultDevice: { type: String, required: false },  // Default device for the dashboard
     limit: { type: Number, required: false },  // Limit for displaying widgets
-    chart: { type: String, enum: ['Line', 'Bar', 'Area'], required: false }  // Chart type
 });
 
 // Define the Dashboard schema to store layouts based on dashboardId
