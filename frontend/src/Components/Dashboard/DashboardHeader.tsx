@@ -41,7 +41,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   );
   const [endDate, setEndDate] = useState<number>(new Date().getTime());
 
-
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
   const storedLayout = useSelector(
@@ -55,98 +54,103 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       setOpenDatePicker(true);
     } else {
       setOpenDatePicker(false);
-      let newDateRange: { startDate: number; endDate: number } | undefined;
+      let newDateRange:
+        | { startDate: number; endDate: number; range: string }
+        | undefined;
 
       switch (value) {
         case 'last-1-minute':
-          newDateRange = { startDate: Date.now() - 60000, endDate: Date.now() };
+          newDateRange = {
+            startDate: Date.now() - 60000,
+            endDate: Date.now(),
+            range: 'last-1-minute',
+          };
           break;
         case 'last-5-minutes':
           newDateRange = {
             startDate: Date.now() - 300000,
             endDate: Date.now(),
+            range: 'last-5-minutes',
           };
           break;
         case 'last-15-minutes':
           newDateRange = {
             startDate: Date.now() - 900000,
             endDate: Date.now(),
+            range: 'last-15-minutes',
           };
           break;
         case 'last-30-minutes':
           newDateRange = {
             startDate: Date.now() - 1800000,
             endDate: Date.now(),
+            range: 'last-30-minutes',
           };
           break;
         case 'last-1-hour':
           newDateRange = {
             startDate: Date.now() - 3600000,
             endDate: Date.now(),
+            range: 'last-1-hour',
           };
           break;
         case 'last-2-hours':
           newDateRange = {
             startDate: Date.now() - 7200000,
             endDate: Date.now(),
+            range: 'last-2-hours',
           };
           break;
         case 'last-1-day':
           newDateRange = {
             startDate: Date.now() - 86400000,
             endDate: Date.now(),
+            range: 'last-1-day',
           };
           break;
         case 'last-7-days':
           newDateRange = {
             startDate: Date.now() - 604800000,
             endDate: Date.now(),
+            range: 'last-7-days',
           };
           break;
         case 'last-30-days':
           newDateRange = {
             startDate: Date.now() - 2592000000,
             endDate: Date.now(),
+            range: 'last-30-days',
           };
           break;
       }
 
       if (newDateRange) {
-        dispatch(
-          setLayout(dashboardId, {
-            ...storedLayout,
-            dateRange: newDateRange,
-          })
-        );
-
-        await postLayout(dashboardId, {
+        const layoutBody = {
           ...storedLayout,
           dateRange: newDateRange,
-        })
+        };
+        dispatch(setLayout(dashboardId, layoutBody));
+        await postLayout(dashboardId, layoutBody);
       }
     }
   };
 
   const handleDateRangeConfirm = async () => {
-    // setOpenDatePicker(false);
     if (startDate && endDate) {
-      dispatch(
-        setLayout(dashboardId, {
-          ...storedLayout,
-          dateRange: {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        })
-      );
 
-      await postLayout(dashboardId, {
+      const layoutBody = {
         ...storedLayout,
         dateRange: {
+          ...storedLayout.dateRange,
           startDate: startDate,
           endDate: endDate,
         },
-      })
+      }
+      dispatch(
+        setLayout(dashboardId, layoutBody)
+      );
+
+      await postLayout(dashboardId, layoutBody);
     }
   };
 
@@ -189,7 +193,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   />
                 </div>
                 <IconButton>
-                  <CheckCircleOutline sx={{color: 'white'}} onClick={handleDateRangeConfirm} />
+                  <CheckCircleOutline
+                    sx={{ color: 'white' }}
+                    onClick={handleDateRangeConfirm}
+                  />
                 </IconButton>
               </div>
             )}
