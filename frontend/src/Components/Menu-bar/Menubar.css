@@ -2,6 +2,7 @@ html {
     scroll-behavior: smooth;
     font-family: 'Poppins', sans-serif;
 }
+
 .side-bar::-webkit-scrollbar,
 .sidebar2::-webkit-scrollbar,
 .sidebar3::-webkit-scrollbar {
@@ -24,7 +25,7 @@ html {
 .side-bar::-webkit-scrollbar-thumb:hover,
 .sidebar2::-webkit-scrollbar-thumb:hover,
 .sidebar3::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .side-bar,
@@ -33,10 +34,11 @@ html {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.1) #f4f6f9;
 }
+
 .Menu {
     width: 100%;
     text-align: center;
-    padding: 10px 0px;
+    padding: 10px 0;
     background-color: #2bc790;
     color: white;
     font-size: 18px;
@@ -47,18 +49,18 @@ html {
     font-weight: bold;
 }
 
-.side-bar {
+.side-bar,
+.sidebar2,
+.sidebar3 {
     height: calc(100vh - 65px);
-    width: 275px !important;
-    width: 20%;
+    width: 275px;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     overflow-x: hidden;
     overflow-y: auto;
     background-color: white;
-    transition: transform 0.3s ease, width 0.3s ease;
+    transition: transform 0.2s ease, width 0.2s ease;
     z-index: 100;
     position: relative;
-    transform: translateX(0);
 }
 
 #side-bar {
@@ -79,36 +81,22 @@ html {
 }
 
 .sidebar2 {
-    height: calc(100vh - 65px);
-    width: 275px;
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
-    overflow-x: hidden;
-    overflow-y: auto;
-    transition: transform 0.3s ease, width 0.3s ease;
-    z-index: 100;
-    position: relative;
-    background-color: white;
     transform: translateX(-275px);
-}
-
-.sidebar3 {
-    transform: translateX(0);
 }
 
 .side-bar ul li,
 .sidebar2 ul li {
-    padding: 14px 14px 14px 12px;
-    font-weight: 450;
+    padding: 14px;
+    font-weight: 500;
+    /* Corrected font-weight */
     font-size: 1.1rem;
     display: flex;
     align-items: center;
     gap: 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    position: relative;
-    transition: all 0.3s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
 }
 
 .side-bar ul li:hover,
@@ -117,28 +105,30 @@ html {
     color: white;
 }
 
+/* Additional sidebar styles */
 .quick-action {
     font-size: 17px;
     font-weight: 500;
     color: #555;
-    padding: 10px 15px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 14px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Sidebar icons */
 .speedicon {
-    font-size: 28px !important;
+    font-size: 28px;
     color: #2bc790;
     transition: color 0.3s ease;
 }
 
-.side-bar ul li:hover .speedicon,
-#side-bar ul li:hover .speedicon {
-    color: white !important;
+.side-bar ul li:hover .speedicon {
+    color: white;
 }
 
+/* Links and counts */
 .link,
 a {
-    color: black !important;
+    color: black;
     text-decoration: none;
     list-style-type: none;
 }
@@ -154,11 +144,24 @@ a {
     font-weight: bold;
 }
 
+/* User selection dropdown */
 .user-selection {
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
     transition: max-height 0.3s ease;
+}
+
+.user-selection li {
+    color: rgba(0, 0, 0, 0.7);
+    min-width: 100%;
+    font-size: 1.02rem !important;
+}
+
+.arrow-down {
+    color: black;
+    position: absolute;
+    right: 25px;
+    transition: all 5s ease;
 }
 
 .toggle-user {
@@ -178,8 +181,14 @@ a {
     transition: background-color 0.3s ease;
 }
 
+.side-bar ul li:hover .arrow-down,
+.sidebar2 ul li:hover .arrow-down {
+    color: white;
+}
+
 .user-selection-link:hover {
     background-color: #dcefff;
+
 }
 
 .menu-icon {
@@ -193,11 +202,13 @@ a {
     transform: rotate(90deg);
 }
 
-@media screen and (max-width:1200px){
-    .side-bar{
-        width: 250px !important;
+@media screen and (max-width: 1200px) {
+    .side-bar {
+        width: 250px;
     }
-    .side-bar ul li, .sidebar2 ul li{
+
+    .side-bar ul li,
+    .sidebar2 ul li {
         font-size: 1rem;
     }
 }

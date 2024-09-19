@@ -11,6 +11,11 @@
     min-width: 100%;
 }
 
+.warehouse{
+    min-width: 400px !important;
+    max-width: 100% !important;
+}
+
 
 .warehouse-form {
     margin: 20px 0;
@@ -31,10 +36,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px !important;
+    width: 130px !important;
+    height: 100%;
 }
 .user-img-info .img img{
-    object-fit: fill;
+    object-fit: contain;
 }
 
 .username {
@@ -43,10 +49,6 @@
     height: max-content !important;
 }
 
-.personicon{
-    border-radius: 50% !important;
-    width: 100px !important;
-}
 
 .location {
     width: 65%;
@@ -129,7 +131,7 @@
     justify-content: space-between;
 }
 .userinfo{
-    height:16vh !important;
+    height:max-content !important;
 }
 @media screen and (max-width:700px){
     .warehouses {

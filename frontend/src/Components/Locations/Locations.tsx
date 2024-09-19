@@ -12,8 +12,9 @@ import Loader from '../Loader/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 
-import { TextField, Box, IconButton } from '@mui/material';
+import { TextField, Box, IconButton, Tooltip } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import React from 'react';
 
 interface Warehouse {
   warehouse_name?: string;
@@ -36,6 +37,15 @@ const Locations = () => {
   const [userMarker, setUserMarker] = useState<L.Marker | null>(null);
   const markerClusterRef = useRef<L.MarkerClusterGroup | null>(null);
   const user = useSelector((state: RootState) => state.user.user);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   console.log('rendered');
   const filteredLocations = useMemo(
@@ -118,14 +128,12 @@ const Locations = () => {
         mapInstance.panInsideBounds(bounds, { animate: true });
       });
 
-      // Variable to store the current marker
       let currentMarker: L.Marker | null = null;
 
       mapInstance.on('click', async (e) => {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
 
-        // Remove the previous marker if it exists
         if (currentMarker) {
           mapInstance.removeLayer(currentMarker);
         }
@@ -145,15 +153,12 @@ const Locations = () => {
 
         newMarker.openPopup();
 
-        // Remove marker when popup is closed
         newMarker.on('popupclose', () => {
           mapInstance.removeLayer(newMarker);
         });
 
-        // Update the current marker reference
         currentMarker = newMarker;
 
-        // Copy coordinates to clipboard
         navigator.clipboard
           .writeText(`${lat.toFixed(6)}, ${lng.toFixed(6)}`)
           .then(
@@ -237,46 +242,51 @@ const Locations = () => {
         <Loader />
       ) : (
         <div className="map-container">
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: 2,
-            }}
-          >
-            <h1>Locations of warehouses</h1>
-
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              <IconButton
-                onClick={centerOnUserLocation}
+          <div className="locations">
+              <Box
                 sx={{
-                  color: 'lightseagreen',
-                  '&:hover': {
-                    color: 'skyblue', // Darker blue on hover
-                  },
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: 2,
+
                 }}
               >
-                <LocationOnIcon />
-              </IconButton>
-              <TextField
-                label="Search Warehouses"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                size="small"
-                sx={{
-                  minWidth: '200px',
-                }}
-              />
-            </Box>
-          </Box>
+                <h2>Locations of warehouses</h2>
 
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <Tooltip open={open} arrow onClose={handleClose} onOpen={handleOpen} title="Get Current Location">
+                    <IconButton
+                      onClick={centerOnUserLocation}
+                      sx={{
+                        color: 'lightseagreen',
+                        '&:hover': {
+                          color: 'skyblue', // Darker blue on hover
+                        },
+                      }}
+                    >
+                      <LocationOnIcon />
+                    </IconButton>
+                  </Tooltip>
+                  
+                  <TextField
+                    label="Search Warehouses"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    size="small"
+                    sx={{
+                      minWidth: '200px',
+                    }}
+                  />
+                </Box>
+              </Box>
+          </div>
           <div className="map" id="map"></div>
         </div>
       )}

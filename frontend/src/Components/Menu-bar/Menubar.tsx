@@ -14,9 +14,10 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { useDispatch, useSelector } from "react-redux";
 import { set_Menubaropen } from "../../Redux/Action/Action";
 import { RootState } from "../../Redux/Reducer";
-
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useEffect, useRef, useState } from "react";
 import { formatNumber } from "../../Utility/utility_functions";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const Menubar = () => {
     const deviceCount = useSelector((state: any) => state.user.deviceCount);
@@ -109,9 +110,9 @@ const Menubar = () => {
                     <GroupIcon className="speedicon" />Users <span className="count">{formatNumber(userCount)}</span>
                 </li>
 
-                <li className="quick-action">Quick Actions</li>
+                <div className="quick-action">Quick Actions</div>
                 <div className="link add-user-link" onClick={() => setIsUserSelectionOpen(!isUserSelectionOpen)}>
-                    <li><PersonAddAlt1Icon className="speedicon" />Add User</li>
+                    <li><PersonAddAlt1Icon className="speedicon" />Add User {!isUserSelectionOpen ? <KeyboardArrowDownIcon className="arrow-down" /> : <KeyboardArrowUpIcon className="arrow-down" />}</li>
                     <div className={`user-selection ${isUserSelectionOpen ? 'toggle-user-open' : 'toggle-user'}`} ref={userSelectionRef}>
                         <li onClick={() => handleLinkClick('/addSupervisor')}>Add Supervisor</li>
                         <li onClick={() => handleLinkClick('/addCustomer')}>Add Customer</li>

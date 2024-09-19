@@ -39,5 +39,16 @@
 }
 
 .map {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.locations{
+    background-color:white;
+    padding:20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+.locations h2{
+    display: flex;
+    align-items: center;
 }
