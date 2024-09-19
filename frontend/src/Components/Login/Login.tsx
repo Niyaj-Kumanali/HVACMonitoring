@@ -259,17 +259,50 @@ const Login: React.FC = () => {
                         <h2 className="title">Welcome</h2>
                         <div className={`input-div one`}>
                             <div className="div">
-                                <TextField id="standard-basic"  onChange={(e) => setUsername(e.target.value)}  label="Username" variant="standard" className='saa ok' />
+                                    <TextField 
+                                    id="standard-basic" 
+                                    onChange={(e) => setUsername(e.target.value)} 
+                                    label="Username" variant="standard" 
+                                    className='saa ok'
+                                    sx={{
+                                        '& .MuiInput-underline:after': {
+                                            borderBottomColor: '#38d39f',
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            color: 'var(--TextField-brandBorderFocusedColor)',
+                                        },
+                                        '& .MuiInputLabel-root.Mui-focused': {
+                                            color: 'rgba(0, 0, 0, 0.5)',
+                                        }
+                                    }}/>
                             </div>
                         </div>
                         <div className={`input-div pass`}>
                             <div className="div">
                                     <FormControl variant="standard" className='saa'>
-                                        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                                        <InputLabel 
+                                            htmlFor="standard-adornment-password"
+                                            sx={{
+                                                color: 'black',
+                                                '&.Mui-focused': {
+                                                    color: 'rgba(0, 0, 0, 0.42)',
+                                                },
+                                            }}
+                                        >
+                                            Password
+                                        </InputLabel>
                                         <Input
                                             id="standard-adornment-password"
                                             type={showPassword ? 'text' : 'password'}
                                             onChange={(e) => setPassword(e.target.value)}
+                                            sx={{
+                                                '&:before': {
+                                                    borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+                                                },
+                                                '&:after': {
+                                                    borderBottom: '2px solid #38d39f', 
+                                                }
+                                            }}
                                             endAdornment={
                                                 <InputAdornment position="end">
                                                     <IconButton
