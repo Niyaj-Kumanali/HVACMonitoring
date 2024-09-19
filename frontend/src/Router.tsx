@@ -15,9 +15,7 @@ import Addvehicle from './Components/Add-Vehicle/Addvehicle';
 import MyComponent from './Components/MyComponent/MyComponent';
 import Login from './Components/Login/Login';
 import Accountinfo from './Components/AccountInfo/Accountinfo';
-
 import Dashboard from './Components/Dashboard/Dashboard';
-
 import App from './App';
 import PageNotFound from './Components/PageNotFound/PageNotFound';
 import AddSupervisor from './Components/Add-User/AddSupervisor';
