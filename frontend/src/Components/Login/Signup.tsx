@@ -16,6 +16,8 @@ import { useDispatch } from 'react-redux';
 import { set_Accesstoken } from '../../Redux/Action/Action';
 import { getActivationLink } from '../../api/userApi';
 import { getResetTokenByEmail, setPassword } from '../../api/loginApi';
+import { FormControl, IconButton, Input, InputAdornment, InputLabel, TextField } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -24,12 +26,7 @@ const Signup: React.FC = () => {
     email: '',
     password: '',
   });
-  const [focusedFields, setFocusedFields] = useState({
-    firstName: true,
-    lastName: false,
-    email: false,
-    password: false,
-  });
+
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -39,28 +36,25 @@ const Signup: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const firstNameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   const handleInputChange =
     (field: keyof typeof formData) =>
       (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [field]: e.target.value });
       };
-
-  const handleFocus = (field: keyof typeof focusedFields) => () => {
-    setFocusedFields((prev) => ({ ...prev, [field]: true }));
-  };
-
-  const handleBlur =
-    (field: keyof typeof focusedFields) =>
-      (e: React.FocusEvent<HTMLInputElement>) => {
-        if (e.target.value === '') {
-          setFocusedFields((prev) => ({ ...prev, [field]: false }));
-        }
-      };
-
 
   const login = async (username: string, password: string): Promise<string> => {
     try {
@@ -226,92 +220,130 @@ const Signup: React.FC = () => {
         </div>
 
         <div className="login-content">
-          <form onSubmit={handleSignUp} autoComplete="on">
+            <form onSubmit={handleSignUp} autoComplete="off">
             <img src={avatarImg} alt="avatar" />
             <h2 className="title">Sign Up</h2>
 
             <div
-              className={`input-div one ${focusedFields.firstName ? 'focus' : ''
+              className={`input-div one 
                 }`}
             >
-              <div className="i">
-                <i className="fas fa-user"></i>
-              </div>
               <div className="div">
-                <h5>First Name</h5>
-                <input
-                  type="text"
-                  className="input"
-                  value={formData.firstName}
-                  onChange={handleInputChange('firstName')}
-                  onFocus={handleFocus('firstName')}
-                  onBlur={handleBlur('firstName')}
-                  autoComplete="given-name"
-                  ref={firstNameRef}
-                />
+                  <TextField
+                    id="standard-basic"
+                    onChange={handleInputChange('firstName')}
+                    label="First Name" variant="standard"
+                    autoComplete="off"
+                    className='saa ok'
+                    value={formData.firstName}
+                    sx={{
+                      '& .MuiInput-underline:after': {
+                        borderBottomColor: '#38d39f',
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: 'rgba(0, 0, 0, 0.7)',
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': {
+                        color: 'rgba(0, 0, 0, 0.5)',
+                      }
+                    }} />
               </div>
             </div>
 
             <div
-              className={`input-div one ${focusedFields.lastName ? 'focus' : ''
-                }`}
+              className={`input-div one`}
             >
-              <div className="i">
-                <i className="fas fa-user"></i>
-              </div>
               <div className="div">
-                <h5>Last Name</h5>
-                <input
-                  type="text"
-                  className="input"
-                  value={formData.lastName}
-                  onChange={handleInputChange('lastName')}
-                  onFocus={handleFocus('lastName')}
-                  onBlur={handleBlur('lastName')}
-                  autoComplete="family-name"
-                />
+                  <TextField
+                    id="standard-basic"
+                    onChange={handleInputChange('lastName')}
+                    label="Last Name" variant="standard"
+                    className='saa ok'
+                    autoComplete="off"
+                    value={formData.lastName}
+                    sx={{
+                      '& .MuiInput-underline:after': {
+                        borderBottomColor: '#38d39f',
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: 'rgba(0, 0, 0, 0.7)',
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': {
+                        color: 'rgba(0, 0, 0, 0.5)',
+                      }
+                    }} />
               </div>
             </div>
 
             <div
-              className={`input-div one ${focusedFields.email ? 'focus' : ''}`}
+              className={`input-div one`}
             >
-              <div className="i">
-                <i className="fas fa-envelope"></i>
-              </div>
               <div className="div">
-                <h5>Email</h5>
-                <input
-                  type="email"
-                  className="input"
-                  value={formData.email}
-                  onChange={handleInputChange('email')}
-                  onFocus={handleFocus('email')}
-                  onBlur={handleBlur('email')}
-                  autoComplete="email"
-                />
+                  <TextField
+                    id="unique-id-email"
+                    onChange={handleInputChange('email')}
+                    label="Email" variant="standard"
+                    autoComplete='off'
+                    className='saa ok'
+                    value={formData.email}
+                    sx={{
+                      '& .MuiInput-underline:after': {
+                        borderBottomColor: '#38d39f',
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: 'rgba(0, 0, 0, 0.7)',
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': {
+                        color: 'rgba(0, 0, 0, 0.5)',
+                      }
+                    }} />
               </div>
             </div>
 
             <div
-              className={`input-div pass ${focusedFields.password ? 'focus' : ''
-                }`}
+              className={`input-div pass `}
             >
-              <div className="i">
-                <i className="fas fa-lock"></i>
-              </div>
               <div className="div">
-                <h5>Password</h5>
-                <input
-                  type="password"
-                  className="input"
-                  value={formData.password}
-                  onChange={handleInputChange('password')}
-                  onFocus={handleFocus('password')}
-                  onBlur={handleBlur('password')}
-                  autoComplete="new-password"
-                  ref={passwordRef}
-                />
+                  <FormControl variant="standard" className='saa'>
+                    <InputLabel 
+                      htmlFor="standard-adornment-password"
+                      sx={{
+                        color: 'rgba(0, 0, 0, 0.7)',
+                        '&.Mui-focused': {
+                          color: 'rgba(0, 0, 0, 0.42)',
+                        },
+                      }}
+                      >
+                        Password
+                      </InputLabel>
+                    <Input
+                      id="standard-adornment-password"
+                      type={showPassword ? 'text' : 'password'}
+                      onChange={handleInputChange('password')}
+                      autoComplete="new-password"
+                      sx={{
+                        '&:before': {
+                          borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+                        },
+                        '&:after': {
+                          borderBottom: '2px solid #38d39f',
+                        },
+                      }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            onMouseUp={handleMouseUpPassword}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    value={formData.password}
+                    />
+                  </FormControl>
               </div>
             </div>
 
