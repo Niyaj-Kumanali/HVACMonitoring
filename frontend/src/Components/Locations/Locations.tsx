@@ -12,7 +12,7 @@ import Loader from '../Loader/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 
-import { TextField, Box, IconButton, Tooltip } from '@mui/material';
+import { TextField, IconButton, Tooltip } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import React from 'react';
 
@@ -243,49 +243,35 @@ const Locations = () => {
       ) : (
         <div className="map-container">
           <div className="locations">
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: 2,
-
-                }}
-              >
+            <div className="locationsh2">
                 <h2>Locations of warehouses</h2>
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <Tooltip open={open} arrow onClose={handleClose} onOpen={handleOpen} title="Get Current Location">
-                    <IconButton
-                      onClick={centerOnUserLocation}
-                      sx={{
-                        color: 'lightseagreen',
-                        '&:hover': {
-                          color: 'skyblue', // Darker blue on hover
-                        },
-                      }}
-                    >
-                      <LocationOnIcon />
-                    </IconButton>
-                  </Tooltip>
-                  
-                  <TextField
-                    label="Search Warehouses"
-                    variant="outlined"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    size="small"
+            </div>
+            <div className="locations-searchbar">
+                <Tooltip open={open} arrow onClose={handleClose} onOpen={handleOpen} title="Get Current Location">
+                  <IconButton
+                    onClick={centerOnUserLocation}
                     sx={{
-                      minWidth: '200px',
+                      color: 'lightseagreen',
+                      '&:hover': {
+                        color: 'skyblue', // Darker blue on hover
+                      },
                     }}
-                  />
-                </Box>
-              </Box>
+                  >
+                    <LocationOnIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <TextField
+                  label="Search Warehouses"
+                  variant="outlined"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  size="small"
+                  sx={{
+                    minWidth: '200px',
+                  }}
+                />
+            </div>
           </div>
           <div className="map" id="map"></div>
         </div>

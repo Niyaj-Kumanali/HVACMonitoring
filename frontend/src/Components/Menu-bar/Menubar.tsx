@@ -31,12 +31,9 @@ const Menubar = () => {
     const userSelectionRef = useRef<HTMLDivElement>(null);
     const menubarRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
-    const navigate = useNavigate();  // useNavigate to programmatically navigate
-
+    const navigate = useNavigate();
     const isMenubar = useSelector((state: RootState) => state.user.menubar)
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(isMenubar || false);
-
-    console.log(menubaropen)
 
     function getClassName(width: number) {
         return width <= 700 ? 'sidebar2' : 'side-bar';
@@ -65,9 +62,9 @@ const Menubar = () => {
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);  // Add the listener globally
+        document.addEventListener('mousedown', handleClickOutside);
 
-        return () => document.removeEventListener('mousedown', handleClickOutside);  // Cleanup the listener on component unmount
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [menubaropen]);
 
 

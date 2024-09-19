@@ -118,9 +118,9 @@ const Charts = () => {
                 const params:any = {
                     keys:
                         keyresponse.data.join(','),
-                    startTs: Date.now() - 300000, // last five minutes
+                    startTs: Date.now() - 500000, // last five minutes
                     endTs: Date.now(),
-                    limit: 100,
+                    limit: 200,
                     orderBy: 'ASC',
                 };
 
@@ -178,7 +178,7 @@ const Charts = () => {
         };
 
         fetchTelemetry();
-        const interval = setInterval(fetchTelemetry, 3000);
+        const interval = setInterval(fetchTelemetry, 5000);
 
         return () => clearInterval(interval);
     }, [selectedDevice]);

@@ -12,7 +12,7 @@
     border-radius: 10px;
     margin: 20px !important;
     min-width: 430px !important;
-    max-width: 100%;
+    max-width: 50%;
 }
 
 .sensor-form {
@@ -39,7 +39,7 @@
     box-sizing: border-box;
 }
 
-.warehouse .sub-btn {
+.warehouse .sub-btn, .warehouse-data .sub-btn{
     margin-top: 30px !important;
 }
 

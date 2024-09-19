@@ -11,9 +11,14 @@
     min-width: 100%;
 }
 
-.warehouse{
-    min-width: 400px !important;
-    max-width: 100% !important;
+.warehouse-data{
+    min-width: 400px;
+    max-width: 100%;
+    height: auto;
+    padding: 20px;
+    background-color: white;
+    margin: 20px;
+    border-radius: 10px;
 }
 
 

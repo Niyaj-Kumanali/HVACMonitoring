@@ -56,7 +56,6 @@ const Header: React.FC = () => {
   }, []);
 
   const menuState = useSelector((state: RootState) => state.user.menubar);
-  console.log(menuState)
 
   const menubarDispatch = useDispatch();
 

@@ -283,7 +283,7 @@ const Signup: React.FC = () => {
                     id="unique-id-email"
                     onChange={handleInputChange('email')}
                     label="Email" variant="standard"
-                    autoComplete='off'
+                    autoComplete='new-email'
                     className='saa ok'
                     value={formData.email}
                     sx={{
