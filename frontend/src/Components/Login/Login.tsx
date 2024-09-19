@@ -21,6 +21,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { getResetTokenByEmail, login } from '../../api/loginApi';
 import { mongoAPI } from '../../api/MongoAPIInstance';
+// import PersonIcon from '@mui/icons-material/Person';
+import { FormControl, IconButton, Input, InputAdornment, InputLabel } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -38,19 +41,22 @@ const Login: React.FC = () => {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
-    const [usernameFocused, setUsernameFocused] = useState<boolean>(false);
-    const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
+    // const [usernameFocused, setUsernameFocused] = useState<boolean>(false);
+    // const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
     const [forgetpasswordemail, setForgetpasswordeamil] = useState("");
+    const [showPassword, setShowPassword] = React.useState(false);
 
-    const handleFocus = (setter: React.Dispatch<React.SetStateAction<boolean>>) => () => {
-        setter(true);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
     };
 
-    const handleBlur = (setter: React.Dispatch<React.SetStateAction<boolean>>) => (e: any) => {
-        if (e.target.value === '') {
-            setter(false);
-        }
+    const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
     };
+
+    console.log(username)
 
     const [state, setState] = useState<{
         open: boolean;
@@ -176,7 +182,6 @@ const Login: React.FC = () => {
                     resetToken: resetToken,
                 };
 
-                // Send the email
                 const emailResponse = await mongoAPI.post('/mailservice/sendresetemail', emailPayload);
                 console.log(emailResponse)
 
@@ -252,38 +257,34 @@ const Login: React.FC = () => {
                     <form onSubmit={handleLogin} autoComplete="on">
                         <img src={avatarImg} alt="avatar" />
                         <h2 className="title">Welcome</h2>
-                        <div className={`input-div one ${usernameFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-user"></i>
-                            </div>
+                        <div className={`input-div one`}>
                             <div className="div">
-                                <h5>Username</h5>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    onFocus={handleFocus(() => setUsernameFocused(true))}
-                                    onBlur={handleBlur(() => setUsernameFocused(false))}
-                                    autoComplete="username"
-                                />
+                                <TextField id="standard-basic"  onChange={(e) => setUsername(e.target.value)}  label="Username" variant="standard" className='saa ok' />
                             </div>
                         </div>
-                        <div className={`input-div pass ${passwordFocused ? 'focus' : ''}`}>
-                            <div className="i">
-                                <i className="fas fa-lock"></i>
-                            </div>
+                        <div className={`input-div pass`}>
                             <div className="div">
-                                <h5>Password</h5>
-                                <input
-                                    type="password"
-                                    className="input"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onFocus={handleFocus(() => setPasswordFocused(true))}
-                                    onBlur={handleBlur(() => setPasswordFocused(false))}
-                                    autoComplete="current-password"
-                                />
+                                    <FormControl variant="standard" className='saa'>
+                                        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                                        <Input
+                                            id="standard-adornment-password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={handleClickShowPassword}
+                                                        onMouseDown={handleMouseDownPassword}
+                                                        onMouseUp={handleMouseUpPassword}
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                            // value={password}
+                                        />
+                                    </FormControl>
                             </div>
                         </div>
                         <p className="forgotPassword" onClick={handleClickOpen}>Forgot Password?</p> {/* Link to open the dialog */}
