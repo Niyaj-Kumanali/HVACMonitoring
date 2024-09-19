@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
     await postLayout(dashboardId, layoutBody);
   };
 
-  const breakpoints = { lg: gridWidth, md: gridWidth * 0.75, sm: gridWidth * 0.5, xs: gridWidth * 0.25, xxs: gridWidth * 0.1 };
+  const breakpoints = { lg: gridWidth, md: gridWidth * 0.75, sm: gridWidth * 0.5, xs: gridWidth * 0.5, xxs: gridWidth * 0.1 };
   const cols = { lg: 14, md: 10, sm: 8, xs: 6, xxs: 4 };
 
   return (
