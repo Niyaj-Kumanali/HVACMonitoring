@@ -292,7 +292,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             ))}
           </Select>
         </FormControl>
-        <FormControl variant="outlined" size="small" style={{ width: 200 }}>
+        <FormControl variant="outlined" size="small" style={{ width: 100 }}>
           <InputLabel id="sensor-select-label">Select Sensors</InputLabel>
           <Select
             labelId="sensor-select-label"

@@ -180,7 +180,7 @@ export interface TelemetryData {
 }
 
 export interface WidgetLayout extends Layout {
-  selectedDevice?: string; // Add this field
+  selectedDevicegit?: string; // Add this field
   selectedSensors?: string[]; // Add this field
   chart?: chartTypes; 
 }
