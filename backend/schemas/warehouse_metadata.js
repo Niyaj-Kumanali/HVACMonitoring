@@ -23,12 +23,6 @@ import { type } from 'os';
         userId: {type: String, required: true},
         email: {type: String, required: true}
 
-        // sensors :[{
-        //     sensor : {type: mongoose.Schema.Types.ObjectId, ref:'sensor_meatadata'},
-        //     rack_id : {type: Number, required:true},
-        //     shelf_id : {type: Number, required:true}
-        // }]
-
     })
 
     const warehouse = mongoose.model('warehouse_metadata', warehouseSchema);

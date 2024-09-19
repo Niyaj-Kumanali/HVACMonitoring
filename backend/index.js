@@ -31,7 +31,7 @@ const swaggerOptions = {
         info: {
             title: "Mongo API Documentation",
             version: "1.0.0",
-            description: "API documentation for warehouse and vehical management",
+            description: "API documentation for backend",
         },
         // servers: [
         //     {
