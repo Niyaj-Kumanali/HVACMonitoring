@@ -8,6 +8,7 @@ import {
 } from '../../api/widgetsBundleAPI';
 
 import { getImages } from '../../api/imageAPIs';
+import { getWarehouseDevicesAveragesByWarehouseId, getWarehouseViolations } from '../../api/telemetryAPIs';
 
 const MyComponent: React.FC = () => {
   // State for widget bundles
@@ -50,18 +51,19 @@ const MyComponent: React.FC = () => {
   };
 
   const handleGetAll = async () => {
-    fetchAllWidgetBundles();
-    fetchWidgetBundles(currentWidgetPage);
-    const currentuser = await getCurrentUser();
-    console.log('Current User: \n', currentuser.data);
+    const response1 = await getWarehouseDevicesAveragesByWarehouseId('2b908e56-1fff-46ac-9710-172f67a0beb7')
+    console.log(response1.data)
 
-    const params = {
-      pageSize: 10000,
-      page: 0,
-    };
+    const resBody = {
+      "id": "2b908e56-1fff-46ac-9710-172f67a0beb7",
+      "keys": {
+        "temperature": 24,
+        "humidity": 50
+      }
+    }
+    const response2 = await getWarehouseViolations(resBody)
+    console.log(response2.data)
 
-    const imageResponse = await getImages(params);
-    console.log(imageResponse.data);
   };
 
   const handlePageChangeWidgets = (page: number) => {

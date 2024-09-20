@@ -14,9 +14,9 @@ import {
 } from '../../api/telemetryAPIs';
 import { getTenantDevices } from '../../api/deviceApi';
 import {
-  Button,
   Checkbox,
   FormControl,
+  IconButton,
   InputLabel,
   ListItemText,
   MenuItem,
@@ -49,13 +49,20 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   const storedLayout = useSelector(
     (state: RootState) => state.dashboardLayout[dashboardId || ''] || {}
   );
+  const currentWidget = storedLayout.layout.map((item: WidgetLayout) =>
+    item.i == widgetId ? item : undefined
+  )[0];
 
   const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
   const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last 5 minutes
   const [endDate, setEndDate] = useState<number>(Date.now());
-  const [selectedDevice, setSelectedDevice] = useState<string>(deviceId);
+  const [selectedDevice, setSelectedDevice] = useState<string>(
+    currentWidget?.selectedDevice || deviceId
+  );
   const [sensors, setSensors] = useState<string[]>([]);
-  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
+  const [selectedSensors, setSelectedSensors] = useState<string[]>(
+    currentWidget?.selectedSensors || []
+  );
   const [telemetryData, setTelemetryData] = useState<TelemetryData>({});
   const [filteredTelemetryData, setFilteredTelemetryData] =
     useState<TelemetryData>({});
@@ -122,7 +129,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     return response.data;
   };
 
-
   const fetchLatestTelemetryData = async (
     deviceId: string,
     selectedSensors: string[],
@@ -174,7 +180,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     try {
       const intervalId = setInterval(async () => {
         if (!selectedDevice) return;
-  
+
         try {
           const keys = await fetchTimeseriesKeys(selectedDevice);
           const latestData = await fetchLatestTelemetryData(
@@ -191,20 +197,19 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             },
             telemetryData
           );
-  
+
           setTelemetryData(updatedTelemetryData);
         } catch (error) {
           console.error('Failed to fetch latest telemetry data', error);
         }
       }, 5000);
-  
+
       return () => {
         clearInterval(intervalId);
       };
     } catch (error) {
       console.error('Failed to fetch latest telemetry data', error);
     }
-
   }, [selectedDevice, selectedSensors, telemetryData]);
 
   useEffect(() => {
@@ -221,7 +226,11 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
   const renderChart = useMemo(() => {
     return (
-      <LineChartWidget data={filteredTelemetryData} chartType={selectedChart} />
+      <LineChartWidget
+        data={filteredTelemetryData}
+        chartType={selectedChart}
+        thresholds={{ temperature: 24, humidity: 50 }}
+      />
     );
   }, [filteredTelemetryData, selectedChart]);
 
@@ -262,13 +271,14 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   return (
     <div className="widget">
       <Toolbar className="widget-header">
-        <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
-          <InputLabel id="chart-select-label">Select Chart</InputLabel>
+        <FormControl variant="standard" size="small">
+          <InputLabel id="chart-select-label">Chart</InputLabel>
           <Select
             labelId="chart-select-label"
             value={selectedChart}
             onChange={(e) => setSelectedChart(e.target.value as chartTypes)}
-            label="Select Chart"
+            label="Chart"
+            size="small"
           >
             {charts.map((chart: chartTypes, index: number) => (
               <MenuItem key={index} value={chart}>
@@ -277,13 +287,14 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             ))}
           </Select>
         </FormControl>
-        <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
-          <InputLabel id="device-select-label">Select Device</InputLabel>
+        <FormControl variant="standard" size="small">
+          <InputLabel id="device-select-label">Device</InputLabel>
           <Select
             labelId="device-select-label"
             value={selectedDevice}
             onChange={(e) => setSelectedDevice(e.target.value as string)}
-            label="Select Device"
+            label="Device"
+            size="small"
           >
             {devices.map((device: Device) => (
               <MenuItem key={device.id?.id} value={device.id?.id}>
@@ -292,15 +303,18 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             ))}
           </Select>
         </FormControl>
-        <FormControl variant="outlined" size="small" style={{ width: 100 }}>
-          <InputLabel id="sensor-select-label">Select Sensors</InputLabel>
+        <FormControl variant="standard" size="small">
+          <InputLabel size="small" id="sensor-select-label">
+            Sensors
+          </InputLabel>
           <Select
             labelId="sensor-select-label"
             multiple
             value={selectedSensors}
             onChange={handleSensorChange}
             renderValue={(selected) => (selected as string[]).join(', ')}
-            label="Select Sensors"
+            label="Sensors"
+            size="small"
           >
             {sensors.map((sensor: string) => (
               <MenuItem key={sensor} value={sensor}>
@@ -310,9 +324,14 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             ))}
           </Select>
         </FormControl>
-        <Button className="delete-button" onClick={handleLayoutDelete}>
+        <IconButton
+          onClick={handleLayoutDelete}
+          sx={{
+            color: 'red',
+          }}
+        >
           <DeleteIcon />
-        </Button>
+        </IconButton>
       </Toolbar>
       {renderChart}
     </div>

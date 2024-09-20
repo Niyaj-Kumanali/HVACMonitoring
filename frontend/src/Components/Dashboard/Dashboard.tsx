@@ -60,19 +60,24 @@ const Dashboard: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const onAddWidget = async (deviceId: string, selectedChart: chartTypes) => {
+  const onAddWidget = async (
+    deviceId: string,
+    selectedChart: chartTypes,
+    selectedSensors: string[]
+  ) => {
     const newWidget: WidgetLayout = {
       i: `widget-${uuid4()}`,
       x: 0,
       y: Math.max(...localLayout.map((item) => item.y + item.h || 0)) + 1,
-      w: 4,
+      w: 5,
       h: 6,
-      minW: 4,
+      minW: 5,
       minH: 6,
       maxW: cols.lg,
       maxH: 12,
       chart: selectedChart,
       selectedDevice: deviceId,
+      selectedSensors: selectedSensors,
     };
 
     const updatedLayout: WidgetLayout[] = [...localLayout, newWidget];
@@ -114,15 +119,19 @@ const Dashboard: React.FC = () => {
     });
 
     setLocalLayout(updatedWidgets);
-    const layoutBody = { ...storedLayout, layout: updatedWidgets }
-    dispatch(
-      setLayout(dashboardId, layoutBody)
-    );
+    const layoutBody = { ...storedLayout, layout: updatedWidgets };
+    dispatch(setLayout(dashboardId, layoutBody));
 
     await postLayout(dashboardId, layoutBody);
   };
 
-  const breakpoints = { lg: gridWidth, md: gridWidth * 0.75, sm: gridWidth * 0.5, xs: gridWidth * 0.25, xxs: gridWidth * 0.1 };
+  const breakpoints = {
+    lg: gridWidth,
+    md: gridWidth * 0.75,
+    sm: gridWidth * 0.5,
+    xs: gridWidth * 0.25,
+    xxs: gridWidth * 0.1,
+  };
   const cols = { lg: 14, md: 10, sm: 8, xs: 6, xxs: 4 };
 
   return (
