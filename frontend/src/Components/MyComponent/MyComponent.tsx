@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './myComponent.css';
-import { getCurrentUser } from '../../api/loginApi';
 
 import {
   getAllWidgetsBundles,
   getWidgetsBundles,
 } from '../../api/widgetsBundleAPI';
 
-import { getImages } from '../../api/imageAPIs';
 import { getWarehouseDevicesAveragesByWarehouseId, getWarehouseViolations } from '../../api/telemetryAPIs';
 
 const MyComponent: React.FC = () => {
