@@ -24,6 +24,11 @@ export const getLayout = async (dashboardId: string = "") => {
 }
 
 
+export const deleteLayout = async (dashboardId: string = "") => {
+  const response = await mongoAPI.delete(`/dashboard/deletedashboard/${dashboardId}`)
+  return response
+}
+
 export const getAllWarehouseByUserId = async (userId: string = "", params: any) => {
   const response = await mongoAPI.get(`/warehouse/getallwarehouse/${userId}`, {params: params});
   return response;
