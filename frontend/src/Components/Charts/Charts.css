@@ -70,9 +70,15 @@
     height:max-content;
 }
 
+.table-cont{
+    margin-top: 20px;
+    min-width: 340px !important;
+    max-width: 100%;
+}
+
 .linechart-graph {
     max-width: 90% !important;
-    min-width: 300px;
+    min-width: 20vw !important;
     height: max-content !important;
 }
 

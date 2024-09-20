@@ -24,6 +24,7 @@ import "./Charts.css";
 import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Reducer";
+import Tabledata from "./Table";
 
 interface Warehouse {
     warehouse_id: string;
@@ -125,7 +126,6 @@ const Charts = () => {
                 };
 
                 const response = await getTimeseries("DEVICE", selectedDevice, params);
-                console.log(response)
                 return response.data;
             } catch (error) {
                 console.error("Failed to fetch telemetry data:", error);
@@ -177,9 +177,9 @@ const Charts = () => {
             }
         };
 
+
         fetchTelemetry();
         const interval = setInterval(fetchTelemetry, 5000);
-
         return () => clearInterval(interval);
     }, [selectedDevice]);
 
@@ -194,6 +194,7 @@ const Charts = () => {
     if (loading) {
         return <Loader />;
     }
+
 
     return (
         <div className="menu-data">
@@ -252,37 +253,46 @@ const Charts = () => {
                                 </TableContainer>
                             </Paper>
                             <div className="linegraph-chart">
-                                <div>
-                                    {telemetryCheckboxes.map((checkbox) => (
-                                        <FormControlLabel
-                                            key={checkbox.value}
-                                            control={
-                                                <Checkbox
-                                                    checked={selectedTelemetry.includes(checkbox.value)}
-                                                    onChange={handleTelemetryChange}
-                                                    value={checkbox.value}
-                                                />
-                                            }
-                                            label={checkbox.label}
-                                        />
-                                    ))}
-                                </div>
-                                {selectedDevice ? (
-                                    seriesData.length > 0 ? (
-                                        <LineChart
-                                            width={900}
-                                            height={600}
-                                            series={seriesData}
-                                            xAxis={[{ scaleType: 'point', data: data?.ts || [] }]}
-                                            grid={{ vertical: true, horizontal: true }}
-                                            className="linechart-graph"
-                                        />
+                                    <div >
+                                        {telemetryCheckboxes.map((checkbox) => (
+                                            <FormControlLabel
+                                                key={checkbox.value}
+                                                control={
+                                                    <Checkbox
+                                                        checked={selectedTelemetry.includes(checkbox.value)}
+                                                        onChange={handleTelemetryChange}
+                                                        value={checkbox.value}
+                                                    />
+                                                }
+                                                label={checkbox.label}
+                                            />
+                                        ))}
+                                    </div>
+                                    {selectedDevice ? (
+                                        seriesData.length > 0 ? (
+                                            <LineChart
+                                                width={750}
+                                                height={600}
+                                                series={seriesData}
+                                                xAxis={[{ scaleType: 'point', data: data?.ts || [] }]}
+                                                grid={{ vertical: true, horizontal: true }}
+                                                className="linechart-graph"
+                                            />
+                                        ) : (
+                                            <p>No valid data available for the selected device.</p>
+                                        )
                                     ) : (
-                                        <p>No valid data available for the selected device.</p>
-                                    )
-                                ) : (
-                                    <p>Please select a device to view telemetry data.</p>
-                                )}
+                                        <p>Please select a device to view telemetry data.</p>
+                                    )}
+                                <div>
+                                    <Tabledata
+                                        maindatas={seriesData.map((item: any) => ({
+                                            label: item.label,
+                                            data: item.data,
+                                            ts: data?.ts || []
+                                        }))}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
