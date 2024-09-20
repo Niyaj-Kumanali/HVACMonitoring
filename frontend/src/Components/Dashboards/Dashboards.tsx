@@ -34,6 +34,7 @@ import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
 import {
+  deleteLayout,
   getAllVehiclesByUserId,
   getAllWarehouseByUserId,
 } from '../../api/MongoAPIInstance';
@@ -164,6 +165,8 @@ const Dashboards = () => {
       await deleteDashboard(dashboardId);
       setOpen(true);
       fetchDashboards(currentPage-1);
+
+      await deleteLayout(dashboardId);
     } catch (error) {
       console.error('Failed to delete dashboard', error);
     }
