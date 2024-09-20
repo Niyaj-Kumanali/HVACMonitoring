@@ -114,7 +114,6 @@ html {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Sidebar icons */
 .speedicon {
     font-size: 28px;
     color: #2bc790;
@@ -122,6 +121,10 @@ html {
 }
 
 .side-bar ul li:hover .speedicon {
+    color: white;
+}
+
+#side-bar ul li:hover .speedicon {
     color: white;
 }
 
