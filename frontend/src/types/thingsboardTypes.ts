@@ -1,4 +1,5 @@
 import { Layout } from "react-grid-layout";
+import { chartTypes } from "../Components/Add-Widget/AddWidget";
 
 // Device types
 export interface Device {
