@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './styles/DashboardLayout.css';
 import {
-  chartTypes,
   Device,
   TelemetryData,
   TelemetryQueryParams,
@@ -24,19 +23,21 @@ import {
   Toolbar,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LineChartWidget from './Charts/LineChartWidget';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
-import { charts } from '../Add-Widget/AddWidget';
+import { charts, chartTypes } from '../Add-Widget/AddWidget';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import Chart from './Charts/Chart';
 
 interface WidgetProps {
   widgetId: string;
   deviceId: string;
   chartType: chartTypes;
 }
+
+export const DEFAULT_LIMIT = 10000;
 
 const DashboardLayout: React.FC<WidgetProps> = ({
   widgetId,
@@ -67,6 +68,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   const [filteredTelemetryData, setFilteredTelemetryData] =
     useState<TelemetryData>({});
   const [devices, setDevices] = useState<Device[]>([]);
+  console.log(selectedDevice, telemetryData)
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -99,10 +101,10 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           response.data.dateRange.startDate &&
           response.data.dateRange.endDate
         ) {
-          setStartDate(response.data.dateRange.startDate);
-          setEndDate(response.data.dateRange.endDate);
+          setStartDate(new Date(response.data.dateRange.startDate).getTime());
+          setEndDate(new Date(response.data.dateRange.endDate).getTime());
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch widget');
       }
     };
@@ -113,8 +115,8 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   useEffect(() => {
     const { startDate, endDate } = storedLayout.dateRange || {};
     if (startDate && endDate) {
-      setStartDate(startDate);
-      setEndDate(endDate);
+      setStartDate(new Date(startDate).getTime());
+      setEndDate(new Date(endDate).getTime());
     }
 
     (storedLayout.layout || []).forEach((item: WidgetLayout) => {
@@ -150,7 +152,8 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         const keys = await fetchTimeseriesKeys(selectedDevice);
         setSensors(keys);
         setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
-
+        setTelemetryData({});
+        setFilteredTelemetryData({})
         const params: TelemetryQueryParams = {
           keys:
             selectedSensors.length > 0
@@ -158,8 +161,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
               : keys.join(','),
           startTs: startDate || Date.now() - 300000,
           endTs: endDate || Date.now(),
-          limit: storedLayout.limit || 100,
-          orderBy: 'ASC',
+          limit: storedLayout.limit || DEFAULT_LIMIT,
         };
 
         const response = await getTimeseries('DEVICE', deviceId, params);
@@ -169,18 +171,14 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       }
     };
 
-    try {
-      fetchTelemetryData();
-    } catch (error) {
-      console.error('Failed to fetch telemetry data', error);
-    }
-  }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit]);
+    fetchTelemetryData();
+  }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit, deviceId]);
+
 
   useEffect(() => {
     try {
       const intervalId = setInterval(async () => {
         if (!selectedDevice) return;
-
         try {
           const keys = await fetchTimeseriesKeys(selectedDevice);
           const latestData = await fetchLatestTelemetryData(
@@ -216,17 +214,21 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     const data =
       selectedSensors.length > 0
         ? selectedSensors.reduce((acc: any, sensor: string) => {
-            acc[sensor] = telemetryData[sensor] || [];
+            const sensorData = telemetryData[sensor] || [];
+            acc[sensor]=sensorData.sort((a: any, b: any) => a.ts - b.ts)
+
             return acc;
           }, {})
         : telemetryData;
+    console.log(data)
 
     setFilteredTelemetryData(data);
-  }, [selectedSensors, telemetryData]);
-
+  }, [selectedSensors, storedLayout?.limit, telemetryData]);
+ 
   const renderChart = useMemo(() => {
+
     return (
-      <LineChartWidget
+      <Chart
         data={filteredTelemetryData}
         chartType={selectedChart}
         thresholds={{ temperature: 24, humidity: 50 }}

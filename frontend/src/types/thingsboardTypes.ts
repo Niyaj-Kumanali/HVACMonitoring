@@ -189,9 +189,6 @@ export interface LayoutState {
   [dashboardId: string]: WidgetLayout[]; // Store layouts based on dashboardId
 }
 
-export type chartTypes = 'Line' | 'Bar' | 'Area';
-
-
 export interface WarehouseDimensions {
   length: string;
   width: string;

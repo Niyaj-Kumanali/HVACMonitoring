@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   LineChart,
@@ -12,13 +13,16 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine, // Import ReferenceLine
+  ReferenceLine,
+  ComposedChart,
+  Scatter,
+  ScatterChart, // Import ReferenceLine
 } from 'recharts';
 import '../styles/charts.css';
-import { chartTypes } from '../../../types/thingsboardTypes';
 import * as XLSX from 'xlsx';
 import { DownloadRounded } from '@mui/icons-material';
 import { Tooltip as Tool, IconButton } from '@mui/material';
+import { chartTypes } from '../../Add-Widget/AddWidget';
 
 interface TelemetryDataItem {
   ts: string | number; // Timestamp can be a string or number
@@ -31,7 +35,7 @@ interface LineChartWidgetProps {
   thresholds?: Record<string, number>; // Optional thresholds for each series
 }
 
-const LineChartWidget: React.FC<LineChartWidgetProps> = ({
+const Chart: React.FC<LineChartWidgetProps> = ({
   data,
   chartType,
   thresholds = {}, // Defaults to empty object
@@ -40,10 +44,9 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
     []
   );
   const seriesKeys = Object.keys(data);
-
   useEffect(() => {
     const formattedData = seriesKeys.flatMap((key) => {
-      const seriesData = data[key];
+      const seriesData = data[key].sort((a: any, b: any) => a.ts - b.ts);
       if (!Array.isArray(seriesData)) {
         console.warn(
           `Expected array for key ${key}, but got ${typeof seriesData}`
@@ -59,6 +62,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
       }));
     });
 
+    console.log(formattedData)
     // Group the formatted data by timestamp
     const groupedData = formattedData.reduce(
       (acc: Array<Record<string, any>>, curr) => {
@@ -73,23 +77,31 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
       []
     );
 
+    console.log(data['temperature']);
+    console.log(groupedData);
+
     setGroupedData(groupedData);
   }, [data, seriesKeys]);
 
   const exportToExcel = (data: Record<string, TelemetryDataItem[]>) => {
-    const formattedData = Object.entries(data).flatMap(([key, seriesData]) => {
-      return seriesData.map((entry) => {
-        const value = typeof entry.value === 'string' ? parseFloat(entry.value) : entry.value;
-        if (key && value > thresholds[key]) {
-          return {
-            timestamp: new Date(entry.ts).toLocaleString(),
-            value: value,
-            key: key,
-          };
-        }
-        return null
-      });
-    }).filter((entry) => entry !== null);
+    const formattedData = Object.entries(data)
+      .flatMap(([key, seriesData]) => {
+        return seriesData.map((entry) => {
+          const value =
+            typeof entry.value === 'string'
+              ? parseFloat(entry.value)
+              : entry.value;
+          if (key && value > thresholds[key]) {
+            return {
+              timestamp: new Date(entry.ts).toLocaleString(),
+              value: value,
+              key: key,
+            };
+          }
+          return null;
+        });
+      })
+      .filter((entry) => entry !== null);
 
     const worksheet = XLSX.utils.json_to_sheet(formattedData);
     const workbook = XLSX.utils.book_new();
@@ -217,10 +229,42 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
           </AreaChart>
         );
 
+      case 'Scatter':
+        return (
+          <ScatterChart data={groupedData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} // Converts timestamp to a readable time
+            />
+            <YAxis />
+            <Tooltip
+              labelFormatter={(label) => new Date(label).toLocaleString()} // Displays a readable date in tooltip
+              formatter={(value) => value} // Optionally format the data point values
+            />
+            <Legend
+              layout="horizontal"
+              align="left"
+              verticalAlign="top"
+              className="custom-legend"
+            />
+            {seriesKeys.map((key, index) => (
+              <Scatter
+                key={key}
+                dataKey={key}
+                fill={getColor(index)} // Use `fill` for scatter points
+                isAnimationActive={false} // Disable animations for faster rendering
+              />
+            ))}
+            {renderThresholdLines()}{' '}
+            {/* Optional custom rendering for threshold lines */}
+          </ScatterChart>
+        );
+
       default:
         return <div>Unsupported chart type</div>;
     }
-  }, [chartType, groupedData, seriesKeys, thresholds]);
+  }, [chartType, getColor, groupedData, seriesKeys, thresholds]);
 
   return (
     <>
@@ -241,4 +285,4 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
   );
 };
 
-export default LineChartWidget;
+export default React.memo(Chart);
