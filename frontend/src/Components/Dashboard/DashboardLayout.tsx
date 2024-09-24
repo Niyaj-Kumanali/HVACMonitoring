@@ -55,8 +55,14 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   )[0];
 
   const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
-  const [startDate, setStartDate] = useState<number>(Date.now() - 300000); // Default last 5 minutes
-  const [endDate, setEndDate] = useState<number>(Date.now());
+  const [dateRange, setDateRange] = useState(() => {
+    const { startDate, endDate, range } = storedLayout?.dateRange || {};
+    return {
+      startDate: new Date(startDate).getTime() || new Date().getTime() - 300000, // Default to 5 minutes ago
+      endDate: new Date(endDate).getTime() || new Date().getTime(), // Default to now
+      range: range || 'last-5-minutes', // Default range
+    };
+  });
   const [selectedDevice, setSelectedDevice] = useState<string>(
     currentWidget?.selectedDevice || deviceId
   );
@@ -84,7 +90,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
       try {
         const response = await getLayout(dashboardId);
-        dispatch(setLayout(dashboardId, response.data))
         const currentWidget = response.data.layout.map((item: WidgetLayout) =>
           item.i == widgetId ? item : undefined
         )[0];
@@ -99,11 +104,12 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         }
         if (
           response.data.dateRange.startDate &&
-          response.data.dateRange.endDate
+          response.data.dateRange.endDate && 
+          response.data.dateRange.range
         ) {
-          setStartDate(new Date(response.data.dateRange.startDate).getTime());
-          setEndDate(new Date(response.data.dateRange.endDate).getTime());
+          setDateRange(response.data?.dateRange)
         }
+        dispatch(setLayout(dashboardId, response.data));
       } catch (error: any) {
         console.error('Failed to fetch widget', error);
       }
@@ -111,20 +117,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
     fetchInitialData();
   }, [dashboardId, deviceId, dispatch, widgetId]);
-
-  // useEffect(() => {
-  //   const { startDate, endDate } = storedLayout.dateRange || {};
-  //   if (startDate && endDate) {
-  //     setStartDate(new Date(startDate).getTime());
-  //     setEndDate(new Date(endDate).getTime());
-  //   }
-
-  //   (storedLayout.layout || []).forEach((item: WidgetLayout) => {
-  //     if (item.i === widgetId) {
-  //       setSelectedChart(item?.chart || 'Line');
-  //     }
-  //   });
-  // }, [storedLayout, widgetId]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
@@ -144,13 +136,12 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             selectedSensors.length > 0
               ? selectedSensors.join(',')
               : keys.join(','),
-          startTs: startDate || Date.now() - 300000,
-          endTs: endDate || Date.now(),
+          startTs: dateRange?.startDate || Date.now() - 300000,
+          endTs: dateRange?.endDate || Date.now(),
           limit: storedLayout.limit || DEFAULT_LIMIT,
         };
 
         const response = await getTimeseries('DEVICE', selectedDevice, params);
-        console.log(selectedDevice, response.data);
         setTelemetryData(response.data);
       } catch (error) {
         console.error('Failed to fetch telemetry data', error);
@@ -160,10 +151,8 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   }, [
     selectedDevice,
     selectedSensors,
-    startDate,
-    endDate,
+    dateRange,
     storedLayout.limit,
-    deviceId,
   ]);
 
   useEffect(() => {
@@ -299,6 +288,8 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       }
     }
   };
+
+  console.log(selectedChart)
   return (
     <div className="widget">
       <Toolbar className="widget-header">
