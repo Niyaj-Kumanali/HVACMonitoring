@@ -150,8 +150,26 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       }
     };
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors, dateRange, storedLayout.limit]);
+  }, [selectedDevice, selectedSensors, dateRange.startDate, dateRange.endDate, dateRange.range, storedLayout.limit, storedLayout]);
 
+  useEffect(() => {
+    const { startDate, endDate } = storedLayout.dateRange || {};
+    if (startDate && endDate) {
+      setDateRange(prev => ({
+        ...prev,
+        startDate: new Date(startDate).getTime(),
+        endDate: new Date(endDate).getTime()
+      }))
+    }
+ 
+    (storedLayout.layout || []).forEach((item: WidgetLayout) => {
+      if (item.i === widgetId) {
+        setSelectedChart(item?.chart || 'Line');
+      }
+    });
+  }, [storedLayout, widgetId])
+ 
+  
   useEffect(() => {
     const fetchLatestTelemetryData = async () => {
       if (!selectedDevice) return;
