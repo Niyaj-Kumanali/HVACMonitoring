@@ -25,8 +25,8 @@ const Dashboard: React.FC = () => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [localLayout, setLocalLayout] = useState<Layout[]>([]);
-  const [rowHeight, setRowHeight] = useState<number>(50);
-  const [gridWidth, setGridWidth] = useState<number>(1200);
+  const [rowHeight, setRowHeight] = useState<number>(ROW_HEIGHT);
+  const [gridWidth, setGridWidth] = useState<number>(GRID_WIDTH);
 
   const storedLayout = useSelector(
     (state: RootState) =>
