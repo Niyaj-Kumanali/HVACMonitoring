@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   LineChart,
   Line,
@@ -9,43 +9,45 @@ import {
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
   ReferenceLine,
   Scatter,
-  ScatterChart, // Import ReferenceLine
+  ScatterChart,
 } from 'recharts';
 import '../styles/charts.css';
-import * as XLSX from 'xlsx';
 import { DownloadRounded } from '@mui/icons-material';
 import { Tooltip as Tool, IconButton } from '@mui/material';
 import { chartTypes } from '../../Add-Widget/AddWidget';
+import { exportToExcel } from '../../../Utility/utility_functions';
 
-interface TelemetryDataItem {
-  ts: string | number; // Timestamp can be a string or number
-  value: string | number; // Value can be a string or number
+export interface TelemetryDataItem {
+  ts: number;
+  value: string | number;
 }
 
-interface LineChartWidgetProps {
+interface ChartProps {
   data: Record<string, TelemetryDataItem[]>; // Data structure
   chartType: chartTypes; // Restricted chart type
   thresholds?: Record<string, number>; // Optional thresholds for each series
 }
 
-const Chart: React.FC<LineChartWidgetProps> = ({
+const Chart: React.FC<ChartProps> = ({
   data,
   chartType,
   thresholds = {}, // Defaults to empty object
 }) => {
-  const [groupedData, setGroupedData] = useState<Array<Record<string, any>>>(
-    []
-  );
-  const seriesKeys = Object.keys(data);
-  useEffect(() => {
+  const seriesKeys = useMemo(() => Object.keys(data), [data]);
+
+  const formatData = (
+    data: Record<string, TelemetryDataItem[]>,
+    seriesKeys: string[]
+  ) => {
     const formattedData = seriesKeys.flatMap((key) => {
-      const seriesData = data[key].sort((a: any, b: any) => a.ts - b.ts);
+      const seriesData = data[key].sort(
+        (a: TelemetryDataItem, b: TelemetryDataItem) => a.ts - b.ts
+      );
       if (!Array.isArray(seriesData)) {
         console.warn(
           `Expected array for key ${key}, but got ${typeof seriesData}`
@@ -61,10 +63,12 @@ const Chart: React.FC<LineChartWidgetProps> = ({
       }));
     });
 
-    console.log(formattedData)
     // Group the formatted data by timestamp
-    const groupedData = formattedData.reduce(
-      (acc: Array<Record<string, any>>, curr) => {
+    return formattedData.reduce(
+      (
+        acc: Array<Record<string, string | number>>,
+        curr: Record<string, string | number>
+      ) => {
         const existing = acc.find((item) => item.name === curr.name);
         if (existing) {
           Object.assign(existing, curr);
@@ -75,51 +79,32 @@ const Chart: React.FC<LineChartWidgetProps> = ({
       },
       []
     );
-
-    console.log(data['temperature']);
-    console.log(groupedData);
-
-    setGroupedData(groupedData);
-  }, [data, seriesKeys]);
-
-  const exportToExcel = (data: Record<string, TelemetryDataItem[]>) => {
-    const formattedData = Object.entries(data)
-      .flatMap(([key, seriesData]) => {
-        return seriesData.map((entry) => {
-          const value =
-            typeof entry.value === 'string'
-              ? parseFloat(entry.value)
-              : entry.value;
-          if (key && value > thresholds[key]) {
-            return {
-              timestamp: new Date(entry.ts).toLocaleString(),
-              value: value,
-              key: key,
-            };
-          }
-          return null;
-        });
-      })
-      .filter((entry) => entry !== null);
-
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Telemetry Data');
-    XLSX.writeFile(workbook, 'telemetry_data.xlsx');
   };
 
   // Fixed color palette
   const colorPalette = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#a4de6c'];
 
   // Function to get color for a series based on its index
-  const getColor = (index: number) => colorPalette[index % colorPalette.length];
+  const getColor = useCallback(
+    (index: number) => colorPalette[index % colorPalette.length],
+    [colorPalette]
+  );
+
+  const groupedData = useMemo(
+    () => formatData(data, seriesKeys),
+    [data, seriesKeys]
+  );
 
   // Memoized renderChart function
   const renderChart = useMemo(() => {
     const renderThresholdLines = () => {
       return seriesKeys.map((key, index) => {
         const threshold = thresholds[key];
-        if (threshold !== undefined && threshold > 0) {
+        if (
+          threshold !== undefined &&
+          threshold > 0 &&
+          seriesKeys.includes(key)
+        ) {
           return (
             <ReferenceLine
               key={`threshold-${key}`}
@@ -139,23 +124,29 @@ const Chart: React.FC<LineChartWidgetProps> = ({
       });
     };
 
+    const renderCommonElements = () => (
+      <>
+        <XAxis
+          dataKey="name"
+          tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
+        />
+        <YAxis />
+        <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
+        <Legend
+          layout="horizontal"
+          align="left"
+          verticalAlign="top"
+          className="custom-legend"
+        />
+        {renderThresholdLines()}
+      </>
+    );
+
     switch (chartType) {
       case 'Line':
         return (
           <LineChart data={groupedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="name"
-              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
-            />
-            <YAxis />
-            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
-            <Legend
-              layout="horizontal"
-              align="left"
-              verticalAlign="top"
-              className="custom-legend"
-            />
+            {renderCommonElements()}
             {seriesKeys.map((key, index) => (
               <Line
                 key={key}
@@ -167,26 +158,13 @@ const Chart: React.FC<LineChartWidgetProps> = ({
                 isAnimationActive={false}
               />
             ))}
-            {renderThresholdLines()}
           </LineChart>
         );
 
       case 'Bar':
         return (
           <BarChart data={groupedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="name"
-              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
-            />
-            <YAxis />
-            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
-            <Legend
-              layout="horizontal"
-              align="left"
-              verticalAlign="top"
-              className="custom-legend"
-            />
+            {renderCommonElements()}
             {seriesKeys.map((key, index) => (
               <Bar
                 key={key}
@@ -194,26 +172,13 @@ const Chart: React.FC<LineChartWidgetProps> = ({
                 fill={getColor(index)} // Use fixed color
               />
             ))}
-            {renderThresholdLines()}
           </BarChart>
         );
 
       case 'Area':
         return (
           <AreaChart data={groupedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="name"
-              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
-            />
-            <YAxis />
-            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
-            <Legend
-              layout="horizontal"
-              align="left"
-              verticalAlign="top"
-              className="custom-legend"
-            />
+            {renderCommonElements()}
             {seriesKeys.map((key, index) => (
               <Area
                 key={key}
@@ -224,29 +189,13 @@ const Chart: React.FC<LineChartWidgetProps> = ({
                 fillOpacity={0.3}
               />
             ))}
-            {renderThresholdLines()}
           </AreaChart>
         );
 
       case 'Scatter':
         return (
           <ScatterChart data={groupedData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="name"
-              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} // Converts timestamp to a readable time
-            />
-            <YAxis />
-            <Tooltip
-              labelFormatter={(label) => new Date(label).toLocaleString()} // Displays a readable date in tooltip
-              formatter={(value) => value} // Optionally format the data point values
-            />
-            <Legend
-              layout="horizontal"
-              align="left"
-              verticalAlign="top"
-              className="custom-legend"
-            />
+            {renderCommonElements()}
             {seriesKeys.map((key, index) => (
               <Scatter
                 key={key}
@@ -255,15 +204,13 @@ const Chart: React.FC<LineChartWidgetProps> = ({
                 isAnimationActive={false} // Disable animations for faster rendering
               />
             ))}
-            {renderThresholdLines()}{' '}
-            {/* Optional custom rendering for threshold lines */}
           </ScatterChart>
         );
 
       default:
         return <div>Unsupported chart type</div>;
     }
-  }, [chartType, getColor, groupedData, seriesKeys, thresholds]);
+  }, [chartType, groupedData, seriesKeys]);
 
   return (
     <>
@@ -276,7 +223,7 @@ const Chart: React.FC<LineChartWidgetProps> = ({
         arrow
         className="download-icon"
       >
-        <IconButton onClick={() => exportToExcel(data)}>
+        <IconButton onClick={() => exportToExcel(data, thresholds)}>
           <DownloadRounded />
         </IconButton>
       </Tool>

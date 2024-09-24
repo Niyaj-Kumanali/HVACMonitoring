@@ -119,7 +119,7 @@ const Charts = () => {
                 const params:any = {
                     keys:
                         keyresponse.data.join(','),
-                    startTs: Date.now() - 1800000, // last 30 minutes
+                    startTs: Date.now() - 900000, // last 30 minutes
                     endTs: Date.now(),
                     limit: 200,
                     orderBy: 'ASC',
@@ -179,7 +179,8 @@ const Charts = () => {
 
 
         fetchTelemetry();
-        const interval = setInterval(fetchTelemetry, 5000);
+        const interval = setInterval(fetchTelemetry, 1000);
+        console.log("first")
         return () => clearInterval(interval);
     }, [selectedDevice]);
 

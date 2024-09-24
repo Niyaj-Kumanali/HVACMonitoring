@@ -14,8 +14,8 @@ const widgetLayoutSchema = new mongoose.Schema({
 
 // Define the date range schema (matches dateRange in DashboardLayoutOptions)
 const dateRangeSchema = new mongoose.Schema({
-    startDate: { type: Date, required: false },  // Start date of the range
-    endDate: { type: Date, required: false },  // End date of the range
+    startDate: { type: Number, required: false },  // Start date of the range
+    endDate: { type: Number, required: false },  // End date of the range
     range: { type: String, required: false}
 });
 

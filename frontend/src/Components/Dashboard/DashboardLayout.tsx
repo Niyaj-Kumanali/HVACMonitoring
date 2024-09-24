@@ -68,7 +68,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   const [filteredTelemetryData, setFilteredTelemetryData] =
     useState<TelemetryData>({});
   const [devices, setDevices] = useState<Device[]>([]);
-  console.log(selectedDevice, telemetryData)
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -105,12 +104,12 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           setEndDate(new Date(response.data.dateRange.endDate).getTime());
         }
       } catch (error: any) {
-        console.error('Failed to fetch widget');
+        console.error('Failed to fetch widget', error);
       }
     };
 
     fetchInitialData();
-  }, []);
+  }, [dashboardId, deviceId, widgetId]);
 
   useEffect(() => {
     const { startDate, endDate } = storedLayout.dateRange || {};
@@ -131,19 +130,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     return response.data;
   };
 
-  const fetchLatestTelemetryData = async (
-    deviceId: string,
-    selectedSensors: string[],
-    sensors: string[]
-  ) => {
-    const response = await getLatestTimeseries(
-      'DEVICE',
-      deviceId,
-      selectedSensors.length > 0 ? selectedSensors : sensors
-    );
-    return response.data;
-  };
-
   useEffect(() => {
     const fetchTelemetryData = async () => {
       if (!selectedDevice) return;
@@ -152,8 +138,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         const keys = await fetchTimeseriesKeys(selectedDevice);
         setSensors(keys);
         setSelectedSensors((prev) => (prev.length > 0 ? prev : keys));
-        setTelemetryData({});
-        setFilteredTelemetryData({})
         const params: TelemetryQueryParams = {
           keys:
             selectedSensors.length > 0
@@ -164,69 +148,70 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           limit: storedLayout.limit || DEFAULT_LIMIT,
         };
 
-        const response = await getTimeseries('DEVICE', deviceId, params);
+        const response = await getTimeseries('DEVICE', selectedDevice, params);
+        console.log(selectedDevice, response.data);
         setTelemetryData(response.data);
       } catch (error) {
         console.error('Failed to fetch telemetry data', error);
       }
     };
-
     fetchTelemetryData();
-  }, [selectedDevice, selectedSensors, startDate, endDate, storedLayout.limit, deviceId]);
-
+  }, [
+    selectedDevice,
+    selectedSensors,
+    startDate,
+    endDate,
+    storedLayout.limit,
+    deviceId,
+  ]);
 
   useEffect(() => {
-    try {
-      const intervalId = setInterval(async () => {
-        if (!selectedDevice) return;
-        try {
-          const keys = await fetchTimeseriesKeys(selectedDevice);
-          const latestData = await fetchLatestTelemetryData(
-            selectedDevice,
-            selectedSensors,
-            keys
-          );
-          const updatedTelemetryData = Object.keys(latestData).reduce(
-            (acc, key) => {
-              return {
-                ...acc,
-                [key]: [...(telemetryData[key] || []), ...latestData[key]],
-              };
-            },
-            telemetryData
-          );
+    const fetchLatestTelemetryData = async () => {
+      if (!selectedDevice) return;
+      try {
+        const keys = await fetchTimeseriesKeys(selectedDevice);
+        const response = await getLatestTimeseries(
+          'DEVICE',
+          deviceId,
+          selectedSensors.length > 0 ? selectedSensors : keys
+        );
+        const latestData = response.data;
+        const updatedTelemetryData = Object.keys(latestData).reduce(
+          (acc, key) => {
+            return {
+              ...acc,
+              [key]: [...(telemetryData[key] || []), ...latestData[key]],
+            };
+          },
+          telemetryData
+        );
 
-          setTelemetryData(updatedTelemetryData);
-        } catch (error) {
-          console.error('Failed to fetch latest telemetry data', error);
-        }
-      }, 5000);
-
-      return () => {
-        clearInterval(intervalId);
-      };
-    } catch (error) {
-      console.error('Failed to fetch latest telemetry data', error);
-    }
-  }, [selectedDevice, selectedSensors, telemetryData]);
+        setTelemetryData(updatedTelemetryData);
+      } catch (error) {
+        console.error('Failed to fetch latest telemetry data', error);
+      }
+    };
+    const intervalId = setInterval(fetchLatestTelemetryData, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [deviceId, selectedDevice, selectedSensors, telemetryData]);
 
   useEffect(() => {
     const data =
       selectedSensors.length > 0
         ? selectedSensors.reduce((acc: any, sensor: string) => {
             const sensorData = telemetryData[sensor] || [];
-            acc[sensor]=sensorData.sort((a: any, b: any) => a.ts - b.ts)
+            acc[sensor] = sensorData.sort((a: any, b: any) => a.ts - b.ts);
 
             return acc;
           }, {})
         : telemetryData;
-    console.log(data)
 
     setFilteredTelemetryData(data);
   }, [selectedSensors, storedLayout?.limit, telemetryData]);
- 
-  const renderChart = useMemo(() => {
 
+  const renderChart = useMemo(() => {
     return (
       <Chart
         data={filteredTelemetryData}
@@ -270,6 +255,27 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     }
   };
 
+  const handleChartSelection = async (e: any) => {
+    const value = e.target.value;
+    if (value.length > 0) {
+      try {
+        const response = await getLayout(dashboardId);
+        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+          item.i == widgetId ? { ...item, selectedChart: value } : item
+        );
+        const layoutBody = {
+          ...storedLayout,
+          layout: updatedLayout,
+        };
+        dispatch(setLayout(dashboardId, layoutBody));
+        await postLayout(dashboardId, layoutBody);
+      } catch (err) {
+        console.error('Failed to set sensors', err);
+      } finally {
+        setSelectedChart(value);
+      }
+    }
+  };
   return (
     <div className="widget">
       <Toolbar className="widget-header">
@@ -278,7 +284,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           <Select
             labelId="chart-select-label"
             value={selectedChart}
-            onChange={(e) => setSelectedChart(e.target.value as chartTypes)}
+            onChange={handleChartSelection}
             label="Chart"
             size="small"
           >
