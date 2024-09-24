@@ -116,7 +116,6 @@ const Warehouses = () => {
                             ))}
                         </div>
                     </div>
-                    
                     <Paginations pageCount={pageCount} onPageChange={setCurrentpage} />
                 </div>
             </div>

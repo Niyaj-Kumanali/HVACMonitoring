@@ -5,7 +5,6 @@
     grid-template-columns: 1fr 1fr 1fr;
     padding: 25px;
     border-radius: 10px;
-    border: 1px solid black;
 }
 .userinfo{
     width: 32%;
@@ -68,9 +67,7 @@
     flex-direction: column;
     justify-content: space-between;
 }
-.user-cont .user-pagination{
-    margin-bottom: 25px;
-}
+
 .user-cont {
     position: relative;
     width: 100%;
@@ -138,9 +135,6 @@
         padding: 10px;
         gap: 8px;
     }
-    .user-cont .user-pagination{
-        margin: 10px ;
-    }
 }
 @media screen and (max-width:700px) {
     .userinfo {
@@ -154,10 +148,6 @@
     .user {
         padding: 10px;
         gap: 10px;
-    }
-    .user-cont .user-pagination {
-        margin: 50px;
-        min-height: 100px !important;
     }
     .user-cont{
         min-height: 100%;

@@ -14,9 +14,6 @@
     flex-direction: column;
     justify-content: space-between;
 }
-.vehicle-pagination{
-    margin-bottom: 25px;
-}
 .warehouses .status{
     display: flex !important;
     justify-content: space-between !important;
@@ -30,9 +27,5 @@
     }
     .warehouses-cont{
         height: 100%;
-    }
-    .vehicle-pagination {
-        margin-top: 20px;
-        min-height: 120px !important;
     }
 }

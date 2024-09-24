@@ -251,7 +251,8 @@ const Warehouse: React.FC = () => {
   return (
     <div className="menu-data">
       <div className="cont">
-        <div className="warehouse-widgets">
+
+        <div className={buttonvisible ? 'del-btn-warehouse-disalble' : 'warehouse-widgets'}>
           <div className="warehouse-widgets-info">
             <div className="warehouse-widgets-info-data">
               <div>

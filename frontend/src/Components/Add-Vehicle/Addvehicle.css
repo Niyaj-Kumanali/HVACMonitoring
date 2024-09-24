@@ -2,7 +2,7 @@
     min-width: 550px;
     max-width: 50%;
     padding: 20px;
-    margin:15px;
+    margin:10px;
     background-color: white;
     border-radius: 10px;
     transition: all 0.2s ease;
@@ -12,6 +12,13 @@
 }
 .vehicle-form .textfieldss{
     background-color:#ebebeb;
+}
+.okkkk{
+    border: 1px solid red;
+    position:fixed !important;
+}
+.css-139byy9-MuiSnackbar-root{
+    position: fixed !important;
 }
 
 .vehicle-form .sub-btn{
