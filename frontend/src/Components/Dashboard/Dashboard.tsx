@@ -15,27 +15,21 @@ import DashboardLayout from './DashboardLayout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const GRID_WIDTH = 1500;
-
-// Breakpoints and columns
-const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-const cols = { lg: 14, md: 10, sm: 8, xs: 6, xxs: 4 };
-
 const Dashboard: React.FC = () => {
   const { dashboardId } = useParams();
   const dispatch = useDispatch();
   const gridLayoutRef = useRef<HTMLDivElement | null>(null);
 
+  const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [localLayout, setLocalLayout] = useState<Layout[]>([]);
+  const [rowHeight, setRowHeight] = useState<number>(50);
+  const [gridWidth, setGridWidth] = useState<number>(1200);
+
   const storedLayout = useSelector(
     (state: RootState) =>
       state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
   );
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const [isClicked, setIsClicked] = useState<boolean>(false);
-
-  const [localLayout, setLocalLayout] = useState<Layout[]>([]);
-  const [rowHeight, setRowHeight] = useState<number>(50); // Dynamically adjusted row height
-  const [gridWidth, setGridWidth] = useState<number>(GRID_WIDTH); // Dynamic grid width for zoom handling
 
   useEffect(() => {
     const fetchDashboardLayout = async () => {
@@ -52,40 +46,38 @@ const Dashboard: React.FC = () => {
     }
   }, [storedLayout]);
 
-  // Adjust row height and grid width based on zoom level and screen size
+  // Dynamically adjust row height and grid width
   useEffect(() => {
-    const handleResizeAndZoom = () => {
-      const zoomLevel = window.outerWidth / window.innerWidth;
-
-      // Adjust grid width and rowHeight dynamically based on zoom level
-      const adjustedRowHeight = Math.max(Math.floor((window.innerHeight / 20) * zoomLevel), 30);
-      const adjustedGridWidth = GRID_WIDTH * zoomLevel;
-
-      setRowHeight(adjustedRowHeight); // Adjust row height based on zoom
-      setGridWidth(adjustedGridWidth); // Adjust grid width based on zoom
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setGridWidth(width > 1200 ? 1200 : width * 0.9); // Adjust width based on screen size
+      setRowHeight(height > 800 ? 50 : 30); // Adjust row height based on screen size
     };
 
-    handleResizeAndZoom(); // Initial calculation
-    window.addEventListener('resize', handleResizeAndZoom); // Recalculate on window resize and zoom
-
-    return () => {
-      window.removeEventListener('resize', handleResizeAndZoom);
-    };
+    handleResize(); // Initial call
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const onAddWidget = async (deviceId: string, selectedChart: chartTypes) => {
+  const onAddWidget = async (
+    deviceId: string,
+    selectedChart: chartTypes,
+    selectedSensors: string[]
+  ) => {
     const newWidget: WidgetLayout = {
       i: `widget-${uuid4()}`,
       x: 0,
       y: Math.max(...localLayout.map((item) => item.y + item.h || 0)) + 1,
-      w: 4,
+      w: 5,
       h: 6,
-      minW: 4,
+      minW: 5,
       minH: 6,
       maxW: cols.lg,
       maxH: 12,
       chart: selectedChart,
       selectedDevice: deviceId,
+      selectedSensors: selectedSensors,
     };
 
     const updatedLayout: WidgetLayout[] = [...localLayout, newWidget];
@@ -127,13 +119,20 @@ const Dashboard: React.FC = () => {
     });
 
     setLocalLayout(updatedWidgets);
-    const layoutBody = { ...storedLayout, layout: updatedWidgets }
-    dispatch(
-      setLayout(dashboardId, layoutBody)
-    );
+    const layoutBody = { ...storedLayout, layout: updatedWidgets };
+    dispatch(setLayout(dashboardId, layoutBody));
 
     await postLayout(dashboardId, layoutBody);
   };
+
+  const breakpoints = {
+    lg: gridWidth,
+    md: gridWidth * 0.75,
+    sm: gridWidth * 0.5,
+    xs: gridWidth * 0.25,
+    xxs: gridWidth * 0.1,
+  };
+  const cols = { lg: 14, md: 10, sm: 8, xs: 6, xxs: 4 };
 
   return (
     <div className="dashboard-container menu-data">
@@ -154,14 +153,14 @@ const Dashboard: React.FC = () => {
             layouts={{ lg: localLayout }}
             breakpoints={breakpoints}
             cols={cols}
-            rowHeight={rowHeight} // Dynamic row height
+            rowHeight={rowHeight} // Use dynamic row height
             maxRows={25}
             isDraggable={isEditable}
             isResizable={isEditable}
             onLayoutChange={onLayoutChange}
             onResizeStop={onLayoutChange}
             onDragStop={onLayoutChange}
-            width={gridWidth} // Dynamic grid width based on zoom
+            width={gridWidth} // Use dynamic grid width
           >
             {localLayout.map((item: WidgetLayout) => (
               <div key={item.i} data-grid={item} className="widget-container">

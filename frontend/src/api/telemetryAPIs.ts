@@ -1,4 +1,5 @@
 import { TelemetryQueryParams } from '../types/thingsboardTypes';
+import { mongoAPI } from './MongoAPIInstance';
 import thingsboardAPI from './thingsboardAPI'; // Adjust the path as necessary
 
 // Save device attributes
@@ -7,7 +8,10 @@ export const saveDeviceAttributes = async (
   scope: 'SERVER_SCOPE' | 'SHARED_SCOPE',
   attributes: Record<string, any>
 ) => {
-  await thingsboardAPI.post(`/plugins/telemetry/${deviceId}/${scope}`, attributes);
+  await thingsboardAPI.post(
+    `/plugins/telemetry/${deviceId}/${scope}`,
+    attributes
+  );
 };
 
 // Delete device attributes
@@ -28,7 +32,10 @@ export const saveEntityAttributesV1 = async (
   scope: string,
   attributes: Record<string, any>
 ) => {
-  await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/${scope}`, attributes);
+  await thingsboardAPI.post(
+    `/plugins/telemetry/${entityType}/${entityId}/${scope}`,
+    attributes
+  );
 };
 
 // Delete entity attributes
@@ -38,9 +45,12 @@ export const deleteEntityAttributes = async (
   scope: string,
   keys?: string[]
 ) => {
-  await thingsboardAPI.delete(`/plugins/telemetry/${entityType}/${entityId}/${scope}`, {
-    params: { keys: keys?.join(',') },
-  });
+  await thingsboardAPI.delete(
+    `/plugins/telemetry/${entityType}/${entityId}/${scope}`,
+    {
+      params: { keys: keys?.join(',') },
+    }
+  );
 };
 
 // Save entity attributes (V2)
@@ -50,7 +60,10 @@ export const saveEntityAttributesV2 = async (
   scope: string,
   attributes: Record<string, any>
 ) => {
-  await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/attributes/${scope}`, attributes);
+  await thingsboardAPI.post(
+    `/plugins/telemetry/${entityType}/${entityId}/attributes/${scope}`,
+    attributes
+  );
 };
 
 // Get all attribute keys
@@ -58,7 +71,9 @@ export const getAttributeKeys = async (
   entityType: string,
   entityId: string
 ) => {
-  const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/attributes`);
+  const response = await thingsboardAPI.get<string[]>(
+    `/plugins/telemetry/${entityType}/${entityId}/keys/attributes`
+  );
   return response;
 };
 
@@ -68,7 +83,9 @@ export const getAttributeKeysByScope = async (
   entityId: string,
   scope: string
 ) => {
-  const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/attributes/${scope}`);
+  const response = await thingsboardAPI.get<string[]>(
+    `/plugins/telemetry/${entityType}/${entityId}/keys/attributes/${scope}`
+  );
   return response;
 };
 
@@ -76,8 +93,10 @@ export const getAttributeKeysByScope = async (
 export const getTimeseriesKeys = async (
   entityType: string,
   entityId: string
-)=> {
-  const response = await thingsboardAPI.get<string[]>(`/plugins/telemetry/${entityType}/${entityId}/keys/timeseries`);
+) => {
+  const response = await thingsboardAPI.get<string[]>(
+    `/plugins/telemetry/${entityType}/${entityId}/keys/timeseries`
+  );
   return response;
 };
 
@@ -88,7 +107,10 @@ export const saveEntityTelemetry = async (
   scope: string,
   telemetryData: Record<string, any>
 ) => {
-  await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}`, telemetryData);
+  await thingsboardAPI.post(
+    `/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}`,
+    telemetryData
+  );
 };
 
 // Save or update time-series data with TTL
@@ -99,7 +121,10 @@ export const saveEntityTelemetryWithTTL = async (
   ttl: number,
   telemetryData: Record<string, any>
 ) => {
-  await thingsboardAPI.post(`/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}/${ttl}`, telemetryData);
+  await thingsboardAPI.post(
+    `/plugins/telemetry/${entityType}/${entityId}/timeseries/${scope}/${ttl}`,
+    telemetryData
+  );
 };
 
 // Delete entity time-series data
@@ -113,16 +138,19 @@ export const deleteEntityTimeseries = async (
   deleteLatest?: boolean,
   rewriteLatestIfDeleted?: boolean
 ) => {
-  await thingsboardAPI.delete(`/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`, {
-    params: {
-      keys: keys?.join(','),
-      deleteAllDataForKeys,
-      startTs,
-      endTs,
-      deleteLatest,
-      rewriteLatestIfDeleted,
-    },
-  });
+  await thingsboardAPI.delete(
+    `/plugins/telemetry/${entityType}/${entityId}/timeseries/delete`,
+    {
+      params: {
+        keys: keys?.join(','),
+        deleteAllDataForKeys,
+        startTs,
+        endTs,
+        deleteLatest,
+        rewriteLatestIfDeleted,
+      },
+    }
+  );
 };
 
 // Get attributes
@@ -176,5 +204,30 @@ export const getLatestTimeseries = async (
     `/plugins/telemetry/${entityType}/${entityId}/values/timeseries`,
     { params: { keys: keys?.join(','), useStrictDataTypes } }
   );
+  return response;
+};
+
+export const getWarehouseDevicesAveragesByWarehouseId = async (
+  warehouseId: string = ''
+) => {
+  const response = await mongoAPI.get('/postgres/warehouse_averages', {
+    params: {
+      id: warehouseId,
+    },
+  });
+  return response;
+};
+
+export const getWarehouseViolations = async (data: {
+  id: string;
+  keys: {
+    [key: string]: number;
+  };
+}) => {
+  const response = await mongoAPI.post(
+    '/postgres/warehouse_violations', // Replace with your actual API URL
+    data
+  );
+
   return response;
 };

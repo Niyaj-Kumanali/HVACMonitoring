@@ -4,6 +4,7 @@ import { DashboardLayoutOptions } from '../Redux/Reducer/layoutReducer';
 export const mongoAPI: AxiosInstance = axios.create({
 
   baseURL: 'https://hvac.myoorja.in',
+  // baseURL: 'http://localhost:2000',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,6 +24,11 @@ export const getLayout = async (dashboardId: string = "") => {
   return response
 }
 
+
+export const deleteLayout = async (dashboardId: string = "") => {
+  const response = await mongoAPI.delete(`/dashboard/deletedashboard/${dashboardId}`)
+  return response
+}
 
 export const getAllWarehouseByUserId = async (userId: string = "", params: any) => {
   const response = await mongoAPI.get(`/warehouse/getallwarehouse/${userId}`, {params: params});

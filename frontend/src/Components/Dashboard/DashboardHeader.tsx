@@ -34,41 +34,47 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onAddWidget,
   isEditable,
 }) => {
-  const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
-
-  const [dateRange, setDateRange] = useState({
-    startDate: new Date().getTime() - 300000,
-    endDate: new Date().getTime(),
-    range: 'last-5-minutes'
-  })
-
   const { dashboardId } = useParams<string>();
   const dispatch = useDispatch();
   const storedLayout = useSelector(
     (state: RootState) => state.dashboardLayout[dashboardId || '']
   );
+  const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
+  const [dateRange, setDateRange] = useState(() => {
+    const { startDate, endDate, range } = storedLayout?.dateRange || {};
+  
+    return {
+      startDate: startDate || new Date().getTime() - 300000, // Default to 5 minutes ago
+      endDate: endDate || new Date().getTime(), // Default to now
+      range: range || 'last-5-minutes', // Default range
+    };
+  });
 
 
-  useEffect(()=> {
-    const fetchInitialData = async()=>{
-        const response = await getLayout(dashboardId);
-        if(response.data.dateRange){
-          setDateRange(response.data.dateRange)
-        }
-        if(response.data.dateRange.range === 'custom-range'){
-          setOpenDatePicker(true)
-        }
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      const response = await getLayout(dashboardId);
+      const { startDate, endDate, range } = response.data?.dateRange || {}; 
+      if (startDate && endDate && range) {
+        setDateRange(response.data.dateRange);
+      }
+      if (response.data.dateRange.range === 'custom-range') {
+        setOpenDatePicker(true);
+      }
+    };
+
+    try {
+      fetchInitialData();
+    } catch (err) {
+      console.error('Falied fetch initial data');
     }
-
-    fetchInitialData()
-
-  }, [])
+  }, []);
 
   const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;
-    setDateRange(prev => ({
+    setDateRange((prev) => ({
       ...prev,
-      range: value
+      range: value,
     }));
     if (value === 'custom-range') {
       setOpenDatePicker(true);
@@ -157,19 +163,16 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
   const handleDateRangeConfirm = async () => {
     if (dateRange.startDate && dateRange.endDate) {
-
       const layoutBody = {
         ...storedLayout,
         dateRange: {
           ...storedLayout.dateRange,
           startDate: dateRange.startDate,
           endDate: dateRange.endDate,
-          range: 'custom-range'
+          range: 'custom-range',
         },
-      }
-      dispatch(
-        setLayout(dashboardId, layoutBody)
-      );
+      };
+      dispatch(setLayout(dashboardId, layoutBody));
       await postLayout(dashboardId, layoutBody);
     }
   };
@@ -193,12 +196,14 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     id="date-start"
                     className="date-field"
                     value={
-                      new Date(dateRange.startDate)?.toISOString().split('T')[0] || ''
+                      new Date(dateRange.startDate)
+                        ?.toISOString()
+                        .split('T')[0] || ''
                     }
                     onChange={(e) =>
-                      setDateRange(prev => ({
-                        ...prev, 
-                        startDate: new Date(e.target.value).getTime()
+                      setDateRange((prev) => ({
+                        ...prev,
+                        startDate: new Date(e.target.value).getTime(),
                       }))
                     }
                   />
@@ -209,11 +214,15 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     type="date"
                     id="date-end"
                     className="date-field"
-                    value={new Date(dateRange.endDate)?.toISOString().split('T')[0] || ''}
+                    value={
+                      new Date(dateRange.endDate)
+                        ?.toISOString()
+                        .split('T')[0] || ''
+                    }
                     onChange={(e) =>
-                      setDateRange(prev => ({
-                        ...prev, 
-                        endDate: new Date(e.target.value).getTime()
+                      setDateRange((prev) => ({
+                        ...prev,
+                        endDate: new Date(e.target.value).getTime(),
                       }))
                     }
                   />

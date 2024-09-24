@@ -12,9 +12,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine, // Import ReferenceLine
 } from 'recharts';
 import '../styles/charts.css';
 import { chartTypes } from '../../../types/thingsboardTypes';
+import * as XLSX from 'xlsx';
+import { DownloadRounded } from '@mui/icons-material';
+import { Tooltip as Tool, IconButton } from '@mui/material';
 
 interface TelemetryDataItem {
   ts: string | number; // Timestamp can be a string or number
@@ -24,13 +28,17 @@ interface TelemetryDataItem {
 interface LineChartWidgetProps {
   data: Record<string, TelemetryDataItem[]>; // Data structure
   chartType: chartTypes; // Restricted chart type
+  thresholds?: Record<string, number>; // Optional thresholds for each series
 }
 
 const LineChartWidget: React.FC<LineChartWidgetProps> = ({
   data,
   chartType,
+  thresholds = {}, // Defaults to empty object
 }) => {
-  const [groupedData, setGroupedData] = useState<Array<Record<string, any>>>([]);
+  const [groupedData, setGroupedData] = useState<Array<Record<string, any>>>(
+    []
+  );
   const seriesKeys = Object.keys(data);
 
   useEffect(() => {
@@ -52,18 +60,42 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
     });
 
     // Group the formatted data by timestamp
-    const groupedData = formattedData.reduce((acc: Array<Record<string, any>>, curr) => {
-      const existing = acc.find((item) => item.name === curr.name);
-      if (existing) {
-        Object.assign(existing, curr);
-      } else {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
+    const groupedData = formattedData.reduce(
+      (acc: Array<Record<string, any>>, curr) => {
+        const existing = acc.find((item) => item.name === curr.name);
+        if (existing) {
+          Object.assign(existing, curr);
+        } else {
+          acc.push(curr);
+        }
+        return acc;
+      },
+      []
+    );
 
     setGroupedData(groupedData);
   }, [data, seriesKeys]);
+
+  const exportToExcel = (data: Record<string, TelemetryDataItem[]>) => {
+    const formattedData = Object.entries(data).flatMap(([key, seriesData]) => {
+      return seriesData.map((entry) => {
+        const value = typeof entry.value === 'string' ? parseFloat(entry.value) : entry.value;
+        if (key && value > thresholds[key]) {
+          return {
+            timestamp: new Date(entry.ts).toLocaleString(),
+            value: value,
+            key: key,
+          };
+        }
+        return null
+      });
+    }).filter((entry) => entry !== null);
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Telemetry Data');
+    XLSX.writeFile(workbook, 'telemetry_data.xlsx');
+  };
 
   // Fixed color palette
   const colorPalette = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#a4de6c'];
@@ -73,6 +105,28 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
 
   // Memoized renderChart function
   const renderChart = useMemo(() => {
+    const renderThresholdLines = () => {
+      return seriesKeys.map((key, index) => {
+        const threshold = thresholds[key];
+        if (threshold !== undefined && threshold > 0) {
+          return (
+            <ReferenceLine
+              key={`threshold-${key}`}
+              y={threshold} // The threshold value for this key
+              stroke={getColor(index)}
+              strokeDasharray="3 3"
+              label={{
+                value: `${key} (${threshold})`,
+                position: 'insideTop', // You can change the label position here
+                fill: getColor(index),
+                fontSize: 12,
+              }}
+            />
+          );
+        }
+        return null;
+      });
+    };
 
     switch (chartType) {
       case 'Line':
@@ -84,9 +138,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -104,6 +156,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
                 isAnimationActive={false}
               />
             ))}
+            {renderThresholdLines()}
           </LineChart>
         );
 
@@ -116,9 +169,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -132,6 +183,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
                 fill={getColor(index)} // Use fixed color
               />
             ))}
+            {renderThresholdLines()}
           </BarChart>
         );
 
@@ -144,9 +196,7 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
               tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
             />
             <YAxis />
-            <Tooltip 
-              labelFormatter={(label) => `${new Date(label)}`}
-            />
+            <Tooltip labelFormatter={(label) => `${new Date(label)}`} />
             <Legend
               layout="horizontal"
               align="left"
@@ -163,15 +213,32 @@ const LineChartWidget: React.FC<LineChartWidgetProps> = ({
                 fillOpacity={0.3}
               />
             ))}
+            {renderThresholdLines()}
           </AreaChart>
         );
 
       default:
         return <div>Unsupported chart type</div>;
     }
-  }, [chartType, groupedData, seriesKeys]);
+  }, [chartType, groupedData, seriesKeys, thresholds]);
 
-  return <ResponsiveContainer width="99%" height="80%">{renderChart}</ResponsiveContainer>;
+  return (
+    <>
+      <ResponsiveContainer width="99%" height="80%">
+        {renderChart}
+      </ResponsiveContainer>
+      <Tool
+        title="Export to Excel"
+        placement="top"
+        arrow
+        className="download-icon"
+      >
+        <IconButton onClick={() => exportToExcel(data)}>
+          <DownloadRounded />
+        </IconButton>
+      </Tool>
+    </>
+  );
 };
 
 export default LineChartWidget;

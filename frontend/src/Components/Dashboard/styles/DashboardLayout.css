@@ -10,30 +10,9 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid #ddd;
-  background-color: #f9f9f9;
+  gap: 5px;
 }
 
-.widget .widget-header .delete-button {
-  color: red;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: 1px solid red;
-}
 
-.widget .widget-header .delete-button:hover {
-  background-color: #ff4b4b;
-  color: white;
-  border: 1px solid gray;
 
-}
 
-.widget .widget-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-}

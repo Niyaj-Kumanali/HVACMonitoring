@@ -103,7 +103,6 @@ function generateResetToken() {
  *                   example: Error details...
  */
 
-
 // Endpoint to create and update user password
 router.post('/setpassword', async (req, res) => {
   const { user_id, password, activateToken } = req.body;
@@ -147,7 +146,6 @@ router.post('/setpassword', async (req, res) => {
     await client.end();
   }
 });
-
 
 /**
  * @swagger
@@ -280,7 +278,6 @@ router.get('/resettoken', async (req, res) => {
     await client.end();
   }
 });
-
 
 /**
  * @swagger
@@ -426,11 +423,9 @@ router.post('/resetpassword', async (req, res) => {
   }
 });
 
-
-
 /**
  * @swagger
- * /averages:
+ * /warehouse_averages:
  *   get:
  *     summary: Get average combined values for keys
  *     tags: [Analytics]
@@ -452,7 +447,7 @@ router.post('/resetpassword', async (req, res) => {
  *               additionalProperties:
  *                 type: number
  *                 description: The average combined value for each key.
- *                 example: 
+ *                 example:
  *                   key1: 10.5
  *                   key2: 20.3
  *       400:
@@ -476,7 +471,7 @@ router.post('/resetpassword', async (req, res) => {
  *                   type: string
  *                   example: Internal Server Error
  */
-router.get('/averages', async (req, res) => {
+router.get('/warehouse_averages', async (req, res) => {
   const { id } = req.query;
 
   if (!id) {
@@ -521,5 +516,49 @@ router.get('/averages', async (req, res) => {
   }
 });
 
+router.post('/warehouse_violations', async (req, res) => {
+  const { id, keys } = req.body;  // Changed to req.body to handle JSON input
+
+  // Validate required fields
+  if (!id || !keys || typeof keys !== 'object') {
+    return res.status(400).json({ error: 'Id and valid keys are required' });
+  }
+
+  const client = createClient();
+
+  try {
+    await client.connect();
+
+    const results = {};
+
+    // Iterate over each key-value pair in keys object
+    for (const [key, threshold] of Object.entries(keys)) {
+      const query = `
+        SELECT COUNT(*)
+        FROM device d
+        JOIN ts_kv ts ON d.id = ts.entity_id
+        JOIN key_dictionary kd ON kd.key_id = ts.key
+        WHERE label = $1
+        AND COALESCE(ts.dbl_v, 0) + COALESCE(ts.long_v, 0) > $3
+        AND kd.key = $2
+      `;
+
+      // Execute query for each key with its corresponding threshold
+      const result = await client.query(query, [id, key, threshold]);
+
+      // Extract the count and store in results object
+      results[key] = result.rows[0].count;
+    }
+
+    // Send the final results as a JSON response
+    res.json(results);
+
+  } catch (error) {
+    console.error('Error executing query', error.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    await client.end();
+  }
+});
 
 export default router;

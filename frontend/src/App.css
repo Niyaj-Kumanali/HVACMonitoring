@@ -88,10 +88,9 @@
   display: inline-flex;
   justify-content: flex-start;
 }
-a{
+a {
   outline: none !important;
 }
-
 
 @media screen and (max-width: 1200px) {
   .menu-data {
@@ -101,10 +100,8 @@ a{
 }
 
 @media screen and (max-width: 700px) {
-    .menu-data {
-        transform: translateX(-275px);
-        width: 100%;
-    }
+  .menu-data {
+    transform: translateX(-275px);
+    width: 100%;
+  }
 }
-
-

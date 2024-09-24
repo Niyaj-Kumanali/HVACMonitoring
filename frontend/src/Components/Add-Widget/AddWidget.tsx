@@ -11,13 +11,18 @@ import {
   Select,
   CircularProgress,
   Typography,
+  Checkbox,
+  ListItemText,
+  TextField,
+  Box,
 } from '@mui/material';
 import { chartTypes, Device } from '../../types/thingsboardTypes';
 import { getTenantDevices } from '../../api/deviceApi';
-import './AddWidget.css';  // Import the CSS file
+import './AddWidget.css'; // Import the CSS file
+import { getTimeseriesKeys } from '../../api/telemetryAPIs';
 
 interface AddWidgetProps {
-  onAdd: (deviceName: string, chart: chartTypes) => void;
+  onAdd: (deviceName: string, chart: chartTypes, selectedSensors: string[]) => void;
   onClose: () => void;
 }
 
@@ -26,7 +31,9 @@ export const charts: chartTypes[] = ['Line', 'Bar', 'Area'];
 const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');
   const [selectedChart, setSelectedChart] = useState<chartTypes>('Line');
+  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
+  const [sensors, setSensors] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,10 +53,28 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
     fetchAllDevices();
   }, []);
 
+  useEffect(() => {
+    const fetchSensors = async () => {
+      if (selectedDevice && selectedDevice != '') {
+        const response = await getTimeseriesKeys('DEVICE', selectedDevice);
+        setSensors(response.data);
+        setSelectedSensors(response.data);
+      }
+    };
+    fetchSensors();
+  }, [selectedDevice]);
+
   const handleAdd = () => {
     if (selectedDevice) {
-      onAdd(selectedDevice, selectedChart); // Pass device ID to onAdd
+      onAdd(selectedDevice, selectedChart, selectedSensors); // Pass device ID to onAdd
       onClose(); // Close the dialog after adding
+    }
+  };
+
+  const handleSensorChange = async (e: any) => {
+    const value = e.target.value as string[];
+    if (value.length > 0) {
+      setSelectedSensors(value);
     }
   };
 
@@ -62,7 +87,7 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
         ) : error ? (
           <Typography color="error">{error}</Typography>
         ) : (
-          <>
+          <div className="add-widget-box">
             <FormControl variant="outlined" size="small">
               <InputLabel id="device-select-label">Select Device</InputLabel>
               <Select
@@ -93,12 +118,43 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
                 ))}
               </Select>
             </FormControl>
-          </>
+            <FormControl variant="outlined" size="small">
+              <InputLabel id="sensor-select-label">Select Sensors</InputLabel>
+              <Select
+                labelId="sensor-select-label"
+                multiple
+                value={selectedSensors}
+                onChange={handleSensorChange}
+                renderValue={(selected) => (selected as string[]).join(', ')}
+                label="Select Sensors"
+              >
+                {sensors.map((sensor: string) => (
+                  <MenuItem key={sensor} value={sensor}>
+                    <Checkbox checked={selectedSensors.includes(sensor)} />
+                    <ListItemText primary={sensor} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl variant="outlined" size="small">
+              {selectedSensors.map((sensor: string) => (
+                <Box sx={{display: 'flex', gap: '10px'}}>
+                  <TextField type='text' size='small' value={sensor} disabled />
+                  <TextField type='number' size='small' value={0} />
+                </Box>
+              ))}
+            </FormControl>
+          </div>
         )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAdd} variant="contained" color="primary" disabled={!selectedDevice}>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={!selectedDevice}
+        >
           Add Widget
         </Button>
       </DialogActions>

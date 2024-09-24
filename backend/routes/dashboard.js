@@ -188,4 +188,24 @@ router.get('/getDashboardLayout/:dashboardId', async (req, res) => {
   }
 });
 
+router.delete("/deletedashboard/:dashboardId", async (req, res) => {
+    try {
+      const { dashboardId } = req.params;
+  
+      // Find the dashboard by dashboardId
+      const dashboard = await Dashboards.findOneAndDelete({ dashboardId });
+  
+      if (dashboard) {
+        // If found, return the layoutOptions
+        res.status(200).json({message: "Dashboard Removed successfully"});
+      } else {
+        // If not found, return a 404 status
+        res.status(404).json({message: "No dashboard found" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error deleting the dashboard', error });
+    }
+  });
+
 export default router;
