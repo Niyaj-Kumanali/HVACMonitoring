@@ -61,6 +61,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             startDate: new Date(response.data.dateRange.startDate).getTime(),
             endDate: new Date(response.data.dateRange.endDate).getTime(),
           });
+          dispatch(setLayout(dashboardId, response.data))
         }
         if (range === 'custom-range') {
           setOpenDatePicker(true);
@@ -71,7 +72,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     };
 
     fetchInitialData();
-  }, []);
+  }, [dashboardId, dispatch]);
 
   const handleRangeChange = async (event: any) => {
     const value = event.target.value as string;

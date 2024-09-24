@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
 
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  const [localLayout, setLocalLayout] = useState<Layout[]>([]);
+  // const [localLayout, setLocalLayout] = useState<Layout[]>([]);
   const [rowHeight, setRowHeight] = useState<number>(ROW_HEIGHT);
   const [gridWidth, setGridWidth] = useState<number>(GRID_WIDTH);
 
@@ -36,12 +36,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboardLayout = async () => {
       const response = await getLayout(dashboardId);
-      setLocalLayout(response.data.layout);
+      // setLocalLayout(response.data.layout);
       dispatch(setLayout(dashboardId, response.data));
     };
 
     fetchDashboardLayout();
-  }, [dashboardId]);
+  }, [dashboardId, dispatch]);
 
   // useEffect(() => {
   //   if (storedLayout.layout) {
@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
     const newWidget: WidgetLayout = {
       i: `widget-${uuid4()}`,
       x: 0,
-      y: Math.max(...localLayout.map((item) => item.y + item.h || 0)) + 1,
+      y: Math.max(...storedLayout.layout.map((item) => item.y + item.h || 0)) + 1,
       w: 5,
       h: 6,
       minW: 5,
@@ -83,8 +83,8 @@ const Dashboard: React.FC = () => {
       selectedSensors: selectedSensors,
     };
 
-    const updatedLayout: WidgetLayout[] = [...localLayout, newWidget];
-    setLocalLayout(updatedLayout);
+    const updatedLayout: WidgetLayout[] = [...storedLayout.layout, newWidget];
+    // setLocalLayout(updatedLayout);
     const layoutBody = {
       ...storedLayout,
       layout: updatedLayout,
@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
     if (isEditable) {
       const layoutBody = {
         ...storedLayout,
-        layout: localLayout,
+        layout: storedLayout.layout,
       };
 
       dispatch(setLayout(dashboardId, layoutBody));
@@ -120,12 +120,12 @@ const Dashboard: React.FC = () => {
   const onLayoutChange = async (newLayout: Layout[]) => {
     const validatedLayout: WidgetLayout[] = validateLayout(newLayout);
 
-    const updatedWidgets = localLayout.map((widget) => {
+    const updatedWidgets = storedLayout.layout.map((widget) => {
       const newWidget = validatedLayout.find((w) => w.i === widget.i);
       return newWidget ? { ...widget, ...newWidget } : widget;
     });
 
-    setLocalLayout(updatedWidgets);
+    // setLocalLayout(updatedWidgets);
     const layoutBody = { ...storedLayout, layout: updatedWidgets };
     dispatch(setLayout(dashboardId, layoutBody));
 
@@ -157,7 +157,7 @@ const Dashboard: React.FC = () => {
         >
           <ResponsiveGridLayout
             className="layout"
-            layouts={{ lg: localLayout }}
+            layouts={{ lg: storedLayout.layout }}
             breakpoints={breakpoints}
             cols={cols}
             rowHeight={rowHeight} // Use dynamic row height
@@ -169,7 +169,7 @@ const Dashboard: React.FC = () => {
             onDragStop={onLayoutChange}
             width={gridWidth} // Use dynamic grid width
           >
-            {localLayout.map((item: WidgetLayout) => (
+            {storedLayout.layout.map((item: WidgetLayout) => (
               <div key={item.i} data-grid={item} className="widget-container">
                 <DashboardLayout
                   widgetId={item.i}
