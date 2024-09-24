@@ -276,6 +276,28 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       }
     }
   };
+
+  const handleDeviceSelection = async (e: any) => {
+    const value = e.target.value;
+    if (value.length > 0) {
+      try {
+        const response = await getLayout(dashboardId);
+        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+          item.i == widgetId ? { ...item, selectedDevice: value } : item
+        );
+        const layoutBody = {
+          ...storedLayout,
+          layout: updatedLayout,
+        };
+        dispatch(setLayout(dashboardId, layoutBody));
+        await postLayout(dashboardId, layoutBody);
+      } catch (err) {
+        console.error('Failed to set sensors', err);
+      } finally {
+        setSelectedDevice(value);
+      }
+    }
+  };
   return (
     <div className="widget">
       <Toolbar className="widget-header">
@@ -300,7 +322,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           <Select
             labelId="device-select-label"
             value={selectedDevice}
-            onChange={(e) => setSelectedDevice(e.target.value as string)}
+            onChange={handleDeviceSelection}
             label="Device"
             size="small"
           >
