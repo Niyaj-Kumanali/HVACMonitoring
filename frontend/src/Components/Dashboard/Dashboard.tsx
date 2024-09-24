@@ -43,11 +43,11 @@ const Dashboard: React.FC = () => {
     fetchDashboardLayout();
   }, [dashboardId]);
 
-  useEffect(() => {
-    if (storedLayout.layout) {
-      setLocalLayout(storedLayout.layout);
-    }
-  }, [storedLayout]);
+  // useEffect(() => {
+  //   if (storedLayout.layout) {
+  //     setLocalLayout(storedLayout.layout);
+  //   }
+  // }, [storedLayout]);
 
   // Dynamically adjust row height and grid width
   useEffect(() => {
