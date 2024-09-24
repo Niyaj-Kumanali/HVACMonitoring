@@ -110,21 +110,21 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     };
 
     fetchInitialData();
-  }, [dashboardId, deviceId, widgetId]);
+  }, [dashboardId, deviceId, dispatch, widgetId]);
 
-  useEffect(() => {
-    const { startDate, endDate } = storedLayout.dateRange || {};
-    if (startDate && endDate) {
-      setStartDate(new Date(startDate).getTime());
-      setEndDate(new Date(endDate).getTime());
-    }
+  // useEffect(() => {
+  //   const { startDate, endDate } = storedLayout.dateRange || {};
+  //   if (startDate && endDate) {
+  //     setStartDate(new Date(startDate).getTime());
+  //     setEndDate(new Date(endDate).getTime());
+  //   }
 
-    (storedLayout.layout || []).forEach((item: WidgetLayout) => {
-      if (item.i === widgetId) {
-        setSelectedChart(item?.chart || 'Line');
-      }
-    });
-  }, [storedLayout, widgetId]);
+  //   (storedLayout.layout || []).forEach((item: WidgetLayout) => {
+  //     if (item.i === widgetId) {
+  //       setSelectedChart(item?.chart || 'Line');
+  //     }
+  //   });
+  // }, [storedLayout, widgetId]);
 
   const fetchTimeseriesKeys = async (deviceId: string) => {
     const response = await getTimeseriesKeys('DEVICE', deviceId);
