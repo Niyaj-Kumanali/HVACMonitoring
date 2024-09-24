@@ -15,6 +15,7 @@ import {
   ReferenceLine,
   Scatter,
   ScatterChart,
+  Brush,
 } from 'recharts';
 import '../styles/charts.css';
 import { DownloadRounded } from '@mui/icons-material';
@@ -139,6 +140,7 @@ const Chart: React.FC<ChartProps> = ({
           className="custom-legend"
         />
         {renderThresholdLines()}
+        {/* <Brush dataKey="name" height={30} stroke="#8884d8" /> */}
       </>
     );
 

@@ -14,8 +14,9 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
@@ -23,6 +24,7 @@ import { uuid } from '../../Utility/utility_functions';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 import { DEFAULT_LIMIT } from './DashboardLayout';
+import { getDashboardById } from '../../api/dashboardApi';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -49,9 +51,19 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       range: range || 'last-5-minutes', // Default range
     };
   });
+  const navigate = useNavigate();
 
+
+  const [dashboardName, setDashboardName] = useState<string>('dashboard');
   useEffect(() => {
     const fetchInitialData = async () => {
+      try {
+        const response = await getDashboardById(dashboardId || "");
+        setDashboardName(response.data.title)
+      }
+      catch(err:any) {
+        err
+      }
       try {
         const response = await getLayout(dashboardId);
         const { startDate, endDate, range } = response.data?.dateRange || {};
@@ -69,6 +81,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       } catch (err: any) {
         console.error('Falied fetch initial data', err);
       }
+
+
     };
 
     fetchInitialData();
@@ -183,6 +197,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     }
   };
 
+  const goBack = () => {
+    navigate(-1);
+};
+
   return (
     <>
       <AppBar position="static">
@@ -190,7 +208,10 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           style={{ backgroundColor: '#2BC790', height: '6vh' }}
           className="toolbar"
         >
-          <Box className="toolbar-left"></Box>
+          <Box className="toolbar-left">
+          <KeyboardBackspaceIcon onClick={goBack} />
+            {dashboardName}
+          </Box>
 
           <Box className="toolbar-right">
             {openDatePicker && (
