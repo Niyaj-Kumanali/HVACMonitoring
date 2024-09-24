@@ -50,28 +50,27 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     };
   });
 
-
   useEffect(() => {
     const fetchInitialData = async () => {
-      const response = await getLayout(dashboardId);
-      const { startDate, endDate, range } = response.data?.dateRange || {}; 
-      if (startDate && endDate && range) {
-        setDateRange({
-          ...response.data.dateRange,
-          startDate: new Date(response.data.dateRange.startDate).getTime(),
-          endDate: new Date(response.data.dateRange.endDate).getTime(),
-        });
-      }
-      if (response.data.dateRange.range === 'custom-range') {
-        setOpenDatePicker(true);
+      try {
+        const response = await getLayout(dashboardId);
+        const { startDate, endDate, range } = response.data?.dateRange || {};
+        if (startDate && endDate && range) {
+          setDateRange({
+            ...response.data.dateRange,
+            startDate: new Date(response.data.dateRange.startDate).getTime(),
+            endDate: new Date(response.data.dateRange.endDate).getTime(),
+          });
+        }
+        if (range === 'custom-range') {
+          setOpenDatePicker(true);
+        }
+      } catch (err: any) {
+        console.error('Falied fetch initial data', err);
       }
     };
 
-    try {
-      fetchInitialData();
-    } catch (err) {
-      console.error('Falied fetch initial data');
-    }
+    fetchInitialData();
   }, []);
 
   const handleRangeChange = async (event: any) => {

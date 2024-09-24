@@ -238,14 +238,13 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     await postLayout(dashboardId, layoutBody);
   };
 
-  const handleSensorChange = async (e: any) => {
+  const handleSensorChange = async (e: { target: { value: string[]; }; }) => {
     const value = e.target.value;
     if (value.length > 0) {
       setSelectedSensors(value);
-
       try {
-        const response = await getLayout(dashboardId);
-        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+        // const response = await getLayout(dashboardId);
+        const updatedLayout = storedLayout.layout.map((item: WidgetLayout) =>
           item.i == widgetId ? { ...item, selectedSensors: value } : item
         );
         const layoutBody = {
@@ -260,12 +259,12 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     }
   };
 
-  const handleChartSelection = async (e: any) => {
+  const handleChartSelection = async (e: { target: { value: chartTypes; }; }) => {
     const value = e.target.value;
     setSelectedChart(value);
     try {
-      const response = await getLayout(dashboardId);
-      const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+      // const response = await getLayout(dashboardId);
+      const updatedLayout = storedLayout.layout.map((item: WidgetLayout) =>
         item.i == widgetId ? { ...item, chart: value } : item
       );
       const layoutBody = {
@@ -279,13 +278,13 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     }
   };
 
-  const handleDeviceSelection = async (e: any) => {
+  const handleDeviceSelection = async (e: { target: { value: string; }; }) => {
     const value = e.target.value;
     try {
       setSelectedDevice(value);
 
-      const response = await getLayout(dashboardId);
-      const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+      // const response = await getLayout(dashboardId);
+      const updatedLayout = storedLayout.layout.map((item: WidgetLayout) =>
         item.i == widgetId ? { ...item, selectedDevice: value } : item
       );
       const layoutBody = {

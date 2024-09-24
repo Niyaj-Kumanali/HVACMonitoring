@@ -37,6 +37,7 @@ const Dashboard: React.FC = () => {
     const fetchDashboardLayout = async () => {
       const response = await getLayout(dashboardId);
       setLocalLayout(response.data.layout);
+      dispatch(setLayout(dashboardId, response.data));
     };
 
     fetchDashboardLayout();
