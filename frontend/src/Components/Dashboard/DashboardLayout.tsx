@@ -84,6 +84,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
       try {
         const response = await getLayout(dashboardId);
+        dispatch(setLayout(dashboardId, response.data))
         const currentWidget = response.data.layout.map((item: WidgetLayout) =>
           item.i == widgetId ? item : undefined
         )[0];
