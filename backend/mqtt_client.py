@@ -53,7 +53,6 @@ def send_telemetry_data(access_token):
     client = mqtt.Client()
     client.username_pw_set(access_token)
     client.on_connect = on_connect
-    client.on_publish = on_publish
     client.on_log = on_log
     
     # Enable logger for debugging
@@ -69,8 +68,9 @@ def send_telemetry_data(access_token):
             "humidity": round(random.uniform(30, 85), 3),
             "power": round(random.uniform(0, 12), 3),
         }
-        print(f"Sending telemetry data: {telemetry_data}")
         client.publish('v1/devices/me/telemetry', json.dumps(telemetry_data))
+        print(f"Sent telemetry data: {telemetry_data}")
+
         time.sleep(0.01)
     except Exception as e:
         print(f"Error while sending telemetry: {e}")
