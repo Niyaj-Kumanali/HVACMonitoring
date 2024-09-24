@@ -54,7 +54,9 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     item.i == widgetId ? item : undefined
   )[0];
 
-  const [selectedChart, setSelectedChart] = useState<chartTypes>(chartType);
+  const [selectedChart, setSelectedChart] = useState<chartTypes>(
+    currentWidget?.chart || chartType
+  );
   const [dateRange, setDateRange] = useState(() => {
     const { startDate, endDate, range } = storedLayout?.dateRange || {};
     return {
@@ -104,10 +106,10 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         }
         if (
           response.data.dateRange.startDate &&
-          response.data.dateRange.endDate && 
+          response.data.dateRange.endDate &&
           response.data.dateRange.range
         ) {
-          setDateRange(response.data?.dateRange)
+          setDateRange(response.data?.dateRange);
         }
         dispatch(setLayout(dashboardId, response.data));
       } catch (error: any) {
@@ -148,12 +150,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       }
     };
     fetchTelemetryData();
-  }, [
-    selectedDevice,
-    selectedSensors,
-    dateRange,
-    storedLayout.limit,
-  ]);
+  }, [selectedDevice, selectedSensors, dateRange, storedLayout.limit]);
 
   useEffect(() => {
     const fetchLatestTelemetryData = async () => {
@@ -224,7 +221,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   };
 
   const handleSensorChange = async (e: any) => {
-    const value = e.target.value as string[];
+    const value = e.target.value;
     if (value.length > 0) {
       setSelectedSensors(value);
 
@@ -247,49 +244,45 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
   const handleChartSelection = async (e: any) => {
     const value = e.target.value;
-    if (value.length > 0) {
-      try {
-        const response = await getLayout(dashboardId);
-        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
-          item.i == widgetId ? { ...item, selectedChart: value } : item
-        );
-        const layoutBody = {
-          ...storedLayout,
-          layout: updatedLayout,
-        };
-        dispatch(setLayout(dashboardId, layoutBody));
-        await postLayout(dashboardId, layoutBody);
-      } catch (err) {
-        console.error('Failed to set sensors', err);
-      } finally {
-        setSelectedChart(value);
-      }
+    setSelectedChart(value);
+    try {
+      const response = await getLayout(dashboardId);
+      const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+        item.i == widgetId ? { ...item, chart: value } : item
+      );
+      const layoutBody = {
+        ...storedLayout,
+        layout: updatedLayout,
+      };
+      await postLayout(dashboardId, layoutBody);
+      dispatch(setLayout(dashboardId, layoutBody));
+    } catch (err) {
+      console.error('Failed to set sensors', err);
     }
   };
 
   const handleDeviceSelection = async (e: any) => {
     const value = e.target.value;
-    if (value.length > 0) {
-      try {
-        const response = await getLayout(dashboardId);
-        const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
-          item.i == widgetId ? { ...item, selectedDevice: value } : item
-        );
-        const layoutBody = {
-          ...storedLayout,
-          layout: updatedLayout,
-        };
-        dispatch(setLayout(dashboardId, layoutBody));
-        await postLayout(dashboardId, layoutBody);
-      } catch (err) {
-        console.error('Failed to set sensors', err);
-      } finally {
-        setSelectedDevice(value);
-      }
+    try {
+      setSelectedDevice(value);
+
+      const response = await getLayout(dashboardId);
+      const updatedLayout = response.data.layout.map((item: WidgetLayout) =>
+        item.i == widgetId ? { ...item, selectedDevice: value } : item
+      );
+      const layoutBody = {
+        ...storedLayout,
+        layout: updatedLayout,
+      };
+      await postLayout(dashboardId, layoutBody);
+      dispatch(setLayout(dashboardId, layoutBody));
+      console.log(value, ...updatedLayout);
+      
+    } catch (err) {
+      console.error('Failed to set sensors', err);
     }
   };
 
-  console.log(selectedChart)
   return (
     <div className="widget">
       <Toolbar className="widget-header">
