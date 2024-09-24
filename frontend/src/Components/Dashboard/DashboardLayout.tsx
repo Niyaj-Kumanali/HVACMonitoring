@@ -238,7 +238,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     await postLayout(dashboardId, layoutBody);
   };
 
-  const handleSensorChange = async (e: { target: { value: string[]; }; }) => {
+  const handleSensorChange = async (e:any) => {
     const value = e.target.value;
     if (value.length > 0) {
       setSelectedSensors(value);
@@ -259,7 +259,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     }
   };
 
-  const handleChartSelection = async (e: { target: { value: chartTypes; }; }) => {
+  const handleChartSelection = async (e: any) => {
     const value = e.target.value;
     setSelectedChart(value);
     try {
@@ -278,7 +278,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     }
   };
 
-  const handleDeviceSelection = async (e: { target: { value: string; }; }) => {
+  const handleDeviceSelection = async (e: any) => {
     const value = e.target.value;
     try {
       setSelectedDevice(value);
