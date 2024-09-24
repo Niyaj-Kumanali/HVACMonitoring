@@ -22,8 +22,12 @@ html {
     grid-template-columns: 0fr 0fr;
     grid-gap: 30px;
 }
+
 @media screen and (max-width:500px) {
     .pageHeaders {
         margin: 5px;
+    }
+    .MuiSnackbar-root{
+        margin-top:10px !important;
     }
 }

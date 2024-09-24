@@ -12,13 +12,27 @@
 }
 
 .warehouse-data{
-    min-width: 400px;
-    max-width: 100%;
-    height: auto;
+    min-width: 450px;
+    max-width: 60%;
+    height: max-content;
     padding: 20px;
     background-color: white;
-    margin: 20px;
+    margin: 10px;
     border-radius: 10px;
+}
+
+@media screen and (max-width: 1000px){
+    .warehouse-data {
+        max-width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .warehouse-data {
+        margin: 0;
+        padding: 10px;
+        min-width: 340px
+    }
 }
 
 
@@ -70,20 +84,21 @@
 }
 
 .warehouse-widgets {
-    margin: 20px 0;
-    width: 100%;
+    margin: 10px;
+    width: 50%;
+    min-width:340px;
     border-radius: 10px;
-    padding: 10px;
+    padding: 15px 10px 10px 10px;
     background-color: white;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     gap: 10px;
 }
 
 .warehouse-widgets-info {
     width: 48%;
-    height: 90%;
+    height: max-content;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -117,17 +132,14 @@
 }
 
 .del-btn-warehouse-disalble {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    display:none;
     pointer-events: none;
 }
 
 .cont {
-    padding: 10px 20px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 20px;
+    height: 100%;
 }
 .warehouses-cont {
     height: 100%;
@@ -146,7 +158,20 @@
     .user-img-info{
         height:15vh !important;
     }
-
+    .warehouse-widgets {
+        width: 100%;
+    }
+}
+@media screen and (max-width:500px) {
+    .warehouse-widgets-info {
+        width: 100%;
+    }
+    .warehouse-widgets {
+        flex-direction: column !important;
+        justify-content: flex-start;
+        gap: 20px !important;
+        min-height: max-content;
+    }
 }
 @media screen and (max-width:1400px) {
     .warehouses {
