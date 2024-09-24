@@ -29,7 +29,6 @@ def fetch_access_tokens():
         cursor.execute(query)
         tokens = cursor.fetchall()
         tokens = [token[0] for token in tokens]
-        print(tokens)
         return tokens
     except Exception as e:
         print(f"Error fetching access tokens: {e}")
@@ -46,32 +45,46 @@ def on_publish(client, userdata, mid):
     telemetry_data = userdata
     print(f"Message published with data: {telemetry_data}")
 
+# Callback to log all MQTT actions (useful for debugging)
+def on_log(client, userdata, level, buf):
+    print(f"Log: {buf}")
+
 def send_telemetry_data(access_token):
     client = mqtt.Client()
     client.username_pw_set(access_token)
     client.on_connect = on_connect
     client.on_publish = on_publish
+    client.on_log = on_log
+    
+    # Enable logger for debugging
+    client.enable_logger()
+    
+    # Connect to ThingsBoard MQTT broker
     client.connect(THINGSBOARD_HOST, 1883, 60)
     client.loop_start()
+
     try:
         telemetry_data = {
             "temperature": round(random.uniform(-10, 35), 3),
             "humidity": round(random.uniform(30, 85), 3),
             "power": round(random.uniform(0, 12), 3),
         }
-        client.user_data_set(telemetry_data)
+        print(f"Sending telemetry data: {telemetry_data}")
         client.publish('v1/devices/me/telemetry', json.dumps(telemetry_data))
+        time.sleep(0.01)
+    except Exception as e:
+        print(f"Error while sending telemetry: {e}")
     finally:
         client.loop_stop()
-        client.disconnect()
+        # client.disconnect()
 
 if __name__ == "__main__":
     try:
+        access_tokens = fetch_access_tokens()
         while True:
-            access_tokens = fetch_access_tokens()
-            for token in access_tokens:
-                send_telemetry_data(token)
-            print(f"\n\nData sent to {len(access_tokens)} devices.\n\n")
-            time.sleep(5)
+            for access_token in access_tokens:
+                print(access_token)
+                send_telemetry_data(access_token)
+            time.sleep(1)
     except KeyboardInterrupt:
         print("Disconnected by user")
