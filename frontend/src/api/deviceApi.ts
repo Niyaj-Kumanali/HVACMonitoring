@@ -9,27 +9,7 @@ export const getDevicePublishTelemetryCommands = async (
   return response;
 };
 
-// Download server certificate
-export const downloadServerCertificate = async (
-  protocol: string
-) => {
-  const response = await thingsboardAPI.get(
-    `/device-connectivity/${protocol}/certificate/download`,
-    { responseType: 'blob' }
-  );
-  return response;
-};
 
-// Download generated docker-compose.yml file for gateway
-export const downloadGatewayDockerCompose = async (
-  deviceId: string
-) => {
-  const response = await thingsboardAPI.get(
-    `/device-connectivity/gateway-launch/${deviceId}/docker-compose/download`,
-    { responseType: 'blob' }
-  );
-  return response;
-};
 
 // Assign device to customer
 export const assignDeviceToCustomer = async (

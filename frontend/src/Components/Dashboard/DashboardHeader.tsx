@@ -22,6 +22,7 @@ import './styles/dashboardheader.css';
 import { uuid } from '../../Utility/utility_functions';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { getLayout, postLayout } from '../../api/MongoAPIInstance';
+import { DEFAULT_LIMIT } from './DashboardLayout';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;
@@ -42,10 +43,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
   const [dateRange, setDateRange] = useState(() => {
     const { startDate, endDate, range } = storedLayout?.dateRange || {};
-  
     return {
-      startDate: startDate || new Date().getTime() - 300000, // Default to 5 minutes ago
-      endDate: endDate || new Date().getTime(), // Default to now
+      startDate: new Date(startDate).getTime() || new Date().getTime() - 300000, // Default to 5 minutes ago
+      endDate: new Date(endDate).getTime() || new Date().getTime(), // Default to now
       range: range || 'last-5-minutes', // Default range
     };
   });
@@ -56,7 +56,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       const response = await getLayout(dashboardId);
       const { startDate, endDate, range } = response.data?.dateRange || {}; 
       if (startDate && endDate && range) {
-        setDateRange(response.data.dateRange);
+        setDateRange({
+          ...response.data.dateRange,
+          startDate: new Date(response.data.dateRange.startDate).getTime(),
+          endDate: new Date(response.data.dateRange.endDate).getTime(),
+        });
       }
       if (response.data.dateRange.range === 'custom-range') {
         setOpenDatePicker(true);
@@ -154,6 +158,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         const layoutBody = {
           ...storedLayout,
           dateRange: newDateRange,
+          limit: DEFAULT_LIMIT,
         };
         dispatch(setLayout(dashboardId, layoutBody));
         await postLayout(dashboardId, layoutBody);
@@ -167,10 +172,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         ...storedLayout,
         dateRange: {
           ...storedLayout.dateRange,
-          startDate: dateRange.startDate,
-          endDate: dateRange.endDate,
+          startDate: new Date(dateRange.startDate).getTime(),
+          endDate: new Date(dateRange.endDate).getTime(),
           range: 'custom-range',
         },
+        limit: DEFAULT_LIMIT,
       };
       dispatch(setLayout(dashboardId, layoutBody));
       await postLayout(dashboardId, layoutBody);
@@ -288,9 +294,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 <MenuItem value="last-30-minutes">Last 30 Minutes</MenuItem>
                 <MenuItem value="last-1-hour">Last 1 Hour</MenuItem>
                 <MenuItem value="last-2-hours">Last 2 Hours</MenuItem>
-                <MenuItem value="last-1-day">Last 1 Day</MenuItem>
-                <MenuItem value="last-7-days">Last 7 Days</MenuItem>
-                <MenuItem value="last-30-days">Last 30 Days</MenuItem>
+                {/* <MenuItem value="last-1-day">Last 1 Day</MenuItem> */}
+                {/* <MenuItem value="last-7-days">Last 7 Days</MenuItem>
+                <MenuItem value="last-30-days">Last 30 Days</MenuItem> */}
                 <MenuItem value="custom-range">Custom Range</MenuItem>
               </Select>
             </FormControl>

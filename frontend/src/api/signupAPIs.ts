@@ -2,7 +2,7 @@ import { Tenant, User } from '../types/thingsboardTypes';
 import { login } from './loginApi';
 import { deleteTenant, saveTenant } from './tenantAPI';
 import thingsboardAPI from './thingsboardAPI';
-import {saveUser } from './userApi';
+import { saveUser } from './userApi';
 
 // Activate User by Email Code
 export const activateUserByEmailCode = async (
@@ -86,17 +86,12 @@ export const CreateSignUpUser = async (tenant: Tenant, tenantBody: User) => {
     throw new Error('Admin credentials are not set.');
   }
 
-  console.log('Admin Credentials:', adminUserName, adminPassword);
-
-  const response = await login(adminUserName, adminPassword);
-  console.log('Admin Response', response);
+  await login(adminUserName, adminPassword);
 
   // Create a tenant
   const tenantResponse = await saveTenant(tenant);
-  console.log(tenantResponse)
 
   const tenantId = tenantResponse.data.id;
-  console.log('Tenant ID:', tenantId);
 
   const tenantUserBody: User = {
     ...tenantBody,
@@ -107,8 +102,7 @@ export const CreateSignUpUser = async (tenant: Tenant, tenantBody: User) => {
     // Create a user
     const createdUser = await saveUser(tenantUserBody, false);
     return createdUser;
-  } catch (error) {
+  } catch (error: any) {
     await deleteTenant(tenantId?.id);
-    console.log('Tenant deleted');
   }
 };

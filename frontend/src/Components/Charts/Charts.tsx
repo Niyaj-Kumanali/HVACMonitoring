@@ -119,7 +119,7 @@ const Charts = () => {
                 const params:any = {
                     keys:
                         keyresponse.data.join(','),
-                    startTs: Date.now() - 500000, // last five minutes
+                    startTs: Date.now() - 1800000, // last 30 minutes
                     endTs: Date.now(),
                     limit: 200,
                     orderBy: 'ASC',

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -16,7 +17,7 @@ import {
   TextField,
   Box,
 } from '@mui/material';
-import { chartTypes, Device } from '../../types/thingsboardTypes';
+import { Device } from '../../types/thingsboardTypes';
 import { getTenantDevices } from '../../api/deviceApi';
 import './AddWidget.css'; // Import the CSS file
 import { getTimeseriesKeys } from '../../api/telemetryAPIs';
@@ -26,7 +27,8 @@ interface AddWidgetProps {
   onClose: () => void;
 }
 
-export const charts: chartTypes[] = ['Line', 'Bar', 'Area'];
+export type chartTypes = 'Line' | 'Bar' | 'Area' | 'Composed' | 'Scatter';
+export const charts: chartTypes[] = ['Line', 'Bar', 'Area', 'Scatter'];
 
 const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
   const [selectedDevice, setSelectedDevice] = useState<string>('');

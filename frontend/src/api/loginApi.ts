@@ -91,7 +91,6 @@ export const getResetTokenByEmail = async (email: string) => {
   const response = await mongoAPI.get('/postgres/resettoken', {
     params: {email},
   });
-  // console.log(response)
   return response;
 };
 
