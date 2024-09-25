@@ -32,6 +32,8 @@
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+
+
 /* .form-control-inner {
     width: 100%;
     padding: 8px;
@@ -77,8 +79,9 @@
 }
 
 .linechart-graph {
-    max-width: 90% !important;
-    min-width: 20vw !important;
+    /* max-width: 90% !important;
+    min-width: 100vw !important; */
+    width: 100% !important;
     height: max-content !important;
 }
 
@@ -89,6 +92,8 @@
 
 .display {
     display: block;
+    /* height: 400px; */
+    /* overflow:scroll */
 }
 
 .error-show {
@@ -135,8 +140,7 @@
         padding: 10px;
     }
     .linechart-graph{
-        border: 1px solid black;
-        min-width: 100% !important;
+        height: 200px !important;
     }
 }
 

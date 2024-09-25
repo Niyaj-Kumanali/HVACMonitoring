@@ -19,6 +19,7 @@
     align-items: center;
     grid-template-columns: 0fr 0fr;
     grid-gap: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .devices .device-ul {
@@ -44,6 +45,11 @@
     height: 13vh;
     font-size: 1.15em;
     transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.devices .device-ul li:hover{
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    transform: scale(1.005);
 }
 .devices ul li span{
     display: flex;
