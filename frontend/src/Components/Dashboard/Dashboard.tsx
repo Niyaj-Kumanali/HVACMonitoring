@@ -14,37 +14,42 @@ import { setLayout } from '../../Redux/Action/layoutActions';
 import DashboardLayout from './DashboardLayout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
+const ROW_HEIGHT = 50;
+const GRID_WIDTH = 1200
 
 const Dashboard: React.FC = () => {
   const { dashboardId } = useParams();
+
+  const storedLayout = useSelector(
+    (state: RootState) =>
+      state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
+  );
   const dispatch = useDispatch();
   const gridLayoutRef = useRef<HTMLDivElement | null>(null);
 
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [localLayout, setLocalLayout] = useState<Layout[]>([]);
-  const [rowHeight, setRowHeight] = useState<number>(50);
-  const [gridWidth, setGridWidth] = useState<number>(1200);
+  const [rowHeight, setRowHeight] = useState<number>(ROW_HEIGHT);
+  const [gridWidth, setGridWidth] = useState<number>(GRID_WIDTH);
 
-  const storedLayout = useSelector(
-    (state: RootState) =>
-      state.dashboardLayout[dashboardId || ''] || { layout: [], dateRange: {} }
-  );
+
 
   useEffect(() => {
     const fetchDashboardLayout = async () => {
       const response = await getLayout(dashboardId);
       setLocalLayout(response.data.layout);
+      dispatch(setLayout(dashboardId, response.data));
     };
 
     fetchDashboardLayout();
-  }, [dashboardId]);
+  }, [dashboardId, dispatch]);
 
-  useEffect(() => {
-    if (storedLayout.layout) {
-      setLocalLayout(storedLayout.layout);
-    }
-  }, [storedLayout]);
+  // useEffect(() => {
+  //   if (storedLayout.layout) {
+  //     setLocalLayout(storedLayout.layout);
+  //   }
+  // }, [storedLayout]);
 
   // Dynamically adjust row height and grid width
   useEffect(() => {
@@ -107,6 +112,10 @@ const Dashboard: React.FC = () => {
     return newLayout.map((item) => ({
       ...item,
       x: Math.min(item.x, cols.lg - item.w),
+      minW: 5,
+      minH: 6,
+      maxW: cols.lg,
+      maxH: 12,
     }));
   };
 
