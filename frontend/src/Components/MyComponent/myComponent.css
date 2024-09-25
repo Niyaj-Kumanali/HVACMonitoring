@@ -1,38 +1,45 @@
 .mycomponent {
-    padding: 20px;
-}
-.mycomponent div{
-    margin: 20px 0;
-}
-.mycomponent label{
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
-    gap: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Prevent overflow */
 }
 
-.mycomponent input{
-    padding: 10px 20px;
-    outline: none;
-    border-radius: 10px;
-    border: 1px solid #eee;
-    margin: 2px;
+.canvas-container {
+  width: 100%; /* Ensure it takes full width */
+  height: 100%; /* Ensure it takes full height */
+}
+.mycomponent div {
+  margin: 20px 0;
+}
+.mycomponent label {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+  gap: 10px;
 }
 
-
-
-.mycomponent button{
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: 1px solid gray;
-    background-color: #fff;
+.mycomponent input {
+  padding: 10px 20px;
+  outline: none;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  margin: 2px;
 }
 
-.mycomponent button:hover{
-    background-color: #eee;
+.mycomponent button {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid gray;
+  background-color: #fff;
 }
 
-.mycomponent form{
-    display: flex;
-    flex-direction: column;
+.mycomponent button:hover {
+  background-color: #eee;
+}
+
+.mycomponent form {
+  display: flex;
+  flex-direction: column;
 }
