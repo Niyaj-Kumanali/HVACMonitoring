@@ -42,7 +42,7 @@ const ResetPassword: React.FC = () => {
         }
       } catch (error: any) {
         setErrorMessage('An error occurred while resetting the password.');
-        console.log(error);
+        console.error('An error occurred while resetting the password.',error);
         if (error?.status === 401) {
           setErrorMessage(error.message);
           setIsExpired(true);

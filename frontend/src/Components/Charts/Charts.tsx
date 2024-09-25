@@ -138,7 +138,6 @@ const Charts = () => {
                 };
 
                 const response = await getTimeseries("DEVICE", selectedDevice, params);
-                console.log(response);
                 return response.data;
             } catch (error) {
                 console.error("Failed to fetch telemetry data:", error);

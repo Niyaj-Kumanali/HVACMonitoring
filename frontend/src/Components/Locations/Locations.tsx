@@ -47,7 +47,6 @@ const Locations = () => {
     setOpen(true);
   };
 
-  console.log('rendered');
   const filteredLocations = useMemo(
     () =>
       uniqueLocations.filter((location) =>
@@ -80,7 +79,7 @@ const Locations = () => {
         [`${latitude},${longitude}`]: data,
       }));
     } catch (err: any) {
-      console.log(
+      console.error(
         `Error fetching location for coordinates ${latitude}, ${longitude}:`,
         err.message
       );

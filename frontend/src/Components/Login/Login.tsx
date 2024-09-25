@@ -56,7 +56,6 @@ const Login: React.FC = () => {
         event.preventDefault();
     };
 
-    console.log(username)
 
     const [state, setState] = useState<{
         open: boolean;
@@ -170,12 +169,9 @@ const Login: React.FC = () => {
             if (response.status === 200) {
                 handleDialogClose();
 
-                let { resetToken, userId } = response.data;
+                let { resetToken } = response.data;
                 resetToken = resetToken == null ? "": resetToken
-                
-                console.log(response);
-                console.log(resetToken);
-                console.log(userId)
+            
 
                 const emailPayload = {
                     email: forgetpasswordemail,
@@ -183,7 +179,6 @@ const Login: React.FC = () => {
                 };
 
                 const emailResponse = await mongoAPI.post('/mailservice/sendresetemail', emailPayload);
-                console.log(emailResponse)
 
                 if (emailResponse.status == 200) {
                     setTimeout(() => {
@@ -194,7 +189,6 @@ const Login: React.FC = () => {
 
                         setTimeout(() => {
                             setState(prevState => ({ ...prevState, open: false }));
-                            // navigate(`/login/resetPassword?token=${resetToken}`, { state: { resetToken, userId, email: forgetpasswordemail } });
                             navigate('/login')
                         }, 500);
                     }, 1000);

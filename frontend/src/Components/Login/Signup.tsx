@@ -125,8 +125,6 @@ const Signup: React.FC = () => {
       };
 
       const createdUser = await CreateSignUpUser(tenant, userBody);
-      console.log(createdUser);
-      console.log("User created")
       const activationLinkResponse = await getActivationLink(createdUser?.data.id?.id)
       const activateToken = activationLinkResponse.data.split("=")[1]
       const passBody = {
