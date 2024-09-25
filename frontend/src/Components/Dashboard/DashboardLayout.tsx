@@ -356,8 +356,22 @@ const DashboardLayout: React.FC<WidgetProps> = ({
   };
 
   return (
-    <div className="widget">
-      <Toolbar className="widget-header">
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      boxSizing: 'border-box',
+    }}>
+      <Toolbar sx={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        width: '100%',
+        height: '15%',
+      }}>
         <FormControl variant="standard" size="small">
           <InputLabel id="chart-select-label">Chart</InputLabel>
           <Select
@@ -366,6 +380,9 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             onChange={handleChartSelection}
             label="Chart"
             size="small"
+            sx={{
+              width: '50px',
+            }}
           >
             {charts.map((chart: chartTypes, index: number) => (
               <MenuItem key={index} value={chart}>
@@ -382,6 +399,9 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             onChange={handleDeviceSelection}
             label="Device"
             size="small"
+            sx={{
+              width: '70px',
+            }}
           >
             {devices.map((device: Device) => (
               <MenuItem key={device.id?.id} value={device.id?.id}>
@@ -412,9 +432,13 @@ const DashboardLayout: React.FC<WidgetProps> = ({
           </Select>
         </FormControl>
         <IconButton
-          onClick={handleLayoutDelete}
+          onClick={(e) => {
+            e.stopPropagation();  // Prevent drag/resize events from interfering
+            handleLayoutDelete(e);
+          }}
           sx={{
             color: 'red',
+            zIndex: '20000',
           }}
         >
           <DeleteIcon />

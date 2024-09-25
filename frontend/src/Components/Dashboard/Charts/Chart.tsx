@@ -18,7 +18,7 @@ import {
 } from 'recharts';
 import '../styles/charts.css';
 import { DownloadRounded } from '@mui/icons-material';
-import { Tooltip as Tool, IconButton } from '@mui/material';
+import { Tooltip as Tool, IconButton, Box } from '@mui/material';
 import { chartTypes } from '../../Add-Widget/AddWidget';
 import { exportToExcel } from '../../../Utility/utility_functions';
 
@@ -171,6 +171,7 @@ const Chart: React.FC<ChartProps> = ({
                 key={key}
                 dataKey={key}
                 fill={getColor(index)} // Use fixed color
+                stackId="stack"
               />
             ))}
           </BarChart>
@@ -214,21 +215,39 @@ const Chart: React.FC<ChartProps> = ({
   }, [chartType, groupedData, seriesKeys]);
 
   return (
-    <>
-      <ResponsiveContainer width="99%" height="80%">
+    <div
+      style={{
+        width: '100%',
+        height: '85%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      <ResponsiveContainer width='99%' height='85%'>
         {renderChart}
       </ResponsiveContainer>
-      <Tool
-        title="Export to Excel"
-        placement="top"
-        arrow
-        className="download-icon"
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          width: '100%',
+          height: '15%',
+        }}
       >
-        <IconButton onClick={() => exportToExcel(data, thresholds)}>
-          <DownloadRounded />
-        </IconButton>
-      </Tool>
-    </>
+        <Tool
+          title="Export to Excel"
+          placement="top"
+          arrow
+        >
+          <IconButton onClick={() => exportToExcel(data, thresholds)}>
+            <DownloadRounded />
+          </IconButton>
+        </Tool>
+      </Box>
+    </div>
   );
 };
 
