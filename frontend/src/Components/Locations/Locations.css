@@ -50,6 +50,7 @@
     display: flex;
     align-items: center;
     justify-content:space-between;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 .locations h2{
     display: flex;

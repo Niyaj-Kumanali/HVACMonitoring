@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FormControl,
     InputLabel,
@@ -55,7 +55,7 @@ const Charts = () => {
     const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
     const [devices, setDevices] = useState<Device[]>([]);
     const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
-    const [selectedTelemetry, setSelectedTelemetry] = useState<string[]>(["Temperature"]);
+    const [selectedTelemetry, setSelectedTelemetry] = useState<string[]>(["Temperature", "Humidity", "Power"]);
     const theme = useTheme();
     const [data, setData] = useState<TelemetryData | null>(null);
     const [humidity, setHumidity] = useState<TelemetryData | null>(null);
@@ -94,9 +94,21 @@ const Charts = () => {
         }
     };
 
+    const chartRef : any = useRef(null);
+
     const handleCheckboxChange = (deviceId: string) => {
         setSelectedDevice(prevSelected => (prevSelected === deviceId ? null : deviceId));
+        setTimeout(() => {
+            if (chartRef.current) {
+                chartRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'nearest'
+                });
+            }
+        }, 0);
     };
+
 
     const handleTelemetryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -121,11 +133,12 @@ const Charts = () => {
                         keyresponse.data.join(','),
                     startTs: Date.now() - 1800000, // last 30 minutes
                     endTs: Date.now(),
-                    limit: 200,
+                    limit: 70,
                     orderBy: 'ASC',
                 };
 
                 const response = await getTimeseries("DEVICE", selectedDevice, params);
+                console.log(response);
                 return response.data;
             } catch (error) {
                 console.error("Failed to fetch telemetry data:", error);
@@ -148,9 +161,9 @@ const Charts = () => {
     }, [selectedWarehouse]);
 
     const seriesData: any = [
-        selectedTelemetry.includes("Temperature") && data ? { data: data.value, label: 'Temperature' } : null,
-        selectedTelemetry.includes("Humidity") && humidity ? { data: humidity.value, label: 'Humidity' } : null,
-        selectedTelemetry.includes("Power") && Power ? { data: Power.value, label: 'Power' } : null
+        selectedTelemetry.includes("Temperature") && data ? { data: data.value, label: 'Temperature', showMark:false } : null,
+        selectedTelemetry.includes("Humidity") && humidity ? { data: humidity.value, label: 'Humidity', showMark: false } : null,
+        selectedTelemetry.includes("Power") && Power ? { data: Power.value, label: 'Power', showMark: false } : null
     ].filter(Boolean);
 
     useEffect(() => {
@@ -179,11 +192,11 @@ const Charts = () => {
 
 
         fetchTelemetry();
-        const interval = setInterval(fetchTelemetry, 5000);
+        const interval = setInterval(fetchTelemetry, 1000);
         return () => clearInterval(interval);
     }, [selectedDevice]);
 
-    const formatDate = (timestamp: number): string => new Date(timestamp).toLocaleString();
+    const formatDate = (timestamp: number): string => new Date(timestamp).toLocaleTimeString();
 
     const telemetryCheckboxes = [
         { label: 'Temperature', value: 'Temperature' },
@@ -194,7 +207,6 @@ const Charts = () => {
     if (loading) {
         return <Loader />;
     }
-
 
     return (
         <div className="menu-data">
@@ -222,37 +234,38 @@ const Charts = () => {
                             </Select>
                         </FormControl>
                         <div className={display ? "display" : "nodisplay"}>
-                            <Paper style={{ height: 'max-content', width: '100%' }}>
-                                <TableContainer component={Paper}>
-                                    <Table sx={{ minWidth: 650 }} aria-label="device table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Select</TableCell>
-                                                <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Device Name</TableCell>
-                                                <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Status</TableCell>
-                                                <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Last Updated</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {devices.map((device) => (
-                                                <TableRow key={device.id.id}>
-                                                    <TableCell padding="checkbox">
-                                                        <Checkbox
-                                                            checked={selectedDevice === device.id.id}
-                                                            onChange={() => handleCheckboxChange(device.id.id)}
-                                                            inputProps={{ 'aria-label': 'select device' }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row" className="tablecell"><p>{device.name}</p></TableCell>
-                                                    <TableCell align="right" className="tablecell"><p>{device.active ? "online" : "offline"}</p></TableCell>
-                                                    <TableCell align="right" className="tablecell"><p>{new Date(device.createdTime).toLocaleString()}</p></TableCell>
+                                <Paper style={{ maxHeight: '700px', overflow: 'auto', width: '100%' }}>
+                                    <TableContainer component={Paper} sx={{ maxHeight: '500px' }}> {/* Adjust height as needed */}
+                                        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="device table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Select</TableCell>
+                                                    <TableCell sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Device Name</TableCell>
+                                                    <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Status</TableCell>
+                                                    <TableCell align="right" sx={{ backgroundColor: theme.palette.primary.main, color: 'white' }}>Last Updated</TableCell>
                                                 </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Paper>
-                            <div className="linegraph-chart">
+                                            </TableHead>
+                                            <TableBody>
+                                                {devices.map((device) => (
+                                                    <TableRow key={device.id.id}>
+                                                        <TableCell padding="checkbox">
+                                                            <Checkbox
+                                                                checked={selectedDevice === device.id.id}
+                                                                onChange={() => handleCheckboxChange(device.id.id)}
+                                                                inputProps={{ 'aria-label': 'select device' }}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell component="th" scope="row" className="tablecell"><p>{device.name}</p></TableCell>
+                                                        <TableCell align="right" className="tablecell"><p>{device.active ? "online" : "offline"}</p></TableCell>
+                                                        <TableCell align="right" className="tablecell"><p>{new Date(device.createdTime).toLocaleString()}</p></TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Paper>
+
+                                <div id="chart-navigate" className="linegraph-chart" ref={chartRef}>
                                     <div >
                                         {telemetryCheckboxes.map((checkbox) => (
                                             <FormControlLabel
@@ -271,13 +284,15 @@ const Charts = () => {
                                     {selectedDevice ? (
                                         seriesData.length > 0 ? (
                                             <LineChart
-                                                width={750}
-                                                height={600}
+                                                width={1450}
+                                                height={700}
                                                 series={seriesData}
                                                 xAxis={[{ scaleType: 'point', data: data?.ts || [] }]}
-                                                grid={{ vertical: true, horizontal: true }}
+                                                grid={{ horizontal: true }}
                                                 className="linechart-graph"
-                                            />
+                                                skipAnimation
+                                            >
+                                            </LineChart>
                                         ) : (
                                             <p>No valid data available for the selected device.</p>
                                         )
