@@ -434,7 +434,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         <IconButton
           onClick={(e) => {
             e.stopPropagation();  // Prevent drag/resize events from interfering
-            handleLayoutDelete(e);
+            handleLayoutDelete();
           }}
           sx={{
             color: 'red',
