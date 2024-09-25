@@ -72,7 +72,6 @@ const DeviceInfo: React.FC = () => {
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
     'success'
   );
-  
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
@@ -199,7 +198,7 @@ const DeviceInfo: React.FC = () => {
         setOpen(true);
         setIsEdit(true);
       }, 500);
-    } catch (error:any) {
+    } catch (error: any) {
       setTimeout(() => {
         setLoadingSave(false);
         setMessage('Error updating device');
@@ -272,7 +271,7 @@ const DeviceInfo: React.FC = () => {
     fetchDeviceInfo();
     fetchAllWarehouses();
     fetchAllVehicles();
-    const loaderTimeout = setTimeout(() => setLoaders(false), 1000);
+    const loaderTimeout = setTimeout(() => setLoaders(false), 700);
     return () => clearTimeout(loaderTimeout);
   }, []);
 
@@ -283,13 +282,18 @@ const DeviceInfo: React.FC = () => {
   return (
     <>
       {loaders ? (
-        <Loader />
+        <div className="menu-data">
+          <Loader />
+        </div>
       ) : (
         <div className="menu-data">
           <div className="add-device">
             <form>
               <div className="header-container">
-                  <label className="label"><KeyboardBackspaceIcon onClick={goBack} />Device Info</label>
+                <label className="label">
+                  <KeyboardBackspaceIcon onClick={goBack} />
+                  Device Info
+                </label>
                 <div className="buttons">
                   <Button
                     variant="outlined" // Use 'outlined' for a transparent background

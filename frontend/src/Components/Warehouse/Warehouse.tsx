@@ -28,10 +28,11 @@ import {
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
 import { RootState } from '../../Redux/Reducer';
+import Loader from '../Loader/Loader';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
-  const currentUser = useSelector((state: RootState) => state.user.user)
+  const currentUser = useSelector((state: RootState) => state.user.user);
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
     latitude: '',
@@ -52,6 +53,7 @@ const Warehouse: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingg, setLoadingg] = useState(false);
+  const [loader, setLoader] = useState(true);
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
     'success'
   );
@@ -63,11 +65,19 @@ const Warehouse: React.FC = () => {
   const [locationInfo, setLocationInfo] = useState<any>({});
   useEffect(() => {
     const fetchWarehouseById = async () => {
-      const response = await getWarehouseByWarehouseId(warehouseid);
+      try {
+        const response = await getWarehouseByWarehouseId(warehouseid);
 
-      setFormData({
-        ...response.data,
-      });
+        setFormData({
+          ...response.data,
+        });
+      } catch (err: any) {
+        console.error("Failed to fetch warehouse", err);
+      } finally {
+        setTimeout(() => {
+          setLoader(false)
+        }, 700);
+      }
     };
     fetchWarehouseById();
   }, [warehouseid]);
@@ -85,8 +95,7 @@ const Warehouse: React.FC = () => {
         console.error('Error deleting warehouse:', error);
         setSnackbarType('error');
         setMessage('Failed to Delete Warehouse');
-      }
-      finally {
+      } finally {
         setOpen(true);
         setTimeout(() => {
           setLoadingg(false);
@@ -221,11 +230,11 @@ const Warehouse: React.FC = () => {
       try {
         const response = await getLocationByLatsAndLongs(latitude, longitude);
         if (!response.ok) {
-            throw new Error('Failed to fetch location data');
+          throw new Error('Failed to fetch location data');
         }
 
         const data: Location = await response.json();
-        setLocationInfo({[warehouseId]: data });
+        setLocationInfo({ [warehouseId]: data });
       } catch (err: any) {
         console.error(
           `Error fetching location for warehouse ${warehouseId}:`,
@@ -235,7 +244,6 @@ const Warehouse: React.FC = () => {
     };
 
     if (formData.latitude && formData.longitude) {
-
       fetchLocationInfo(
         formData.latitude,
         formData.longitude,
@@ -246,189 +254,199 @@ const Warehouse: React.FC = () => {
 
   return (
     <div className="menu-data">
-      <div className="cont">
-
-        <div className={buttonvisible ? 'del-btn-warehouse-disalble' : 'warehouse-widgets'}>
-          <div className="warehouse-widgets-info">
-            <div className="warehouse-widgets-info-data">
-              <div>
-                <h3>
-                  Name<p> : {formData.warehouse_name}</p>
-                </h3>
-                <h3>
-                  Sensors<p> : {formData.sensors ?? ''}</p>
-                </h3>
-                <h3>
-                  Location
-                  <p>
-                    :{' '}
-                    {locationInfo[warehouseid || '']?.display_name ||
-                      'Loading location...'}
-                  </p>
-                </h3>
+      {loader ? (
+        <Loader />
+      ) : (
+        <div className="cont">
+          <div
+            className={
+              buttonvisible ? 'del-btn-warehouse-disalble' : 'warehouse-widgets'
+            }
+          >
+            <div className="warehouse-widgets-info">
+              <div className="warehouse-widgets-info-data">
+                <div>
+                  <h3>
+                    Name<p> : {formData.warehouse_name}</p>
+                  </h3>
+                  <h3>
+                    Sensors<p> : {formData.sensors ?? ''}</p>
+                  </h3>
+                  <h3>
+                    Location
+                    <p>
+                      :{' '}
+                      {locationInfo[warehouseid || '']?.display_name ||
+                        'Loading location...'}
+                    </p>
+                  </h3>
+                </div>
+                <div>
+                  <Button variant="contained" onClick={handleButtonVisible}>
+                    EDIT
+                  </Button>
+                </div>
               </div>
-              <div>
-                <Button variant="contained" onClick={handleButtonVisible}>
-                  EDIT
-                </Button>
+              <div className="warehouse-widgets-info-data">
+                <h3>Energy Consumed : {3}</h3>
+              </div>
+              <div className="warehouse-widgets-info-data">
+                <h3>Occupancy : {5}</h3>
               </div>
             </div>
-            <div className="warehouse-widgets-info-data">
-              <h3>Energy Consumed : {3}</h3>
-            </div>
-            <div className="warehouse-widgets-info-data">
-              <h3>Occupancy : {5}</h3>
+            <div className="warehouse-widgets-info">
+              <div className="warehouse-widgets-info-data">
+                <h3>Current Temp : {42}</h3>
+              </div>
+              <div className="warehouse-widgets-info-data">
+                <h3>No of Violation : {10}</h3>
+              </div>
+              <div className="warehouse-widgets-info-data">
+                <p>No of Times Doors opened : {19}</p>
+              </div>
             </div>
           </div>
-          <div className="warehouse-widgets-info">
-            <div className="warehouse-widgets-info-data">
-              <h3>Current Temp : {42}</h3>
-            </div>
-            <div className="warehouse-widgets-info-data">
-              <h3>No of Violation : {10}</h3>
-            </div>
-            <div className="warehouse-widgets-info-data">
-              <p>No of Times Doors opened : {19}</p>
-            </div>
+
+          <div
+            className={
+              buttonvisible ? 'warehouse-data' : 'del-btn-warehouse-disalble'
+            }
+          >
+            <h3>Warehouse: {formData.warehouse_name}</h3>
+            <form className="warehouse-form" onSubmit={handleSubmit}>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Warehouse Name"
+                  name="warehouse_name"
+                  value={formData.warehouse_name}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                  inputProps={{
+                    readOnly: buttonvisible ? false : true,
+                  }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Latitude"
+                  name="latitude"
+                  type="number"
+                  value={formData.latitude}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Longitude"
+                  name="longitude"
+                  type="number"
+                  value={formData.longitude}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Length"
+                  name="warehouse_dimensions.length"
+                  type="number"
+                  value={formData.warehouse_dimensions.length}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Width"
+                  name="warehouse_dimensions.width"
+                  type="number"
+                  value={formData.warehouse_dimensions.width}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Height"
+                  name="warehouse_dimensions.height"
+                  type="number"
+                  value={formData.warehouse_dimensions.height}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Energy Resource"
+                  name="energy_resource"
+                  value={formData.energy_resource}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="No Of Cooling Units"
+                  name="cooling_units"
+                  type="number"
+                  value={formData.cooling_units ?? ''}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="No Of Sensors"
+                  name="sensors"
+                  type="number"
+                  value={formData.sensors ?? ''}
+                  onChange={handleChange}
+                  disabled={submitted}
+                  className="textfieldss"
+                />
+              </FormControl>
+              <div className="del-btn-warehouse">
+                <LoadingButton
+                  size="small"
+                  type="submit"
+                  color="secondary"
+                  loading={loading}
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  disabled={loadingg}
+                  className="btn-save"
+                >
+                  <span>Update</span>
+                </LoadingButton>
+                <LoadingButton
+                  size="small"
+                  color="error"
+                  loading={loadingg}
+                  loadingPosition="start"
+                  startIcon={<DeleteIcon />}
+                  variant="contained"
+                  disabled={loading}
+                  className="btn-save"
+                  onClick={handleDeleteWarehouse}
+                >
+                  <span>Delete</span>
+                </LoadingButton>
+              </div>
+            </form>
           </div>
         </div>
+      )}
 
-        <div
-          className={buttonvisible ? 'warehouse-data' : 'del-btn-warehouse-disalble'}
-        >
-          <h3>Warehouse: {formData.warehouse_name}</h3>
-          <form className="warehouse-form" onSubmit={handleSubmit}>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Warehouse Name"
-                name="warehouse_name"
-                value={formData.warehouse_name}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-                inputProps={{
-                  readOnly: buttonvisible ? false : true,
-                }}
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Latitude"
-                name="latitude"
-                type="number"
-                value={formData.latitude}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Longitude"
-                name="longitude"
-                type="number"
-                value={formData.longitude}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Length"
-                name="warehouse_dimensions.length"
-                type="number"
-                value={formData.warehouse_dimensions.length}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Width"
-                name="warehouse_dimensions.width"
-                type="number"
-                value={formData.warehouse_dimensions.width}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Height"
-                name="warehouse_dimensions.height"
-                type="number"
-                value={formData.warehouse_dimensions.height}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="Energy Resource"
-                name="energy_resource"
-                value={formData.energy_resource}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="No Of Cooling Units"
-                name="cooling_units"
-                type="number"
-                value={formData.cooling_units ?? ''}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-              <TextField
-                label="No Of Sensors"
-                name="sensors"
-                type="number"
-                value={formData.sensors ?? ''}
-                onChange={handleChange}
-                disabled={submitted}
-                className="textfieldss"
-              />
-            </FormControl>
-            <div className="del-btn-warehouse">
-              <LoadingButton
-                size="small"
-                type="submit"
-                color="secondary"
-                loading={loading}
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-                variant="contained"
-                disabled={loadingg}
-                className="btn-save"
-              >
-                <span>Update</span>
-              </LoadingButton>
-              <LoadingButton
-                size="small"
-                color="error"
-                loading={loadingg}
-                loadingPosition="start"
-                startIcon={<DeleteIcon />}
-                variant="contained"
-                disabled={loading}
-                className="btn-save"
-                onClick={handleDeleteWarehouse}
-              >
-                <span>Delete</span>
-              </LoadingButton>
-            </div>
-          </form>
-        </div>
-      </div>
       <Snackbar
         open={open}
         autoHideDuration={2000}
