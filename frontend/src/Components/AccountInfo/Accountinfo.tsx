@@ -29,12 +29,10 @@ const Accountinfo = () => {
             phone: phone,
         };
 
-        console.log(updateUser);
         await saveUser(updateUser, false);
         alert('User updated successfully');
 
         setTimeout(() => {
-            console.log("Data saved!");
             setLoading(false);
         }, 2000);
     };

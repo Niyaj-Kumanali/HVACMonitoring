@@ -77,9 +77,7 @@ const Warehouse: React.FC = () => {
 
     setTimeout(async () => {
       try {
-        console.log(warehouseid);
-        const response = await deleteWarehouseByWarehouseId(warehouseid);
-        console.log(response);
+        await deleteWarehouseByWarehouseId(warehouseid);
         fetchAllWarehouses();
         setSnackbarType('success');
         setMessage('Warehouse Deleted Successfully');
@@ -143,7 +141,6 @@ const Warehouse: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log(formData);
     e.preventDefault();
 
     setLoading(true);
@@ -223,7 +220,6 @@ const Warehouse: React.FC = () => {
     ) => {
       try {
         const response = await getLocationByLatsAndLongs(latitude, longitude);
-        console.log(response);
         if (!response.ok) {
             throw new Error('Failed to fetch location data');
         }
@@ -231,7 +227,7 @@ const Warehouse: React.FC = () => {
         const data: Location = await response.json();
         setLocationInfo({[warehouseId]: data });
       } catch (err: any) {
-        console.log(
+        console.error(
           `Error fetching location for warehouse ${warehouseId}:`,
           err.message
         );

@@ -76,7 +76,6 @@ const Adduser = () => {
             };
 
             const user = await saveUser(newUser, IsSendActivationMail);
-            console.log(user);
 
             const activationlink = await getActivationLink(user.data.id?.id);
             setActivationlink(activationlink.data);;

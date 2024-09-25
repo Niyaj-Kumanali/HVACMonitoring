@@ -95,7 +95,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
         const currentWidget = response.data.layout.find(
           (item: WidgetLayout) => item.i === widgetId
         );
-        console.log(currentWidget);
         if (currentWidget.selectedDevice) {
           setSelectedDevice(currentWidget.selectedDevice || deviceId);
         }
@@ -349,7 +348,6 @@ const DashboardLayout: React.FC<WidgetProps> = ({
       };
       await postLayout(dashboardId, layoutBody);
       dispatch(setLayout(dashboardId, layoutBody));
-      console.log(value, ...updatedLayout);
     } catch (err) {
       console.error('Failed to set Device', err);
     }

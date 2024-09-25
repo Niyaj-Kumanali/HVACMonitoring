@@ -1,177 +1,178 @@
 /* General Styles */
 .header {
-    width: 100%;
-    padding: 20px 30px;
-    display: flex;
-    gap: 25px;
-    background-color: #2BC790;
-    box-shadow: 0px 0 10px rgb(31, 89, 2);
-    z-index: 200;
-    position: relative;
-    height: 60px;
-    align-items: center;
-    transition: all 0.3s ease;
+  width: 100%;
+  padding: 20px 30px;
+  display: flex;
+  gap: 25px;
+  background-color: #2bc790;
+  box-shadow: 0px 0 10px rgb(31, 89, 2);
+  z-index: 200;
+  position: relative;
+  height: 60px;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
 .menu-items {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  display: none;
 }
 
 .menu-items .menuicon {
-    font-size: 35px;
-    cursor: pointer;
+  font-size: 35px;
+  cursor: pointer;
 }
 
 .link2 {
-    color: white !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo {
-    width: 250px;
-    height: 50px;
-    color: white;
-    font-size: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: width 0.3s ease;
+  width: 250px;
+  height: 50px;
+  color: white;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.3s ease;
 }
 
 .logo div {
-    width: 70%;
-    height: 100%;
+  width: 70%;
+  height: 100%;
 }
 
 .logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .account {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    color: white;
-    position: absolute;
-    right: 30px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: white;
+  position: absolute;
+  right: 30px;
 }
 
 .account li {
-    list-style-type: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 6px;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 6px;
 }
 
 .accounticon {
-    font-size: 35px !important;
+  font-size: 35px !important;
 }
 
 li {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .menuu {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .visible {
-    position: absolute;
-    top: 55px;
-    color: black;
-    width: 250px;
-    right: 1px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 5px 5px -3px #0003, 0 8px 10px 1px #00000024, 0 3px 14px 2px #0000001f;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  top: 55px;
+  color: black;
+  width: 250px;
+  right: 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 5px 5px -3px #0003, 0 8px 10px 1px #00000024,
+    0 3px 14px 2px #0000001f;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .visible .link2 {
-    color: black !important;
-    padding: 11px;
-    font-size: 18px;
-    gap: 10px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+  color: black !important;
+  padding: 11px;
+  font-size: 18px;
+  gap: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .visible .link2:hover {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
 .visible .link2:first-child:hover {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .visible .link2:last-child:hover {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 /* Media Queries */
 
 /* Tablets and small laptops */
 @media screen and (max-width: 1000px) {
-    .account .user-email {
-        display: none;
-    }
+  .account .user-email {
+    display: none;
+  }
 }
 
 /* Small devices (phones) */
 @media screen and (max-width: 700px) {
-    .logo {
-        width: 140px;
-    }
+  .logo {
+    width: 140px;
+  }
 
-    .menu-items {
-        display: block;
-    }
+  .menu-items {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 500px) {
-    .homelink {
-        display: none;
-    }
+  .homelink {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 320px) {
-    .header{
-        min-width: 345px;
-    }
+  .header {
+    min-width: 345px;
+  }
 }
 
 @media screen and (max-width: 370px) {
-    .menuu {
-        width: 50px;
-    }
+  .menuu {
+    width: 50px;
+  }
 
-    .logo {
-        width: 140px;
-    }
-        .header {
-            min-width: 345px;
-        }
+  .logo {
+    width: 140px;
+  }
+  .header {
+    min-width: 345px;
+  }
 }
