@@ -61,31 +61,34 @@ const Header: React.FC = () => {
 
   return (
     <div className="header">
-      {menuState ? (
-        <div
-          className="menu-items"
-          onClick={() => {menubarDispatch(set_Menubaropen(false))}}
-        >
-          <MenuOpenIcon className="menuicon" />
-        </div>
-      ) : (
-        <div
-          className="menu-items"
-          onClick={() => {menubarDispatch(set_Menubaropen(true))}}
-        >
-          <MenuIcon className="menuicon" />
-        </div>
-      )}
-      {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
-
-      <Link to="/dashboards" className="link link2 homelink">
-        {/* <li>Home</li> */}
-        <div className="logo">
-          <div>
-            <img src={logo} alt="logo" />
+      <div className="header-menu-logo">
+        {menuState ? (
+          <div
+            className="menu-items"
+            onClick={() => { menubarDispatch(set_Menubaropen(false)) }}
+          >
+            <MenuOpenIcon className="menuicon" />
           </div>
-        </div>
-      </Link>
+        ) : (
+          <div
+            className="menu-items"
+            onClick={() => { menubarDispatch(set_Menubaropen(true)) }}
+          >
+            <MenuIcon className="menuicon" />
+          </div>
+        )}
+        {/* <div className="logo"><div><img src={logo} alt="logo" /></div></div> */}
+
+        <Link to="/dashboards" className="link link2 homelink">
+          {/* <li>Home</li> */}
+          <div className="logo">
+            <div>
+              <img src={logo} alt="logo" />
+            </div>
+          </div>
+        </Link>
+      </div>
+      
       <div className="account">
         <li className="user-email">
           <AccountCircleIcon className="accounticon" />
