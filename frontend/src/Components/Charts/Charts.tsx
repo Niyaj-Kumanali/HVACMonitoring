@@ -205,7 +205,7 @@ const Charts = () => {
     ];
 
     if (loading) {
-        return <Loader />;
+        return <div className="menu-data"><Loader /></div>;
     }
 
     return (

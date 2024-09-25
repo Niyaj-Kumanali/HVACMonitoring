@@ -87,7 +87,9 @@ const Warehouses = () => {
 
     return (
         loading ? (
-            <Loader />
+            <div className="menu-data">
+                <Loader />
+            </div>
         ) : allWarehouses.length === 0 ? (
             <div className="menu-data">{message}</div>
         ) : (

@@ -47,7 +47,7 @@ const Dashboards = () => {
   const currentuser = useSelector((state: any) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
-  const [loading, setLoader] = useState(true);
+  const [loading, setLoader] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>('');
   const [pageCount, setPageCount] = useState<number>(1);
@@ -126,12 +126,11 @@ const Dashboards = () => {
       console.error('Failed to fetch dashboards', error);
       setError('No Dashboard Found');
       setShowError(true);
-    } finally {
-      setLoader(false);
     }
   };
 
   useEffect(() => {
+    setLoader(true);
     const fetchAllData = async () => {
       try {
         const response = await getCurrentUser();
@@ -153,7 +152,10 @@ const Dashboards = () => {
         setError('Failed to load data');
         setShowError(true);
       } finally {
-        setLoader(false);
+        setTimeout(() => {
+          setLoader(false);
+        }, 700)
+        
       }
     };
 

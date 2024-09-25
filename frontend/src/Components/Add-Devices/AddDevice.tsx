@@ -83,7 +83,7 @@ const AddDevice = () => {
 
   setTimeout(() => {
     setLoaders(false);
-  }, 1000);
+  }, 700);
 
   const fetchDevices = async (page: number): Promise<void> => {
     try {
@@ -150,7 +150,10 @@ const AddDevice = () => {
   return (
     <>
       {loaders ? (
-        <Loader />
+        <div className="menu-data">
+          <Loader />
+        </div>
+        
       ) : (
         <div className="menu-data">
           <div className="add-device">

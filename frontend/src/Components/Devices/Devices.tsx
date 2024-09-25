@@ -56,7 +56,7 @@ const Devices: React.FC = () => {
                     setInitialLoad(false);
                 }
                 setLoadingDevices(false);
-            }, 500);
+            }, 700);
         }
     };
 
@@ -92,13 +92,14 @@ const Devices: React.FC = () => {
 
     return (
         <div className="menu-data">
-            <div className="devices">
-                    {loadingDevices && initialLoad ? (
-                        <Loader />
-                    ) : (
-                        <>
-                            <div>
-                                <h2 className="devicesH2"><KeyboardBackspaceIcon onClick={goBack} />Devices</h2>
+            {loadingDevices && initialLoad ? (
+                <Loader />
+            ) : (
+                <>
+                    <div className="devices">
+
+                        <div>
+                            <h2 className="devicesH2"><KeyboardBackspaceIcon onClick={goBack} />Devices</h2>
                             {errorMessage ? (
                                 <div className="error-message">{errorMessage}</div>
                             ) : (
@@ -124,18 +125,19 @@ const Devices: React.FC = () => {
                                                     </li>
                                                 ))}
                                             </ul>
-                                            
+
                                         </>
                                     )}
                                 </>
                             )}
-                            </div>
-                            <div className="pagination">
-                                <Paginations pageCount={pageCount} onPageChange={setCurrentPage} />
-                            </div>
-                        </>
-                    )}
-            </div>
+                        </div>
+                        <div className="pagination">
+                            <Paginations pageCount={pageCount} onPageChange={setCurrentPage} />
+                        </div>
+
+                    </div>
+                </>
+            )}
             <Snackbar
                 open={open}
                 autoHideDuration={2000}

@@ -89,6 +89,7 @@
   justify-content: flex-start;
   background-image: url("./assets/Backgroundimg.jpg");
   background-size: fit;
+    flex-direction: column;
 }
 a {
   outline: none !important;

@@ -42,7 +42,7 @@ const AddCustomer: React.FC = () => {
                 if (initialLoad) {
                     setInitialLoad(false);
                 }
-            } , 500)
+            } , 700)
             
         }
     };
@@ -64,7 +64,7 @@ const AddCustomer: React.FC = () => {
 
     const renderContent = () => {
         if (loading && initialLoad) {
-            return <Loader />;
+            return <div className="menu-data"><Loader /></div>;
         }
 
         if (errorMessage) {
