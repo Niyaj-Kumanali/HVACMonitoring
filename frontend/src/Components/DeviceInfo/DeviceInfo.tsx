@@ -36,6 +36,7 @@ import {
   getAllVehiclesByUserId,
   getAllWarehouseByUserId,
 } from '../../api/MongoAPIInstance';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 interface Warehouse {
   warehouse_id: string;
@@ -343,7 +344,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.name || ''}
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  disabled={isEdit}
                 />
               </Box>
               <label className="label">Location</label>
@@ -357,7 +358,8 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleLabelChange}
                   className="form-control-inner"
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  // inputProps={{ readOnly: isEdit }}
+                  disabled={isEdit}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -377,7 +379,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleWarehouseChange}
                     className="form-control-inner"
                     required
-                    inputProps={{ readOnly: isEdit }}
+                    disabled={isEdit}
                   >
                     {warehouse.map((wh, index) => (
                       <MenuItem key={index} value={wh.warehouse_id}>
@@ -398,7 +400,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleVehicleChange}
                     className="form-control-inner"
                     required
-                    inputProps={{ readOnly: isEdit }}
+                    disabled={isEdit}
                   >
                     {vehicle.map((veh, index) => (
                       <MenuItem key={index} value={veh.vehicle_id}>
@@ -417,7 +419,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.type || ''}
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  disabled={isEdit}
                 />
               </Box>
               <label className="label">Action</label>
@@ -431,7 +433,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleActionChange}
                   className="form-control-inner"
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  disabled={isEdit}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -482,7 +484,7 @@ const DeviceInfo: React.FC = () => {
               </div>
             </form>
           </div>
-          <Snackbar
+          {/* <Snackbar
             open={open}
             autoHideDuration={2000}
             onClose={handleClose}
@@ -505,9 +507,15 @@ const DeviceInfo: React.FC = () => {
                 </span>
               }
             />
-          </Snackbar>
+          </Snackbar> */}
         </div>
       )}
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
     </>
   );
 };

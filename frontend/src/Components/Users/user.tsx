@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { User as UserType } from '../../types/thingsboardTypes';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 const User = () => {
   const [username, setUsername] = useState<string>('');
@@ -64,10 +65,9 @@ const User = () => {
         }
       } catch (error) {
         console.error('Failed to fetch user data', error);
-      }
-      finally {
+      } finally {
         setTimeout(() => {
-            setLoader(false)
+          setLoader(false);
         }, 700);
       }
     };
@@ -157,155 +157,156 @@ const User = () => {
   };
 
   return (
-    <div className="menu-data">
-      {loader ? (
-        <Loader />
-      ) : (
-        <div className="accountinfo">
-          <header className="accountinfo-header">
-            <div className="accountinfo-email">
-              <p className="accountinfo-profile">Profile</p>
-              <p>{user?.email}</p>
-            </div>
-            <div className="accountinfo-lastlogin">
-              <p>Last Login</p>
-              <p>
-                {user?.additionalInfo?.lastLoginTs
-                  ? formatDate(user.additionalInfo.lastLoginTs)
-                  : 'No Login Found'}
-              </p>
-            </div>
-          </header>
-          <main className="accountinfo-main">
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#ebebeb',
-                marginBottom: '10px',
-              }}
-            >
-              <TextField
-                fullWidth
-                label="Email"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                inputProps={{ readOnly: isEdit }}
-              />
-            </Box>
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#ebebeb',
-                marginBottom: '10px',
-              }}
-            >
-              <TextField
-                fullWidth
-                label="First Name"
-                value={firstName}
-                onChange={(e) => setFirstname(e.target.value)}
-                required
-                inputProps={{ readOnly: isEdit }}
-              />
-            </Box>
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#ebebeb',
-                marginBottom: '10px',
-              }}
-            >
-              <TextField
-                fullWidth
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastname(e.target.value)}
-                required
-                inputProps={{ readOnly: isEdit }}
-              />
-            </Box>
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#ebebeb',
-                marginBottom: '10px',
-              }}
-            >
-              <TextField
-                fullWidth
-                label="Phone Number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                inputProps={{ readOnly: isEdit }}
-              />
-            </Box>
-            <Box
-              sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#ebebeb',
-                marginBottom: '10px',
-              }}
-            >
-              <TextField
-                fullWidth
-                label="Authority"
-                value={authority}
-                onChange={(e) => setAuthority(e.target.value)}
-                disabled={true}
-              />
-            </Box>
-            <div className="accountinfo-savebtn-delt-btn">
-              {isEdit ? (
-                <Button
-                  variant="contained"
-                  onClick={() => setIsEdit(false)}
-                  sx={{ width: '150px', height: '50px' }}
-                >
-                  Edit
-                </Button>
-              ) : (
-                <>
-                  <LoadingButton
-                    size="small"
-                    color="secondary"
-                    onClick={handleClick}
-                    loading={loading}
-                    loadingPosition="start"
-                    startIcon={<SaveIcon />}
+    <>
+      <div className="menu-data">
+        {loader ? (
+          <Loader />
+        ) : (
+          <div className="accountinfo">
+            <header className="accountinfo-header">
+              <div className="accountinfo-email">
+                <p className="accountinfo-profile">Profile</p>
+                <p>{user?.email}</p>
+              </div>
+              <div className="accountinfo-lastlogin">
+                <p>Last Login</p>
+                <p>
+                  {user?.additionalInfo?.lastLoginTs
+                    ? formatDate(user.additionalInfo.lastLoginTs)
+                    : 'No Login Found'}
+                </p>
+              </div>
+            </header>
+            <main className="accountinfo-main">
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  backgroundColor: '#ebebeb',
+                  marginBottom: '10px',
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Email"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  inputProps={{ readOnly: isEdit }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  backgroundColor: '#ebebeb',
+                  marginBottom: '10px',
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstname(e.target.value)}
+                  required
+                  inputProps={{ readOnly: isEdit }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  backgroundColor: '#ebebeb',
+                  marginBottom: '10px',
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastname(e.target.value)}
+                  required
+                  inputProps={{ readOnly: isEdit }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  backgroundColor: '#ebebeb',
+                  marginBottom: '10px',
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  inputProps={{ readOnly: isEdit }}
+                />
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  backgroundColor: '#ebebeb',
+                  marginBottom: '10px',
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Authority"
+                  value={authority}
+                  onChange={(e) => setAuthority(e.target.value)}
+                  disabled={true}
+                />
+              </Box>
+              <div className="accountinfo-savebtn-delt-btn">
+                {isEdit ? (
+                  <Button
                     variant="contained"
-                    disabled={loadingDelete}
+                    onClick={() => setIsEdit(false)}
                     sx={{ width: '150px', height: '50px' }}
                   >
-                    <span>Update</span>
-                  </LoadingButton>
-                  <LoadingButton
-                    size="small"
-                    color="error"
-                    onClick={handleDeleteUser}
-                    loading={loadingDelete}
-                    loadingPosition="start"
-                    startIcon={<DeleteIcon />}
-                    variant="contained"
-                    disabled={loading}
-                    sx={{ width: '150px', height: '50px' }}
-                  >
-                    <span>Delete</span>
-                  </LoadingButton>
-                </>
-              )}
-            </div>
-          </main>
-        </div>
-      )}
+                    Edit
+                  </Button>
+                ) : (
+                  <>
+                    <LoadingButton
+                      size="small"
+                      color="secondary"
+                      onClick={handleClick}
+                      loading={loading}
+                      loadingPosition="start"
+                      startIcon={<SaveIcon />}
+                      variant="contained"
+                      disabled={loadingDelete}
+                      sx={{ width: '150px', height: '50px' }}
+                    >
+                      <span>Update</span>
+                    </LoadingButton>
+                    <LoadingButton
+                      size="small"
+                      color="error"
+                      onClick={handleDeleteUser}
+                      loading={loadingDelete}
+                      loadingPosition="start"
+                      startIcon={<DeleteIcon />}
+                      variant="contained"
+                      disabled={loading}
+                      sx={{ width: '150px', height: '50px' }}
+                    >
+                      <span>Delete</span>
+                    </LoadingButton>
+                  </>
+                )}
+              </div>
+            </main>
+          </div>
+        )}
 
-      <Snackbar
+        {/* <Snackbar
         open={open}
         autoHideDuration={2000}
         onClose={handleClose}
@@ -328,8 +329,15 @@ const User = () => {
             </span>
           }
         />
-      </Snackbar>
-    </div>
+      </Snackbar> */}
+      </div>
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
+    </>
   );
 };
 

@@ -22,6 +22,7 @@ import {
   WarehouseData,
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 const AddWarehouse: React.FC = () => {
   const [formData, setFormData] = useState<WarehouseData>({
@@ -117,7 +118,6 @@ const AddWarehouse: React.FC = () => {
       email: currentUser.email,
     };
 
-
     try {
       await addWarehouse(JSON.stringify(convertedData));
 
@@ -163,126 +163,127 @@ const AddWarehouse: React.FC = () => {
   };
 
   return (
-    <div className="menu-data">
-      <div className="warehouse">
-        <h3>Add Warehouse</h3>
-        <form className="warehouse-form" onSubmit={handleSubmit}>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Warehouse Name"
-              name="warehouse_name"
-              value={formData.warehouse_name}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Latitude"
-              name="latitude"
-              type="number"
-              value={formData.latitude}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Longitude"
-              name="longitude"
-              type="number"
-              value={formData.longitude}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Length"
-              name="warehouse_dimensions.length"
-              type="number"
-              value={formData.warehouse_dimensions.length}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Width"
-              name="warehouse_dimensions.width"
-              type="number"
-              value={formData.warehouse_dimensions.width}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Height"
-              name="warehouse_dimensions.height"
-              type="number"
-              value={formData.warehouse_dimensions.height}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Energy Resource"
-              name="energy_resource"
-              type="text"
-              value={formData.energy_resource}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="No Of Cooling Units"
-              name="cooling_units"
-              type="number"
-              value={formData.cooling_units ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="No Of Sensors"
-              name="sensors"
-              type="number"
-              value={formData.sensors ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <div className="sub-btn">
-            <LoadingButton
-              size="small"
-              type="submit"
-              color="secondary"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              variant="contained"
-              disabled={loading}
-              className="btn-save"
-            >
-              <span>Save</span>
-            </LoadingButton>
-          </div>
-        </form>
-      </div>
-      <Snackbar
+    <>
+      <div className="menu-data">
+        <div className="warehouse">
+          <h3>Add Warehouse</h3>
+          <form className="warehouse-form" onSubmit={handleSubmit}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Warehouse Name"
+                name="warehouse_name"
+                value={formData.warehouse_name}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Latitude"
+                name="latitude"
+                type="number"
+                value={formData.latitude}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Longitude"
+                name="longitude"
+                type="number"
+                value={formData.longitude}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Length"
+                name="warehouse_dimensions.length"
+                type="number"
+                value={formData.warehouse_dimensions.length}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Width"
+                name="warehouse_dimensions.width"
+                type="number"
+                value={formData.warehouse_dimensions.width}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Height"
+                name="warehouse_dimensions.height"
+                type="number"
+                value={formData.warehouse_dimensions.height}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Energy Resource"
+                name="energy_resource"
+                type="text"
+                value={formData.energy_resource}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="No Of Cooling Units"
+                name="cooling_units"
+                type="number"
+                value={formData.cooling_units ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="No Of Sensors"
+                name="sensors"
+                type="number"
+                value={formData.sensors ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <div className="sub-btn">
+              <LoadingButton
+                size="small"
+                type="submit"
+                color="secondary"
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                disabled={loading}
+                className="btn-save"
+              >
+                <span>Save</span>
+              </LoadingButton>
+            </div>
+          </form>
+        </div>
+        {/* <Snackbar
         open={open}
         autoHideDuration={2000}
         onClose={handleClose}
@@ -305,8 +306,15 @@ const AddWarehouse: React.FC = () => {
             </span>
           }
         />
-      </Snackbar>
-    </div>
+      </Snackbar> */}
+      </div>
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
+    </>
   );
 };
 

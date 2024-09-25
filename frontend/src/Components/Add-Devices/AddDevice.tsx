@@ -18,6 +18,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ErrorIcon from '@mui/icons-material/Error';
 import { getCurrentUser } from '../../api/loginApi';
 import { mongoAPI } from '../../api/MongoAPIInstance';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 interface Warehouse {
   warehouse_id: string;
@@ -46,7 +47,6 @@ const AddDevice = () => {
     type: 'default',
   });
 
-
   const fetchWarehousesAndVehicles = async () => {
     try {
       const currentUser = await getCurrentUser();
@@ -64,11 +64,9 @@ const AddDevice = () => {
     }
   };
 
-
   useEffect(() => {
     fetchWarehousesAndVehicles();
   }, []);
-
 
   const handleActionChange = (event: SelectChangeEvent) => {
     setAction(event.target.value);
@@ -102,12 +100,12 @@ const AddDevice = () => {
   const handleClick = async () => {
     setLoading(true);
 
-    if (deviceInfo.name === "" || deviceInfo.type === "") {
+    if (deviceInfo.name === '' || deviceInfo.type === '') {
       setLoading(false);
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
-      setOpen(true)
-      return
+      setOpen(true);
+      return;
     }
 
     try {
@@ -124,7 +122,7 @@ const AddDevice = () => {
         setSnackbarType('success');
         setOpen(true);
       }, 500);
-    } catch (error:any) {
+    } catch (error: any) {
       setTimeout(() => {
         setLoading(false);
         setMessage('Device Already Exist');
@@ -152,7 +150,6 @@ const AddDevice = () => {
         <div className="menu-data">
           <Loader />
         </div>
-        
       ) : (
         <div className="menu-data">
           <div className="add-device">
@@ -200,7 +197,12 @@ const AddDevice = () => {
                     id="warehouse-select"
                     value={deviceInfo.label}
                     label="Select Warehouse"
-                    onChange={(e) => setDeviceInfo(prev => ({ ...prev, label: e.target.value }))}
+                    onChange={(e) =>
+                      setDeviceInfo((prev) => ({
+                        ...prev,
+                        label: e.target.value,
+                      }))
+                    }
                     className="form-control-inner"
                   >
                     {warehouse.map((wh, index) => (
@@ -220,7 +222,11 @@ const AddDevice = () => {
                     value={deviceInfo.label}
                     label="Select Vehicle"
                     onChange={(e) =>
-                      setDeviceInfo((prev) => ({ ...prev, label: e.target.value }))}
+                      setDeviceInfo((prev) => ({
+                        ...prev,
+                        label: e.target.value,
+                      }))
+                    }
                     className="form-control-inner"
                   >
                     {vehicle.map((veh, index) => (
@@ -240,7 +246,8 @@ const AddDevice = () => {
                   label="Select Type"
                   name="type"
                   onChange={(e) =>
-                    setDeviceInfo((prev) => ({ ...prev, type: e.target.value }))}
+                    setDeviceInfo((prev) => ({ ...prev, type: e.target.value }))
+                  }
                   value={deviceInfo.type || ''}
                   required
                 />
@@ -282,7 +289,7 @@ const AddDevice = () => {
               </div>
             </form>
           </div>
-          <Snackbar
+          {/* <Snackbar
             open={open}
             autoHideDuration={2000}
             onClose={handleClose}
@@ -305,9 +312,15 @@ const AddDevice = () => {
                 </span>
               }
             />
-          </Snackbar>
+          </Snackbar> */}
         </div>
       )}
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
     </>
   );
 };

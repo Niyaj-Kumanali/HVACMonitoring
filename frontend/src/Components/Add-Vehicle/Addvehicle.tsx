@@ -16,9 +16,12 @@ import './Addvehicle.css';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
-import { DriverDetails, VehicleData, VehicleDimensions } from '../../types/thingsboardTypes';
-
-
+import {
+  DriverDetails,
+  VehicleData,
+  VehicleDimensions,
+} from '../../types/thingsboardTypes';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 const AddVehicle: React.FC = () => {
   const currentUser = useSelector((state: RootState) => state.user.user);
@@ -118,7 +121,6 @@ const AddVehicle: React.FC = () => {
       email: currentUser.email,
     };
 
-
     try {
       await addVehicle(JSON.stringify(convertedData));
 
@@ -143,7 +145,10 @@ const AddVehicle: React.FC = () => {
 
   const fetchAllVehicles = async () => {
     try {
-      const response = await getAllVehiclesByUserId(currentUser.id?.id, undefined);
+      const response = await getAllVehiclesByUserId(
+        currentUser.id?.id,
+        undefined
+      );
       vehicleCountDispatch(set_vehicle_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
@@ -160,134 +165,135 @@ const AddVehicle: React.FC = () => {
   };
 
   return (
-    <div className="menu-data">
-      <div className="vehicle">
-        <h3>Add Vehicle</h3>
-        <form className="vehicle-form" onSubmit={handleSubmit}>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Vehicle Number"
-              name="vehicle_number"
-              value={formData.vehicle_number}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Vehicle Name"
-              name="vehicle_name"
-              value={formData.vehicle_name}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Length"
-              name="vehicle_dimensions.length"
-              type="number"
-              value={formData.vehicle_dimensions.length}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Width"
-              name="vehicle_dimensions.width"
-              type="number"
-              value={formData.vehicle_dimensions.width}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Height"
-              name="vehicle_dimensions.height"
-              type="number"
-              value={formData.vehicle_dimensions.height}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Driver Name"
-              name="driver_details.driver_name"
-              value={formData.Driver_details.driver_name}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Driver Contact No"
-              name="driver_details.driver_contact_no"
-              type="number"
-              value={formData.Driver_details.driver_contact_no}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Licence ID"
-              name="driver_details.licence_id"
-              value={formData.Driver_details.licence_id}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Cooling Units"
-              name="cooling_units"
-              type="number"
-              value={formData.cooling_units ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Sensors"
-              name="sensors"
-              type="number"
-              value={formData.sensors ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <div className="sub-btn">
-            <LoadingButton
-              size="small"
-              type="submit"
-              color="secondary"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              variant="contained"
-              disabled={loading}
-              className="btn-save"
-            >
-              <span>Save</span>
-            </LoadingButton>
-          </div>
-        </form>
-      </div>
-      <Snackbar
+    <>
+      <div className="menu-data">
+        <div className="vehicle">
+          <h3>Add Vehicle</h3>
+          <form className="vehicle-form" onSubmit={handleSubmit}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Vehicle Number"
+                name="vehicle_number"
+                value={formData.vehicle_number}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Vehicle Name"
+                name="vehicle_name"
+                value={formData.vehicle_name}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Length"
+                name="vehicle_dimensions.length"
+                type="number"
+                value={formData.vehicle_dimensions.length}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Width"
+                name="vehicle_dimensions.width"
+                type="number"
+                value={formData.vehicle_dimensions.width}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Height"
+                name="vehicle_dimensions.height"
+                type="number"
+                value={formData.vehicle_dimensions.height}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Driver Name"
+                name="driver_details.driver_name"
+                value={formData.Driver_details.driver_name}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Driver Contact No"
+                name="driver_details.driver_contact_no"
+                type="number"
+                value={formData.Driver_details.driver_contact_no}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Licence ID"
+                name="driver_details.licence_id"
+                value={formData.Driver_details.licence_id}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Cooling Units"
+                name="cooling_units"
+                type="number"
+                value={formData.cooling_units ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Sensors"
+                name="sensors"
+                type="number"
+                value={formData.sensors ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <div className="sub-btn">
+              <LoadingButton
+                size="small"
+                type="submit"
+                color="secondary"
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                disabled={loading}
+                className="btn-save"
+              >
+                <span>Save</span>
+              </LoadingButton>
+            </div>
+          </form>
+        </div>
+        {/* <Snackbar
         open={open}
         autoHideDuration={2000}
         onClose={handleClose}
@@ -310,8 +316,15 @@ const AddVehicle: React.FC = () => {
             </span>
           }
         />
-      </Snackbar>
-    </div>
+      </Snackbar> */}
+      </div>
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
+    </>
   );
 };
 

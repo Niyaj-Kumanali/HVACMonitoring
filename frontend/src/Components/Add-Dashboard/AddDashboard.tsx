@@ -14,6 +14,7 @@ import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './AddDashboard.css';  // Ensure you import the CSS file
 import { postLayout } from '../../api/MongoAPIInstance';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -145,7 +146,7 @@ const AddDashboard: React.FC = () => {
             </Button>
           </Box>
 
-          <Snackbar
+          {/* <Snackbar
             open={open}
             autoHideDuration={2000}
             onClose={handleClose}
@@ -161,9 +162,11 @@ const AddDashboard: React.FC = () => {
                 </span>
               }
             />
-          </Snackbar>
+          </Snackbar> */}
         </Box>
       </div>
+      <CustomSnackBar open={open} setOpen={setOpen} snackbarType={snackbarType} message={message}/>
+
     </>
     
   );
