@@ -15,7 +15,6 @@ import {
   ReferenceLine,
   Scatter,
   ScatterChart,
-  Brush,
 } from 'recharts';
 import '../styles/charts.css';
 import { DownloadRounded } from '@mui/icons-material';
