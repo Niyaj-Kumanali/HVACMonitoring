@@ -3,17 +3,13 @@ import {
   TextField,
   Button,
   Box,
-  SnackbarContent,
-  SnackbarCloseReason,
-  Snackbar,
 } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import { DashboardType } from '../../types/thingsboardTypes';
 import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './AddDashboard.css';  // Ensure you import the CSS file
 import { postLayout } from '../../api/MongoAPIInstance';
+import CustomSnackBar from '../SnackBar/SnackBar';
 
 const AddDashboard: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -28,10 +24,33 @@ const AddDashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchDashboard = async () => {
-      const response = await getDashboardById(dashboardId || '');
-      setTitle(response.data?.title || '');
-      setDescription(response.data?.description || '');
-      setButtonText('Save Dashboard');
+      try{
+        const response = await getDashboardById(dashboardId || '');
+        setTitle(response.data?.title || '');
+        setDescription(response.data?.description || '');
+        setButtonText('Save Dashboard');
+      }
+      catch(error:any){
+        setSnackbarType('error');
+        if (error.status === 401) {
+          setMessage('Session has expired navigating to login page');
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
+        }else if (error.status === 404){
+          setMessage('Dashboard is not available');
+          setTimeout(() => {
+            navigate('/dashboards');
+          }, 1000);
+        }else{
+          setMessage('Error fetching dashboard');
+          setTimeout(() => {
+            navigate('/dashboards');
+          }, 1000);
+        }
+        setOpen(true);
+      };
+
     };
 
     if (dashboardId) {
@@ -66,7 +85,6 @@ const AddDashboard: React.FC = () => {
         setMessage('Dashboard created successfully!');
       }
       setSnackbarType('success');
-      setOpen(true);
 
       setTimeout(() => {
         navigate('/dashboards');
@@ -74,36 +92,34 @@ const AddDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error saving dashboard:', error);
       setSnackbarType('error');
-      setMessage('Failed to create/update dashboard');
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } 
+      if(dashboardId) {
+        setMessage('Failed to update dashboard');
+      }
+      else{
+        setMessage('Failed to create dashboard');
+      }
+    }
+    finally {
       setOpen(true);
     }
   };
 
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    event
-    if (reason === 'clickaway') {
-      return;
-    }
 
-    setOpen(false);
-  };
 
-  const snackbarStyles = {
-    backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-    color: 'white',
-  };
 
-  const snackbarIcon = snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />;
 
   return (
     <>
-      <div className="dashboard-app-data">
+      <div className="menu-data">
         <Box
-          className="add-dashboard menu-data"
+          className="add-dashboard"
           component="form"
           onSubmit={handleSubmit}
         >
@@ -144,26 +160,10 @@ const AddDashboard: React.FC = () => {
               {buttonText}
             </Button>
           </Box>
-
-          <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            style={{ marginTop: '64px' }}
-          >
-            <SnackbarContent
-              style={snackbarStyles}
-              message={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {snackbarIcon}
-                  {message}
-                </span>
-              }
-            />
-          </Snackbar>
         </Box>
       </div>
+      <CustomSnackBar open={open} setOpen={setOpen} snackbarType={snackbarType} message={message}/>
+
     </>
     
   );

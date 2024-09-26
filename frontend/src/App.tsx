@@ -8,13 +8,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { set_Accesstoken } from './Redux/Action/Action';
 import React from 'react';
+import useIdle from './Hooks/useIdle';
+import { RootState } from './Redux/Reducer';
 
 const App = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
-  const accesstoken = useSelector((state: any) => state.user.accesstoken);
+  const accesstoken = useSelector((state: RootState) => state.user.accesstoken);
   const dispatch = useDispatch();
-  // const nodeRef = useRef(null);
+  const isIdle = useIdle(30000);
  
   useEffect(() => {
     const validateToken = () => {
@@ -30,7 +31,7 @@ const App = () => {
           } else {
             dispatch(set_Accesstoken(token));
           }
-        } catch (error) {
+        } catch (error:any) {
           localStorage.removeItem('token');
           navigate('/login');
         }
@@ -39,8 +40,11 @@ const App = () => {
       }
     };
 
-    validateToken();
-  }, [navigate, accesstoken, dispatch]);
+    if (isIdle) {
+      console.log("first")
+      validateToken();
+    }
+  }, [isIdle, navigate, dispatch, accesstoken]);
 
   return (
     <>

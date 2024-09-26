@@ -24,18 +24,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import {
   Button,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
 } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DeviceInfo.css';
 import {
   getAllVehiclesByUserId,
   getAllWarehouseByUserId,
 } from '../../api/MongoAPIInstance';
+import CustomSnackBar from '../SnackBar/SnackBar';
+import { RootState } from '../../Redux/Reducer';
+import { log } from 'console';
 
 interface Warehouse {
   warehouse_id: string;
@@ -51,7 +49,7 @@ const DeviceInfo: React.FC = () => {
   const { deviceId } = useParams();
   const navigate = useNavigate();
   const deviceCountDispatch = useDispatch();
-  const user = useSelector((state: any) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const [accessToken, setAccessToken] = useState<string>('');
 
   const [isEdit, setIsEdit] = useState(true);
@@ -72,7 +70,6 @@ const DeviceInfo: React.FC = () => {
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
     'success'
   );
-  
 
   useEffect(() => {
     const fetchDeviceInfo = async () => {
@@ -116,7 +113,6 @@ const DeviceInfo: React.FC = () => {
   };
 
   const fetchDeviceInfo = async () => {
-    // setLoading(true);
     try {
       const response = await getDeviceById(deviceId);
       setDeviceInfo(response.data);
@@ -129,8 +125,6 @@ const DeviceInfo: React.FC = () => {
       setMessage('Failed to fetch device information.');
       setSnackbarType('error');
       setOpen(true);
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -160,6 +154,7 @@ const DeviceInfo: React.FC = () => {
     setDeviceInfo((prev) => ({
       ...prev,
       additionalInfo: { ...prev.additionalInfo, labelType: event.target.value },
+      label: "",
     }));
 
     if (selectedLabel === 'warehouse') {
@@ -180,10 +175,10 @@ const DeviceInfo: React.FC = () => {
   const handleClick = async () => {
     setLoadingSave(true);
 
-    if (deviceInfo.name === '' || deviceInfo.type === '') {
-      // setLoading(false);
+    if (!deviceInfo.name || !deviceInfo.type || !deviceInfo.label || !deviceInfo.additionalInfo.labelType) {
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
+      setLoadingSave(false);
       setOpen(true);
       return;
     }
@@ -199,7 +194,8 @@ const DeviceInfo: React.FC = () => {
         setOpen(true);
         setIsEdit(true);
       }, 500);
-    } catch (error:any) {
+    } catch (error) {
+      console.error('Error updating device', error)
       setTimeout(() => {
         setLoadingSave(false);
         setMessage('Error updating device');
@@ -224,26 +220,28 @@ const DeviceInfo: React.FC = () => {
           navigate('/devices');
         }, 900);
       }, 900);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Failed to delete device', error);
-
-      setTimeout(() => {
-        setLoadingDelete(false);
-        setOpen(true);
+      setSnackbarType('error');
+      setLoadingDelete(false);
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
+        setOpen(true)
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }else{
         setMessage('Failed to delete device');
-        setSnackbarType('error');
-      }, 500);
+        setTimeout(() => {
+          setOpen(true);
+        }, 500);
+      }
+
+
+
     }
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    event;
-    setOpen(false);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -272,7 +270,7 @@ const DeviceInfo: React.FC = () => {
     fetchDeviceInfo();
     fetchAllWarehouses();
     fetchAllVehicles();
-    const loaderTimeout = setTimeout(() => setLoaders(false), 1000);
+    const loaderTimeout = setTimeout(() => setLoaders(false), 700);
     return () => clearTimeout(loaderTimeout);
   }, []);
 
@@ -283,13 +281,18 @@ const DeviceInfo: React.FC = () => {
   return (
     <>
       {loaders ? (
-        <Loader />
+        <div className="menu-data">
+          <Loader />
+        </div>
       ) : (
         <div className="menu-data">
           <div className="add-device">
             <form>
               <div className="header-container">
-                  <label className="label"><KeyboardBackspaceIcon onClick={goBack} />Device Info</label>
+                <label className="label">
+                  <KeyboardBackspaceIcon onClick={goBack} />
+                  Device Info
+                </label>
                 <div className="buttons">
                   <Button
                     variant="outlined" // Use 'outlined' for a transparent background
@@ -339,7 +342,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.name || ''}
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  inputProps={{readOnly: isEdit}}
                 />
               </Box>
               <label className="label">Location</label>
@@ -353,11 +356,8 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleLabelChange}
                   className="form-control-inner"
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  inputProps={{readOnly: isEdit}}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
                   <MenuItem value="warehouse">Warehouse</MenuItem>
                   <MenuItem value="vehicle">Vehicle</MenuItem>
                 </Select>
@@ -373,7 +373,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleWarehouseChange}
                     className="form-control-inner"
                     required
-                    inputProps={{ readOnly: isEdit }}
+                    inputProps={{readOnly: isEdit}}
                   >
                     {warehouse.map((wh, index) => (
                       <MenuItem key={index} value={wh.warehouse_id}>
@@ -394,7 +394,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleVehicleChange}
                     className="form-control-inner"
                     required
-                    inputProps={{ readOnly: isEdit }}
+                    inputProps={{readOnly: isEdit}}
                   >
                     {vehicle.map((veh, index) => (
                       <MenuItem key={index} value={veh.vehicle_id}>
@@ -413,7 +413,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.type || ''}
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  inputProps={{readOnly: isEdit}}
                 />
               </Box>
               <label className="label">Action</label>
@@ -427,7 +427,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleActionChange}
                   className="form-control-inner"
                   required
-                  inputProps={{ readOnly: isEdit }}
+                  inputProps={{readOnly: isEdit}}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -490,32 +490,14 @@ const DeviceInfo: React.FC = () => {
               </div>
             </form>
           </div>
-          <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            style={{ marginTop: '64px' }}
-          >
-            <SnackbarContent
-              style={{
-                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                color: 'white',
-              }}
-              message={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {snackbarType === 'success' ? (
-                    <CheckIcon style={{ marginRight: '8px' }} />
-                  ) : (
-                    <ErrorIcon style={{ marginRight: '8px' }} />
-                  )}
-                  {message}
-                </span>
-              }
-            />
-          </Snackbar>
         </div>
       )}
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
     </>
   );
 };

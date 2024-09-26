@@ -3,15 +3,11 @@ import {
   Toolbar,
   Typography,
   Button,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   IconButton,
 } from '@mui/material';
 import Loader from '../Loader/Loader';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import './Dashboards.css';
 import { useEffect, useState } from 'react';
@@ -42,9 +38,11 @@ import { getCurrentUser } from '../../api/loginApi';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import Paginations from '../Pagination/Paginations';
+import CustomSnackBar from '../SnackBar/SnackBar';
+import { RootState } from '../../Redux/Reducer';
 
 const Dashboards = () => {
-  const currentuser = useSelector((state: any) => state.user.user);
+  const currentuser = useSelector((state: RootState) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoader] = useState(false);
@@ -54,7 +52,6 @@ const Dashboards = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
 
   const fetchUserData = async () => {
     try {
@@ -122,7 +119,7 @@ const Dashboards = () => {
       };
       const response = await getTenantDashboards(params);
       setDashboards(response.data.data ?? []);
-      setPageCount(response.data.totalPages)
+      setPageCount(response.data.totalPages);
     } catch (error) {
       console.error('Failed to fetch dashboards', error);
       setError('No Dashboard Found');
@@ -141,7 +138,7 @@ const Dashboards = () => {
           dispatch(set_Authority(response.data.authority));
 
           await Promise.all([
-            fetchDashboards(currentPage-1),
+            fetchDashboards(currentPage - 1),
             fetchUserData(),
             fetchDevices(0),
             fetchAllVehicles(),
@@ -155,8 +152,7 @@ const Dashboards = () => {
       } finally {
         setTimeout(() => {
           setLoader(false);
-        }, 700)
-        
+        }, 700);
       }
     };
 
@@ -167,7 +163,7 @@ const Dashboards = () => {
     try {
       await deleteDashboard(dashboardId);
       setOpen(true);
-      fetchDashboards(currentPage-1);
+      fetchDashboards(currentPage - 1);
 
       await deleteLayout(dashboardId);
     } catch (error) {
@@ -176,17 +172,6 @@ const Dashboards = () => {
   };
   const handleEdit = async (dashboardId: string = '') => {
     navigate(`/dashboard/edit/${dashboardId}`);
-  };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event;
-      return;
-    }
-    setOpen(false);
   };
 
   const handleDashboardClick = (dashboardId: string = 'defaultId') => {
@@ -202,9 +187,17 @@ const Dashboards = () => {
   return (
     <>
       <div className="menu-data">
-        <AppBar style={{ backgroundColor: '#2BC790' }} position="static" className='app-bar-dashboard'>
+        <AppBar
+          style={{ backgroundColor: '#2BC790' }}
+          position="static"
+          className="app-bar-dashboard"
+        >
           <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }} className='typography'>
+            <Typography
+              variant="h6"
+              style={{ flexGrow: 1 }}
+              className="typography"
+            >
               Dashboard Management
             </Typography>
             <Button
@@ -231,30 +224,30 @@ const Dashboards = () => {
             <>
               <ul>
                 <div className="dashboard-cont">
-                      {dashboards.map((dashboard, index) => (
-                        <li key={index} className="dashboardListItem">
-                          <span
-                            onClick={() => handleDashboardClick(dashboard.id?.id)}
-                            className="title"
-                          >
-                            {dashboard.title}
-                          </span>
-                          <div className="button-container">
-                            <IconButton
-                              aria-label="edit"
-                              onClick={() => handleEdit(dashboard.id?.id)}
-                            >
-                              <EditIcon className="edit-icon" />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
-                              onClick={() => handleDelete(dashboard.id?.id)}
-                            >
-                              <DeleteIcon className="delete-icon" />
-                            </IconButton>
-                          </div>
-                        </li>
-                      ))}
+                  {dashboards.map((dashboard, index) => (
+                    <li key={index} className="dashboardListItem">
+                      <span
+                        onClick={() => handleDashboardClick(dashboard.id?.id)}
+                        className="title"
+                      >
+                        {dashboard.title}
+                      </span>
+                      <div className="button-container">
+                        <IconButton
+                          aria-label="edit"
+                          onClick={() => handleEdit(dashboard.id?.id)}
+                        >
+                          <EditIcon className="edit-icon" />
+                        </IconButton>
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handleDelete(dashboard.id?.id)}
+                        >
+                          <DeleteIcon className="delete-icon" />
+                        </IconButton>
+                      </div>
+                    </li>
+                  ))}
                 </div>
               </ul>
               <Paginations
@@ -264,25 +257,13 @@ const Dashboards = () => {
             </>
           )}
         </div>
-
-        <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          style={{ marginTop: '64px' }}
-        >
-          <SnackbarContent
-            style={{ backgroundColor: 'green', color: 'white' }}
-            message={
-              <span style={{ display: 'flex', alignItems: 'center' }}>
-                <CheckIcon style={{ marginRight: '8px' }} />
-                Dashboard deleted successfully
-              </span>
-            }
-          />
-        </Snackbar>
       </div>
+      <CustomSnackBar
+        open={open}
+        setOpen={setOpen}
+        snackbarType={'success'}
+        message={'Dashboard deleted successfully'}
+      />
     </>
   );
 };

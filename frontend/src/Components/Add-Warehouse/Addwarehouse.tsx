@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import './Addwarehouse.css';
 import {
   FormControl,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
 import {
   addWarehouse,
   getAllWarehouseByUserId,
@@ -22,8 +17,12 @@ import {
   WarehouseData,
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
+import CustomSnackBar from '../SnackBar/SnackBar';
+import { getCurrentUser } from '../../api/loginApi';
+import { useNavigate } from 'react-router-dom';
 
 const AddWarehouse: React.FC = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
     latitude: '',
@@ -117,8 +116,8 @@ const AddWarehouse: React.FC = () => {
       email: currentUser.email,
     };
 
-
     try {
+      await getCurrentUser()
       await addWarehouse(JSON.stringify(convertedData));
 
       setTimeout(() => {
@@ -130,13 +129,22 @@ const AddWarehouse: React.FC = () => {
         fetchAllWarehouses();
       }, 1000);
     } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
+      setSnackbarType('error');
+
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
         setOpen(true);
-        setSnackbarType('error');
-        setMessage('Failed to Add Warehouse');
-        console.error('Error submitting form:', error);
-      }, 1000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }else{
+        setTimeout(() => {
+          setMessage('Failed to Add Warehouse');
+          setLoading(false);
+          setOpen(true);
+        }, 1000);
+      }
+
     }
   };
 
@@ -154,159 +162,135 @@ const AddWarehouse: React.FC = () => {
     }
   };
 
-  const handleClose = (
-    _event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    setOpen(false);
-  };
-
   return (
-    <div className="menu-data">
-      <div className="warehouse">
-        <h3>Add Warehouse</h3>
-        <form className="warehouse-form" onSubmit={handleSubmit}>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Warehouse Name"
-              name="warehouse_name"
-              value={formData.warehouse_name}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Latitude"
-              name="latitude"
-              type="number"
-              value={formData.latitude}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Longitude"
-              name="longitude"
-              type="number"
-              value={formData.longitude}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Length"
-              name="warehouse_dimensions.length"
-              type="number"
-              value={formData.warehouse_dimensions.length}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Width"
-              name="warehouse_dimensions.width"
-              type="number"
-              value={formData.warehouse_dimensions.width}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Height"
-              name="warehouse_dimensions.height"
-              type="number"
-              value={formData.warehouse_dimensions.height}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="Energy Resource"
-              name="energy_resource"
-              type="text"
-              value={formData.energy_resource}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="No Of Cooling Units"
-              name="cooling_units"
-              type="number"
-              value={formData.cooling_units ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              label="No Of Sensors"
-              name="sensors"
-              type="number"
-              value={formData.sensors ?? ''}
-              onChange={handleChange}
-              disabled={submitted}
-              className="textfieldss"
-            />
-          </FormControl>
-          <div className="sub-btn">
-            <LoadingButton
-              size="small"
-              type="submit"
-              color="secondary"
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              variant="contained"
-              disabled={loading}
-              className="btn-save"
-            >
-              <span>Save</span>
-            </LoadingButton>
-          </div>
-        </form>
+    <>
+      <div className="menu-data">
+        <div className="warehouse">
+          <h3>Add Warehouse</h3>
+          <form className="warehouse-form" onSubmit={handleSubmit}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Warehouse Name"
+                name="warehouse_name"
+                value={formData.warehouse_name}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Latitude"
+                name="latitude"
+                type="number"
+                value={formData.latitude}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Longitude"
+                name="longitude"
+                type="number"
+                value={formData.longitude}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Length"
+                name="warehouse_dimensions.length"
+                type="number"
+                value={formData.warehouse_dimensions.length}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Width"
+                name="warehouse_dimensions.width"
+                type="number"
+                value={formData.warehouse_dimensions.width}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Height"
+                name="warehouse_dimensions.height"
+                type="number"
+                value={formData.warehouse_dimensions.height}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Energy Resource"
+                name="energy_resource"
+                type="text"
+                value={formData.energy_resource}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="No Of Cooling Units"
+                name="cooling_units"
+                type="number"
+                value={formData.cooling_units ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="No Of Sensors"
+                name="sensors"
+                type="number"
+                value={formData.sensors ?? ''}
+                onChange={handleChange}
+                disabled={submitted}
+                className="textfieldss"
+              />
+            </FormControl>
+            <div className="sub-btn">
+              <LoadingButton
+                size="small"
+                type="submit"
+                color="secondary"
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                disabled={loading}
+                className="btn-save"
+              >
+                <span>Save</span>
+              </LoadingButton>
+            </div>
+          </form>
+        </div>
       </div>
-      <Snackbar
+      <CustomSnackBar
         open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            color: 'white',
-          }}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarType === 'success' ? (
-                <CheckIcon style={{ marginRight: '8px' }} />
-              ) : (
-                <ErrorIcon style={{ marginRight: '8px' }} />
-              )}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar>
-    </div>
+        setOpen={setOpen}
+        snackbarType={snackbarType}
+        message={message}
+      />
+    </>
   );
 };
 
