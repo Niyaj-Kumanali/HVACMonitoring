@@ -36,9 +36,13 @@
     "recharts": "^2.12.7",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+<<<<<<< HEAD
+    "uuid": "^10.0.0"
+=======
     "three": "^0.168.0",
     "uuid": "^10.0.0",
     "xlsx": "^0.18.5"
+>>>>>>> 4b0cf625da9a1f97e6207eeb4fa200b09550c7a6
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",
