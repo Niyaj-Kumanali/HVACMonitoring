@@ -54,6 +54,11 @@ import postgres from './routes/postgresRoute.js';
 import mailRouter from './routes/mailRouter.js';
 import influxRoute from './routes/influxRoute.js'
 import dashboard from './routes/dashboard.js'
+import roomRoute from './routes/roomRoute.js'
+import finalWarehouseRoute from './routes/finalWarehouseRoute.js'
+import dgsetRoute from './routes/dgsetRoute.js'
+import gridRoute from './routes/gridRoute.js'
+import powerswitchRoute from './routes/powerswitchRoute.js'
 
 
 app.use('/warehouse', warehouseRouter);
@@ -64,6 +69,11 @@ app.use('/postgres', postgres);
 app.use('/mailservice', mailRouter);
 app.use('/influx', influxRoute);
 app.use('/dashboard', dashboard);
+app.use('/room', roomRoute);
+app.use('/finalwarhouse', finalWarehouseRoute);
+app.use('/dgset', dgsetRoute);
+app.use('/grid', gridRoute);
+app.use('/powerswitch', powerswitchRoute);
 
 
 
