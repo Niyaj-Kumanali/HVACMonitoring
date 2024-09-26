@@ -27,6 +27,7 @@ import Signup from './Components/Login/Signup';
 import Vehicleinfo from './Components/Vehicles/Vehicleinfo';
 import AddDashboard from './Components/Add-Dashboard/AddDashboard';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
+import Finalwarehouse from './Components/Warehouse/Finalwarehouse';
 
 const Router = createBrowserRouter([
   {
@@ -143,6 +144,10 @@ const Router = createBrowserRouter([
         path: '/vehicle/:vehicleid',
         element: <Vehicleinfo />,
       },
+      {
+        path: '/finalwarehouse',
+        element: <Finalwarehouse />,
+      }
     ],
   },
   {

@@ -18,7 +18,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
-
+import CloseIcon from '@mui/icons-material/Close';
 import Loader from '../Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
@@ -441,13 +441,28 @@ const DeviceInfo: React.FC = () => {
               </FormControl>
               <div className="accountinfo-savebtn-delete-btn">
                 {isEdit ? (
-                  <Button
-                    className="btn-save"
-                    variant="contained"
-                    onClick={() => setIsEdit(false)}
-                  >
-                    Edit
-                  </Button>
+                  <>
+                      <Button
+                        className="btn-save"
+                        variant="contained"
+                        onClick={() => setIsEdit(false)}
+                      >
+                        Edit
+                      </Button>
+                    <LoadingButton
+                      size="small"
+                      color="error"
+                      onClick={handleDeleteDevice}
+                      loading={loadingDelete}
+                      loadingPosition="start"
+                      startIcon={<DeleteIcon />}
+                      variant="contained"
+                      disabled={loadingSave}
+                      className="btn-save"
+                    >
+                      <span>Delete</span>
+                    </LoadingButton>
+                  </>
                 ) : (
                   <>
                     <LoadingButton
@@ -465,16 +480,13 @@ const DeviceInfo: React.FC = () => {
                     </LoadingButton>
                     <LoadingButton
                       size="small"
-                      color="error"
-                      onClick={handleDeleteDevice}
-                      loading={loadingDelete}
+                      onClick={() => setIsEdit(true)}
                       loadingPosition="start"
-                      startIcon={<DeleteIcon />}
+                      startIcon={<CloseIcon />}
                       variant="contained"
-                      disabled={loadingSave}
                       className="btn-save"
                     >
-                      <span>Delete</span>
+                      <span>Cancel</span>
                     </LoadingButton>
                   </>
                 )}

@@ -125,6 +125,9 @@ const Menubar = () => {
                     <li onClick={() => handleLinkClick('/addWarehouse')}>
                         <AddIcon className="speedicon" />Add Warehouse
                     </li>
+                    <li onClick={() => handleLinkClick('/finalwarehouse')}>
+                        <AddIcon className="speedicon" />Final Warehouse
+                    </li>
                     <li onClick={() => handleLinkClick('/addVehicle')}>
                         <AddIcon className="speedicon" />Add Vehicle
                     </li>
