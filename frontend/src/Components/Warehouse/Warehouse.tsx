@@ -271,6 +271,9 @@ const Warehouse: React.FC = () => {
                 <Button variant="contained" onClick={handleButtonVisible}>
                   EDIT
                 </Button>
+                <Button variant="contained" color='error' sx={{marginLeft:"10px"}} onClick={handleButtonVisible}>
+                  Delete
+                </Button>
               </div>
             </div>
             <div className="warehouse-widgets-info-data">
