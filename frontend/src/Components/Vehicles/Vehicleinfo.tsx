@@ -3,15 +3,10 @@ import '../Add-Warehouse/Addwarehouse.css';
 import {
   Button,
   FormControl,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
 import { getVehicleByVehicleId, mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -247,14 +242,6 @@ const AddVehicle: React.FC = () => {
     }
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    event;
-    setOpen(false);
-  };
 
   return (
     <>
@@ -442,30 +429,6 @@ const AddVehicle: React.FC = () => {
               </div>
             </form>
           </div>
-          {/* <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            style={{ marginTop: '64px' }}
-          >
-            <SnackbarContent
-              style={{
-                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                color: 'white',
-              }}
-              message={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {snackbarType === 'success' ? (
-                    <CheckIcon style={{ marginRight: '8px' }} />
-                  ) : (
-                    <ErrorIcon style={{ marginRight: '8px' }} />
-                  )}
-                  {message}
-                </span>
-              }
-            />
-          </Snackbar> */}
         </div>
       )}
       <CustomSnackBar

@@ -5,10 +5,7 @@ import { deleteDevice, getTenantDeviceInfos } from '../../api/deviceApi';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import React from 'react';
-import SnackbarContent from '@mui/material/SnackbarContent';
 import { useDispatch } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import { useNavigate } from 'react-router-dom';
@@ -76,16 +73,6 @@ const Devices: React.FC = () => {
     setOpen(true);
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event.preventDefault();
-      return;
-    }
-    setOpen(false);
-  };
 
   const goBack = () => {
     navigate(-1);
@@ -158,23 +145,6 @@ const Devices: React.FC = () => {
             </div>
           </>
         )}
-        {/* <Snackbar
-                open={open}
-                autoHideDuration={2000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                style={{ marginTop: '64px' }}
-            >
-                <SnackbarContent
-                    style={{ backgroundColor: 'green', color: 'white' }}
-                    message={
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
-                            <CheckIcon style={{ marginRight: '8px' }} />
-                            Device deleted successfully
-                        </span>
-                    }
-                />
-            </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

@@ -2,15 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   FormControl,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   deleteWarehouseByWarehouseId,
@@ -72,7 +67,7 @@ const Warehouse: React.FC = () => {
         setFormData({
           ...response.data,
         });
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to fetch warehouse', err);
       } finally {
         setTimeout(() => {
@@ -210,13 +205,6 @@ const Warehouse: React.FC = () => {
     }
   };
 
-  const handleClose = (
-    _event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    setOpen(false);
-  };
 
   const handleButtonVisible = () => {
     setButtonVisible(true);
@@ -236,10 +224,10 @@ const Warehouse: React.FC = () => {
 
         const data: Location = await response.json();
         setLocationInfo({ [warehouseId]: data });
-      } catch (err: any) {
+      } catch (err) {
         console.error(
           `Error fetching location for warehouse ${warehouseId}:`,
-          err.message
+          err
         );
       }
     };
@@ -251,7 +239,7 @@ const Warehouse: React.FC = () => {
         warehouseid || ''
       );
     }
-  }, [formData]);
+  }, [formData, warehouseid]);
 
   return (
     <>
@@ -451,29 +439,6 @@ const Warehouse: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-          message={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {snackbarType === 'success' ? <CheckIcon /> : <ErrorIcon />}
-              <span>{message}</span>
-            </div>
-          }
-        />
-      </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

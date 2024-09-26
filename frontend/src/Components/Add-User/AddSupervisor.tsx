@@ -1,24 +1,17 @@
-import {
-  Box,
-  Checkbox,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
-  TextField,
-} from '@mui/material';
+import { Box, Checkbox, TextField } from '@mui/material';
 import './Adduser.css';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import { User } from '../../types/thingsboardTypes';
 import { saveUser, getActivationLink, getUsers } from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import { set_usersCount } from '../../Redux/Action/Action';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { useNavigate } from 'react-router-dom';
 
 const AddSupervisor = () => {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [firstName, setFirstname] = useState('');
@@ -80,21 +73,19 @@ const AddSupervisor = () => {
     } catch (error: any) {
       console.error('Failed to create user: ' + error.message);
       await minLoadingTime;
-      setMessage('Failed to create user.');
       setSnackbarType('error');
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setMessage('Failed to create user.');
+      }
       setOpen(true);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    event;
-    setOpen(false);
   };
 
   return (
@@ -197,26 +188,6 @@ const AddSupervisor = () => {
             )}
           </form>
         </div>
-        {/* <Snackbar
-                open={open}
-                autoHideDuration={2000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                style={{ marginTop: '64px' }}
-            >
-                <SnackbarContent
-                    style={{
-                        backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                        color: 'white',
-                    }}
-                    message={
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
-                            {snackbarType === 'success' ? <CheckIcon style={{ marginRight: '8px' }} /> : <ErrorIcon style={{ marginRight: '8px' }} />}
-                            {message}
-                        </span>
-                    }
-                />
-            </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

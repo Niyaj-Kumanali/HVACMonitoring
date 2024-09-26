@@ -1,18 +1,9 @@
-import {
-  Box,
-  Checkbox,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
-  TextField,
-} from '@mui/material';
+import { Box, Checkbox, TextField } from '@mui/material';
 import './Adduser.css';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { Customer, User } from '../../types/thingsboardTypes';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import { getCurrentUser } from '../../api/loginApi';
 import {
   createOrUpdateCustomer,
@@ -22,6 +13,7 @@ import { getActivationLink, getUsers, saveUser } from '../../api/userApi';
 import { set_usersCount } from '../../Redux/Action/Action';
 import { useDispatch } from 'react-redux';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { useNavigate } from 'react-router-dom';
 
 const Adduser = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +31,7 @@ const Adduser = () => {
     useState<boolean>(false);
   const [activationlink, setActivationlink] = useState('');
   const devicecountdispatch = useDispatch();
-
+  const navigate = useNavigate();
   const fetchUserData = async () => {
     try {
       const params = {
@@ -67,7 +59,7 @@ const Adduser = () => {
       try {
         const response = await createOrUpdateCustomer(cust);
         customer = response.data;
-      } catch (error) {
+      } catch (error: any) {
         const response = await getTenantCustomerByTitle(title);
         customer = response.data;
       }
@@ -106,8 +98,15 @@ const Adduser = () => {
     } catch (error: any) {
       console.error('Failed to create customer: ' + error.message);
       await minLoadingTime;
-      setMessage('Failed to create customer.');
       setSnackbarType('error');
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setMessage('Failed to create customer.');
+      }
       setOpen(true);
     } finally {
       setLoading(false);
@@ -116,20 +115,11 @@ const Adduser = () => {
 
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    event;
-    setOpen(false);
-  };
-
   return (
     <>
       <div className="menu-data">
         <div className="users">
-          <form onSubmit={handleCustomerSubmit}>
+          <form onSubmit={handleCustomerSubmit} >
             <div className="input-user">
               <label htmlFor="" className="label">
                 Organization Name
@@ -237,26 +227,6 @@ const Adduser = () => {
             )}
           </form>
         </div>
-        {/* <Snackbar
-                open={open}
-                autoHideDuration={2000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                style={{ marginTop: '64px' }}
-            >
-                <SnackbarContent
-                    style={{
-                        backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                        color: 'white'
-                    }}
-                    message={
-                        <span style={{ display: 'flex', alignItems: 'center' }}>
-                            {snackbarType === 'success' ? <CheckIcon style={{ marginRight: '8px' }} /> : <ErrorIcon style={{ marginRight: '8px' }} />}
-                            {message}
-                        </span>
-                    }
-                />
-            </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

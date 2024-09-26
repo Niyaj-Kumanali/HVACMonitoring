@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import '../Add-Warehouse/Addwarehouse.css';
 import {
   FormControl,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
 import { addVehicle, getAllVehiclesByUserId } from '../../api/MongoAPIInstance';
 import './Addvehicle.css';
 import { set_vehicle_count } from '../../Redux/Action/Action';
@@ -22,8 +17,11 @@ import {
   VehicleDimensions,
 } from '../../types/thingsboardTypes';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../../api/loginApi';
 
 const AddVehicle: React.FC = () => {
+  const navigate = useNavigate()
   const currentUser = useSelector((state: RootState) => state.user.user);
   const defaultVehicle = {
     vehicle_number: '',
@@ -122,6 +120,7 @@ const AddVehicle: React.FC = () => {
     };
 
     try {
+      await getCurrentUser()
       await addVehicle(JSON.stringify(convertedData));
 
       setTimeout(() => {
@@ -133,13 +132,22 @@ const AddVehicle: React.FC = () => {
         fetchAllVehicles();
       }, 1000);
     } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
+      setSnackbarType('error');
+
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
         setOpen(true);
-        setSnackbarType('error');
-        setMessage('Failed to Add Vehicle');
-        console.error('Error submitting form:', error);
-      }, 1000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }else{
+        setTimeout(() => {
+          setLoading(false);
+          setOpen(true);
+          setMessage('Failed to Add Vehicle');
+        }, 1000);
+      }
+
     }
   };
 
@@ -155,14 +163,6 @@ const AddVehicle: React.FC = () => {
     }
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    event;
-    if (reason === 'clickaway') return;
-    setOpen(false);
-  };
 
   return (
     <>
@@ -293,30 +293,6 @@ const AddVehicle: React.FC = () => {
             </div>
           </form>
         </div>
-        {/* <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            color: 'white',
-          }}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarType === 'success' ? (
-                <CheckIcon style={{ marginRight: '8px' }} />
-              ) : (
-                <ErrorIcon style={{ marginRight: '8px' }} />
-              )}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

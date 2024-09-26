@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import './Addwarehouse.css';
 import {
   FormControl,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
-import CheckIcon from '@mui/icons-material/Check';
 import {
   addWarehouse,
   getAllWarehouseByUserId,
@@ -23,8 +18,11 @@ import {
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { getCurrentUser } from '../../api/loginApi';
+import { useNavigate } from 'react-router-dom';
 
 const AddWarehouse: React.FC = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState<WarehouseData>({
     warehouse_name: '',
     latitude: '',
@@ -119,6 +117,7 @@ const AddWarehouse: React.FC = () => {
     };
 
     try {
+      await getCurrentUser()
       await addWarehouse(JSON.stringify(convertedData));
 
       setTimeout(() => {
@@ -130,13 +129,22 @@ const AddWarehouse: React.FC = () => {
         fetchAllWarehouses();
       }, 1000);
     } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
+      setSnackbarType('error');
+
+      if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
         setOpen(true);
-        setSnackbarType('error');
-        setMessage('Failed to Add Warehouse');
-        console.error('Error submitting form:', error);
-      }, 1000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }else{
+        setTimeout(() => {
+          setMessage('Failed to Add Warehouse');
+          setLoading(false);
+          setOpen(true);
+        }, 1000);
+      }
+
     }
   };
 
@@ -152,14 +160,6 @@ const AddWarehouse: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);
     }
-  };
-
-  const handleClose = (
-    _event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') return;
-    setOpen(false);
   };
 
   return (
@@ -283,30 +283,6 @@ const AddWarehouse: React.FC = () => {
             </div>
           </form>
         </div>
-        {/* <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            color: 'white',
-          }}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarType === 'success' ? (
-                <CheckIcon style={{ marginRight: '8px' }} />
-              ) : (
-                <ErrorIcon style={{ marginRight: '8px' }} />
-              )}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

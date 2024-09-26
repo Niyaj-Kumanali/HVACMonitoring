@@ -24,8 +24,16 @@ const Accountinfo = () => {
       try {
         const response = await getCurrentUser();
         setCurrentUser(response.data);
-      } catch (err: any) {
+      } catch (err:any) {
         console.log('Failed to load user', err);
+        setSnackbarType('error');
+        if (err.status === 401) {
+          setMessage('Session has expired navigating to login page');
+          setOpen(true);
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
+        } 
       } finally {
         setTimeout(() => {
           setLoader(false);
@@ -43,24 +51,22 @@ const Accountinfo = () => {
       setMessage('User updated successfully');
       setSnackbarType('success');
       setOpen(true);
-    } catch (error: any) {
+    } catch (error:any) {
+      setSnackbarType('error');
       if (error.status === 401) {
         setMessage('Session has expired navigating to login page');
-        setSnackbarType('error');
-        setOpen(true);
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
         console.log(error);
         setMessage('Error updating user');
-        setSnackbarType('error');
-        setOpen(true);
       }
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 700);
+        setOpen(true);
+      }, 500);
     }
   };
 

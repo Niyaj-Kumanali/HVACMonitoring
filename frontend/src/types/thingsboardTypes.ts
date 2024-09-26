@@ -138,6 +138,7 @@ export interface Customer {
   city?: string; // Optional: City of the customer
   zip?: string; // Optional: ZIP code of the customer
   tenantId?: {id: string, entityType: string}; // ID of the tenant the customer belongs to
+  name?: string; // Optional: Name of the customer
 }
 
 export interface UserSettings {

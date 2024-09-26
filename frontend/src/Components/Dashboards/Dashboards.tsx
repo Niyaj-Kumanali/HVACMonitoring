@@ -3,15 +3,11 @@ import {
   Toolbar,
   Typography,
   Button,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
   IconButton,
 } from '@mui/material';
 import Loader from '../Loader/Loader';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import './Dashboards.css';
 import { useEffect, useState } from 'react';
@@ -43,9 +39,10 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import Paginations from '../Pagination/Paginations';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { RootState } from '../../Redux/Reducer';
 
 const Dashboards = () => {
-  const currentuser = useSelector((state: any) => state.user.user);
+  const currentuser = useSelector((state: RootState) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoader] = useState(false);
@@ -177,17 +174,6 @@ const Dashboards = () => {
     navigate(`/dashboard/edit/${dashboardId}`);
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event;
-      return;
-    }
-    setOpen(false);
-  };
-
   const handleDashboardClick = (dashboardId: string = 'defaultId') => {
     if (dashboardId) {
       navigate(`/dashboard/${dashboardId}`);
@@ -271,24 +257,6 @@ const Dashboards = () => {
             </>
           )}
         </div>
-
-        {/* <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          style={{ marginTop: '64px' }}
-        >
-          <SnackbarContent
-            style={{ backgroundColor: 'green', color: 'white' }}
-            message={
-              <span style={{ display: 'flex', alignItems: 'center' }}>
-                <CheckIcon style={{ marginRight: '8px' }} />
-                Dashboard deleted successfully
-              </span>
-            }
-          />
-        </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

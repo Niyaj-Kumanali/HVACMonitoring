@@ -5,22 +5,17 @@ import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteUser, getUserById, getUsers, saveUser } from '../../api/userApi';
-import {
-  Button,
-  Snackbar,
-  SnackbarCloseReason,
-  SnackbarContent,
-} from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
+import { Button } from '@mui/material';
 import { set_usersCount } from '../../Redux/Action/Action';
 import { useDispatch } from 'react-redux';
 import { User as UserType } from '../../types/thingsboardTypes';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { getCustomerById } from '../../api/customerAPI';
 
 const User = () => {
+  const [Organization, setOrganization] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [firstName, setFirstname] = useState<string>('');
   const [lastName, setLastname] = useState<string>('');
@@ -56,6 +51,10 @@ const User = () => {
         if (email) {
           const response = await getUserById(email);
           const userData = response.data;
+          if (userData.authority === 'CUSTOMER_USER') {
+            const response = await getCustomerById(userData.customerId.id);
+            setOrganization(response.data?.title);
+          }
           setUsername(userData.email || '');
           setFirstname(userData.firstName || '');
           setLastname(userData.lastName || '');
@@ -122,20 +121,25 @@ const User = () => {
           setSnackbarType('success');
           setOpen(true);
           setTimeout(() => {
-            setLoading(false);
             setOpen(false);
+            setLoading(false);
             setIsEdit(true);
           }, 1000);
         } else {
           throw new Error('Failed to update user');
         }
-      } catch (error) {
-        console.error('Failed to update user', error);
-        setMessage('Failed to update user');
+      } catch (error: any) {
         setSnackbarType('error');
+        if (error.status === 401) {
+          setMessage('Session has expired navigating to login page');
+          setTimeout(() => {
+            navigate('/login');
+          }, 2000);
+        } else {
+          setMessage('Failed to update user');
+        }
         setOpen(true);
         setLoading(false);
-        setTimeout(() => setOpen(false), 1000);
       }
     }
   };
@@ -143,17 +147,6 @@ const User = () => {
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleString();
-  };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event.preventDefault();
-      return;
-    }
-    setOpen(false);
   };
 
   return (
@@ -178,6 +171,25 @@ const User = () => {
               </div>
             </header>
             <main className="accountinfo-main">
+              {Organization && (
+                <Box
+                  sx={{
+                    width: '100%',
+                    maxWidth: '100%',
+                    backgroundColor: '#ebebeb',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    label="Organization"
+                    value={Organization}
+                    onChange={(e) => setOrganization(e.target.value)}
+                    required
+                    disabled={true}
+                  />
+                </Box>
+              )}
               <Box
                 sx={{
                   width: '100%',
@@ -305,31 +317,6 @@ const User = () => {
             </main>
           </div>
         )}
-
-        {/* <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        style={{ marginTop: '64px' }}
-      >
-        <SnackbarContent
-          style={{
-            backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-            color: 'white',
-          }}
-          message={
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              {snackbarType === 'success' ? (
-                <CheckIcon style={{ marginRight: '8px' }} />
-              ) : (
-                <ErrorIcon style={{ marginRight: '8px' }} />
-              )}
-              {message}
-            </span>
-          }
-        />
-      </Snackbar> */}
       </div>
       <CustomSnackBar
         open={open}

@@ -1,24 +1,17 @@
-import './AddDecice.css';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import './AddDevice.css';
 import { useState, useEffect } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
 import { saveDevice, getTenantDevices } from '../../api/deviceApi';
 import Loader from '../Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
-import { Snackbar, SnackbarCloseReason, SnackbarContent } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import { getCurrentUser } from '../../api/loginApi';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { useNavigate } from 'react-router-dom';
+import { SelectChangeEvent, Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 interface Warehouse {
   warehouse_id: string;
@@ -31,6 +24,7 @@ interface Vehicle {
 }
 
 const AddDevice = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState('');
   const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
@@ -45,6 +39,9 @@ const AddDevice = () => {
 
   const [deviceInfo, setDeviceInfo] = useState<Device>({
     type: 'default',
+    additionalInfo: {
+      labelType: 'warehouse'
+    }
   });
 
   const fetchWarehousesAndVehicles = async () => {
@@ -99,8 +96,7 @@ const AddDevice = () => {
 
   const handleClick = async () => {
     setLoading(true);
-
-    if (deviceInfo.name === '' || deviceInfo.type === '') {
+    if (!deviceInfo.name|| !deviceInfo.type || !deviceInfo.label) {
       setLoading(false);
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
@@ -112,36 +108,33 @@ const AddDevice = () => {
       await saveDevice(deviceInfo);
       await fetchDevices(0);
 
-      setTimeout(() => {
-        setDeviceInfo({
-          type: 'default',
-        });
-        setAction('');
-        setLoading(false);
-        setMessage('Device added successfully!');
-        setSnackbarType('success');
-        setOpen(true);
-      }, 500);
+      setDeviceInfo({
+        type: 'default',
+        additionalInfo: {
+          labelType: 'warehouse'
+        }
+      });
+      setAction('');
+      setMessage('Device added successfully!');
+      setSnackbarType('success');
     } catch (error: any) {
+      setSnackbarType('error');
+      if (error.status === 400) {
+        setMessage('Device Already Exist');
+      } else if (error.status === 401) {
+        setMessage('Session has expired navigating to login page');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        setMessage('Error Adding Device');
+      }
+    } finally {
       setTimeout(() => {
         setLoading(false);
-        setMessage('Device Already Exist');
-        setSnackbarType('error');
         setOpen(true);
       }, 500);
     }
-  };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === 'clickaway') {
-      event;
-      return;
-    }
-
-    setOpen(false);
   };
 
   return (
@@ -172,25 +165,22 @@ const AddDevice = () => {
                 Location
               </label>
               <div></div>
-              <FormControl className="form-control">
+              <FormControl className="form-control" required>
                 <InputLabel id="location-label">Select Location</InputLabel>
                 <Select
                   labelId="location-label"
                   id="location-select"
-                  value={deviceInfo.additionalInfo?.labelType || ''}
+                  value={deviceInfo.additionalInfo?.labelType || 'warehouse'}
                   label="Select Location"
                   onChange={handleLocationChange}
                   className="form-control-inner"
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
                   <MenuItem value="warehouse">Warehouse</MenuItem>
                   <MenuItem value="vehicle">Vehicle</MenuItem>
                 </Select>
               </FormControl>
               {deviceInfo.additionalInfo?.labelType === 'warehouse' && (
-                <FormControl className="form-control">
+                <FormControl className="form-control" required>
                   <InputLabel id="warehouse-label">Select Warehouse</InputLabel>
                   <Select
                     labelId="warehouse-label"
@@ -214,7 +204,7 @@ const AddDevice = () => {
                 </FormControl>
               )}
               {deviceInfo.additionalInfo?.labelType === 'vehicle' && (
-                <FormControl className="form-control">
+                <FormControl className="form-control" required>
                   <InputLabel id="vehicle-label">Select Vehicle</InputLabel>
                   <Select
                     labelId="vehicle-label"
@@ -289,30 +279,6 @@ const AddDevice = () => {
               </div>
             </form>
           </div>
-          {/* <Snackbar
-            open={open}
-            autoHideDuration={2000}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            style={{ marginTop: '64px' }}
-          >
-            <SnackbarContent
-              style={{
-                backgroundColor: snackbarType === 'success' ? 'green' : 'red',
-                color: 'white',
-              }}
-              message={
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  {snackbarType === 'success' ? (
-                    <CheckIcon style={{ marginRight: '8px' }} />
-                  ) : (
-                    <ErrorIcon style={{ marginRight: '8px' }} />
-                  )}
-                  {message}
-                </span>
-              }
-            />
-          </Snackbar> */}
         </div>
       )}
       <CustomSnackBar
