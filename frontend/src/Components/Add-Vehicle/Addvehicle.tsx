@@ -118,11 +118,9 @@ const AddVehicle: React.FC = () => {
       email: currentUser.email,
     };
 
-    console.log(convertedData);
 
     try {
-      const response = await addVehicle(JSON.stringify(convertedData));
-      console.log('Vehicle added:', response);
+      await addVehicle(JSON.stringify(convertedData));
 
       setTimeout(() => {
         handleReset();

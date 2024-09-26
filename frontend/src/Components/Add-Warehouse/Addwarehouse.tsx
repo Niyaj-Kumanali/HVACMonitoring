@@ -11,13 +11,17 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { addWarehouse, getAllWarehouseByUserId} from '../../api/MongoAPIInstance';
+import {
+  addWarehouse,
+  getAllWarehouseByUserId,
+} from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
-import { WarehouseData, WarehouseDimensions } from '../../types/thingsboardTypes';
-
-
+import {
+  WarehouseData,
+  WarehouseDimensions,
+} from '../../types/thingsboardTypes';
 
 const AddWarehouse: React.FC = () => {
   const [formData, setFormData] = useState<WarehouseData>({
@@ -113,13 +117,9 @@ const AddWarehouse: React.FC = () => {
       email: currentUser.email,
     };
 
-    console.log(JSON.stringify(convertedData));
 
     try {
-  
-        const response = await addWarehouse(JSON.stringify(convertedData))
-      
-      console.log('Warehouse added:', response.data);
+      await addWarehouse(JSON.stringify(convertedData));
 
       setTimeout(() => {
         handleReset();
@@ -144,7 +144,10 @@ const AddWarehouse: React.FC = () => {
 
   const fetchAllWarehouses = async () => {
     try {
-      const response = await getAllWarehouseByUserId(currentUser.id?.id, undefined);
+      const response = await getAllWarehouseByUserId(
+        currentUser.id?.id,
+        undefined
+      );
       warehousecountDispatch(set_warehouse_count(response.data.totalElements));
     } catch (error) {
       console.error('Failed to fetch warehouses:', error);

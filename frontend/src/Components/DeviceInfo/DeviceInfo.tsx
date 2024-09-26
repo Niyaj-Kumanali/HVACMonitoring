@@ -199,11 +199,10 @@ const DeviceInfo: React.FC = () => {
         setOpen(true);
         setIsEdit(true);
       }, 500);
-    } catch (error) {
-      console.log('Failed to create device');
+    } catch (error:any) {
       setTimeout(() => {
         setLoadingSave(false);
-        setMessage('Device Already Exist');
+        setMessage('Error updating device');
         setSnackbarType('error');
         setOpen(true);
       }, 500);
@@ -252,7 +251,6 @@ const DeviceInfo: React.FC = () => {
   };
 
   const handleCopy = async (text: string) => {
-    console.log(navigator);
     try {
       await navigator.clipboard.writeText(text);
       setMessage('Copied to clipboard!');
@@ -264,7 +262,6 @@ const DeviceInfo: React.FC = () => {
     } finally {
       setOpen(true);
     }
-    console.log(text)
   };
 
   useEffect(() => {

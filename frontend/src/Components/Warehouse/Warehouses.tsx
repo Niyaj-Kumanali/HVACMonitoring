@@ -65,7 +65,7 @@ const Warehouses = () => {
                 const data: LocationInfo = await response.json();
                 setLocationInfo(prevState => ({ ...prevState, [warehouseId]: data }));
             } catch (err: any) {
-                console.log(`Error fetching location for warehouse ${warehouseId}:`, err.message);
+                console.error(`Error fetching location for warehouse ${warehouseId}:`, err.message);
             }
         };
 

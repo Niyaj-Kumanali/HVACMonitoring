@@ -160,7 +160,7 @@ export interface MobileSessionData {
 export interface Tenant {
   id?: {id: string, entityType: string};
   title: string;
-  additionalInfo?: Object;
+  additionalInfo?: object;
 }
 
 export interface TelemetryQueryParams {

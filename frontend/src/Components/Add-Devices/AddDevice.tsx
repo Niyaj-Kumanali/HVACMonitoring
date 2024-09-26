@@ -124,8 +124,7 @@ const AddDevice = () => {
         setSnackbarType('success');
         setOpen(true);
       }, 500);
-    } catch (error) {
-      console.log('Failed to create device');
+    } catch (error:any) {
       setTimeout(() => {
         setLoading(false);
         setMessage('Device Already Exist');
