@@ -3,7 +3,7 @@ import Menubar from './Components/Menu-bar/Menubar';
 // import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './App.css';
 import Header from './Components/Header/Header';
-import { useEffect} from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { set_Accesstoken } from './Redux/Action/Action';
@@ -16,41 +16,43 @@ const App = () => {
   const accesstoken = useSelector((state: RootState) => state.user.accesstoken);
   const dispatch = useDispatch();
   const isIdle = useIdle(30000);
- 
-  useEffect(() => {
-    const validateToken = () => {
-      const token = localStorage.getItem('token');
 
-      if (token) {
-        try {
-          const decodedToken: any = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-          if (decodedToken.exp < currentTime) {
-            localStorage.removeItem('token');
-            navigate('/login');
-          } else {
-            dispatch(set_Accesstoken(token));
-          }
-        } catch (error:any) {
+  const validateToken = () => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
           localStorage.removeItem('token');
           navigate('/login');
+        } else {
+          dispatch(set_Accesstoken(token));
         }
-      } else {
+      } catch (error: any) {
+        localStorage.removeItem('token');
         navigate('/login');
       }
-    };
-
+    } else {
+      navigate('/login');
+    }
+  };
+  useEffect(() => {
     if (isIdle) {
-      console.log("first")
       validateToken();
     }
-  }, [isIdle, navigate, dispatch, accesstoken]);
+  }, [isIdle]);
+
+  useEffect(() => {
+    validateToken();
+  }, [navigate, dispatch, accesstoken]);
 
   return (
     <>
       <Header />
       {/* <TransitionGroup component={null}> */}
-        {/* <CSSTransition
+      {/* <CSSTransition
           key={location.pathname}
           classNames={{
             enter: 'page-enter',
@@ -59,11 +61,11 @@ const App = () => {
           timeout={0}
           nodeRef={nodeRef}
         > */}
-          <div>
-            <Menubar />
-            <Outlet />
-          </div>
-        {/* </CSSTransition>
+      <div>
+        <Menubar />
+        <Outlet />
+      </div>
+      {/* </CSSTransition>
       </TransitionGroup> */}
     </>
   );

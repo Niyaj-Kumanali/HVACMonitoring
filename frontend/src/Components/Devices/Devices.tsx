@@ -13,6 +13,7 @@ import Paginations from '../Pagination/Paginations';
 import Loader from '../Loader/Loader';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { TextField } from '@mui/material';
 
 const Devices: React.FC = () => {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -24,10 +25,12 @@ const Devices: React.FC = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
 
   useEffect(() => {
     fetchDevices(currentPage - 1);
-  }, [currentPage]);
+  }, [currentPage, searchTerm]);
 
   const fetchDevices = async (page: number = 0): Promise<void> => {
     try {
@@ -39,12 +42,16 @@ const Devices: React.FC = () => {
         page: page,
         sortProperty: 'createdTime',
         sortOrder: 'DESC',
+        textSearch: searchTerm
       };
 
       const response = await getTenantDeviceInfos(params);
       setPageCount(response.data.totalPages);
       setDevices(response.data.data || []);
-      deviceCountDispatch(set_DeviceCount(response.data.totalElements));
+      if(!searchTerm){
+        deviceCountDispatch(set_DeviceCount(response.data.totalElements));
+
+      }
     } catch (error) {
       console.error('Failed to fetch devices', error);
       setErrorMessage('Problem fetching devices data');
@@ -91,6 +98,16 @@ const Devices: React.FC = () => {
                   <KeyboardBackspaceIcon onClick={goBack} />
                   Devices
                 </h2>
+                <TextField
+                  label="Search Warehouses"
+                  variant="outlined"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  size="small"
+                  sx={{
+                    minWidth: '200px',
+                  }}
+                />
                 {errorMessage ? (
                   <div className="error-message">{errorMessage}</div>
                 ) : (

@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ShareIcon from '@mui/icons-material/Share';
+import EditIcon from '@mui/icons-material/Edit';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
@@ -22,9 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Loader from '../Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
-import {
-  Button,
-} from '@mui/material';
+import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DeviceInfo.css';
 import {
@@ -33,8 +32,6 @@ import {
 } from '../../api/MongoAPIInstance';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { RootState } from '../../Redux/Reducer';
-import { log } from 'console';
-
 interface Warehouse {
   warehouse_id: string;
   warehouse_name: string;
@@ -56,6 +53,8 @@ const DeviceInfo: React.FC = () => {
 
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingCancel, setLoadingCancel] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState<Device>({
     type: 'default',
   });
@@ -154,7 +153,7 @@ const DeviceInfo: React.FC = () => {
     setDeviceInfo((prev) => ({
       ...prev,
       additionalInfo: { ...prev.additionalInfo, labelType: event.target.value },
-      label: "",
+      label: '',
     }));
 
     if (selectedLabel === 'warehouse') {
@@ -175,7 +174,12 @@ const DeviceInfo: React.FC = () => {
   const handleClick = async () => {
     setLoadingSave(true);
 
-    if (!deviceInfo.name || !deviceInfo.type || !deviceInfo.label || !deviceInfo.additionalInfo.labelType) {
+    if (
+      !deviceInfo.name ||
+      !deviceInfo.type ||
+      !deviceInfo.label ||
+      !deviceInfo.additionalInfo.labelType
+    ) {
       setMessage('Fill the requiered fields!');
       setSnackbarType('error');
       setLoadingSave(false);
@@ -195,7 +199,7 @@ const DeviceInfo: React.FC = () => {
         setIsEdit(true);
       }, 500);
     } catch (error) {
-      console.error('Error updating device', error)
+      console.error('Error updating device', error);
       setTimeout(() => {
         setLoadingSave(false);
         setMessage('Error updating device');
@@ -220,28 +224,33 @@ const DeviceInfo: React.FC = () => {
           navigate('/devices');
         }, 900);
       }, 900);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Failed to delete device', error);
       setSnackbarType('error');
       setLoadingDelete(false);
       if (error.status === 401) {
         setMessage('Session has expired navigating to login page');
-        setOpen(true)
+        setOpen(true);
         setTimeout(() => {
           navigate('/login');
         }, 2000);
-      }else{
+      } else {
         setMessage('Failed to delete device');
         setTimeout(() => {
           setOpen(true);
         }, 500);
       }
-
-
-
     }
   };
 
+  const handleEditDevice = async () => {
+    setLoadingEdit(true);
+
+    setTimeout(() => {
+      setIsEdit(false);
+      setLoadingEdit(false);
+    }, 900);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -276,6 +285,15 @@ const DeviceInfo: React.FC = () => {
 
   const goBack = () => {
     navigate(-1);
+  };
+
+  const handleCancel = () => {
+    setLoadingCancel(true);
+
+    setTimeout(() => {
+      setIsEdit(true);
+      setLoadingCancel(false);
+    }, 900);
   };
 
   return (
@@ -342,7 +360,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.name || ''}
                   required
-                  inputProps={{readOnly: isEdit}}
+                  inputProps={{ readOnly: isEdit }}
                 />
               </Box>
               <label className="label">Location</label>
@@ -356,7 +374,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleLabelChange}
                   className="form-control-inner"
                   required
-                  inputProps={{readOnly: isEdit}}
+                  inputProps={{ readOnly: isEdit }}
                 >
                   <MenuItem value="warehouse">Warehouse</MenuItem>
                   <MenuItem value="vehicle">Vehicle</MenuItem>
@@ -373,7 +391,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleWarehouseChange}
                     className="form-control-inner"
                     required
-                    inputProps={{readOnly: isEdit}}
+                    inputProps={{ readOnly: isEdit }}
                   >
                     {warehouse.map((wh, index) => (
                       <MenuItem key={index} value={wh.warehouse_id}>
@@ -394,7 +412,7 @@ const DeviceInfo: React.FC = () => {
                     onChange={handleVehicleChange}
                     className="form-control-inner"
                     required
-                    inputProps={{readOnly: isEdit}}
+                    inputProps={{ readOnly: isEdit }}
                   >
                     {vehicle.map((veh, index) => (
                       <MenuItem key={index} value={veh.vehicle_id}>
@@ -413,7 +431,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleInputChange}
                   value={deviceInfo.type || ''}
                   required
-                  inputProps={{readOnly: isEdit}}
+                  inputProps={{ readOnly: isEdit }}
                 />
               </Box>
               <label className="label">Action</label>
@@ -427,7 +445,7 @@ const DeviceInfo: React.FC = () => {
                   onChange={handleActionChange}
                   className="form-control-inner"
                   required
-                  inputProps={{readOnly: isEdit}}
+                  inputProps={{ readOnly: isEdit }}
                 >
                   <MenuItem value="">
                     <em>None</em>
@@ -439,13 +457,19 @@ const DeviceInfo: React.FC = () => {
               <div className="accountinfo-savebtn-delete-btn">
                 {isEdit ? (
                   <>
-                      <Button
-                        className="btn-save"
-                        variant="contained"
-                        onClick={() => setIsEdit(false)}
-                      >
-                        Edit
-                      </Button>
+                    <LoadingButton
+                      className="btn-save"
+                      variant="contained"
+                      onClick={handleEditDevice}
+                      size="small"
+                      color="primary"
+                      loading={loadingEdit}
+                      loadingPosition="start"
+                      startIcon={<EditIcon />}
+                      disabled={loadingSave}
+                    >
+                      Edit
+                    </LoadingButton>
                     <LoadingButton
                       size="small"
                       color="error"
@@ -477,8 +501,9 @@ const DeviceInfo: React.FC = () => {
                     </LoadingButton>
                     <LoadingButton
                       size="small"
-                      onClick={() => setIsEdit(true)}
+                      onClick={handleCancel}
                       loadingPosition="start"
+                      loading={loadingCancel}
                       startIcon={<CloseIcon />}
                       variant="contained"
                       className="btn-save"
