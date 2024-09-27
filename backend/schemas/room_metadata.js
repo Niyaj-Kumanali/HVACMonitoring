@@ -13,9 +13,7 @@ const roomSchema = new mongoose.Schema({
     racks : {type : Number , required : true},
     power_point : {type : Number , required : true},
     slot: {type : Number , required : true},
-    level_slots : {type : Map, of : [Number]},
-
-
+    level_slots : {type : Map, of : [Number] },
 })
 
 const roomModel = mongoose.model('room_metadata', roomSchema);
