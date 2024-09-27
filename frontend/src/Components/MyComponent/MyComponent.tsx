@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './myComponent.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const MyComponent: React.FC = () => {
   const mountRef = useRef<HTMLDivElement | null>(null);
