@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@react-three/drei": "^9.114.0",
-    "@react-three/fiber": "^8.17.8",
-    "apexcharts": "^3.53.0",
-    "react-apexcharts": "^1.4.1",
-    "three": "^0.168.0"
-  }
-}
