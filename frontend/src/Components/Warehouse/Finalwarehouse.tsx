@@ -11,87 +11,60 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
-import { WarehouseData, WarehouseDimensions } from '../../types/thingsboardTypes';
-import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
+import {getAllWarehouseByUserId } from '../../api/warehouseAPIs';
+import { mongoAPI } from '../../api/MongoAPIInstance';
 
 
+interface FormData {
+    room_no: string;
+    room_name: string;
+    racks: string;
+    power_points: string;
+    slots: string;
+    level_slot: {}
+}
 
 const Finalwarehouse: React.FC = () => {
-    const [formData, setFormData] = useState<WarehouseData>({
-        warehouse_name: '',
-        latitude: '',
-        longitude: '',
-        warehouse_dimensions: {
-            length: '',
-            width: '',
-            height: '',
-        },
-        energy_resource: '',
-        cooling_units: null,
-        sensors: null,
-        userId: '',
-        email: '',
+    const [formData, setFormData] = useState<FormData>({
+        room_no: '',
+        room_name: '',
+        racks: '',
+        power_points: '',
+        slots: '',
+        level_slot: {}
     });
+
 
     const currentUser = useSelector((state: RootState) => state.user.user);
 
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-        'success'
-    );
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
     const [message, setMessage] = useState('');
 
     const handleReset = () => {
         setFormData({
-            warehouse_name: '',
-            latitude: '',
-            longitude: '',
-            warehouse_dimensions: {
-                length: '',
-                width: '',
-                height: '',
-            },
-            energy_resource: '',
-            cooling_units: null,
-            sensors: null,
-            userId: '',
-            email: '',
+            room_no:'',
+            room_name: '',
+            racks: '',
+            power_points: '',
+            slots: '',
+            level_slot: {}
         });
         setSubmitted(false);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name.startsWith('warehouse_dimensions.')) {
-            const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
-            setFormData({
-                ...formData,
-                warehouse_dimensions: {
-                    ...formData.warehouse_dimensions,
-                    [dimensionKey]: value,
-                },
-            });
-        } else {
-            if (name === 'cooling_units' || name === 'sensors') {
-                const numericValue = parseInt(value, 10);
-                if (numericValue >= 0 || value === '') {
-                    setFormData({
-                        ...formData,
-                        [name]: value === '' ? null : value,
-                    });
-                }
-            } else {
-                setFormData({
-                    ...formData,
-                    [name]: value,
-                });
-            }
-        }
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,24 +73,22 @@ const Finalwarehouse: React.FC = () => {
 
         const convertedData = {
             ...formData,
-            latitude: parseFloat(formData.latitude),
-            longitude: parseFloat(formData.longitude),
-            warehouse_dimensions: {
-                length: parseFloat(formData.warehouse_dimensions.length),
-                width: parseFloat(formData.warehouse_dimensions.width),
-                height: parseFloat(formData.warehouse_dimensions.height),
-            },
-            cooling_units: Number(formData.cooling_units),
-            sensors: Number(formData.sensors),
-            userId: currentUser.id?.id,
-            email: currentUser.email,
+            room_no: Number(formData.room_no),  
+            room_name: formData.room_name,
+            racks: Number(formData.racks),
+            power_points: Number(formData.power_points),
+            slots: Number(formData.slots),
+            level_slots: Array.from({ length: Number(formData.racks), }, (_, i) => i + 1)
+                .reduce((acc, rack) => {
+                    acc[rack] = Array.from({ length: Number(formData.slots), }, (_, j) => j + 1);
+                    return acc;
+                }, {})
         };
 
         console.log(JSON.stringify(convertedData));
 
         try {
-
-            const response = await addWarehouse(JSON.stringify(convertedData))
+            const response = await mongoAPI.post(`/room/addroom`, convertedData);
 
             console.log('Warehouse added:', response.data);
 
@@ -167,8 +138,8 @@ const Finalwarehouse: React.FC = () => {
                     <FormControl fullWidth margin="normal">
                         <TextField
                             label="Room Number"
-                            name="warehouse_name"
-                            value={formData.warehouse_name}
+                            name="room_no"
+                            value={formData.room_no}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -176,10 +147,20 @@ const Finalwarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Warehouse"
-                            name="latitude"
+                            label="Room Name"
+                            name="room_name"
+                            value={formData.room_name}
+                            onChange={handleChange}
+                            disabled={submitted}
+                            className="textfieldss"
+                        />
+                    </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <TextField
+                            label="Racks"
+                            name="racks"
                             type="number"
-                            value={formData.latitude}
+                            value={formData.racks}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -187,10 +168,10 @@ const Finalwarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Longitude"
-                            name="longitude"
+                            label="Power Points"
+                            name="power_points"
                             type="number"
-                            value={formData.longitude}
+                            value={formData.power_points}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -198,48 +179,16 @@ const Finalwarehouse: React.FC = () => {
                     </FormControl>
                     <FormControl fullWidth margin="normal">
                         <TextField
-                            label="Length"
-                            name="warehouse_dimensions.length"
+                            label="Slots"
+                            name="slots"
                             type="number"
-                            value={formData.warehouse_dimensions.length}
+                            value={formData.slots}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
                         />
                     </FormControl>
-                    <FormControl fullWidth margin="normal">
-                        <TextField
-                            label="Width"
-                            name="warehouse_dimensions.width"
-                            type="number"
-                            value={formData.warehouse_dimensions.width}
-                            onChange={handleChange}
-                            disabled={submitted}
-                            className="textfieldss"
-                        />
-                    </FormControl>
-                    <FormControl fullWidth margin="normal">
-                        <TextField
-                            label="Height"
-                            name="warehouse_dimensions.height"
-                            type="number"
-                            value={formData.warehouse_dimensions.height}
-                            onChange={handleChange}
-                            disabled={submitted}
-                            className="textfieldss"
-                        />
-                    </FormControl>
-                    <FormControl fullWidth margin="normal">
-                        <TextField
-                            label="Energy Resource"
-                            name="energy_resource"
-                            type="text"
-                            value={formData.energy_resource}
-                            onChange={handleChange}
-                            disabled={submitted}
-                            className="textfieldss"
-                        />
-                    </FormControl>
+
                     <div className="sub-btn">
                         <LoadingButton
                             size="small"
