@@ -68,7 +68,7 @@ pipeline {
                         echo "PM2 process list after restarting:"
                         pm2 list
 
-                        pm2 restart hvac_backend
+                        pm2 restart hvac_backend --update-env
                     '''
                 }
             }
