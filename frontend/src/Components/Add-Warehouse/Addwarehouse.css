@@ -77,22 +77,11 @@
     background-color: #1976D2;
 }
 
-.warehouse {
-    min-width: 400px;
-    max-width: 55%;
-    height: auto;
-    padding: 20px;
-    background-color: white;
-    margin: 20px;
-}
 
 .warehouse .textfieldss {
     background-color: #ebebeb;
 }
 
-.warehouse-form {
-    width: 100%;
-}
 
 .form-group {
     /* border: 1px solid black; */

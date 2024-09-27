@@ -37,13 +37,6 @@
 }
 
 
-.warehouse-form {
-    margin: 20px 0;
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    height: max-height;
-}
 
 .user-img-info {
     display: flex;
