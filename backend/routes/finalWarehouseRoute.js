@@ -45,7 +45,7 @@ router.get('/Warehouses/:warehouse_id', async (req, res) => {
         );
 
         const powerSourceDetails = await Promise.all(
-            const powerSourceData = await powerswitchModel.findOne({})
+            await powerswitchModel.findOne({})
         )
 
         // Respond with warehouse data and populated room details
