@@ -48,12 +48,12 @@ const Router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/dashboard/:dashboardId',
-        element: <Dashboard />,
-      },
-      {
         path: '/dashboards',
         element: <Dashboards />,
+      },
+      {
+        path: '/dashboard/:dashboardId',
+        element: <Dashboard />,
       },
       {
         path: '/charts',

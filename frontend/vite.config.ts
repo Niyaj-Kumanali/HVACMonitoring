@@ -7,7 +7,4 @@ export default defineConfig({
     react(),
     inspect(), // Add the inspect plugin
   ],
-  optimizeDeps: {
-    include: ['date-fns'],
-  },
 });
