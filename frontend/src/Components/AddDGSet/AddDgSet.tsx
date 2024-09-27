@@ -1,15 +1,15 @@
 import LoadingButton from "@mui/lab/LoadingButton"
 import { FormControl, TextField } from "@mui/material"
 import SaveIcon from '@mui/icons-material/Save';
-import CustomSnackBar from "../SnackBar/SnackBar";
+// import CustomSnackBar from "../SnackBar/SnackBar";
 import { memo, useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 
 const AddDgSet: React.FC = () => {
 
-    const [open, setOpen] = useState(false);
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-    const [message, setMessage] = useState('');
+    // const [open, setOpen] = useState(false);
+    // const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+    // const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -158,12 +158,12 @@ const AddDgSet: React.FC = () => {
                     </div>
                 )
             }
-            <CustomSnackBar
+            {/* <CustomSnackBar
                 open={open}
                 setOpen={setOpen}
                 snackbarType={snackbarType}
                 message={message}
-            />
+            /> */}
         </>
     )
 }
