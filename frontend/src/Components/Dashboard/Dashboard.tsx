@@ -9,9 +9,9 @@ import Box from '@mui/material/Box';
 import { WidgetLayout } from '../../types/thingsboardTypes';
 import { v4 as uuid4 } from 'uuid';
 import { RootState } from '../../Redux/Reducer';
-import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import DashboardLayout from './DashboardLayout';
+import { getLayout, postLayout } from '../../api/dashboardApi';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const ROW_HEIGHT = 50;

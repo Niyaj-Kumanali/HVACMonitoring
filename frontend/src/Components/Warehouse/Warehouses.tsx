@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Warehouse.css";
 import Loader from "../Loader/Loader";
-import { getAllWarehouseByUserId, getLocationByLatsAndLongs } from "../../api/MongoAPIInstance";
+import { getLocationByLatsAndLongs } from "../../api/MongoAPIInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { set_warehouse_count } from "../../Redux/Action/Action";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { RootState } from "../../Redux/Reducer";
 import Paginations from "../Pagination/Paginations";
 import { Warehouse, LocationInfo } from "../../types/thingsboardTypes";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { getAllWarehouseByUserId } from "../../api/warehouseAPIs";
 
 
 const Warehouses = () => {

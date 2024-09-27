@@ -26,12 +26,10 @@ import { set_DeviceCount } from '../../Redux/Action/Action';
 import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DeviceInfo.css';
-import {
-  getAllVehiclesByUserId,
-  getAllWarehouseByUserId,
-} from '../../api/MongoAPIInstance';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { RootState } from '../../Redux/Reducer';
+import { getAllVehiclesByUserId } from '../../api/vehicleAPIs';
+import { getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 interface Warehouse {
   warehouse_id: string;
   warehouse_name: string;

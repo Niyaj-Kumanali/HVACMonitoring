@@ -6,10 +6,6 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-import {
-  addWarehouse,
-  getAllWarehouseByUserId,
-} from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
@@ -20,6 +16,7 @@ import {
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate } from 'react-router-dom';
+import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 
 const AddWarehouse: React.FC = () => {
   const navigate = useNavigate()

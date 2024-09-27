@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-import { addVehicle, getAllVehiclesByUserId } from '../../api/MongoAPIInstance';
 import './Addvehicle.css';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +18,7 @@ import {
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../api/loginApi';
+import { addVehicle, getAllVehiclesByUserId } from '../../api/vehicleAPIs';
 
 const AddVehicle: React.FC = () => {
   const navigate = useNavigate()

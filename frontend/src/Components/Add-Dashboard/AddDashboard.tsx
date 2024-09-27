@@ -5,10 +5,9 @@ import {
   Box,
 } from '@mui/material';
 import { DashboardType } from '../../types/thingsboardTypes';
-import { getDashboardById, saveDashboard } from '../../api/dashboardApi';
+import { getDashboardById, postLayout, saveDashboard } from '../../api/dashboardApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './AddDashboard.css';  // Ensure you import the CSS file
-import { postLayout } from '../../api/MongoAPIInstance';
 import CustomSnackBar from '../SnackBar/SnackBar';
 
 const AddDashboard: React.FC = () => {

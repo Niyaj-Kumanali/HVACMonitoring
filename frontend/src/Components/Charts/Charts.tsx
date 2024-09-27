@@ -9,7 +9,6 @@ import {
     Checkbox,
     FormControlLabel
 } from "@mui/material";
-import { getAllWarehouseByUserId } from "../../api/MongoAPIInstance";
 import { getFilteredDevices } from "../../api/deviceApi";
 import {  getTimeseries, getTimeseriesKeys } from "../../api/telemetryAPIs";
 import Table from '@mui/material/Table';
@@ -25,6 +24,7 @@ import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/Reducer";
 import Tabledata from "./Table";
+import { getAllWarehouseByUserId } from "../../api/warehouseAPIs";
 
 interface Warehouse {
     warehouse_id: string;

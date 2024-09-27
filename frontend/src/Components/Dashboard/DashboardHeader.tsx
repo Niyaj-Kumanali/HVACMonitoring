@@ -22,9 +22,8 @@ import { setLayout } from '../../Redux/Action/layoutActions';
 import './styles/dashboardheader.css';
 import { uuid } from '../../Utility/utility_functions';
 import { CheckCircleOutline } from '@mui/icons-material';
-import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 import { DEFAULT_LIMIT } from './DashboardLayout';
-import { getDashboardById } from '../../api/dashboardApi';
+import { getDashboardById, getLayout, postLayout } from '../../api/dashboardApi';
 
 interface DashboardHeaderProps {
   onToggleEdit: () => void;

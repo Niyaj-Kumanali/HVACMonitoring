@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import '../Warehouse/Warehouse.css';
-import { getAllVehiclesByUserId } from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import VehicleLoader from '../Loader/VehicleLoader';
@@ -9,6 +8,7 @@ import truckimage from '../../assets/truck.gif';
 import Paginations from '../Pagination/Paginations';
 import { RootState } from '../../Redux/Reducer';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { getAllVehiclesByUserId } from '../../api/vehicleAPIs';
 
 
 interface VehicleDimensions {
