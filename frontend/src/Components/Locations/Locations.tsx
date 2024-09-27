@@ -5,7 +5,6 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster';
 import './Locations.css';
 import {
-  getAllWarehouseByUserId,
   getLocationByLatsAndLongs,
 } from '../../api/MongoAPIInstance';
 import Loader from '../Loader/Loader';
@@ -15,6 +14,7 @@ import { RootState } from '../../Redux/Reducer';
 import { TextField, IconButton, Tooltip } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import React from 'react';
+import { getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 
 interface Warehouse {
   warehouse_name?: string;

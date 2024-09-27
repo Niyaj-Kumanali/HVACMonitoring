@@ -3,14 +3,6 @@ import { Button, FormControl, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  deleteWarehouseByWarehouseId,
-  getAllWarehouseByUserId,
-  getLocationByLatsAndLongs,
-  getWarehouseByWarehouseId,
-  updateWarehouseByWarehouseId,
-} from '../../api/MongoAPIInstance';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,6 +13,8 @@ import {
 import { RootState } from '../../Redux/Reducer';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
+import { getWarehouseByWarehouseId, deleteWarehouseByWarehouseId, updateWarehouseByWarehouseId, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();

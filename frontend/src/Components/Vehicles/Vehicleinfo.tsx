@@ -7,13 +7,14 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-import { getVehicleByVehicleId, mongoAPI } from '../../api/MongoAPIInstance';
+import { mongoAPI } from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Vehicles.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VehicleLoader from '../Loader/VehicleLoader';
 import CustomSnackBar from '../SnackBar/SnackBar';
+import { getVehicleByVehicleId } from '../../api/vehicleAPIs';
 
 // Define interfaces for vehicle data
 interface VehicleDimensions {

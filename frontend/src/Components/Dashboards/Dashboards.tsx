@@ -16,7 +16,7 @@ import {
   DashboardType,
   DeviceQueryParams,
 } from '../../types/thingsboardTypes';
-import { deleteDashboard, getTenantDashboards } from '../../api/dashboardApi';
+import { deleteDashboard, deleteLayout, getTenantDashboards } from '../../api/dashboardApi';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   set_Authority,
@@ -29,17 +29,14 @@ import {
 import { getUsers } from '../../api/userApi';
 import { getTenantDevices } from '../../api/deviceApi';
 import { useNavigate } from 'react-router-dom';
-import {
-  deleteLayout,
-  getAllVehiclesByUserId,
-  getAllWarehouseByUserId,
-} from '../../api/MongoAPIInstance';
 import { getCurrentUser } from '../../api/loginApi';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import Paginations from '../Pagination/Paginations';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { RootState } from '../../Redux/Reducer';
+import { getAllVehiclesByUserId } from '../../api/vehicleAPIs';
+import { getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 
 const Dashboards = () => {
   const currentuser = useSelector((state: RootState) => state.user.user);

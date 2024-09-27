@@ -28,8 +28,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { setLayout } from '../../Redux/Action/layoutActions';
 import { charts, chartTypes } from '../Add-Widget/AddWidget';
-import { getLayout, postLayout } from '../../api/MongoAPIInstance';
 import Chart from './Charts/Chart';
+import { getLayout, postLayout } from '../../api/dashboardApi';
 
 interface WidgetProps {
   widgetId: string;

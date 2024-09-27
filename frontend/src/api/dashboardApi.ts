@@ -1,4 +1,6 @@
+import { DashboardLayoutOptions } from '../Redux/Reducer/layoutReducer';
 import { DashboardType } from '../types/thingsboardTypes';
+import { mongoAPI } from './MongoAPIInstance';
 import thingsboardAPI from './thingsboardAPI';
 
 // Create or Update Dashboard
@@ -208,3 +210,20 @@ export const updateTenantHomeDashboardInfo = async (
   );
   return response;
 };
+
+
+export const postLayout = async (dashboardId: string = "", layout: DashboardLayoutOptions) => {
+  const response = await mongoAPI.post(`/dashboard/saveDashboardLayout/${dashboardId}`, layout);
+  return response
+}
+
+export const getLayout = async (dashboardId: string = "") => {
+  const response = await mongoAPI.get(`/dashboard/getDashboardLayout/${dashboardId}`)
+  return response
+}
+
+
+export const deleteLayout = async (dashboardId: string = "") => {
+  const response = await mongoAPI.delete(`/dashboard/deletedashboard/${dashboardId}`)
+  return response
+}

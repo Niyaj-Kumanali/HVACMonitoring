@@ -11,11 +11,11 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { addWarehouse, getAllWarehouseByUserId } from '../../api/MongoAPIInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
 import { WarehouseData, WarehouseDimensions } from '../../types/thingsboardTypes';
+import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 
 
 
