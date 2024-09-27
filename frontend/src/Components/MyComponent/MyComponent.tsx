@@ -126,7 +126,6 @@
 
 // export default MyComponent;
 
-import React from 'react';
 import { addRoom } from '../../api/roomAPIs';
 
 const MyComponent = () => {
