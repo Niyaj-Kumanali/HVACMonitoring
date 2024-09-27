@@ -25,6 +25,24 @@ html {
     border-radius: 10px;
 }
 
+.warehouse {
+    min-width: 400px;
+    max-width: 55%;
+    height: auto;
+    padding: 20px;
+    background-color: white;
+    margin: 20px;
+}
+
+.warehouse-form {
+    margin: 20px 0;
+    width: 100%;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    height: max-height;
+}
+
 @media screen and (max-width:500px) {
     .pageHeaders {
         margin: 5px;
