@@ -131,7 +131,7 @@ const AddVehicle: React.FC = () => {
         setMessage('Vehicle Added Successfully');
         fetchAllVehicles();
       }, 1000);
-    } catch (error) {
+    } catch (error:any) {
       setSnackbarType('error');
 
       if (error.status === 401) {

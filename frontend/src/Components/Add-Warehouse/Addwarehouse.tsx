@@ -128,7 +128,7 @@ const AddWarehouse: React.FC = () => {
         setMessage('Warehouse Added Successfully');
         fetchAllWarehouses();
       }, 1000);
-    } catch (error) {
+    } catch (error:any) {
       setSnackbarType('error');
 
       if (error.status === 401) {
