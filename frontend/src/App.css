@@ -41,13 +41,13 @@
   }
 }
 
-.page-enter {
+/* .page-enter {
   animation: slideIn var(--slide-in-duration) ease-out forwards;
 }
 
 .page-exit {
   animation: slideOut var(--slide-out-duration) ease-in forwards;
-}
+} */
 
 .App {
   display: flex;

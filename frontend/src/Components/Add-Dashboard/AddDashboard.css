@@ -6,7 +6,7 @@
     min-width: 440px;
     border-radius: 10px;
     box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2), -3px -3px 5px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    /* transition: all 0.3s ease; */
     display: flex;
     flex-direction: column;
     height: max-content;

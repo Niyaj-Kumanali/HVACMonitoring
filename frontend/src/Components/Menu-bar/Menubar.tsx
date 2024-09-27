@@ -27,13 +27,15 @@ const Menubar = () => {
     const vehicleCount = useSelector((state: any) => state.user.vehicleCount);
     const menubaropen = useSelector((state: any) => state.user.menubar);
     const [className, setClassName] = useState(getClassName(window.innerWidth));
-    const hideref = useRef<HTMLDivElement>(null);
+    // const hideref = useRef<HTMLDivElement>(null);
     const userSelectionRef = useRef<HTMLDivElement>(null);
     const menubarRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isMenubar = useSelector((state: RootState) => state.user.menubar)
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(isMenubar || false);
+
+    console.log("menu")
 
     function getClassName(width: number) {
         return width <= 700 ? 'sidebar2' : 'side-bar';
@@ -86,14 +88,14 @@ const Menubar = () => {
                 <li onClick={() => handleLinkClick('/charts')}>
                     <PieChartIcon className="speedicon" />Charts
                 </li>
-                {/* <li onClick={() => handleLinkClick('/actions')}>
+                 {/* <li onClick={() => handleLinkClick('/actions')}>
                     <ElectricBoltIcon className="speedicon" />Actions <span className="count">{formatNumber(3)}</span>
                 </li> */}
                 {currentuser === 'TENANT_ADMIN' && (
                     <li onClick={() => handleLinkClick('/devices')}>
                         <CableIcon className="speedicon" />Devices <span className="count">{formatNumber(deviceCount)}</span>
                     </li>
-                )}
+                )} 
                 <li onClick={() => handleLinkClick('/locations')}>
                     <LocationOnIcon className="speedicon" />Locations <span className="count">{formatNumber(warehousecount)}</span>
                 </li>
@@ -115,7 +117,7 @@ const Menubar = () => {
                         <li onClick={() => handleLinkClick('/addCustomer')}>Add Customer</li>
                     </div>
                 </div>
-                <div ref={hideref}>
+                <div >
                     <li onClick={() => handleLinkClick('/addDevice')}>
                         <AddToQueueIcon className="speedicon" />Add Device
                     </li>
