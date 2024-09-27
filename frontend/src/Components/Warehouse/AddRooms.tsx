@@ -11,32 +11,27 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
-import { addWarehouse, getAllWarehouseByUserId, mongoAPI } from '../../api/MongoAPIInstance';
-import { useDispatch, useSelector } from 'react-redux';
-import { set_warehouse_count } from '../../Redux/Action/Action';
-import { RootState } from '../../Redux/Reducer';
+import { addRoom } from '../../api/roomAPIs';
 
-interface FormData {
+interface Roomtypes {
     room_no: string;
     room_name: string;
     racks: string;
-    power_points: string;
-    slots: string;
-    level_slot: {}
+    power_point: string;
+    slot: string;
+    level_slots: {}
 }
 
-const Finalwarehouse: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
+const AddRooms: React.FC = () => {
+    const [formData, setFormData] = useState<Roomtypes>({
         room_no: '',
         room_name: '',
         racks: '',
-        power_points: '',
-        slots: '',
-        level_slot: {}
+        power_point: '',
+        slot: '',
+        level_slots: {}
     });
 
-
-    const currentUser = useSelector((state: RootState) => state.user.user);
 
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
@@ -49,9 +44,9 @@ const Finalwarehouse: React.FC = () => {
             room_no:'',
             room_name: '',
             racks: '',
-            power_points: '',
-            slots: '',
-            level_slot: {}
+            power_point: '',
+            slot: '',
+            level_slots: {}
         });
         setSubmitted(false);
     };
@@ -73,19 +68,17 @@ const Finalwarehouse: React.FC = () => {
             room_no: Number(formData.room_no),  
             room_name: formData.room_name,
             racks: Number(formData.racks),
-            power_points: Number(formData.power_points),
-            slots: Number(formData.slots),
+            power_point: Number(formData.power_point),
+            slot: Number(formData.slot),
             level_slots: Array.from({ length: Number(formData.racks), }, (_, i) => i + 1)
-                .reduce((acc, rack) => {
-                    acc[rack] = Array.from({ length: Number(formData.slots), }, (_, j) => j + 1);
+                .reduce((acc:any, rack:any) => {
+                    acc[rack] = Array.from({ length: Number(formData.slot), }, (_, j) => j + 1);
                     return acc;
                 }, {})
         };
 
-        console.log(JSON.stringify(convertedData));
-
         try {
-            const response = await mongoAPI.post(`/room/addroom`, convertedData);
+            const response = await addRoom(convertedData);
 
             console.log('Warehouse added:', response.data);
 
@@ -94,30 +87,19 @@ const Finalwarehouse: React.FC = () => {
                 setLoading(false);
                 setOpen(true);
                 setSnackbarType('success');
-                setMessage('Warehouse Added Successfully');
-                fetchAllWarehouses();
+                setMessage('Room Added Successfully');
             }, 1000);
         } catch (error) {
             setTimeout(() => {
                 setLoading(false);
                 setOpen(true);
                 setSnackbarType('error');
-                setMessage('Failed to Add Warehouse');
+                setMessage('Failed to Add Room');
                 console.error('Error submitting form:', error);
             }, 1000);
         }
     };
 
-    const warehousecountDispatch = useDispatch();
-
-    const fetchAllWarehouses = async () => {
-        try {
-            const response = await getAllWarehouseByUserId(currentUser.id?.id, undefined);
-            warehousecountDispatch(set_warehouse_count(response.data.totalElements));
-        } catch (error) {
-            console.error('Failed to fetch warehouses:', error);
-        }
-    };
 
     const handleClose = (
         _event: React.SyntheticEvent | Event,
@@ -166,9 +148,9 @@ const Finalwarehouse: React.FC = () => {
                     <FormControl fullWidth margin="normal">
                         <TextField
                             label="Power Points"
-                            name="power_points"
+                            name="power_point"
                             type="number"
-                            value={formData.power_points}
+                            value={formData.power_point}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -177,9 +159,9 @@ const Finalwarehouse: React.FC = () => {
                     <FormControl fullWidth margin="normal">
                         <TextField
                             label="Slots"
-                            name="slots"
+                            name="slot"
                             type="number"
-                            value={formData.slots}
+                            value={formData.slot}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -231,4 +213,4 @@ const Finalwarehouse: React.FC = () => {
     );
 };
 
-export default Finalwarehouse;
+export default AddRooms;

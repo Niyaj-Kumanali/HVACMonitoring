@@ -167,9 +167,9 @@ const AddVehicle: React.FC = () => {
   return (
     <>
       <div className="menu-data">
-        <div className="vehicle">
+        <div className="warehouse">
           <h3>Add Vehicle</h3>
-          <form className="vehicle-form" onSubmit={handleSubmit}>
+          <form className="warehouse-form" onSubmit={handleSubmit}>
             <FormControl fullWidth margin="normal">
               <TextField
                 label="Vehicle Number"

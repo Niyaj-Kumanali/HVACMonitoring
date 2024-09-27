@@ -249,9 +249,9 @@ const AddVehicle: React.FC = () => {
         <VehicleLoader />
       ) : (
         <div className="menu-data">
-          <div className="vehicle">
+            <div className="warehouse">
             <h3>{vehicleid ? 'Edit Vehicle' : 'Add Vehicle'}</h3>
-            <form className="vehicle-form" onSubmit={handleSubmit}>
+            <form className="warehouse-form" onSubmit={handleSubmit}>
               <FormControl fullWidth margin="normal">
                 <TextField
                   label="Vehicle Number"
