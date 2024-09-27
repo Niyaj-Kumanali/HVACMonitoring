@@ -137,7 +137,7 @@ const MyComponent = () => {
       power_point: 1,
       slot: 2,
       level_slots: Array.from({ length: 2 }, (_, i) => i + 1)
-      .reduce((acc, rack) => {
+      .reduce((acc:any, rack:any) => {
         acc[rack] = Array.from({ length: 2 }, (_, j) => j + 1);
         return acc;
       }, {})
