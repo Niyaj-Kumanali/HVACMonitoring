@@ -4,20 +4,20 @@ const router = express.Router();
 
 router.post('/addroom', async (req, res) => {
     try {
-        const { room_name } = req.body;  // Destructure room_name from the request body
+        const body = req.body;  // Destructure room_name from the request body
 
         // Check if a room with the same name already exists
         const existingRoom = await roomModel.findOne({
-            room_name: room_name
+            room_name: body.room_name
         });
 
         if (existingRoom) {
             return res.status(409).send({ message: 'Room name must be unique.' });
         }
 
-        const newRoom = new roomModel(req.body);
+        const newRoom = new roomModel(body);
         await newRoom.save();
-        res.status(201).send(newRoom);
+        res.status(200).send(newRoom);
     } catch (error) {
         res.status(400).send({ error: "Failed to add room", details: error.message });
     }

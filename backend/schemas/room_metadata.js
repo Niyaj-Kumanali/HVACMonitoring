@@ -8,11 +8,12 @@ const roomSchema = new mongoose.Schema({
         required : true,
         default : uuidv4
     },
+    room_no : {type : Number , required : true},
     room_name : {type : String , required : true},
     racks : {type : Number , required : true},
     power_point : {type : Number , required : true},
     slot: {type : Number , required : true},
-    level_slots : {type : Map, of : [Number] },
+    level_slots : {type : Map, of : [Number]},
 
 
 })

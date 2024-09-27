@@ -131,14 +131,18 @@ import { addRoom } from '../../api/roomAPIs';
 const MyComponent = () => {
   const handleGetAll = async () => {
     const body1 = {
-      room_name: 'name1',
-      racks: 1,
+      room_no: 426,
+      room_name: 'name7',
+      racks: 2,
       power_point: 1,
-      slot: 1,
-      level_slots: {
-        '1': [1],
-      },
+      slot: 2,
+      level_slots: Array.from({ length: 2 }, (_, i) => i + 1)
+      .reduce((acc, rack) => {
+        acc[rack] = Array.from({ length: 2 }, (_, j) => j + 1);
+        return acc;
+      }, {})
     };
+
     const response1 = await addRoom(body1);
     console.log(response1);
   };
