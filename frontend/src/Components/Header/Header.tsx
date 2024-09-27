@@ -5,7 +5,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import LogoutIcon from '@mui/icons-material/Logout';
 import './Header.css';
 // import "../Menu-bar/Menubar.css";
-import { getCurrentUser } from '../../api/loginApi';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from '../../assets/UrjalinksLogo_03.png';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +16,9 @@ const Header: React.FC = () => {
   const [toggle, setToggle] = useState<string>('hidden');
   const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
-  const [email, setEmail] = useState<string | undefined>('');
+  const {email} = useSelector((state: RootState) => state.user.user)
+
+  console.log("Header")
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,6 +28,7 @@ const Header: React.FC = () => {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -42,18 +44,6 @@ const Header: React.FC = () => {
     navigate('/login');
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await getCurrentUser();
-        setEmail(userData.data.email);
-      } catch (error) {
-        console.error('Failed to fetch user data', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const menuState = useSelector((state: RootState) => state.user.menubar);
 

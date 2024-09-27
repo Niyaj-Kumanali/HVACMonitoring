@@ -8,14 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { set_Accesstoken } from './Redux/Action/Action';
 import React from 'react';
-import useIdle from './Hooks/useIdle';
 import { RootState } from './Redux/Reducer';
 
 const App = () => {
   const navigate = useNavigate();
   const accesstoken = useSelector((state: RootState) => state.user.accesstoken);
   const dispatch = useDispatch();
-  const isIdle = useIdle(30000);
 
   const validateToken = () => {
     const token = localStorage.getItem('token');
@@ -38,15 +36,12 @@ const App = () => {
       navigate('/login');
     }
   };
-  useEffect(() => {
-    if (isIdle) {
-      validateToken();
-    }
-  }, [isIdle]);
 
   useEffect(() => {
     validateToken();
   }, [navigate, dispatch, accesstoken]);
+
+  console.log("App")
 
   return (
     <>
