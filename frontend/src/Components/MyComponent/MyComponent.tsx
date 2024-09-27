@@ -14,7 +14,7 @@ const MyComponent: React.FC = () => {
     // Define a new layout for the warehouse, spreading rooms in a grid
     const roomWidth = 2; // Width of the room
     const roomHeight = 5; // Height of the room
-    const roomDepth = 4; // Depth of the room
+    // const roomDepth = 4; // Depth of the room
 
     const layout = [
       { x: -roomWidth * 2, y: roomHeight, z: 0 }, // Adjusted x-coordinate
