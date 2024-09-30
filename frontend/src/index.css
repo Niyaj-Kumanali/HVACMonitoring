@@ -32,6 +32,7 @@ html {
     padding: 20px;
     background-color: white;
     margin: 20px;
+    height: max-content;
 }
 
 .warehouse-form {
