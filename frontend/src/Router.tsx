@@ -30,6 +30,7 @@ import ResetPassword from './Components/ResetPassword/ResetPassword';
 import AddRooms from './Components/Warehouse/AddRooms';
 import AddDgSet from './Components/AddDGSet/AddDgSet';
 import AddGrid from './Components/AddGrid/AddGrid';
+import AddSwitch from './Components/AddSwitch/AddSwitch';
 
 const Router = createBrowserRouter([
   {
@@ -157,6 +158,10 @@ const Router = createBrowserRouter([
       {
         path: '/addGrid',
         element: <AddGrid />,
+      },
+      {
+        path:'/addSwitch',
+        element: <AddSwitch />,
       }
     ],
   },

@@ -111,6 +111,7 @@ const AddDgSet: React.FC = () => {
                                         name="dgset_name"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.dgset_name}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -120,6 +121,7 @@ const AddDgSet: React.FC = () => {
                                         type="number"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.output_voltage}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -129,6 +131,7 @@ const AddDgSet: React.FC = () => {
                                         type="number"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.max_output_current}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -137,6 +140,7 @@ const AddDgSet: React.FC = () => {
                                         name="fuel_type"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.fuel_type}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -145,6 +149,7 @@ const AddDgSet: React.FC = () => {
                                         name="fuel_capacity"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.fuel_capacity}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -153,6 +158,7 @@ const AddDgSet: React.FC = () => {
                                         name="output_connector_type"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.output_connector_type}
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
@@ -163,6 +169,7 @@ const AddDgSet: React.FC = () => {
                                         name="motor_type"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        value={formData.motor_type}
                                     >
                                         <MenuItem value={"BLDC (Brushless DC) Motors"}>BLDC (Brushless DC) Motors</MenuItem>
                                         <MenuItem value={"SRM (Switched Reluctance Motors)"}>SRM (Switched Reluctance Motors)</MenuItem>
