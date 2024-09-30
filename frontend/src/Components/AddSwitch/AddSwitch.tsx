@@ -1,10 +1,9 @@
 import LoadingButton from "@mui/lab/LoadingButton";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 import CustomSnackBar from "../SnackBar/SnackBar";
-import { addGRID } from "../../api/gridAPIs";
 import { mongoAPI } from "../../api/MongoAPIInstance";
 
 interface FormData {
@@ -13,10 +12,10 @@ interface FormData {
 
 const AddSwitch = () => {
     const [open, setOpen] = useState<boolean>(false);
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-    const [message, setMessage] = useState<string>('');
+    // const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+    // const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-    const [addbuttonloader, setAddButtonLoader] = useState<boolean>(false);
+    // const [addbuttonloader, setAddButtonLoader] = useState<boolean>(false);
     const [formData, setFormdata] = useState<FormData>({
         powerSource_status: '',
 
@@ -41,11 +40,11 @@ const AddSwitch = () => {
         getAllGrid()
     },[formData])
 
-    const handleReset = () => {
-        setFormdata({
-            powerSource_status: ''
-        });
-    };
+    // const handleReset = () => {
+    //     setFormdata({
+    //         powerSource_status: ''
+    //     });
+    // };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -130,11 +129,17 @@ const AddSwitch = () => {
                                         size="small"
                                         type="submit"
                                         color="secondary"
-                                        loading={addbuttonloader}
+                                        loading={
+                                            // addbuttonloader
+                                            false
+                                        }
                                         loadingPosition="start"
                                         startIcon={<SaveIcon />}
                                         variant="contained"
-                                        disabled={addbuttonloader}
+                                        disabled={
+                                            // addbuttonloader
+                                            false
+                                        }
                                         className="btn-save"
                                     >
                                         <span>Save</span>
@@ -148,8 +153,14 @@ const AddSwitch = () => {
             <CustomSnackBar
                 open={open}
                 setOpen={setOpen}
-                snackbarType={snackbarType}
-                message={message}
+                snackbarType={
+                    // snackbarType
+                    'success'
+                }
+                message={
+                    // message
+                    ""
+                }
             />
         </>
     );
