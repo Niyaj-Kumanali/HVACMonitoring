@@ -6,6 +6,6 @@ export const addSwitch = async (body:any) => {
 }
 
 export const updateSwitch = async (body:any) => {
-    const response = mongoAPI.put(`/powerswitch/updateswitch`, body)
+    const response = mongoAPI.post(`/powerswitch/updateswitch`, body)
     return response
 }
