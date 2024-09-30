@@ -20,6 +20,12 @@ import { type } from 'os';
         energy_resource : {type: String, required: true},
         cooling_units :{type: Number, required: true},
         sensors: {type: Number, reqired: true},
+        rooms: {
+            type : []
+        },
+        powerSource: {
+            type : []
+        },
         userId: {type: String, required: true},
         email: {type: String, required: true}
 

@@ -205,6 +205,8 @@ export interface WarehouseData {
   energy_resource: string;
   cooling_units: string | null;
   sensors: string | null;
+  rooms : [];
+  powerSource: [];
   userId: string;
   email: string;
 }

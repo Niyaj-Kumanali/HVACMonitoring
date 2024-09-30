@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Addwarehouse.css';
 import {
   FormControl,
@@ -17,6 +17,7 @@ import CustomSnackBar from '../SnackBar/SnackBar';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate } from 'react-router-dom';
 import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
+import { getAllRooms } from '../../api/roomAPIs';
 
 const AddWarehouse: React.FC = () => {
   const navigate = useNavigate()
@@ -32,9 +33,29 @@ const AddWarehouse: React.FC = () => {
     energy_resource: '',
     cooling_units: null,
     sensors: null,
+    rooms : [],
+    powerSource: [],
     userId: '',
     email: '',
   });
+
+  const getAllRoomsfunc = async () => {
+    try {
+      const response = await getAllRooms();
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      await getAllRoomsfunc();
+    };
+
+    fetchRooms();
+  }, []);
+  
 
   const currentUser = useSelector((state: RootState) => state.user.user);
 
@@ -59,6 +80,8 @@ const AddWarehouse: React.FC = () => {
       energy_resource: '',
       cooling_units: null,
       sensors: null,
+      rooms : [],
+      powerSource: [],
       userId: '',
       email: '',
     });

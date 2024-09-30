@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { roomSchema } from '../schemas/room_metadata.js';
 
 const finalwarehouseSchema = new mongoose.Schema({ // Using new mongoose.Schema for clarity
     warehouse_id: {
