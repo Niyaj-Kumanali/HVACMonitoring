@@ -4,7 +4,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 import CustomSnackBar from "../SnackBar/SnackBar";
+import { addGRID, getAllGRID } from "../../api/gridAPIs";
 import { mongoAPI } from "../../api/MongoAPIInstance";
+import { addAllDGSET } from "../../api/dgsetAPIs";
 
 interface FormData {
     powerSource_status: String,
@@ -31,13 +33,20 @@ const AddSwitch = () => {
         }
     };
 
-    const getAllGrid = async () => {
-        const responce = await mongoAPI.get(`/grid/getallgrids`)
-        console.log(responce.data)
+    const getAllGrids = async () => {
+        console.log("hi")
+        const responce = await getAllGRID()
+        console.log(responce.data.grids)
+    }
+
+    const getAllDGSet = async () => {
+        const responce = addAllDGSET();
+        console.log(responce)
     }
 
     useEffect(()=>{
-        getAllGrid()
+        getAllGrids(),
+        getAllDGSet()
     },[formData])
 
     // const handleReset = () => {
@@ -167,3 +176,4 @@ const AddSwitch = () => {
 }
 
 export default AddSwitch
+
