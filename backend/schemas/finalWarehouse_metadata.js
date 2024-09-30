@@ -53,7 +53,7 @@ const finalwarehouseSchema = new mongoose.Schema({ // Using new mongoose.Schema 
         type : []
     },
     powerSource: {
-        type : String
+        type : []
     }
 });
 

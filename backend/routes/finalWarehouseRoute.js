@@ -23,7 +23,7 @@ router.post('/addwarehouse', async (req, res) => {
 });
 
 
-router.get('/Warehouses/:warehouse_id', async (req, res) => {
+router.get('/getwarehouses/:warehouse_id', async (req, res) => {
     try {
         const warehouse = await finalwarehouse.findOne({ warehouse_id: req.params.warehouse_id });
 
@@ -31,27 +31,45 @@ router.get('/Warehouses/:warehouse_id', async (req, res) => {
             return res.status(404).json({ message: 'Warehouse not found' });
         }
 
-        console.log(warehouse);
+        console.log({ warehouse_id: warehouse });
 
-        // Populate room data using the room_id
-        const roomsWithDetails = await Promise.all(
-            warehouse.rooms.map(async (room) => {
-                console.log(room)
-                const roomData = await roomModel.findOne({ room_id: room }).select('room_name racks power_point slot level_slots');
-                return {
-                    details: roomData // Attach the populated room details
-                };
-            })
-        );
+        // Check if rooms array exists and is not empty
+        let roomsWithDetails = [];
+        if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
+            // Populate room data using the room_id
+            roomsWithDetails = await Promise.all(
+                warehouse.rooms.map(async (room) => {
+                    console.log({ rooms: room });
+                    const roomData = await roomModel.findOne({ room_id: room }).select('room_name racks power_point slot level_slots room_id');
+                    return roomData; // Return the room details directly
+                })
+            );
+        }
 
-        const powerSourceDetails = await Promise.all(
-            await powerswitchModel.findOne({})
-        )
+        let powerStatusWithDetails = [];
+        if (Array.isArray(warehouse.powerSource) && warehouse.powerSource.length > 0) {
+            //populate power source using powerSource_id
+            powerStatusWithDetails = await Promise.all(
+                warehouse.powerSource.map(async (power) => {
+                    console.log({power : power});
+                    const powerDetails = await powerswitchModel.findOne({powerSource_id : power}).select('powerSource_id powerSource_status power_source')
+                    return powerDetails;
+                })
+            )
+        }
 
-        // Respond with warehouse data and populated room details
-        res.json({ ...warehouse.toObject(), rooms: roomsWithDetails });
+
+        const { rooms, ...warehouseWithoutRooms } = warehouse.toObject();
+
+        return res.status(200).json({   
+            message: 'Warehouse and room details fetched successfully',
+            warehouse : warehouseWithoutRooms,
+            rooms: roomsWithDetails,
+            powerStatus : powerStatusWithDetails
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error);
+        return res.status(500).json({ message: 'Server error', error });
     }
 });
 
