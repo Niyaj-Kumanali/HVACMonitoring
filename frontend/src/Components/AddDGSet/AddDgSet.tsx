@@ -1,24 +1,97 @@
-import LoadingButton from "@mui/lab/LoadingButton"
-import { FormControl, TextField } from "@mui/material"
+import LoadingButton from "@mui/lab/LoadingButton";
+import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
-// import CustomSnackBar from "../SnackBar/SnackBar";
 import { memo, useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
+import { addDGSET } from "../../api/dgsetAPIs";
+import CustomSnackBar from "../SnackBar/SnackBar";
+
+// Define types for the form data
+interface FormData {
+    dgset_name: string;
+    output_voltage: string;
+    max_output_current: string;
+    fuel_type: string;
+    fuel_capacity: string;
+    output_connector_type: string;
+    motor_type: string;
+}
 
 const AddDgSet: React.FC = () => {
+    const [open, setOpen] = useState<boolean>(false);
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
+    const [message, setMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [addbuttonloader, setAddButtonLoader] = useState<boolean>(false);
+    const [formData, setFormdata] = useState<FormData>({
+        dgset_name: '',
+        output_voltage: '',
+        max_output_current: '',
+        fuel_type: '',
+        fuel_capacity: '',
+        output_connector_type: '',
+        motor_type: ''
+    });
 
-    // const [open, setOpen] = useState(false);
-    // const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-    // const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(true);
+    const handleChange = (event: any) => {
+        const { name, value } = event.target;
+        if (name) {
+            setFormdata({
+                ...formData,
+                [name]: value
+            });
+        }
+    };
+
+    const handleReset = () => {
+        setFormdata({
+            dgset_name: '',
+            output_voltage: '',
+            max_output_current: '',
+            fuel_type: '',
+            fuel_capacity: '',
+            output_connector_type: '',
+            motor_type: ''
+        });
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setAddButtonLoader(true);
+
+        const finalData = {
+            ...formData,
+            max_output_current: Number(formData.max_output_current),
+        };
+
+        try {
+            const response = await addDGSET(finalData);
+            console.log(response.data);
+            setTimeout(() => {
+                handleReset();
+                setAddButtonLoader(false);
+                setOpen(true);
+                setSnackbarType('success');
+                setMessage('DG-Set Added Successfully');
+            }, 1000);
+        } catch (error) {
+            setTimeout(() => {
+                setAddButtonLoader(false);
+                setOpen(true);
+                setSnackbarType('error');
+                setMessage('Failed to Add DG-Set');
+                console.error('Error submitting form:', error);
+            }, 1000);
+        }
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setLoading(false)
-        }, 700)
+            setLoading(false);
+        }, 700);
 
         return () => clearTimeout(timer);
-    }, [])
+    }, []);
 
     return (
         <>
@@ -31,123 +104,81 @@ const AddDgSet: React.FC = () => {
                     <div className="menu-data">
                         <div className="warehouse">
                             <h3>Add DG Set</h3>
-                            <form className="warehouse-form">
+                            <form className="warehouse-form" onSubmit={handleSubmit}>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Vehicle Number"
-                                        name="vehicle_number"
-                                        // value={formData.vehicle_number}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        label="Name"
+                                        name="dgset_name"
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Vehicle Name"
-                                        name="vehicle_name"
-                                        // value={formData.vehicle_name}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
-                                        className="textfieldss"
-                                    />
-                                </FormControl>
-                                <FormControl fullWidth margin="normal">
-                                    <TextField
-                                        label="Length"
-                                        name="vehicle_dimensions.length"
+                                        label="Output Voltage"
+                                        name="output_voltage"
                                         type="number"
-                                        // value={formData.vehicle_dimensions.length}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Width"
-                                        name="vehicle_dimensions.width"
+                                        label="Max Output Current"
+                                        name="max_output_current"
                                         type="number"
-                                        // value={formData.vehicle_dimensions.width}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Height"
-                                        name="vehicle_dimensions.height"
-                                        type="number"
-                                        // value={formData.vehicle_dimensions.height}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        label="Fuel Type"
+                                        name="fuel_type"
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Driver Name"
-                                        name="driver_details.driver_name"
-                                        // value={formData.Driver_details.driver_name}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        label="Fuel Capacity"
+                                        name="fuel_capacity"
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
-                                        label="Driver Contact No"
-                                        name="driver_details.driver_contact_no"
-                                        type="number"
-                                        // value={formData.Driver_details.driver_contact_no}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                        label="Output Connector Type"
+                                        name="output_connector_type"
+                                        onChange={handleChange}
                                         className="textfieldss"
                                     />
                                 </FormControl>
                                 <FormControl fullWidth margin="normal">
-                                    <TextField
-                                        label="Licence ID"
-                                        name="driver_details.licence_id"
-                                        // value={formData.Driver_details.licence_id}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
+                                    <InputLabel className="input-label-select" id="warehouse-label">Select Motor Type</InputLabel>
+                                    <Select
+                                        labelId="warehouse-label"
+                                        id="warehouse-select"
+                                        name="motor_type"
+                                        onChange={handleChange}
                                         className="textfieldss"
-                                    />
-                                </FormControl>
-                                <FormControl fullWidth margin="normal">
-                                    <TextField
-                                        label="Cooling Units"
-                                        name="cooling_units"
-                                        type="number"
-                                        // value={formData.cooling_units ?? ''}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
-                                        className="textfieldss"
-                                    />
-                                </FormControl>
-                                <FormControl fullWidth margin="normal">
-                                    <TextField
-                                        label="Sensors"
-                                        name="sensors"
-                                        type="number"
-                                        // value={formData.sensors ?? ''}
-                                        // onChange={handleChange}
-                                        // disabled={submitted}
-                                        className="textfieldss"
-                                    />
+                                    >
+                                        <MenuItem value={"BLDC (Brushless DC) Motors"}>BLDC (Brushless DC) Motors</MenuItem>
+                                        <MenuItem value={"SRM (Switched Reluctance Motors)"}>SRM (Switched Reluctance Motors)</MenuItem>
+                                        <MenuItem value={"PMSM (Permanent Magnet Synchronous Motors)"}>PMSM (Permanent Magnet Synchronous Motors)</MenuItem>
+                                    </Select>
                                 </FormControl>
                                 <div className="sub-btn">
                                     <LoadingButton
                                         size="small"
                                         type="submit"
                                         color="secondary"
-                                        // loading={loading}
+                                        loading={addbuttonloader}
                                         loadingPosition="start"
                                         startIcon={<SaveIcon />}
                                         variant="contained"
-                                        // disabled={loading}
+                                        disabled={addbuttonloader}
                                         className="btn-save"
                                     >
                                         <span>Save</span>
@@ -158,14 +189,14 @@ const AddDgSet: React.FC = () => {
                     </div>
                 )
             }
-            {/* <CustomSnackBar
+            <CustomSnackBar
                 open={open}
                 setOpen={setOpen}
                 snackbarType={snackbarType}
                 message={message}
-            /> */}
+            />
         </>
-    )
-}
+    );
+};
 
-export default memo(AddDgSet) 
+export default memo(AddDgSet);

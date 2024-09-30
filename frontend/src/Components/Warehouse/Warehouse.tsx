@@ -301,7 +301,7 @@ const Warehouse: React.FC = () => {
 
             <div
               className={
-                buttonvisible ? 'warehouse-data' : 'del-btn-warehouse-disalble'
+                buttonvisible ? 'warehouse' : 'del-btn-warehouse-disalble'
               }
             >
               <h3>Warehouse: {formData.warehouse_name}</h3>

@@ -29,6 +29,7 @@ import AddDashboard from './Components/Add-Dashboard/AddDashboard';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
 import AddRooms from './Components/Warehouse/AddRooms';
 import AddDgSet from './Components/AddDGSet/AddDgSet';
+import AddGrid from './Components/AddGrid/AddGrid';
 
 const Router = createBrowserRouter([
   {
@@ -152,6 +153,10 @@ const Router = createBrowserRouter([
       {
         path: '/addDgset',
         element: <AddDgSet />,
+      },
+      {
+        path: '/addGrid',
+        element: <AddGrid />,
       }
     ],
   },
