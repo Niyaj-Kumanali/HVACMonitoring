@@ -1,9 +1,12 @@
 import { mongoAPI } from "./MongoAPIInstance"
 
 export const addSwitch = async (body:any) => {
-    const response = mongoAPI.put(`/powerswitch/addpowerswitch`, body)
+    const response = mongoAPI.post(`/powerswitch/addpowerswitch`, body)
     return response
 }
+
+export const updateSwitch = async (body:any) => {
+    const response = mongoAPI.put(`/powerswitch/updateswitch`, body)
 
 export const getAllSwitchs = async () => {
     const response = mongoAPI.get(`/powerswitch/getallpowerswitches`)
@@ -11,6 +14,6 @@ export const getAllSwitchs = async () => {
 }
 
 export const getSwitchByPowerSourceId = async (body:any) => {
-    const response = mongoAPI.put(`/powerswitch/updateswitch`, body)
+    const response = mongoAPI.get(`/powerswitch/updateswitch`, body)
     return response
 }
