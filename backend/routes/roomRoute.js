@@ -8,11 +8,11 @@ router.post('/addroom', async (req, res) => {
 
         // Check if a room with the same name already exists
         const existingRoom = await roomModel.findOne({
-            room_name: body.room_name
+            room_no: body.room_no
         });
 
         if (existingRoom) {
-            return res.status(409).send({ message: 'Room name must be unique.' });
+            return res.status(409).send({ message: 'Room no must be unique.' });
         }
 
         const newRoom = new roomModel(body);
@@ -24,9 +24,10 @@ router.post('/addroom', async (req, res) => {
 });
 
 
-router.put('/updatelevelslots', async (req, res) => {
+router.put('/updatelevelslots/:roomId', async (req, res) => {
     try {
-        const { roomId, level_slot } = req.body;
+        const { roomId } = req.params;
+        const {  level_slot } = req.body;
 
         // Find the room by the roomId
         const roomToUpdate = await roomModel.findOne({ room_id: roomId });
