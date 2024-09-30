@@ -5,7 +5,12 @@ export const addSwitch = async (body:any) => {
     return response
 }
 
-export const updateSwitch = async (body:any) => {
+export const getAllSwitchs = async () => {
+    const response = mongoAPI.get(`/powerswitch/getallpowerswitches`)
+    return response
+}
+
+export const getSwitchByPowerSourceId = async (body:any) => {
     const response = mongoAPI.put(`/powerswitch/updateswitch`, body)
     return response
 }
