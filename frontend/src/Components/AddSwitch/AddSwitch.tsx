@@ -6,7 +6,7 @@ import Loader from "../Loader/Loader";
 import CustomSnackBar from "../SnackBar/SnackBar";
 import { addGRID, getAllGRID } from "../../api/gridAPIs";
 import { mongoAPI } from "../../api/MongoAPIInstance";
-import { addAllDGSET } from "../../api/dgsetAPIs";
+import { getAllDGSET } from "../../api/dgsetAPIs";
 
 interface FormData {
     powerSource_status: String,
@@ -40,7 +40,7 @@ const AddSwitch = () => {
     }
 
     const getAllDGSet = async () => {
-        const responce = addAllDGSET();
+        const responce = await getAllDGSET();
         console.log(responce)
     }
 

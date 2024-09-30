@@ -72,6 +72,9 @@ const Accountinfo = () => {
                     }
                 }
             }
+            else {
+                setMessage('Network error. Please check your connection.')
+            }
         } finally {
             setTimeout(() => {
                 setOpen(true);
