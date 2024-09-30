@@ -41,8 +41,6 @@ const App = () => {
     validateToken();
   }, [navigate, dispatch, accesstoken]);
 
-  console.log("App")
-
   return (
     <>
       <Header />

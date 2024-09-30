@@ -18,7 +18,6 @@ const Header: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const {email} = useSelector((state: RootState) => state.user.user)
 
-  console.log("Header")
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

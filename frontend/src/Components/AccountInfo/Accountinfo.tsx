@@ -10,6 +10,7 @@ import Loader from '../Loader/Loader';
 import { User } from '../../types/thingsboardTypes';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 const Accountinfo = () => {
   const [currentUser, setCurrentUser] = useState<User>({});
@@ -19,6 +20,7 @@ const Accountinfo = () => {
   const [message, setMessage] = useState('');
   const [snackbarType, setSnackbarType] = useState('success');
   const navigate = useNavigate();
+  console.log("accountinfo")
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -196,4 +198,4 @@ const Accountinfo = () => {
   );
 };
 
-export default Accountinfo;
+export default React.memo(Accountinfo);

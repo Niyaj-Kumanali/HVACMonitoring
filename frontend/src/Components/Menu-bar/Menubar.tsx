@@ -35,7 +35,6 @@ const Menubar = () => {
     const isMenubar = useSelector((state: RootState) => state.user.menubar)
     const [isUserSelectionOpen, setIsUserSelectionOpen] = useState(isMenubar || false);
 
-    console.log("menu")
 
     function getClassName(width: number) {
         return width <= 700 ? 'sidebar2' : 'side-bar';
