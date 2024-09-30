@@ -1,5 +1,8 @@
 import express from 'express';
 import warehouse from '../schemas/warehouse_metadata.js';
+import { roomModel } from '../schemas/room_metadata.js';
+import { powerswitchModel } from '../schemas/powerswitch_metadata.js';
+
 const router = express.Router();
 
 /**
@@ -216,6 +219,7 @@ router.post('/addwarehouse', async (req, res) => {
  *       500:
  *         description: Error retrieving warehouse data
  */
+
 router.get('/getallwarehouse', async (req, res) => {
   try {
     const getAllWarehouse = await warehouse.find();
@@ -228,6 +232,61 @@ router.get('/getallwarehouse', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving warehouse data', error });
   }
 });
+
+
+// router.get('/getallwarehouse', async (req, res) => {
+//   try {
+//       const getAllWarehouse = await warehouse.find(); // Fetch all warehouses
+
+//       if (getAllWarehouse.length === 0) { // Check if there are no warehouses
+//           return res.status(404).json({ message: 'No warehouses found' });
+//       }
+
+//       // Initialize arrays to hold the results
+//       let warehousesWithDetails = await Promise.all(
+//           getAllWarehouse.map(async (warehouse) => {
+//               // Populate room data using the room_id
+//               let roomsWithDetails = [];
+//               if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
+//                   roomsWithDetails = await Promise.all(
+//                       warehouse.rooms.map(async (room) => {
+//                           const roomData = await roomModel.findOne({ room_id: room.room_id }).select('room_name racks power_point slot level_slots room_id');
+//                           return roomData; // Return the room details
+//                       })
+//                   );
+//               }
+
+//               // Populate power source data using powerSource_id
+//               let powerStatusWithDetails = [];
+//               if (Array.isArray(warehouse.powerSource) && warehouse.powerSource.length > 0) {
+//                   powerStatusWithDetails = await Promise.all(
+//                       warehouse.powerSource.map(async (power) => {
+//                           const powerDetails = await powerswitchModel.findOne({ powerSource_id: power.powerSource_id }).select('powerSource_id powerSource_status power_source');
+//                           return powerDetails;
+//                       })
+//                   );
+//               }
+
+//               // Return the warehouse data with populated rooms and power sources
+//               const { rooms, powerSource, ...warehouseWithoutDetails } = warehouse.toObject(); // Convert to plain object
+//               return {
+//                   ...warehouseWithoutDetails,
+//                   rooms: roomsWithDetails,
+//                   powerStatus: powerStatusWithDetails
+//               };
+//           })
+//       );
+
+//       return res.status(200).json({
+//           message: 'Warehouse, room, and power source details fetched successfully',
+//           warehouses: warehousesWithDetails,
+//       });
+//   } catch (error) {
+//       console.error(error); // Log the error for debugging
+//       res.status(500).json({ message: 'Error retrieving warehouse data', error });
+//   }
+// });
+
 
 /**
  * @swagger
