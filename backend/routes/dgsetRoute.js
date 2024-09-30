@@ -31,6 +31,26 @@ router.get('/getalldgsets', async (req, res) => {
     }
 });
 
+router.get('/getdgset/:dgset_id', async (req, res) => {
+    const { dgset_id } = req.params;
+
+    try {
+        const dgset = await dgsetModel.findOne({ dgset_id }); // Fetch the DGSet with the given dgset_id
+
+        if (!dgset) {
+            return res.status(404).json({ message: 'DGSet not found' });
+        }
+
+        return res.status(200).json({
+            message: 'DGSet fetched successfully',
+            dgset
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error', error });
+    }
+});
+
 
 router.put('/updatedgset/:dgset_id', async (req, res) => {
     const { dgset_id } = req.params;
