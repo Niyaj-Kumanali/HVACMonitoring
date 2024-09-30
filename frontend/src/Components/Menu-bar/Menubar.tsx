@@ -135,6 +135,9 @@ const Menubar = () => {
                     <li onClick={() => handleLinkClick('/addGrid')}>
                         <AddIcon className="speedicon" />Add Grid
                     </li>
+                    <li onClick={() => handleLinkClick('/addSwitch')}>
+                        <AddIcon className="speedicon" />Add Switch
+                    </li>
                     <li onClick={() => handleLinkClick('/addVehicle')}>
                         <AddIcon className="speedicon" />Add Vehicle
                     </li>
