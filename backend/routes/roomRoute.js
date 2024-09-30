@@ -24,6 +24,26 @@ router.post('/addroom', async (req, res) => {
 });
 
 
+router.get('/getallrooms', async (req, res) => {
+    try {
+        // Fetch all rooms from the database
+        const rooms = await roomModel.find();
+
+        // Check if rooms are found
+        if (rooms.length === 0) {
+            return res.status(404).json({ message: 'No rooms found.' });
+        }
+
+        // Send the rooms in the response
+        res.status(200).json({
+            message: 'Rooms fetched successfully',
+            rooms
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch rooms', details: error.message });
+    }
+});
+
 router.put('/updatelevelslots/:roomId', async (req, res) => {
     try {
         const { roomId } = req.params;

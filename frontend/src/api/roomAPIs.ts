@@ -5,6 +5,11 @@ export const addRoom = async(body:any)=> {
     return response
 }
 
+export const getAllRooms = async()=> {
+    const response = await mongoAPI.get(`/room/addroom`)
+    return response
+}
+
 export const updateLevelSlots = async(body:any)=> {
     const response = await mongoAPI.put(`/room/update`, body)
     return response
