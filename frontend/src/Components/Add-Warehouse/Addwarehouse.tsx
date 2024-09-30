@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './Addwarehouse.css';
 import {
+  Autocomplete,
+  FilledTextFieldProps,
   FormControl,
+  OutlinedTextFieldProps,
+  StandardTextFieldProps,
   TextField,
+  TextFieldVariants,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -18,6 +23,8 @@ import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate } from 'react-router-dom';
 import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 import { getAllRooms } from '../../api/roomAPIs';
+import { getAllSwitchs } from '../../api/powerSwitchAPIs';
+import { JSX } from 'react/jsx-runtime';
 
 const AddWarehouse: React.FC = () => {
   const navigate = useNavigate()
@@ -33,7 +40,7 @@ const AddWarehouse: React.FC = () => {
     energy_resource: '',
     cooling_units: null,
     sensors: null,
-    rooms : [],
+    rooms: [],
     powerSource: [],
     userId: '',
     email: '',
@@ -42,23 +49,36 @@ const AddWarehouse: React.FC = () => {
   const getAllRoomsfunc = async () => {
     try {
       const response = await getAllRooms();
-      console.log(response.data);
+      setAllRooms(response.data.rooms);
+      console.log(response.data.rooms);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
   };
 
+  const getAllPowerSourcesfunc = async () => {
+    try {
+      const response = await getAllSwitchs();
+      setAllSwitches(response.data.powerSwitches);
+      console.log(response.data.powerSwitches);
+    } catch (error) {
+      console.error("Error fetching switches:", error);
+    }
+  }
+
   useEffect(() => {
     const fetchRooms = async () => {
-      await getAllRoomsfunc();
+      await Promise.all([getAllRoomsfunc(), getAllPowerSourcesfunc()]);
     };
 
     fetchRooms();
   }, []);
-  
+
 
   const currentUser = useSelector((state: RootState) => state.user.user);
 
+  const [allRooms, setAllRooms] = useState([]);
+  const [allSwitches, setAllSwitches] = useState([]);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,7 +100,7 @@ const AddWarehouse: React.FC = () => {
       energy_resource: '',
       cooling_units: null,
       sensors: null,
-      rooms : [],
+      rooms: [],
       powerSource: [],
       userId: '',
       email: '',
@@ -148,7 +168,7 @@ const AddWarehouse: React.FC = () => {
         setMessage('Warehouse Added Successfully');
         fetchAllWarehouses();
       }, 1000);
-    } catch (error:any) {
+    } catch (error: any) {
       setSnackbarType('error');
 
       if (error.status === 401) {
@@ -157,7 +177,7 @@ const AddWarehouse: React.FC = () => {
         setTimeout(() => {
           navigate('/login');
         }, 2000);
-      }else{
+      } else {
         setTimeout(() => {
           setMessage('Failed to Add Warehouse');
           setLoading(false);
@@ -284,6 +304,38 @@ const AddWarehouse: React.FC = () => {
                 onChange={handleChange}
                 disabled={submitted}
                 className="textfieldss"
+              />
+            </FormControl>
+            <FormControl>
+              <Autocomplete
+                options={allRooms} // Use the fetched rooms as options
+                getOptionLabel={(option: { room_name: any; }) => option.room_name || ''} // Adjust according to your room object structure
+                onChange={(event: any, value: any) => setFormData({ ...formData, rooms: value })}
+                renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
+                  <TextField
+                    {...params}
+                    label="Select Room"
+                    variant="outlined"
+                    disabled={submitted}
+                    className="textfieldss"
+                  />
+                )}
+              />
+            </FormControl>
+            <FormControl>
+              <Autocomplete
+                options={allSwitches} // Use the fetched rooms as options
+                getOptionLabel={(option: { powerSource_id: any; }) => option.powerSource_id || ''} // Adjust according to your room object structure
+                onChange={(event: any, value: any) => setFormData({ ...formData, powerSource: value })}
+                renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
+                  <TextField
+                    {...params}
+                    label="Select Switches"
+                    variant="outlined"
+                    disabled={submitted}
+                    className="textfieldss"
+                  />
+                )}
               />
             </FormControl>
             <div className="sub-btn">

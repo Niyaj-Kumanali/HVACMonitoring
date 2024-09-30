@@ -6,7 +6,7 @@ export const addRoom = async(body:any)=> {
 }
 
 export const getAllRooms = async()=> {
-    const response = await mongoAPI.get(`/room/addroom`)
+    const response = await mongoAPI.get(`/room/getallrooms`)
     return response
 }
 
