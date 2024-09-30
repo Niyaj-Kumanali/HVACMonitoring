@@ -6,6 +6,6 @@ export const addDGSET = async (body:any) => {
 }
 
 export const addAllDGSET = async () => {
-    const response = await mongoAPI.get(`/dgset/getalldgset`)
+    const response = await mongoAPI.get(`/dgset/getalldgsets`)
     return response
 }
