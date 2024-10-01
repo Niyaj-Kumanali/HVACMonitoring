@@ -7,7 +7,7 @@ router.post('/addgrid', async(req, res) => {
     try {
         const newgrid = new gridModel(req.body);
         await newgrid.save();
-        res.status(201).send(newgrid);
+        res.status(200).send(newgrid);
     } catch (error) {
         res.status(500).send({message : "failed to add Grid", details : error.message})
     }
@@ -19,10 +19,7 @@ router.get('/getallgrids', async (req, res) => {
         if (!grids || grids.length === 0) {
             return res.status(404).json({ message: 'No grids found' });
         }
-        res.status(200).json({
-            message: 'Grids fetched successfully',
-            grids
-        });
+        res.status(200).json(grids);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch grids', details: error.message });
     }
@@ -38,10 +35,7 @@ router.get('/getgrid/:grid_id', async (req, res) => {
             return res.status(404).json({ message: 'Grid not found' });
         }
 
-        res.status(200).json({
-            message: 'Grid fetched successfully',
-            grid
-        });
+        res.status(200).json(grid);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch grid', details: error.message });
     }
@@ -61,10 +55,7 @@ router.put('/updategrid/:grid_id', async (req, res) => {
             return res.status(404).json({ message: 'Grid not found' });
         }
 
-        res.status(200).json({
-            message: 'Grid updated successfully',
-            grid: updatedGrid
-        });
+        res.status(200).json(updatedGrid);
     } catch (error) {
         res.status(500).json({ message: 'Failed to update grid', details: error.message });
     }
@@ -82,8 +73,7 @@ router.delete('/deletegrid/:grid_id', async (req, res) => {
         }
 
         res.status(200).json({
-            message: 'Grid deleted successfully',
-            grid: deletedGrid
+            message: `Grid deleted succesfully ${deletedGrid.grid_id}`,
         });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete grid', details: error.message });

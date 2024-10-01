@@ -22,10 +22,7 @@ router.get('/getalldgsets', async (req, res) => {
         if (!dgsets || dgsets.length === 0) {
             return res.status(404).json({ message: 'No DGSets found' });
         }
-        res.status(200).json({
-            message: 'DGSets fetched successfully',
-            dgsets
-        });
+        res.status(200).json(dgsets);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch DGSets', details: error.message });
     }
@@ -41,10 +38,7 @@ router.get('/getdgset/:dgset_id', async (req, res) => {
             return res.status(404).json({ message: 'DGSet not found' });
         }
 
-        return res.status(200).json({
-            message: 'DGSet fetched successfully',
-            dgset
-        });
+        return res.status(200).json(dgsets);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Server error', error });
@@ -66,10 +60,7 @@ router.put('/updatedgset/:dgset_id', async (req, res) => {
             return res.status(404).json({ message: 'DGSet not found' });
         }
 
-        return res.status(200).json({
-            message: 'DGSet updated successfully',
-            dgset: updatedDgset
-        });
+        return res.status(200).json(updatedDgset);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Server error', error });
@@ -90,7 +81,6 @@ router.delete('/deletedgset/:dgset_id', async (req, res) => {
 
         return res.status(200).json({
             message: 'DGSet deleted successfully',
-            dgset: deletedDgset
         });
     } catch (error) {
         console.error(error);

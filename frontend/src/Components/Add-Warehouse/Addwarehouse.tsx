@@ -4,8 +4,13 @@ import {
   Autocomplete,
   FilledTextFieldProps,
   FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
   OutlinedTextFieldProps,
+  Select,
   StandardTextFieldProps,
+  Switch,
   TextField,
   TextFieldVariants,
 } from '@mui/material';
@@ -15,6 +20,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { set_warehouse_count } from '../../Redux/Action/Action';
 import { RootState } from '../../Redux/Reducer';
 import {
+  Device,
+  dgset,
+  grid,
+  rooms,
   WarehouseData,
   WarehouseDimensions,
 } from '../../types/thingsboardTypes';
@@ -23,8 +32,9 @@ import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate } from 'react-router-dom';
 import { addWarehouse, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
 import { getAllRooms } from '../../api/roomAPIs';
-import { getAllSwitchs } from '../../api/powerSwitchAPIs';
-import { JSX } from 'react/jsx-runtime';
+import { getAllDGSET } from '../../api/dgsetAPIs';
+import { getAllGRID } from '../../api/gridAPIs';
+import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
 
 const AddWarehouse: React.FC = () => {
   const navigate = useNavigate()
@@ -41,7 +51,10 @@ const AddWarehouse: React.FC = () => {
     cooling_units: null,
     sensors: null,
     rooms: [],
-    powerSource: [],
+    dgset: [],
+    grid: [],
+    devices: [],
+    powerSource: false,
     userId: '',
     email: '',
   });
@@ -49,36 +62,76 @@ const AddWarehouse: React.FC = () => {
   const getAllRoomsfunc = async () => {
     try {
       const response = await getAllRooms();
-      setAllRooms(response.data.rooms);
-      console.log(response.data.rooms);
+      setAllRooms(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
   };
 
-  const getAllPowerSourcesfunc = async () => {
+  const getAllDGsetsfunc = async () => {
     try {
-      const response = await getAllSwitchs();
-      setAllSwitches(response.data.powerSwitches);
-      console.log(response.data.powerSwitches);
+      const response = await getAllDGSET();
+      setAllDGsets(response.data);
+      // console.log(response.data)
     } catch (error) {
-      console.error("Error fetching switches:", error);
+      console.error("Error fetching DGsets:", error);
     }
   }
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      await Promise.all([getAllRoomsfunc(), getAllPowerSourcesfunc()]);
+  const getAllGridsfunc = async () => {
+    try {
+      const response = await getAllGRID();
+      setAllGrids(response.data);
+      // console.log(response);
+    } catch (error) {
+      console.error("Error fetching Grids:", error);
+    }
+  }
+
+  // const getAllPowerSourcesfunc = async () => {
+  //   try {
+  //     const response = await getAllSwitchs();
+  //     setAllSwitches(response.data.powerSwitches);
+  //     console.log(response.data.powerSwitches);
+  //   } catch (error) {
+  //     console.error("Error fetching switches:", error);
+  //   }
+  // }
+
+
+    const fetchDevices = async () => {
+        try {
+            const params = {
+                pageSize: 1000,
+                page: 0,
+                sortProperty: 'name',
+                sortOrder: 'ASC',
+            };
+
+            const response = await getTenantDeviceInfos(params);
+            setDevices(response.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch devices', error);
+        }
     };
 
-    fetchRooms();
+
+  useEffect(() => {
+    const fetchRoomsGridDg = async () => {
+      await Promise.all([getAllRoomsfunc(), getAllDGsetsfunc(), getAllGridsfunc(), fetchDevices()]);
+    };
+
+    fetchRoomsGridDg();
   }, []);
 
 
   const currentUser = useSelector((state: RootState) => state.user.user);
 
   const [allRooms, setAllRooms] = useState([]);
-  const [allSwitches, setAllSwitches] = useState([]);
+  const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
+  const [allGrids, setAllGrids] = useState<grid[]>([]);
+  const [devices, setDevices] = useState<Device[]>([])
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,14 +154,17 @@ const AddWarehouse: React.FC = () => {
       cooling_units: null,
       sensors: null,
       rooms: [],
-      powerSource: [],
+      dgset: [],
+      grid: [],
+      devices: [],
+      powerSource: false,
       userId: '',
       email: '',
     });
     setSubmitted(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     if (name.startsWith('warehouse_dimensions.')) {
       const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
@@ -131,10 +187,19 @@ const AddWarehouse: React.FC = () => {
       } else {
         setFormData({
           ...formData,
-          [name]: value,
+          [name]: value
         });
       }
     }
+  };
+
+  const handlePowerSourceToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      powerSource: event.target.checked, // true for on (enable DGSet), false for off (enable Grid)
+      // dgset: event.target.checked ? prev.dgset : [], // Clear dgset if turning off
+      // grid: !event.target.checked ? prev.grid : [],  // Clear grid if turning on
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -158,7 +223,8 @@ const AddWarehouse: React.FC = () => {
 
     try {
       await getCurrentUser()
-      await addWarehouse(JSON.stringify(convertedData));
+      const response = await addWarehouse(JSON.stringify(convertedData));
+      await updateDeviceLabels(response.data.warehouse_id, devices)
 
       setTimeout(() => {
         handleReset();
@@ -306,7 +372,105 @@ const AddWarehouse: React.FC = () => {
                 className="textfieldss"
               />
             </FormControl>
-            <FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel className="input-label-select" id="device-label">Available Devices</InputLabel>
+              <Select
+                labelId="device-label"
+                id="device-select"
+                name="devices"
+                value={devices || []}
+                label={"Available Devices"}
+                onChange={(e:any)=> setDevices(e.target.value)}
+                className="textfieldss"
+                required
+                multiple
+              >
+                {devices.map((item: Device, index: number) => (
+                  <MenuItem key={index} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel className="input-label-select" id="switch-label">Available Rooms</InputLabel>
+              <Select
+                labelId="Room-label"
+                id="Room-select"
+                name="rooms"
+                value={formData.rooms}
+                label={"Available rooms"}
+                onChange={handleChange}
+                className="textfieldss"
+                required
+                multiple
+              >
+                {allRooms.map((item: rooms, index: number) => (
+                  <MenuItem key={index} value={item.room_id}>
+                    {item.room_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel className="input-label-select" id="switch-label">Available Dgset</InputLabel>
+              <Select
+                labelId="DGset-label"
+                id="Dgset-select"
+                name="dgset"
+                value={formData.dgset}
+                label={"Available DGset"}
+                onChange={handleChange}
+                className="textfieldss"
+                required
+                multiple
+              >
+                {allDGsets.map((item: dgset, index: number) => (
+                  <MenuItem key={index} value={item.dgset_id}>
+                    {item.dgset_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel className="input-label-select" id="switch-label">Available Grid</InputLabel>
+              <Select
+                labelId="Grid-label"
+                id="Grid-select"
+                name="grid"
+                value={formData.grid}
+                label={"Available Grid"}
+                onChange={handleChange}
+                className="textfieldss"
+                required
+                multiple
+              >
+                {allGrids.map((item: grid, index: number) => (
+                  <MenuItem key={index} value={item.grid_id}>
+                    {item.grid_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.powerSource}
+                  onChange={handlePowerSourceToggle}
+                  name="powerSource"
+                  color="primary"
+                />
+              }
+              label={`Power Source: ${formData.powerSource ? "DGSET" : "GRID"}`}
+            />
+
+
+            {/* <FormControl>
               <Autocomplete
                 options={allRooms} // Use the fetched rooms as options
                 getOptionLabel={(option: { room_name: any; }) => option.room_name || ''} // Adjust according to your room object structure
@@ -324,8 +488,8 @@ const AddWarehouse: React.FC = () => {
                   />
                 )}
               />
-            </FormControl>
-            <FormControl>
+            </FormControl> */}
+            {/* <FormControl>
               <Autocomplete
                 options={allSwitches} // Use the fetched rooms as options
                 getOptionLabel={(option: { powerSource_id: any; }) => option.powerSource_id || ''} // Adjust according to your room object structure
@@ -343,7 +507,8 @@ const AddWarehouse: React.FC = () => {
                   />
                 )}
               />
-            </FormControl>
+            </FormControl> */}
+
             <div className="sub-btn">
               <LoadingButton
                 size="small"
@@ -373,3 +538,4 @@ const AddWarehouse: React.FC = () => {
 };
 
 export default AddWarehouse;
+

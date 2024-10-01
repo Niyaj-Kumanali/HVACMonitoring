@@ -197,6 +197,38 @@ export interface WarehouseDimensions {
   height: string;
 }
 
+export interface dgset {
+  dgset_id: string;              
+  dgset_name: string;            
+  fuel_capacity: string;         
+  fuel_type: string;             
+  max_output_current: number;    
+  motor_type: string;            
+  output_connector_type: string; 
+  output_voltage: number; 
+}
+
+export interface grid {
+  grid_id: string;               // Unique identifier for the grid
+  grid_name: string;             // Name of the grid
+  max_output_current: number;     // Maximum output current (e.g., 200)
+  output_connector_type: string;  // Type of output connector (e.g., "Type 1")
+  output_voltage: number;        // Output voltage (e.g., 400)
+}
+
+export interface LevelSlots {
+  [level: number]: number[]; // Dynamic keys for levels with an array of numbers
+}
+
+export interface rooms {
+  room_id: string;            // Unique identifier for the room
+  room_name: string;          // Name of the room
+  racks: number;              // Number of racks in the room
+  power_point: number;        // Power point (could represent a power rating or count)
+  slot: number;               // Slot number in the room
+  level_slots: LevelSlots;    // Level slots with dynamic levels as keys
+}
+
 export interface WarehouseData {
   warehouse_name: string;
   latitude: string;
@@ -205,10 +237,13 @@ export interface WarehouseData {
   energy_resource: string;
   cooling_units: string | null;
   sensors: string | null;
-  rooms : [];
-  powerSource: [];
+  rooms : rooms[];
+  dgset : dgset[];
+  grid : grid[];
+  powerSource: boolean;
   userId: string;
   email: string;
+  devices: string[]
 }
 
 export interface VehicleDimensions {
