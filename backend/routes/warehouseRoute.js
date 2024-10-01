@@ -201,7 +201,7 @@ router.post('/addwarehouse', async (req, res) => {
 
     const newWarehouse = new warehouse(req.body);
     await newWarehouse.save();
-    res.status(201).send(newWarehouse);
+    res.status(200).send(newWarehouse);
   } catch (error) {
     res.status(400).send(error);
   }

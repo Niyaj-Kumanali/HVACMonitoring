@@ -34,7 +34,9 @@ const Warehouse: React.FC = () => {
     userId: '',
     email: '',
     rooms: [],
-    powerSource: []
+    dgset : [],
+    grid : [],
+    powerSource: Object,
 
   });
 
@@ -110,7 +112,9 @@ const Warehouse: React.FC = () => {
       userId: formData.userId,
       email: formData.email,
       rooms: [],
-      powerSource: []
+      dgset : [],
+      grid : [],
+      powerSource: Object,
     });
     setSubmitted(false);
   };
