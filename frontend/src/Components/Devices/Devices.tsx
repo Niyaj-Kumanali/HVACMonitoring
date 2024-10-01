@@ -95,19 +95,23 @@ const Devices: React.FC = () => {
                         <div className="devices">
                             <div>
                                 <h2 className="devicesH2">
-                                    <KeyboardBackspaceIcon onClick={goBack} />
-                                    Devices
+                                    <div className='div1-h2device'>
+                                        <KeyboardBackspaceIcon onClick={goBack} />
+                                        Devices
+                                    </div>
+                                    <TextField
+                                        label="Search Device"
+                                        variant="outlined"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        size="small"
+                                        className='textfieldss'
+                                        sx={{
+                                            minWidth: '200px',
+                                        }}
+                                    />
                                 </h2>
-                                <TextField
-                                    label="Search Warehouses"
-                                    variant="outlined"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    size="small"
-                                    sx={{
-                                        minWidth: '200px',
-                                    }}
-                                />
+                                
                                 {errorMessage ? (
                                     <div className="error-message">{errorMessage}</div>
                                 ) : (
