@@ -16,6 +16,8 @@
     "@mui/lab": "^6.0.0-beta.9",
     "@mui/material": "^6.0.2",
     "@mui/x-charts": "^7.16.0",
+    "@react-three/drei": "^9.114.0",
+    "@react-three/fiber": "^8.17.8",
     "@types/leaflet.markercluster": "^1.5.4",
     "@types/node": "^22.5.5",
     "@types/three": "^0.168.0",

@@ -42,7 +42,7 @@ const Dashboards = () => {
   const currentuser = useSelector((state: RootState) => state.user.user);
   const [dashboards, setDashboards] = useState<DashboardType[]>([]);
   const [open, setOpen] = useState(false);
-  const [loading, setLoader] = useState(false);
+  const [loading, setLoader] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState<string>('');
   const [pageCount, setPageCount] = useState<number>(1);
