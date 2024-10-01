@@ -308,8 +308,8 @@ const AddWarehouse: React.FC = () => {
             </FormControl>
             <FormControl>
               <Autocomplete
-                options={allRooms} // Use the fetched rooms as options
-                getOptionLabel={(option: { room_name: any; }) => option.room_name || ''} // Adjust according to your room object structure
+                options={allRooms}
+                getOptionLabel={(option: { room_name: any; }) => option.room_name || ''}
                 onChange={(event: any, value: any) => setFormData({ ...formData, rooms: value })}
                 renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
                   <TextField
