@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './Addwarehouse.css';
 import {
-  Autocomplete,
-  FilledTextFieldProps,
   FormControl,
   FormControlLabel,
   InputLabel,
   MenuItem,
-  OutlinedTextFieldProps,
-  Select,
-  StandardTextFieldProps,
-  Switch,
   TextField,
-  TextFieldVariants,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -224,7 +217,7 @@ const AddWarehouse: React.FC = () => {
     try {
       await getCurrentUser()
       const response = await addWarehouse(JSON.stringify(convertedData));
-      await updateDeviceLabels(response.data.warehouse_id, devices)
+      await updateDeviceLabels({id: response.data.warehouse_id, devices: formData.devices})
 
       setTimeout(() => {
         handleReset();
@@ -381,7 +374,7 @@ const AddWarehouse: React.FC = () => {
                 name="devices"
                 value={devices || []}
                 label={"Available Devices"}
-                onChange={(e:any)=> setDevices(e.target.value)}
+                onChange={(e:any)=> setFormData(prev => ({...prev, devices: e.target.value}))}
                 className="textfieldss"
                 required
                 multiple
