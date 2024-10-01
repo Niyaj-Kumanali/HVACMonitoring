@@ -169,7 +169,6 @@ router.put("/updateswitch", async (req, res) => {
     }
 });
 
-// Delete a Power Switch
 router.put("/updateswitch/:powerSource_id", async (req, res) => {
     const { powerSource_status, dgset_id, grid_id } = req.body;
     const { powerSource_id } = req.params; // Extracting powerSource_id from the URL parameters
