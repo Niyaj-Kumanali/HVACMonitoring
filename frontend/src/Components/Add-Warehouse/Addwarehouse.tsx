@@ -308,6 +308,7 @@ const AddWarehouse: React.FC = () => {
             </FormControl>
             <FormControl>
               <Autocomplete
+
                 options={allRooms} // Use the fetched rooms as options
                 getOptionLabel={(option: { room_name: any; }) => option.room_name || ''} // Adjust according to your room object structure
                 onChange={(event: any, value: any) => {

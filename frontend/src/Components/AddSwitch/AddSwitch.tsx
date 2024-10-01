@@ -140,11 +140,15 @@ const AddSwitch = () => {
                                     className="textfieldss"
                                     required
                                 >
-                                    {formData.powerSource_status && powerData.map((item, index) => (
-                                        <MenuItem key={index} value={item.grid_id || item.dgset_id}>
-                                            {item.grid_name || item.dgset_name}
-                                        </MenuItem>
-                                    ))}
+                                {
+
+                                    formData.powerSource_status ? 
+                                        powerData.map((item, index) => (
+                                            <MenuItem key={index} value={item.grid_id || item.dgset_id}>
+                                                {item.grid_name || item.dgset_name}
+                                            </MenuItem>
+                                        )) : <MenuItem>No Options</MenuItem>
+                                }
                                 </Select>
                             </FormControl>
 
