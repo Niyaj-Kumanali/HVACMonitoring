@@ -1,7 +1,7 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Loader from "../Loader/Loader";
 import CustomSnackBar from "../SnackBar/SnackBar";
 import { getAllGRID } from "../../api/gridAPIs";
@@ -10,56 +10,47 @@ import { addSwitch } from "../../api/powerSwitchAPIs";
 
 interface FormData {
     powerSource_status: string | boolean,
-    dgset_id : string,
-    grid_id : string,
+    dgset_id: string,
+    grid_id: string,
     power_source: string,
 }
 
 const AddSwitch = () => {
-    const [open, setOpen] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-    const [message, setMessage] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [addButtonLoader, setAddButtonLoader] = useState<boolean>(false);
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [addButtonLoader, setAddButtonLoader] = useState(false);
     const [formData, setFormdata] = useState<FormData>({
         powerSource_status: '',
-        power_source:"",
-        dgset_id:"",
-        grid_id:""
+        power_source: "",
+        dgset_id: "",
+        grid_id: ""
     });
     const [powerData, setPowerData] = useState<any[]>([]);
 
     const handleChange = (event: any) => {
-        const { name, value } = event.target;
-        setFormdata({
-            ...formData,
-            [name]: value,
-        });
+        const { name, value } = event.target as HTMLInputElement;
+        setFormdata((prevFormData) => ({
+            ...prevFormData,
+            [name!]: value,
+        }));
     };
 
-    const getAllGrids = async () => {
-        const response = await getAllGRID();
-        return response.data.grids;
-    }
-
-    const getAllDGSets = async () => {
-        const response = await getAllDGSET();
-        return response.data.dgsets;
-    }
+    const getAllSources = useCallback(async () => {
+        try {
+            const data = formData.powerSource_status === "on" ?
+                await getAllDGSET() :
+                await getAllGRID();
+            setPowerData(data.data.dgsets || data.data.grids);
+        } catch (error) {
+            console.error("Error fetching sources:", error);
+        }
+    }, [formData.powerSource_status]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            let data;
-            if (formData.powerSource_status === "on") {
-                data = await getAllDGSets();
-            } else {
-                data = await getAllGrids();
-            }
-            setPowerData(data);
-        };
-
-        fetchData();
-    }, [formData]);
+        getAllSources();
+    }, [getAllSources]);
 
     const handleReset = () => {
         setFormdata({
@@ -74,23 +65,14 @@ const AddSwitch = () => {
         e.preventDefault();
         setAddButtonLoader(true);
 
-        let finalData: Partial<FormData> = {
-            powerSource_status: formData.powerSource_status === "on" ? true : false
+        const finalData: Partial<FormData> = {
+            powerSource_status: formData.powerSource_status === "on",
+            dgset_id: formData.powerSource_status === "on" ? formData.power_source : '',
+            grid_id: formData.powerSource_status === "off" ? formData.power_source : ''
         };
 
-        if (formData.powerSource_status === "on" && formData.power_source) {
-            finalData.dgset_id = formData.power_source;
-        }
-
-        if (formData.powerSource_status === "off" && formData.power_source) {
-            finalData.grid_id = formData.power_source;
-        }
-
-        console.log(finalData)
-
         try {
-            const response = await addSwitch(finalData);
-            console.log(response.data);
+            await addSwitch(finalData);
             setTimeout(() => {
                 handleReset();
                 setAddButtonLoader(false);
@@ -128,43 +110,43 @@ const AddSwitch = () => {
                     <div className="warehouse">
                         <h3>Add Switch</h3>
                         <form className="warehouse-form" onSubmit={handleSubmit}>
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel id="power-source-status-label">Switch Status</InputLabel>
-                                    <Select
-                                        labelId="power-source-status-label"
-                                        id="power-source-status-select"
-                                        name="powerSource_status"
-                                        value={formData.powerSource_status}
-                                        onChange={handleChange}
-                                        label={"Switch Status"}
-                                        className="textfieldss"
-                                        required
-                                    >
-                                        <MenuItem value=""><em>None</em></MenuItem>
-                                        <MenuItem value="on">ON</MenuItem>
-                                        <MenuItem value="off">OFF</MenuItem>
-                                    </Select>
-                                </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <InputLabel id="power-source-status-label">Switch Status</InputLabel>
+                                <Select
+                                    labelId="power-source-status-label"
+                                    id="power-source-status-select"
+                                    name="powerSource_status"
+                                    value={formData.powerSource_status}
+                                    onChange={handleChange}
+                                    label="Switch Status"
+                                    className="textfieldss"
+                                    required
+                                >
+                                    <MenuItem value=""><em>None</em></MenuItem>
+                                    <MenuItem value="on">ON</MenuItem>
+                                    <MenuItem value="off">OFF</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                                <FormControl fullWidth margin="normal">
-                                    <InputLabel className="input-label-select" id="switch-label">Available Sources</InputLabel>
-                                    <Select
-                                        labelId="switch-label"
-                                        id="switch-select"
-                                        name="power_source"
-                                        value={formData.power_source}
-                                        label={"Available Sources"}
-                                        onChange={handleChange}
-                                        className="textfieldss"
-                                        required
-                                    >
-                                        {powerData.map((item, index) => (
-                                            <MenuItem key={index} value={item.grid_id || item.dgset_id}>
-                                                {item.grid_name || item.dgset_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <InputLabel className="input-label-select" id="switch-label">Available Sources</InputLabel>
+                                <Select
+                                    labelId="switch-label"
+                                    id="switch-select"
+                                    name="power_source"
+                                    value={formData.power_source}
+                                    label="Available Sources"
+                                    onChange={handleChange}
+                                    className="textfieldss"
+                                    required
+                                >
+                                    {formData.powerSource_status && powerData.map((item, index) => (
+                                        <MenuItem key={index} value={item.grid_id || item.dgset_id}>
+                                            {item.grid_name || item.dgset_name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
 
                             <div className="sub-btn">
                                 <LoadingButton

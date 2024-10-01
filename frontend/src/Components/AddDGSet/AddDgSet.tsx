@@ -169,6 +169,7 @@ const AddDgSet: React.FC = () => {
                                         name="motor_type"
                                         onChange={handleChange}
                                         className="textfieldss"
+                                        label={"Select Motor Type"}
                                         value={formData.motor_type}
                                     >
                                         <MenuItem value={"BLDC (Brushless DC) Motors"}>BLDC (Brushless DC) Motors</MenuItem>
