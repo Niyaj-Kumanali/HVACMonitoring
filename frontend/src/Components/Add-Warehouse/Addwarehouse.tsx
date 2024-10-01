@@ -5,6 +5,7 @@ import {
   FormControlLabel,
   InputLabel,
   MenuItem,
+  Select,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -379,7 +380,7 @@ const AddWarehouse: React.FC = () => {
                 required
                 multiple
               >
-                {devices.map((item: Device, index: number) => (
+                {devices.map((item: any, index: number) => (
                   <MenuItem key={index} value={item.id}>
                     {item.name}
                   </MenuItem>
