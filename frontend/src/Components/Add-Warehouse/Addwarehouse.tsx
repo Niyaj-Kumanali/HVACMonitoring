@@ -219,7 +219,9 @@ const AddWarehouse: React.FC = () => {
     try {
       await getCurrentUser()
       const response = await addWarehouse(JSON.stringify(convertedData));
-      await updateDeviceLabels({id: response.data.warehouse_id, devices: formData.devices || []})
+      const updateDeviceBody = {id: response.data.warehouse_id, devices: formData.devices || []}
+      console.log(updateDeviceBody)
+      await updateDeviceLabels(updateDeviceBody)
 
       setTimeout(() => {
         handleReset();
@@ -374,15 +376,15 @@ const AddWarehouse: React.FC = () => {
                 labelId="device-label"
                 id="device-select"
                 name="devices"
-                value={devices || []}
+                value={formData.devices || []}
                 label={"Available Devices"}
                 onChange={(e:any)=> setFormData(prev => ({...prev, devices: e.target.value}))}
                 className="textfieldss"
                 required
                 multiple
               >
-                {devices.map((item: any, index: number) => (
-                  <MenuItem key={index} value={item.id}>
+                {devices.map((item: Device, index: number) => (
+                  <MenuItem key={index} value={item.id?.id}>
                     {item.name}
                   </MenuItem>
                 ))}
