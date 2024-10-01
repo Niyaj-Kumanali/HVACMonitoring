@@ -310,7 +310,10 @@ const AddWarehouse: React.FC = () => {
               <Autocomplete
                 options={allRooms} // Use the fetched rooms as options
                 getOptionLabel={(option: { room_name: any; }) => option.room_name || ''} // Adjust according to your room object structure
-                onChange={(event: any, value: any) => setFormData({ ...formData, rooms: value })}
+                onChange={(event: any, value: any) => {
+                  event
+                  setFormData({ ...formData, rooms: value })
+                }}
                 renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
                   <TextField
                     {...params}
@@ -326,7 +329,10 @@ const AddWarehouse: React.FC = () => {
               <Autocomplete
                 options={allSwitches} // Use the fetched rooms as options
                 getOptionLabel={(option: { powerSource_id: any; }) => option.powerSource_id || ''} // Adjust according to your room object structure
-                onChange={(event: any, value: any) => setFormData({ ...formData, powerSource: value })}
+                onChange={(event: any, value: any) => {
+                  event
+                  setFormData({ ...formData, powerSource: value })
+                }}
                 renderInput={(params: JSX.IntrinsicAttributes & { variant?: TextFieldVariants | undefined; } & Omit<FilledTextFieldProps | OutlinedTextFieldProps | StandardTextFieldProps, "variant">) => (
                   <TextField
                     {...params}
