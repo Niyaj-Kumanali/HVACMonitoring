@@ -36,7 +36,7 @@ const Warehouse: React.FC = () => {
     rooms: [],
     dgset : [],
     grid : [],
-    powerSource: Object,
+    powerSource: false,
 
   });
 
@@ -114,7 +114,7 @@ const Warehouse: React.FC = () => {
       rooms: [],
       dgset : [],
       grid : [],
-      powerSource: Object,
+      powerSource: false,
     });
     setSubmitted(false);
   };

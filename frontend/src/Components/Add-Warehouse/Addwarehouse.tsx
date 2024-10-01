@@ -6,6 +6,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -218,7 +219,7 @@ const AddWarehouse: React.FC = () => {
     try {
       await getCurrentUser()
       const response = await addWarehouse(JSON.stringify(convertedData));
-      await updateDeviceLabels({id: response.data.warehouse_id, devices: formData.devices})
+      await updateDeviceLabels({id: response.data.warehouse_id, devices: formData.devices || []})
 
       setTimeout(() => {
         handleReset();

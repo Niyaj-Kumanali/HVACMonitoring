@@ -243,7 +243,7 @@ export interface WarehouseData {
   powerSource: boolean;
   userId: string;
   email: string;
-  devices: string[]
+  devices?: string[]
 }
 
 export interface VehicleDimensions {
