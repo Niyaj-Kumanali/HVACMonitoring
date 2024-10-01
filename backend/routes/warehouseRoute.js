@@ -736,4 +736,29 @@ router.put('/updatewarehouse/:warehouse_id', async (req, res) => {
   }
 });
 
+router.put('/updatewarehousetest/:warehouseId', async (req, res) => {
+  try {
+    const { warehouseId } = req.params;
+    const updatedData = req.body;
+
+    // Find the warehouse by warehouseId and update it
+    const updatedWarehouse = await warehouseModel.findOneAndUpdate(
+      { warehouse_id: warehouseId }, // Match the warehouseId
+      { $set: updatedData }, // Update the fields from the request body
+      { new: true } // Return the updated warehouse document
+    );
+
+    if (!updatedWarehouse) {
+      return res.status(404).json({ message: 'Warehouse not found' });
+    }
+
+    res.status(200).json({
+      message: 'Warehouse updated successfully',
+      warehouse: updatedWarehouse
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating warehouse', error });
+  }
+});
+
 export default router;

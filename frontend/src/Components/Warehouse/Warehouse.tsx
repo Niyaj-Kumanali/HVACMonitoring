@@ -33,6 +33,9 @@ const Warehouse: React.FC = () => {
     sensors: '',
     userId: '',
     email: '',
+    rooms: [],
+    powerSource: []
+
   });
 
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -106,6 +109,8 @@ const Warehouse: React.FC = () => {
       sensors: formData.sensors,
       userId: formData.userId,
       email: formData.email,
+      rooms: [],
+      powerSource: []
     });
     setSubmitted(false);
   };
