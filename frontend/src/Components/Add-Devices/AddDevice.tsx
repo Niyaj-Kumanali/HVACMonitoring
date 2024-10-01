@@ -197,7 +197,7 @@ const AddDevice = () => {
                                             },
                                         }))
                                     }
-                                    value={deviceInfo.additionalInfo.make}
+                                    value={deviceInfo?.additionalInfo?.make}
                                     required
                                 />
                             </Box>
@@ -215,7 +215,7 @@ const AddDevice = () => {
                                         }))
                                     }
                                     value={
-                                        deviceInfo.additionalInfo.sensitivity
+                                        deviceInfo?.additionalInfo?.sensitivity
                                     }
                                     required
                                 />
@@ -233,7 +233,7 @@ const AddDevice = () => {
                                             },
                                         }))
                                     }
-                                    value={deviceInfo.additionalInfo.accuracy}
+                                    value={deviceInfo?.additionalInfo?.accuracy}
                                     required
                                 />
                             </Box>
@@ -252,8 +252,7 @@ const AddDevice = () => {
                                         }))
                                     }
                                     value={
-                                        deviceInfo.additionalInfo
-                                            .minSamplingTime
+                                        deviceInfo?.additionalInfo?.minSamplingTime
                                     }
                                     required
                                 />

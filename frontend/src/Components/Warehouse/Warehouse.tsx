@@ -15,6 +15,7 @@ import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
 import { getWarehouseByWarehouseId, deleteWarehouseByWarehouseId, updateWarehouseByWarehouseId, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
+import AddWarehouse from '../Add-Warehouse/Addwarehouse';
 
 const Warehouse: React.FC = () => {
   const { warehouseid } = useParams();
@@ -51,8 +52,8 @@ const Warehouse: React.FC = () => {
   const [buttonvisible, setButtonVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-  const navigate = useNavigate();
-  const warehousecountDispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const warehousecountDispatch = useDispatch();
   const [locationInfo, setLocationInfo] = useState<any>({});
   useEffect(() => {
     const fetchWarehouseById = async () => {
@@ -73,136 +74,136 @@ const Warehouse: React.FC = () => {
     fetchWarehouseById();
   }, [warehouseid]);
 
-  const handleDeleteWarehouse = async () => {
-    setLoadingg(true);
+  // const handleDeleteWarehouse = async () => {
+  //   setLoadingg(true);
 
-    setTimeout(async () => {
-      try {
-        await deleteWarehouseByWarehouseId(warehouseid);
-        fetchAllWarehouses();
-        setSnackbarType('success');
-        setMessage('Warehouse Deleted Successfully');
-      } catch (error) {
-        console.error('Error deleting warehouse:', error);
-        setSnackbarType('error');
-        setMessage('Failed to Delete Warehouse');
-      } finally {
-        setOpen(true);
-        setTimeout(() => {
-          setLoadingg(false);
-          navigate('/warehouses');
-        }, 700);
-      }
-    }, 1000);
-  };
+  //   setTimeout(async () => {
+  //     try {
+  //       await deleteWarehouseByWarehouseId(warehouseid);
+  //       fetchAllWarehouses();
+  //       setSnackbarType('success');
+  //       setMessage('Warehouse Deleted Successfully');
+  //     } catch (error) {
+  //       console.error('Error deleting warehouse:', error);
+  //       setSnackbarType('error');
+  //       setMessage('Failed to Delete Warehouse');
+  //     } finally {
+  //       setOpen(true);
+  //       setTimeout(() => {
+  //         setLoadingg(false);
+  //         navigate('/warehouses');
+  //       }, 700);
+  //     }
+  //   }, 1000);
+  // };
 
-  const handleReset = () => {
-    setFormData({
-      warehouse_name: formData.warehouse_name,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      warehouse_dimensions: {
-        length: formData.warehouse_dimensions?.length || '0',
-        width: formData.warehouse_dimensions?.width || '0',
-        height: formData.warehouse_dimensions?.height || '0',
-      },
-      energy_resource: formData.energy_resource,
-      cooling_units: formData.cooling_units,
-      sensors: formData.sensors,
-      userId: formData.userId,
-      email: formData.email,
-      rooms: [],
-      dgset : [],
-      grid : [],
-      powerSource: false,
-    });
-    setSubmitted(false);
-  };
+  // const handleReset = () => {
+  //   setFormData({
+  //     warehouse_name: formData.warehouse_name,
+  //     latitude: formData.latitude,
+  //     longitude: formData.longitude,
+  //     warehouse_dimensions: {
+  //       length: formData.warehouse_dimensions?.length || '0',
+  //       width: formData.warehouse_dimensions?.width || '0',
+  //       height: formData.warehouse_dimensions?.height || '0',
+  //     },
+  //     energy_resource: formData.energy_resource,
+  //     cooling_units: formData.cooling_units,
+  //     sensors: formData.sensors,
+  //     userId: formData.userId,
+  //     email: formData.email,
+  //     rooms: [],
+  //     dgset : [],
+  //     grid : [],
+  //     powerSource: false,
+  //   });
+  //   setSubmitted(false);
+  // };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
 
-    if (name.startsWith('warehouse_dimensions.')) {
-      const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
-      setFormData((prev) => ({
-        ...prev,
-        warehouse_dimensions: {
-          ...prev.warehouse_dimensions,
-          [dimensionKey]: value,
-        },
-      }));
-    } else if (name === 'cooling_units' || name === 'sensors') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value === '' ? null : value,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  //   if (name.startsWith('warehouse_dimensions.')) {
+  //     const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       warehouse_dimensions: {
+  //         ...prev.warehouse_dimensions,
+  //         [dimensionKey]: value,
+  //       },
+  //     }));
+  //   } else if (name === 'cooling_units' || name === 'sensors') {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: value === '' ? null : value,
+  //     }));
+  //   } else {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      const convertedData = {
-        ...formData,
-        latitude: parseFloat(formData.latitude),
-        longitude: parseFloat(formData.longitude),
-        warehouse_dimensions: {
-          length: parseFloat(formData.warehouse_dimensions?.length),
-          width: parseFloat(formData.warehouse_dimensions?.width),
-          height: parseFloat(formData.warehouse_dimensions?.height),
-        },
-        cooling_units: Number(formData.cooling_units),
-        sensors: Number(formData.sensors),
-        userId: currentUser.id?.id,
-        email: currentUser.email,
-      };
+  //   try {
+  //     const convertedData = {
+  //       ...formData,
+  //       latitude: parseFloat(formData.latitude),
+  //       longitude: parseFloat(formData.longitude),
+  //       warehouse_dimensions: {
+  //         length: parseFloat(formData.warehouse_dimensions?.length),
+  //         width: parseFloat(formData.warehouse_dimensions?.width),
+  //         height: parseFloat(formData.warehouse_dimensions?.height),
+  //       },
+  //       cooling_units: Number(formData.cooling_units),
+  //       sensors: Number(formData.sensors),
+  //       userId: currentUser.id?.id,
+  //       email: currentUser.email,
+  //     };
 
-      await updateWarehouseByWarehouseId(
-        warehouseid,
-        JSON.stringify(convertedData)
-      );
+  //     await updateWarehouseByWarehouseId(
+  //       warehouseid,
+  //       JSON.stringify(convertedData)
+  //     );
 
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setSnackbarType('success');
-        setMessage('Warehouse Updated Successfully');
-        fetchAllWarehouses();
-        handleReset();
-        setButtonVisible(false);
-      }, 500);
-    } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setSnackbarType('error');
-        setMessage('Failed to Update Warehouse');
-        console.error('Error submitting form:', error);
-      }, 500);
-    }
-  };
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //       setOpen(true);
+  //       setSnackbarType('success');
+  //       setMessage('Warehouse Updated Successfully');
+  //       fetchAllWarehouses();
+  //       handleReset();
+  //       setButtonVisible(false);
+  //     }, 500);
+  //   } catch (error) {
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //       setOpen(true);
+  //       setSnackbarType('error');
+  //       setMessage('Failed to Update Warehouse');
+  //       console.error('Error submitting form:', error);
+  //     }, 500);
+  //   }
+  // };
 
-  const fetchAllWarehouses = async () => {
-    try {
-      const response = await getAllWarehouseByUserId(
-        currentUser.id?.id,
-        undefined
-      );
+  // const fetchAllWarehouses = async () => {
+  //   try {
+  //     const response = await getAllWarehouseByUserId(
+  //       currentUser.id?.id,
+  //       undefined
+  //     );
 
-      warehousecountDispatch(set_warehouse_count(response.data.totalElements));
-    } catch (error) {
-      console.error('Failed to fetch warehouses:', error);
-      warehousecountDispatch(set_warehouse_count(0));
-    }
-  };
+  //     warehousecountDispatch(set_warehouse_count(response.data.totalElements));
+  //   } catch (error) {
+  //     console.error('Failed to fetch warehouses:', error);
+  //     warehousecountDispatch(set_warehouse_count(0));
+  //   }
+  // };
 
   const handleButtonVisible = () => {
     setButtonVisible(true);
@@ -313,7 +314,7 @@ const Warehouse: React.FC = () => {
                 buttonvisible ? 'warehouse' : 'del-btn-warehouse-disalble'
               }
             >
-              <h3>Warehouse: {formData.warehouse_name}</h3>
+              {/* <h3>Warehouse: {formData.warehouse_name}</h3>
               <form className="warehouse-form" onSubmit={handleSubmit}>
                 <FormControl fullWidth margin="normal">
                   <TextField
@@ -443,7 +444,8 @@ const Warehouse: React.FC = () => {
                     <span>Delete</span>
                   </LoadingButton>
                 </div>
-              </form>
+              </form> */}
+              
             </div>
           </div>
         )}
@@ -454,6 +456,7 @@ const Warehouse: React.FC = () => {
           message={message}
         />
       </div>
+      {buttonvisible && <AddWarehouse />}
     </>
   );
 };

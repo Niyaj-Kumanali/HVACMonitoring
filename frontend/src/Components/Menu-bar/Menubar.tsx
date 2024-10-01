@@ -123,7 +123,7 @@ const Menubar = () => {
                     {/* <li onClick={() => handleLinkClick('/addAction')}>
                         <AddIcon className="speedicon" />Add Action
                     </li> */}
-                    <li onClick={() => handleLinkClick('/addWarehouse')}>
+                    <li onClick={() => handleLinkClick('/warehouse')}>
                         <AddIcon className="speedicon" />Add Warehouse
                     </li>
                     <li onClick={() => handleLinkClick('/addRoom')}>
