@@ -19,3 +19,14 @@ export const deleteRoom = async(roomId: any)=> {
     const response = await mongoAPI.delete(`/room/deleteroom/${roomId}`)
     return response
 }
+
+
+export const AddWarehouseIdToRooms = async(body: any)=> {
+    const response = await mongoAPI.put(`/room/updaterooms`, body)
+    return response
+}
+
+export const getRoomByWarehouseId = async(warehouse_id: string)=> {
+    const response = await mongoAPI.get(`/room/rooms/${warehouse_id}`)
+    return response
+}

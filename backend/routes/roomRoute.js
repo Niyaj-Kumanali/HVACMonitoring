@@ -7,6 +7,7 @@ router.post('/addroom', async (req, res) => {
         const body = req.body;  // Destructure room_name from the request body
 
         // Check if a room with the same name already exists
+        console.log(body)
         const existingRoom = await roomModel.findOne({
             room_no: body.room_no
         });
@@ -29,10 +30,23 @@ router.get('/getallrooms', async (req, res) => {
         // Fetch all rooms from the database
         const rooms = await roomModel.find();
 
-        // Check if rooms are found
-        if (rooms.length === 0) {
-            return res.status(404).json({ message: 'No rooms found.' });
-        }
+        // // Check if rooms are found
+        // if (rooms.length === 0) {
+        //     return res.status(404).json({ message: 'No rooms found.' });
+        // }
+
+        // Send the rooms in the response
+        res.status(200).json(rooms);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch rooms', details: error.message });
+    }
+});
+
+router.get('/getallrooms/:userId', async (req, res) => {
+    try {
+        const {userId} = req.params;
+        // Fetch all rooms from the database
+        const rooms = await roomModel.find({userId : userId});
 
         // Send the rooms in the response
         res.status(200).json(rooms);
@@ -44,7 +58,7 @@ router.get('/getallrooms', async (req, res) => {
 router.put('/updatelevelslots/:roomId', async (req, res) => {
     try {
         const { roomId } = req.params;
-        const {  level_slot } = req.body;
+        const { level_slot } = req.body;
 
         // Find the room by the roomId
         const roomToUpdate = await roomModel.findOne({ room_id: roomId });
@@ -92,7 +106,7 @@ router.delete('/deleteroom/:roomId', async (req, res) => {
     try {
         // Use findOneAndDelete with a query object
         const deletedRoom = await room.findOneAndDelete({ room_id: roomId });
-        
+
         if (!deletedRoom) {
             return res.status(404).send({ error: "Room not found" });  // If no room found, return 404
         }
@@ -102,6 +116,58 @@ router.delete('/deleteroom/:roomId', async (req, res) => {
         res.status(500).send({ error: "Failed to delete room", details: error.message });  // Return 500 for server error
     }
 });
+
+router.get('/rooms/:warehouseId', async (req, res) => {
+    const { warehouseId } = req.params;  // Extract warehouseId from the request parameters
+    if (!warehouseId) {
+        return res.status(400).json({ error: 'warehouseId is required' });
+    }
+
+    try {
+        // Find all rooms associated with the given warehouseId
+        const rooms = await roomModel.find({ warehouse_id: warehouseId });
+        
+        // Log the rooms for debugging
+        console.log(rooms);
+        
+        // Respond with the retrieved rooms
+        res.status(200).json(rooms);
+    } catch (error) {
+        console.error('Error retrieving rooms:', error.message);  // Log the error for debugging
+        res.status(500).json({ error: 'Failed to retrieve rooms', details: error.message });  // Return 500 for server error
+    }
+});
+
+
+router.put('/updaterooms', async (req, res) => {
+    const { id, rooms } = req.body;
+    // console.log(req.body)
+    // Validate required fields
+    if (!id || !rooms || rooms.length === 0) {
+        return res.status(400).json({ error: 'Id and Room IDs are required' });
+    }
+
+    try {
+        // Updating each room in the list
+        rooms.map(async (roomId) => {
+            const roomToUpdate = await roomModel.findOne({ room_id: roomId });
+            if (!roomToUpdate) {
+                console.warn(`Room not found for ID: ${roomId}`);
+                return; // Skip to the next room if not found
+            }
+            roomToUpdate.warehouse_id = id;
+            // console.log(roomToUpdate)
+            roomToUpdate.save(); // Save the updated room
+        });
+
+
+        res.json({ message: 'Rooms updated successfully' });
+    } catch (error) {
+        console.error('Error executing query', error.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 
 export default router;

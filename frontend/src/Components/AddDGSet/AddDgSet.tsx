@@ -5,17 +5,10 @@ import { memo, useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 import { addDGSET } from "../../api/dgsetAPIs";
 import CustomSnackBar from "../SnackBar/SnackBar";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Reducer";
+import { dgset } from "../../types/thingsboardTypes";
 
-// Define types for the form data
-interface FormData {
-    dgset_name: string;
-    output_voltage: string;
-    max_output_current: string;
-    fuel_type: string;
-    fuel_capacity: string;
-    output_connector_type: string;
-    motor_type: string;
-}
 
 const AddDgSet: React.FC = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -23,15 +16,18 @@ const AddDgSet: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [addbuttonloader, setAddButtonLoader] = useState<boolean>(false);
-    const [formData, setFormdata] = useState<FormData>({
+    const [formData, setFormdata] = useState<dgset>({
         dgset_name: '',
-        output_voltage: '',
-        max_output_current: '',
+        output_voltage: 0,
+        max_output_current: 0,
         fuel_type: '',
         fuel_capacity: '',
         output_connector_type: '',
-        motor_type: ''
+        motor_type: '',
+        userId: '',
     });
+
+    const currentUser = useSelector((state: RootState) => state.user.user);
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -46,12 +42,13 @@ const AddDgSet: React.FC = () => {
     const handleReset = () => {
         setFormdata({
             dgset_name: '',
-            output_voltage: '',
-            max_output_current: '',
+            output_voltage: 0,
+            max_output_current: 0,
             fuel_type: '',
             fuel_capacity: '',
             output_connector_type: '',
-            motor_type: ''
+            motor_type: '',
+            userId: '',
         });
     };
 
@@ -62,7 +59,10 @@ const AddDgSet: React.FC = () => {
         const finalData = {
             ...formData,
             max_output_current: Number(formData.max_output_current),
+            userId : currentUser.id?.id,
         };
+
+        
 
         try {
             const response = await addDGSET(finalData);

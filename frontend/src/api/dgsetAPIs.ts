@@ -9,3 +9,8 @@ export const getAllDGSET = async () => {
     const response = await mongoAPI.get(`/dgset/getalldgsets`)
     return response
 }
+
+export const AddWarehouseIdToDGSet = async (body:any) => {
+    const response = await mongoAPI.put(`/dgset/updatedgset`, body)
+    return response
+}

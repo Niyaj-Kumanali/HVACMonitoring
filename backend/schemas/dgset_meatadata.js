@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { type } from 'os';
 
 const dgsetSchema = mongoose.Schema({
     dgset_id : {
@@ -14,7 +13,8 @@ const dgsetSchema = mongoose.Schema({
     fuel_type : {type: String},
     fuel_capacity : {type: String},
     output_connector_type : {type: String},
-    motor_type : {type: String}
+    motor_type : {type: String},
+    userId: { type: String, required: true },
 })
 
 const dgsetModel = mongoose.model('dgSet_metadata', dgsetSchema)
