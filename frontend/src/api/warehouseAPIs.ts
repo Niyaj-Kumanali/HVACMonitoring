@@ -29,3 +29,8 @@ export const getAllWarehouseByUserId = async (userId: string = "", params: any) 
     const response = await mongoAPI.put(`/warehouse/updatewarehouse/${warehouseId}`, data);
     return response;
   };
+
+  export const roomsInUse = async (userId: string) => {
+    const response = await mongoAPI.get(`/warehouse/roomsinuse/${userId}`);
+    return response.data;
+  }

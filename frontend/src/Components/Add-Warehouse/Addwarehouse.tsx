@@ -33,7 +33,7 @@ import {
     getWarehouseByWarehouseId,
     updateWarehouseByWarehouseId,
 } from '../../api/warehouseAPIs';
-import { AddWarehouseIdToRooms, getAllRooms } from '../../api/roomAPIs';
+import { AddWarehouseIdToRooms, avaliableRooms, getAllRooms } from '../../api/roomAPIs';
 import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
 import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
@@ -64,6 +64,7 @@ const AddWarehouse: React.FC = () => {
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState<WarehouseData>(defaultWarehouse);
+    const currentUser = useSelector((state: RootState) => state.user.user);
 
     const getAllRoomsfunc = async () => {
         try {
@@ -132,9 +133,10 @@ const AddWarehouse: React.FC = () => {
         };
 
         fetchRoomsGridDg();
+        avaliableRooms(currentUser?.id?.id );
     }, [warehouseid]);
 
-    const currentUser = useSelector((state: RootState) => state.user.user);
+    
 
     const [allRooms, setAllRooms] = useState([]);
     const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
