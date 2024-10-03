@@ -214,15 +214,20 @@ const AddWarehouse: React.FC = () => {
                 userId: currentUser.id?.id,
                 email: currentUser.email,
             };
-            const response = await updateWarehouseByWarehouseId(
-                warehouseid,
-                JSON.stringify(convertedData)
-            );
-            const updateDeviceBody = {
-                id: response.data.warehouse_id,
-                devices: formData.devices || [],
-            };
+            
+            
             if (warehouseid) {
+
+                const response = await updateWarehouseByWarehouseId(
+                    warehouseid,
+                    JSON.stringify(convertedData)
+                );
+
+                const updateDeviceBody = {
+                    id: response.data.warehouse_id,
+                    devices: formData.devices || [],
+                };
+
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
                 await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
@@ -237,6 +242,15 @@ const AddWarehouse: React.FC = () => {
                     }, 700)
                 }, 600);
             } else {
+                const response = await addWarehouse(
+                    JSON.stringify(convertedData)
+                );
+
+                const updateDeviceBody = {
+                    id: response.data.warehouse_id,
+                    devices: formData.devices || [],
+                };
+                
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
                 await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
