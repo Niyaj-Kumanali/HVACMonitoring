@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { WarehouseData } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
@@ -269,12 +269,14 @@ const Warehouse: React.FC = () => {
                                         </h3>
                                     </div>
                                     <div>
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleButtonVisible}
-                                        >
-                                            EDIT
-                                        </Button>
+                                        <Link to="/Editwarehouse">
+                                            <Button
+                                                variant="contained"
+                                                // onClick={handleButtonVisible}
+                                            >
+                                                EDIT
+                                            </Button>
+                                        </Link>
                                         <Button
                                             variant="contained"
                                             color="error"
