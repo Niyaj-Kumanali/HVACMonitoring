@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteUser, getUserById, getUsers, saveUser } from '../../api/userApi';
-import { Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import { deleteUser, getUserById, getUsers } from '../../api/userApi';
 import { set_usersCount } from '../../Redux/Action/Action';
 import { useDispatch } from 'react-redux';
 import { User as UserType } from '../../types/thingsboardTypes';
@@ -15,13 +14,13 @@ import CustomSnackBar from '../SnackBar/SnackBar';
 import { getCustomerById } from '../../api/customerAPI';
 
 const User = () => {
+
   const [Organization, setOrganization] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [firstName, setFirstname] = useState<string>('');
   const [lastName, setLastname] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [authority, setAuthority] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
@@ -31,9 +30,9 @@ const User = () => {
     'success'
   );
   const devicecountdispatch = useDispatch();
-  const { email } = useParams<{ email: string }>();
+  const { emailid } = useParams<{ emailid: string }>();
   const [user, setUser] = useState<UserType | undefined>();
-  const [isEdit, setIsEdit] = useState(true);
+  const isEdit = true;
 
   const fetchUserData = async () => {
     try {
@@ -48,13 +47,14 @@ const User = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (email) {
-          const response = await getUserById(email);
+        if (emailid) {
+          const response = await getUserById(emailid);
           const userData = response.data;
           if (userData.authority === 'CUSTOMER_USER') {
             const response = await getCustomerById(userData.customerId.id);
             setOrganization(response.data?.title);
           }
+          console.log(userData)
           setUsername(userData.email || '');
           setFirstname(userData.firstName || '');
           setLastname(userData.lastName || '');
@@ -72,7 +72,7 @@ const User = () => {
     };
 
     fetchUserData();
-  }, [email]);
+  }, [emailid]);
 
   const handleDeleteUser = async () => {
     setLoadingDelete(true);
@@ -103,46 +103,7 @@ const User = () => {
     }
   };
 
-  const handleClick = async () => {
-    setLoading(true);
-    if (user) {
-      const updateUser: UserType = {
-        ...user,
-        email: username,
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
-      };
-
-      try {
-        const response = await saveUser(updateUser, false);
-        if (response.status === 200) {
-          setMessage('User updated successfully');
-          setSnackbarType('success');
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-            setLoading(false);
-            setIsEdit(true);
-          }, 1000);
-        } else {
-          throw new Error('Failed to update user');
-        }
-      } catch (error: any) {
-        setSnackbarType('error');
-        if (error.status === 401) {
-          setMessage('Session has expired navigating to login page');
-          setTimeout(() => {
-            navigate('/login');
-          }, 2000);
-        } else {
-          setMessage('Failed to update user');
-        }
-        setOpen(true);
-        setLoading(false);
-      }
-    }
-  };
+  
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -275,44 +236,29 @@ const User = () => {
                 />
               </Box>
               <div className="accountinfo-savebtn-delt-btn">
-                {isEdit ? (
-                  <Button
+
+                  <LoadingButton
                     variant="contained"
-                    onClick={() => setIsEdit(false)}
-                    sx={{ width: '150px', height: '50px' }}
+                    onClick={() => navigate(`/editUser/${emailid}`)}
+                    disabled={loadingDelete}
+                    className='btn-save'
+                    startIcon={<EditIcon/>}
                   >
                     Edit
-                  </Button>
-                ) : (
-                  <>
-                    <LoadingButton
-                      size="small"
-                      color="secondary"
-                      onClick={handleClick}
-                      loading={loading}
-                      loadingPosition="start"
-                      startIcon={<SaveIcon />}
-                      variant="contained"
-                      disabled={loadingDelete}
-                      sx={{ width: '150px', height: '50px' }}
-                    >
-                      <span>Update</span>
-                    </LoadingButton>
-                    <LoadingButton
-                      size="small"
-                      color="error"
-                      onClick={handleDeleteUser}
-                      loading={loadingDelete}
-                      loadingPosition="start"
-                      startIcon={<DeleteIcon />}
-                      variant="contained"
-                      disabled={loading}
-                      sx={{ width: '150px', height: '50px' }}
-                    >
-                      <span>Delete</span>
-                    </LoadingButton>
-                  </>
-                )}
+                  </LoadingButton>
+
+                  <LoadingButton
+                    size="small"
+                    color="error"
+                    onClick={handleDeleteUser}
+                    loading={loadingDelete}
+                    loadingPosition="start"
+                    startIcon={<DeleteIcon />}
+                    variant="contained"
+                    className='btn-save'
+                  >
+                    <span>Delete</span>
+                  </LoadingButton>
               </div>
             </main>
           </div>

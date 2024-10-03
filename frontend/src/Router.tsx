@@ -34,6 +34,7 @@ import AddWarehouse from './Components/Add-Warehouse/Addwarehouse';
 import EditWarehouse from './Components/Warehouse/EditWarehouse';
 import EditVehicle from './Components/Vehicles/EditVehicle';
 import EditDevice from './Components/Devices/EditDevice';
+import EditUser from './Components/Users/EditUser';
 
 const Router = createBrowserRouter([
     {
@@ -139,7 +140,7 @@ const Router = createBrowserRouter([
                 element: <AddSupervisor />,
             },
             {
-                path: '/user/:email',
+                path: '/user/:emailid',
                 element: <User />,
             },
             {
@@ -181,6 +182,10 @@ const Router = createBrowserRouter([
             {
                 path: '/editDevice/:deviceid',
                 element: <EditDevice />,
+            },
+            {
+                path:'/editUser/:emailid',
+                element: <EditUser />,
             }
         ],
     },
