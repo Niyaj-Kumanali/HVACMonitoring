@@ -62,6 +62,8 @@ const AddDgSet: React.FC = () => {
             userId : currentUser.id?.id,
         };
 
+        console.log(finalData);
+
         
 
         try {
