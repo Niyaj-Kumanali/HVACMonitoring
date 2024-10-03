@@ -144,7 +144,6 @@ const AddWarehouse: React.FC = () => {
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [loadingg, setLoadingg] = useState(false);
 
     const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
         'success'
@@ -304,29 +303,6 @@ const AddWarehouse: React.FC = () => {
         } catch (error) {
             console.error('Failed to fetch warehouses:', error);
         }
-    };
-
-    const handleDeleteWarehouse = async () => {
-      setLoadingg(true);
-  
-      setTimeout(async () => {
-        try {
-          await deleteWarehouseByWarehouseId(warehouseid);
-          fetchAllWarehouses();
-          setSnackbarType('success');
-          setMessage('Warehouse Deleted Successfully');
-        } catch (error) {
-          console.error('Error deleting warehouse:', error);
-          setSnackbarType('error');
-          setMessage('Failed to Delete Warehouse');
-        } finally {
-          setOpen(true);
-          setTimeout(() => {
-            setLoadingg(false);
-            navigate('/warehouses');
-          }, 700);
-        }
-      }, 1000);
     };
 
     return (
@@ -572,23 +548,21 @@ const AddWarehouse: React.FC = () => {
                                     loadingPosition="start"
                                     startIcon={<SaveIcon />}
                                     variant="contained"
-                                    disabled={loadingg}
                                     className="btn-save"
                                 >
                                     <span>Update</span>
                                 </LoadingButton>
                                 <LoadingButton
                                     size="small"
-                                    color="error"
-                                    loading={loadingg}
+                                    color="primary"
                                     loadingPosition="start"
                                     startIcon={<DeleteIcon />}
                                     variant="contained"
                                     disabled={loading}
                                     className="btn-save"
-                                    onClick={handleDeleteWarehouse}
+                                    onClick={()=> { navigate(`/warehouse/${warehouseid}`)}}
                                 >
-                                    <span>Delete</span>
+                                    <span>Cancel</span>
                                 </LoadingButton>
                             </div>
                         ) : (
@@ -622,79 +596,4 @@ const AddWarehouse: React.FC = () => {
 };
 
 export default AddWarehouse;
-
-{
-    /* <FormControl>
-                            <Autocomplete
-                                options={allRooms} // Use the fetched rooms as options
-                                getOptionLabel={(option: { room_name: any }) =>
-                                    option.room_name || ''
-                                } // Adjust according to your room object structure
-                                onChange={(event: any, value: any) => {
-                                    event;
-                                    setFormData({ ...formData, rooms: value });
-                                }}
-                                renderInput={(
-                                    params: JSX.IntrinsicAttributes & {
-                                        variant?: TextFieldVariants | undefined;
-                                    } & Omit<
-                                            | FilledTextFieldProps
-                                            | OutlinedTextFieldProps
-                                            | StandardTextFieldProps,
-                                            'variant'
-                                        >
-                                ) => (
-                                    <TextField
-                                        {...params}
-                                        label="Select Room"
-                                        variant="outlined"
-                                        disabled={submitted}
-                                        className="textfieldss"
-                                    />
-                                )}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <Autocomplete
-                                options={allSwitches} // Use the fetched rooms as options
-                                getOptionLabel={(option: {
-                                    powerSource_id: any;
-                                }) => option.powerSource_id || ''} // Adjust according to your room object structure
-                                onChange={(event: any, value: any) => {
-                                    event;
-                                    setFormData({
-                                        ...formData,
-                                        powerSource: value,
-                                    });
-                                }}
-                                renderInput={(
-                                    params: JSX.IntrinsicAttributes & {
-                                        variant?: TextFieldVariants | undefined;
-                                    } & Omit<
-                                            | FilledTextFieldProps
-                                            | OutlinedTextFieldProps
-                                            | StandardTextFieldProps,
-                                            'variant'
-                                        >
-                                ) => (
-                                    <TextField
-                                        {...params}
-                                        label="Select Switches"
-                                        variant="outlined"
-                                        disabled={submitted}
-                                        className="textfieldss"
-                                    />
-                                )}
-                            />
-                        </FormControl> */
-}
-
-// const getAllPowerSourcesfunc = async () => {
-//   try {
-//     const response = await getAllSwitchs();
-//     setAllSwitches(response.data.powerSwitches);
-//     console.log(response.data.powerSwitches);
-//   } catch (error) {
-//     console.error("Error fetching switches:", error);
-//   }
-// }
+    

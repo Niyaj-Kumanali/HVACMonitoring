@@ -169,7 +169,7 @@ const Router = createBrowserRouter([
         element: <AddSwitch />,
       },
       {
-        path:'/Editwarehouse',
+        path:'/Editwarehouse/:warehouseid',
         element: <EditWarehouse />,
       }
     ],

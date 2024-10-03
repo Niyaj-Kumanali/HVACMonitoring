@@ -1,6 +1,8 @@
+import AddWarehouse from "../Add-Warehouse/Addwarehouse"
+
 const EditWarehouse = () => {
     return (
-        <div className="menu-data">EditWarehouse</div>
+        <AddWarehouse />
     )
 }
 
