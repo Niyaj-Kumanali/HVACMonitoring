@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { WarehouseData } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
@@ -235,41 +235,51 @@ const Warehouse: React.FC = () => {
 
     return (
         <>
-            <div className="menu-data">
-                {loader ? (
-                    <Loader />
-                ) : (
-                    <div className="cont">
-                        <div
-                            className={
-                                buttonvisible
-                                    ? 'del-btn-warehouse-disalble'
-                                    : 'warehouse-widgets'
-                            }
-                        >
-                            <div className="warehouse-widgets-info">
-                                <div className="warehouse-widgets-info-data">
-                                    <div>
-                                        <h3>
-                                            Name
-                                            <p> : {formData.warehouse_name}</p>
-                                        </h3>
-                                        <h3>
-                                            Sensors
-                                            <p> : {formData.sensors ?? ''}</p>
-                                        </h3>
-                                        <h3>
-                                            Location
-                                            <p>
-                                                :
-                                                {locationInfo[warehouseid || '']
-                                                    ?.display_name ||
-                                                    'Loading location...'}
-                                            </p>
-                                        </h3>
-                                    </div>
-                                    <div>
-                                        <Link to="/Editwarehouse">
+            {buttonvisible ? (
+                <AddWarehouse />
+            ) : (
+                <div className="menu-data">
+                    {loader ? (
+                        <Loader />
+                    ) : (
+                        <div className="cont">
+                            <div
+                                className={
+                                    buttonvisible
+                                        ? 'del-btn-warehouse-disalble'
+                                        : 'warehouse-widgets'
+                                }
+                            >
+                                <div className="warehouse-widgets-info">
+                                    <div className="warehouse-widgets-info-data">
+                                        <div>
+                                            <h3>
+                                                Name
+                                                <p>
+                                                    {' '}
+                                                    : {formData.warehouse_name}
+                                                </p>
+                                            </h3>
+                                            <h3>
+                                                Sensors
+                                                <p>
+                                                    {' '}
+                                                    : {formData.sensors ?? ''}
+                                                </p>
+                                            </h3>
+                                            <h3>
+                                                Location
+                                                <p>
+                                                    :
+                                                    {locationInfo[
+                                                        warehouseid || ''
+                                                    ]?.display_name ||
+                                                        'Loading location...'}
+                                                </p>
+                                            </h3>
+                                        </div>
+                                        <div>
+                                           <Link to="/Editwarehouse">
                                             <Button
                                                 variant="contained"
                                                 // onClick={handleButtonVisible}
@@ -277,47 +287,49 @@ const Warehouse: React.FC = () => {
                                                 EDIT
                                             </Button>
                                         </Link>
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            sx={{ marginLeft: '10px' }}
-                                            onClick={handleButtonVisible}
-                                        >
-                                            Delete
-                                        </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                sx={{ marginLeft: '10px' }}
+                                                onClick={handleButtonVisible}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="warehouse-widgets-info-data">
+                                        <h3>Energy Consumed : {3}</h3>
+                                    </div>
+                                    <div className="warehouse-widgets-info-data">
+                                        <h3>Occupancy : {5}</h3>
                                     </div>
                                 </div>
-                                <div className="warehouse-widgets-info-data">
-                                    <h3>Energy Consumed : {3}</h3>
-                                </div>
-                                <div className="warehouse-widgets-info-data">
-                                    <h3>Occupancy : {5}</h3>
+
+                                <div>
+                                    <div className="warehouse-widgets-info">
+                                        <div className="warehouse-widgets-info-data">
+                                            <h3>Current Temp : {42}</h3>
+                                        </div>
+                                        <div className="warehouse-widgets-info-data">
+                                            <h3>No of Violation : {10}</h3>
+                                        </div>
+                                        <div className="warehouse-widgets-info-data">
+                                            <p>
+                                                No of Times Doors opened : {19}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div>
-                                <div className="warehouse-widgets-info">
-                                    <div className="warehouse-widgets-info-data">
-                                        <h3>Current Temp : {42}</h3>
-                                    </div>
-                                    <div className="warehouse-widgets-info-data">
-                                        <h3>No of Violation : {10}</h3>
-                                    </div>
-                                    <div className="warehouse-widgets-info-data">
-                                        <p>No of Times Doors opened : {19}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            className={
-                                buttonvisible
-                                    ? 'warehouse'
-                                    : 'del-btn-warehouse-disalble'
-                            }
-                        >
-                            {/* <h3>Warehouse: {formData.warehouse_name}</h3>
+                            <div
+                                className={
+                                    buttonvisible
+                                        ? 'warehouse'
+                                        : 'del-btn-warehouse-disalble'
+                                }
+                            >
+                                {/* <h3>Warehouse: {formData.warehouse_name}</h3>
               <form className="warehouse-form" onSubmit={handleSubmit}>
                 <FormControl fullWidth margin="normal">
                   <TextField
@@ -448,17 +460,17 @@ const Warehouse: React.FC = () => {
                   </LoadingButton>
                 </div>
               </form> */}
+                            </div>
                         </div>
-                    </div>
-                )}
-                <CustomSnackBar
-                    open={open}
-                    setOpen={setOpen}
-                    snackbarType={'success'}
-                    message={""}
-                />
-            </div>
-            {buttonvisible && <AddWarehouse />}
+                    )}
+                    <CustomSnackBar
+                        open={open}
+                        setOpen={setOpen}
+                        snackbarType={'success'}
+                        message={''}
+                    />
+                </div>
+            )}
         </>
     );
 };
