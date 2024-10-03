@@ -13,9 +13,12 @@ import { getActivationLink, getUsers, saveUser } from '../../api/userApi';
 import { set_usersCount } from '../../Redux/Action/Action';
 import { useDispatch } from 'react-redux';
 import CustomSnackBar from '../SnackBar/SnackBar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Adduser = () => {
+
+  const { emailid } = useParams<{ emailid: string }>();
+  console.log(emailid)
   const [email, setEmail] = useState('');
   const [firstName, setFirstname] = useState('');
   const [lastName, setLastname] = useState('');
