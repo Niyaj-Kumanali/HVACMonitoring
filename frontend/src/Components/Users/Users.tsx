@@ -26,7 +26,9 @@ const AddCustomer: React.FC = () => {
             setLoader(true); 
             const params = {
                 pageSize: 12,
-                page: page
+                page: page,
+                sortProperty: 'createdTime',
+                sortOrder: 'DESC'
             };
             const userData = await getUsers(params);
 

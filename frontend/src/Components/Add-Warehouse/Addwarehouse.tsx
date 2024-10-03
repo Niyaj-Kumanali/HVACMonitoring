@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './Addwarehouse.css';
 import {
     FormControl,
-    FormControlLabel,
     InputLabel,
     MenuItem,
     Select,
     Switch,
     TextField,
+    FormControlLabel,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -37,6 +37,7 @@ import { AddWarehouseIdToRooms, getAllRooms } from '../../api/roomAPIs';
 import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
 import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
+
 const defaultWarehouse = {
     warehouse_name: '',
     latitude: '',
@@ -60,7 +61,6 @@ const defaultWarehouse = {
 
 const AddWarehouse: React.FC = () => {
     const { warehouseid } = useParams();
-    console.log(warehouseid);
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState<WarehouseData>(defaultWarehouse);
@@ -159,9 +159,7 @@ const AddWarehouse: React.FC = () => {
     const handleChange = (e: any) => {
         const { name, value } = e.target;
         if (name.startsWith('warehouse_dimensions.')) {
-            const dimensionKey = name.split(
-                '.'
-            )[1] as keyof WarehouseDimensions;
+            const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
             setFormData({
                 ...formData,
                 warehouse_dimensions: {
@@ -202,90 +200,90 @@ const AddWarehouse: React.FC = () => {
 
         try {
             await getCurrentUser();
+            const convertedData = {
+                ...formData,
+                latitude: parseFloat(formData.latitude),
+                longitude: parseFloat(formData.longitude),
+                warehouse_dimensions: {
+                    length: parseFloat(formData.warehouse_dimensions?.length),
+                    width: parseFloat(formData.warehouse_dimensions?.width),
+                    height: parseFloat(formData.warehouse_dimensions?.height),
+                },
+                cooling_units: Number(formData.cooling_units),
+                sensors: Number(formData.sensors),
+                userId: currentUser.id?.id,
+                email: currentUser.email,
+            };
+            
+            
             if (warehouseid) {
-                const convertedData = {
-                    ...formData,
-                    latitude: parseFloat(formData.latitude),
-                    longitude: parseFloat(formData.longitude),
-                    warehouse_dimensions: {
-                        length: parseFloat(
-                            formData.warehouse_dimensions?.length
-                        ),
-                        width: parseFloat(formData.warehouse_dimensions?.width),
-                        height: parseFloat(
-                            formData.warehouse_dimensions?.height
-                        ),
-                    },
-                    cooling_units: Number(formData.cooling_units),
-                    sensors: Number(formData.sensors),
-                    userId: currentUser.id?.id,
-                    email: currentUser.email,
-                };
+
                 const response = await updateWarehouseByWarehouseId(
                     warehouseid,
                     JSON.stringify(convertedData)
                 );
+
                 const updateDeviceBody = {
                     id: response.data.warehouse_id,
                     devices: formData.devices || [],
                 };
+
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
                 await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
                 await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
-                
+                setTimeout(() => {
+                    setLoading(false);
+                    setMessage('Warehouse Updated Successfully');
+                    setOpen(true);
+                    setSnackbarType('success');
+                    setTimeout(() => {
+                        navigate(`/Warehouse/${warehouseid}`)
+                    }, 700)
+                }, 600);
             } else {
-                const convertedData = {
-                    ...formData,
-                    latitude: parseFloat(formData.latitude),
-                    longitude: parseFloat(formData.longitude),
-                    warehouse_dimensions: {
-                        length: parseFloat(
-                            formData.warehouse_dimensions.length
-                        ),
-                        width: parseFloat(formData.warehouse_dimensions.width),
-                        height: parseFloat(
-                            formData.warehouse_dimensions.height
-                        ),
-                    },
-                    cooling_units: Number(formData.cooling_units),
-                    sensors: Number(formData.sensors),
-                    userId: currentUser.id?.id,
-                    email: currentUser.email,
-                };
                 const response = await addWarehouse(
                     JSON.stringify(convertedData)
                 );
+
                 const updateDeviceBody = {
                     id: response.data.warehouse_id,
                     devices: formData.devices || [],
                 };
+                
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
                 await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
                 await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
+                setTimeout(() => {
+                    setLoading(false);
+                    setMessage('Warehouse Added Successfully');
+                    setOpen(true);
+                    setSnackbarType('success');
+                    setTimeout(() => {
+                        navigate(`/Warehouse/${warehouseid}`)
+                    }, 700)
+                }, 600);
             }
-
             setTimeout(() => {
                 handleReset();
                 setLoading(false);
                 setOpen(true);
                 setSnackbarType('success');
-                setMessage('Warehouse Added Successfully');
                 fetchAllWarehouses();
             }, 1000);
         } catch (error: any) {
             setSnackbarType('error');
 
             if (error.status === 401) {
-                setMessage('Session has expired navigating to login page');
+                setMessage('Session has expired. Navigating to login page.');
                 setOpen(true);
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
             } else {
                 setTimeout(() => {
-                    setMessage('Failed to Add Warehouse');
+                    setMessage(warehouseid ? 'Failed to Update Warehouse' : 'Failed to Add Warehouse');
                     setLoading(false);
                     setOpen(true);
                 }, 1000);

@@ -3,7 +3,7 @@ import '../Warehouse/Warehouse.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_vehicle_count } from '../../Redux/Action/Action';
 import VehicleLoader from '../Loader/VehicleLoader';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import truckimage from '../../assets/truck.gif';
 import Paginations from '../Pagination/Paginations';
 import { RootState } from '../../Redux/Reducer';
@@ -34,6 +34,10 @@ interface VehicleData {
 }
 
 const Vehicles = () => {
+
+  const { vehicleid } = useParams();
+  console.log(vehicleid)
+
   const currentUser = useSelector((state: RootState) => state.user.user);
 
   const [allVehicles, setAllVehicles] = useState<VehicleData[]>([]);
