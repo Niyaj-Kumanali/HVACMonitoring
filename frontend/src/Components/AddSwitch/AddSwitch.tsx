@@ -72,7 +72,8 @@ const AddSwitch = () => {
         };
 
         try {
-            await addSwitch(finalData);
+            const responce = await addSwitch(finalData);
+            console.log(responce.data)
             setTimeout(() => {
                 handleReset();
                 setAddButtonLoader(false);
@@ -130,26 +131,35 @@ const AddSwitch = () => {
 
                             <FormControl fullWidth margin="normal">
                                 <InputLabel className="input-label-select" id="switch-label">Available Sources</InputLabel>
-                                <Select
-                                    labelId="switch-label"
-                                    id="switch-select"
-                                    name="power_source"
-                                    value={formData.power_source}
-                                    label="Available Sources"
-                                    onChange={handleChange}
-                                    className="textfieldss"
-                                    required
-                                >
-                                {
+                                    <Select
+                                        labelId="switch-label"
+                                        id="switch-select"
+                                        name="power_source"
+                                        value={formData.power_source}
+                                        label="Available Sources"
+                                        onChange={handleChange}
+                                        className="textfieldss"
+                                        required
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                    zIndex: 1300, // Ensure it's on top
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {formData.powerSource_status ? (
+                                            powerData.map((item, index) => (
+                                                <MenuItem key={index} value={item.grid_id || item.dgset_id}>
+                                                    {item.grid_name || item.dgset_name}
+                                                </MenuItem>
+                                            ))
+                                        ) : (
+                                            <MenuItem>No Options</MenuItem>
+                                        )}
+                                    </Select>
 
-                                    formData.powerSource_status ? 
-                                        powerData.map((item, index) => (
-                                            <MenuItem key={index} value={item.grid_id || item.dgset_id}>
-                                                {item.grid_name || item.dgset_name}
-                                            </MenuItem>
-                                        )) : <MenuItem>No Options</MenuItem>
-                                }
-                                </Select>
                             </FormControl>
 
                             <div className="sub-btn">
