@@ -35,10 +35,7 @@ router.get('/getallrooms', async (req, res) => {
         }
 
         // Send the rooms in the response
-        res.status(200).json({
-            message: 'Rooms fetched successfully',
-            rooms
-        });
+        res.status(200).json(rooms);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch rooms', details: error.message });
     }

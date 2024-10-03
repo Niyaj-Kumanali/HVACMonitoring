@@ -16,7 +16,7 @@ const Header: React.FC = () => {
   const [toggle, setToggle] = useState<string>('hidden');
   const navigate = useNavigate();
   const menuRef = useRef<HTMLDivElement>(null);
-  const {email} = useSelector((state: RootState) => state.user.user)
+  const currentUser = useSelector((state: RootState) => state.user.user)
 
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const Header: React.FC = () => {
       <div className="account">
         <li className="user-email">
           <AccountCircleIcon className="accounticon" />
-          <span>{email}</span>
+          <span>{currentUser?.email}</span>
         </li>
         <li className="menuu" onClick={handleVisible}>
           <MoreVertIcon />

@@ -1,315 +1,321 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, TextField } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useDispatch, useSelector } from 'react-redux';
-import { set_warehouse_count } from '../../Redux/Action/Action';
-import { useNavigate, useParams } from 'react-router-dom';
-import {
-  WarehouseData,
-  WarehouseDimensions,
-} from '../../types/thingsboardTypes';
-import { RootState } from '../../Redux/Reducer';
+import { Button } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { WarehouseData } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
-import { getWarehouseByWarehouseId, deleteWarehouseByWarehouseId, updateWarehouseByWarehouseId, getAllWarehouseByUserId } from '../../api/warehouseAPIs';
+import { getWarehouseByWarehouseId } from '../../api/warehouseAPIs';
+import AddWarehouse from '../Add-Warehouse/Addwarehouse';
 
 const Warehouse: React.FC = () => {
-  const { warehouseid } = useParams();
-  const currentUser = useSelector((state: RootState) => state.user.user);
-  const [formData, setFormData] = useState<WarehouseData>({
-    warehouse_name: '',
-    latitude: '',
-    longitude: '',
-    warehouse_dimensions: {
-      length: '0',
-      width: '0',
-      height: '0',
-    },
-    energy_resource: '',
-    cooling_units: '',
-    sensors: '',
-    userId: '',
-    email: '',
-    rooms: [],
-    powerSource: []
-
-  });
-
-  const [submitted, setSubmitted] = useState<boolean>(false);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loadingg, setLoadingg] = useState(false);
-  const [loader, setLoader] = useState(true);
-  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-    'success'
-  );
-  const [buttonvisible, setButtonVisible] = useState(false);
-  const [message, setMessage] = useState('');
-
-  const navigate = useNavigate();
-  const warehousecountDispatch = useDispatch();
-  const [locationInfo, setLocationInfo] = useState<any>({});
-  useEffect(() => {
-    const fetchWarehouseById = async () => {
-      try {
-        const response = await getWarehouseByWarehouseId(warehouseid);
-
-        setFormData({
-          ...response.data,
-        });
-      } catch (err) {
-        console.error('Failed to fetch warehouse', err);
-      } finally {
-        setTimeout(() => {
-          setLoader(false);
-        }, 700);
-      }
-    };
-    fetchWarehouseById();
-  }, [warehouseid]);
-
-  const handleDeleteWarehouse = async () => {
-    setLoadingg(true);
-
-    setTimeout(async () => {
-      try {
-        await deleteWarehouseByWarehouseId(warehouseid);
-        fetchAllWarehouses();
-        setSnackbarType('success');
-        setMessage('Warehouse Deleted Successfully');
-      } catch (error) {
-        console.error('Error deleting warehouse:', error);
-        setSnackbarType('error');
-        setMessage('Failed to Delete Warehouse');
-      } finally {
-        setOpen(true);
-        setTimeout(() => {
-          setLoadingg(false);
-          navigate('/warehouses');
-        }, 700);
-      }
-    }, 1000);
-  };
-
-  const handleReset = () => {
-    setFormData({
-      warehouse_name: formData.warehouse_name,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      warehouse_dimensions: {
-        length: formData.warehouse_dimensions?.length || '0',
-        width: formData.warehouse_dimensions?.width || '0',
-        height: formData.warehouse_dimensions?.height || '0',
-      },
-      energy_resource: formData.energy_resource,
-      cooling_units: formData.cooling_units,
-      sensors: formData.sensors,
-      userId: formData.userId,
-      email: formData.email,
-      rooms: [],
-      powerSource: []
+    const { warehouseid } = useParams();
+    // const currentUser = useSelector((state: RootState) => state.user.user);
+    const [formData, setFormData] = useState<WarehouseData>({
+        warehouse_name: '',
+        latitude: '',
+        longitude: '',
+        warehouse_dimensions: {
+            length: '0',
+            width: '0',
+            height: '0',
+        },
+        energy_resource: '',
+        cooling_units: '',
+        sensors: '',
+        userId: '',
+        email: '',
+        rooms: [],
+        dgset: [],
+        grid: [],
+        powerSource: false,
     });
-    setSubmitted(false);
-  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    // const [submitted, setSubmitted] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    // const [loading, setLoading] = useState(false);
+    // const [loadingg, setLoadingg] = useState(false);
+    const [loader, setLoader] = useState(true);
+    // const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+    //     'success'
+    // );
+    const [buttonvisible, setButtonVisible] = useState(false);
+    // const [message, setMessage] = useState('');
 
-    if (name.startsWith('warehouse_dimensions.')) {
-      const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
-      setFormData((prev) => ({
-        ...prev,
-        warehouse_dimensions: {
-          ...prev.warehouse_dimensions,
-          [dimensionKey]: value,
-        },
-      }));
-    } else if (name === 'cooling_units' || name === 'sensors') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value === '' ? null : value,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+    // const navigate = useNavigate();
+    // const warehousecountDispatch = useDispatch();
+    const [locationInfo, setLocationInfo] = useState<any>({});
+    useEffect(() => {
+        const fetchWarehouseById = async () => {
+            try {
+                const response = await getWarehouseByWarehouseId(warehouseid);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+                setFormData({
+                    ...response.data,
+                });
+            } catch (err) {
+                console.error('Failed to fetch warehouse', err);
+            } finally {
+                setTimeout(() => {
+                    setLoader(false);
+                }, 700);
+            }
+        };
+        fetchWarehouseById();
+    }, [warehouseid]);
 
-    setLoading(true);
+    // const handleDeleteWarehouse = async () => {
+    //   setLoadingg(true);
 
-    try {
-      const convertedData = {
-        ...formData,
-        latitude: parseFloat(formData.latitude),
-        longitude: parseFloat(formData.longitude),
-        warehouse_dimensions: {
-          length: parseFloat(formData.warehouse_dimensions?.length),
-          width: parseFloat(formData.warehouse_dimensions?.width),
-          height: parseFloat(formData.warehouse_dimensions?.height),
-        },
-        cooling_units: Number(formData.cooling_units),
-        sensors: Number(formData.sensors),
-        userId: currentUser.id?.id,
-        email: currentUser.email,
-      };
+    //   setTimeout(async () => {
+    //     try {
+    //       await deleteWarehouseByWarehouseId(warehouseid);
+    //       fetchAllWarehouses();
+    //       setSnackbarType('success');
+    //       setMessage('Warehouse Deleted Successfully');
+    //     } catch (error) {
+    //       console.error('Error deleting warehouse:', error);
+    //       setSnackbarType('error');
+    //       setMessage('Failed to Delete Warehouse');
+    //     } finally {
+    //       setOpen(true);
+    //       setTimeout(() => {
+    //         setLoadingg(false);
+    //         navigate('/warehouses');
+    //       }, 700);
+    //     }
+    //   }, 1000);
+    // };
 
-      await updateWarehouseByWarehouseId(
-        warehouseid,
-        JSON.stringify(convertedData)
-      );
+    // const handleReset = () => {
+    //   setFormData({
+    //     warehouse_name: formData.warehouse_name,
+    //     latitude: formData.latitude,
+    //     longitude: formData.longitude,
+    //     warehouse_dimensions: {
+    //       length: formData.warehouse_dimensions?.length || '0',
+    //       width: formData.warehouse_dimensions?.width || '0',
+    //       height: formData.warehouse_dimensions?.height || '0',
+    //     },
+    //     energy_resource: formData.energy_resource,
+    //     cooling_units: formData.cooling_units,
+    //     sensors: formData.sensors,
+    //     userId: formData.userId,
+    //     email: formData.email,
+    //     rooms: [],
+    //     dgset : [],
+    //     grid : [],
+    //     powerSource: false,
+    //   });
+    //   setSubmitted(false);
+    // };
 
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setSnackbarType('success');
-        setMessage('Warehouse Updated Successfully');
-        fetchAllWarehouses();
-        handleReset();
-        setButtonVisible(false);
-      }, 500);
-    } catch (error) {
-      setTimeout(() => {
-        setLoading(false);
-        setOpen(true);
-        setSnackbarType('error');
-        setMessage('Failed to Update Warehouse');
-        console.error('Error submitting form:', error);
-      }, 500);
-    }
-  };
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //   const { name, value } = e.target;
 
-  const fetchAllWarehouses = async () => {
-    try {
-      const response = await getAllWarehouseByUserId(
-        currentUser.id?.id,
-        undefined
-      );
+    //   if (name.startsWith('warehouse_dimensions.')) {
+    //     const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
+    //     setFormData((prev) => ({
+    //       ...prev,
+    //       warehouse_dimensions: {
+    //         ...prev.warehouse_dimensions,
+    //         [dimensionKey]: value,
+    //       },
+    //     }));
+    //   } else if (name === 'cooling_units' || name === 'sensors') {
+    //     setFormData((prev) => ({
+    //       ...prev,
+    //       [name]: value === '' ? null : value,
+    //     }));
+    //   } else {
+    //     setFormData((prev) => ({
+    //       ...prev,
+    //       [name]: value,
+    //     }));
+    //   }
+    // };
 
-      warehousecountDispatch(set_warehouse_count(response.data.totalElements));
-    } catch (error) {
-      console.error('Failed to fetch warehouses:', error);
-      warehousecountDispatch(set_warehouse_count(0));
-    }
-  };
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //   e.preventDefault();
 
-  const handleButtonVisible = () => {
-    setButtonVisible(true);
-  };
+    //   setLoading(true);
 
-  useEffect(() => {
-    const fetchLocationInfo = async (
-      latitude: string,
-      longitude: string,
-      warehouseId: string
-    ) => {
-      try {
-        const response = await getLocationByLatsAndLongs(latitude, longitude);
-        if (!response.ok) {
-          throw new Error('Failed to fetch location data');
-        }
+    //   try {
+    //     const convertedData = {
+    //       ...formData,
+    //       latitude: parseFloat(formData.latitude),
+    //       longitude: parseFloat(formData.longitude),
+    //       warehouse_dimensions: {
+    //         length: parseFloat(formData.warehouse_dimensions?.length),
+    //         width: parseFloat(formData.warehouse_dimensions?.width),
+    //         height: parseFloat(formData.warehouse_dimensions?.height),
+    //       },
+    //       cooling_units: Number(formData.cooling_units),
+    //       sensors: Number(formData.sensors),
+    //       userId: currentUser.id?.id,
+    //       email: currentUser.email,
+    //     };
 
-        const data: Location = await response.json();
-        setLocationInfo({ [warehouseId]: data });
-      } catch (err) {
-        console.error(
-          `Error fetching location for warehouse ${warehouseId}:`,
-          err
-        );
-      }
+    //     await updateWarehouseByWarehouseId(
+    //       warehouseid,
+    //       JSON.stringify(convertedData)
+    //     );
+
+    //     setTimeout(() => {
+    //       setLoading(false);
+    //       setOpen(true);
+    //       setSnackbarType('success');
+    //       setMessage('Warehouse Updated Successfully');
+    //       fetchAllWarehouses();
+    //       handleReset();
+    //       setButtonVisible(false);
+    //     }, 500);
+    //   } catch (error) {
+    //     setTimeout(() => {
+    //       setLoading(false);
+    //       setOpen(true);
+    //       setSnackbarType('error');
+    //       setMessage('Failed to Update Warehouse');
+    //       console.error('Error submitting form:', error);
+    //     }, 500);
+    //   }
+    // };
+
+    // const fetchAllWarehouses = async () => {
+    //   try {
+    //     const response = await getAllWarehouseByUserId(
+    //       currentUser.id?.id,
+    //       undefined
+    //     );
+
+    //     warehousecountDispatch(set_warehouse_count(response.data.totalElements));
+    //   } catch (error) {
+    //     console.error('Failed to fetch warehouses:', error);
+    //     warehousecountDispatch(set_warehouse_count(0));
+    //   }
+    // };
+
+    const handleButtonVisible = () => {
+        setButtonVisible(true);
     };
 
-    if (formData.latitude && formData.longitude) {
-      fetchLocationInfo(
-        formData.latitude,
-        formData.longitude,
-        warehouseid || ''
-      );
-    }
-  }, [formData, warehouseid]);
+    useEffect(() => {
+        const fetchLocationInfo = async (
+            latitude: string,
+            longitude: string,
+            warehouseId: string
+        ) => {
+            try {
+                const response = await getLocationByLatsAndLongs(
+                    latitude,
+                    longitude
+                );
+                if (!response.ok) {
+                    throw new Error('Failed to fetch location data');
+                }
 
-  return (
-    <>
-      <div className="menu-data">
-        {loader ? (
-          <Loader />
-        ) : (
-          <div className="cont">
-            <div
-              className={
-                buttonvisible
-                  ? 'del-btn-warehouse-disalble'
-                  : 'warehouse-widgets'
-              }
-            >
-              <div className="warehouse-widgets-info">
-                <div className="warehouse-widgets-info-data">
-                  <div>
-                    <h3>
-                      Name<p> : {formData.warehouse_name}</p>
-                    </h3>
-                    <h3>
-                      Sensors<p> : {formData.sensors ?? ''}</p>
-                    </h3>
-                    <h3>
-                      Location
-                      <p>
-                        :
-                        {locationInfo[warehouseid || '']?.display_name ||
-                          'Loading location...'}
-                      </p>
-                    </h3>
-                  </div>
-                  <div>
-                    <Button variant="contained" onClick={handleButtonVisible}>
-                      EDIT
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      sx={{ marginLeft: '10px' }}
-                      onClick={handleButtonVisible}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-                <div className="warehouse-widgets-info-data">
-                  <h3>Energy Consumed : {3}</h3>
-                </div>
-                <div className="warehouse-widgets-info-data">
-                  <h3>Occupancy : {5}</h3>
-                </div>
-              </div>
+                const data: Location = await response.json();
+                setLocationInfo({ [warehouseId]: data });
+            } catch (err) {
+                console.error(
+                    `Error fetching location for warehouse ${warehouseId}:`,
+                    err
+                );
+            }
+        };
 
-              <div>
-                <div className="warehouse-widgets-info">
-                  <div className="warehouse-widgets-info-data">
-                    <h3>Current Temp : {42}</h3>
-                  </div>
-                  <div className="warehouse-widgets-info-data">
-                    <h3>No of Violation : {10}</h3>
-                  </div>
-                  <div className="warehouse-widgets-info-data">
-                    <p>No of Times Doors opened : {19}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+        if (formData.latitude && formData.longitude) {
+            fetchLocationInfo(
+                formData.latitude,
+                formData.longitude,
+                warehouseid || ''
+            );
+        }
+    }, [formData, warehouseid]);
 
-            <div
-              className={
-                buttonvisible ? 'warehouse' : 'del-btn-warehouse-disalble'
-              }
-            >
-              <h3>Warehouse: {formData.warehouse_name}</h3>
+    return (
+        <>
+            <div className="menu-data">
+                {loader ? (
+                    <Loader />
+                ) : (
+                    <div className="cont">
+                        <div
+                            className={
+                                buttonvisible
+                                    ? 'del-btn-warehouse-disalble'
+                                    : 'warehouse-widgets'
+                            }
+                        >
+                            <div className="warehouse-widgets-info">
+                                <div className="warehouse-widgets-info-data">
+                                    <div>
+                                        <h3>
+                                            Name
+                                            <p> : {formData.warehouse_name}</p>
+                                        </h3>
+                                        <h3>
+                                            Sensors
+                                            <p> : {formData.sensors ?? ''}</p>
+                                        </h3>
+                                        <h3>
+                                            Location
+                                            <p>
+                                                :
+                                                {locationInfo[warehouseid || '']
+                                                    ?.display_name ||
+                                                    'Loading location...'}
+                                            </p>
+                                        </h3>
+                                    </div>
+                                    <div>
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleButtonVisible}
+                                        >
+                                            EDIT
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            sx={{ marginLeft: '10px' }}
+                                            onClick={handleButtonVisible}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="warehouse-widgets-info-data">
+                                    <h3>Energy Consumed : {3}</h3>
+                                </div>
+                                <div className="warehouse-widgets-info-data">
+                                    <h3>Occupancy : {5}</h3>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="warehouse-widgets-info">
+                                    <div className="warehouse-widgets-info-data">
+                                        <h3>Current Temp : {42}</h3>
+                                    </div>
+                                    <div className="warehouse-widgets-info-data">
+                                        <h3>No of Violation : {10}</h3>
+                                    </div>
+                                    <div className="warehouse-widgets-info-data">
+                                        <p>No of Times Doors opened : {19}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            className={
+                                buttonvisible
+                                    ? 'warehouse'
+                                    : 'del-btn-warehouse-disalble'
+                            }
+                        >
+                            {/* <h3>Warehouse: {formData.warehouse_name}</h3>
               <form className="warehouse-form" onSubmit={handleSubmit}>
                 <FormControl fullWidth margin="normal">
                   <TextField
@@ -439,19 +445,20 @@ const Warehouse: React.FC = () => {
                     <span>Delete</span>
                   </LoadingButton>
                 </div>
-              </form>
+              </form> */}
+                        </div>
+                    </div>
+                )}
+                <CustomSnackBar
+                    open={open}
+                    setOpen={setOpen}
+                    snackbarType={'success'}
+                    message={""}
+                />
             </div>
-          </div>
-        )}
-        <CustomSnackBar
-          open={open}
-          setOpen={setOpen}
-          snackbarType={snackbarType}
-          message={message}
-        />
-      </div>
-    </>
-  );
+            {buttonvisible && <AddWarehouse />}
+        </>
+    );
 };
 
 export default Warehouse;

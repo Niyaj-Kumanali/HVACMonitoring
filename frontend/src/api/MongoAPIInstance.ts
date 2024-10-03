@@ -3,6 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 export const mongoAPI: AxiosInstance = axios.create({
 
   baseURL: 'https://hvac.myoorja.in',
+  // baseURL: 'http://localhost:2000',
   headers: {
     'Content-Type': 'application/json',
   },

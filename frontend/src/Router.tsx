@@ -10,7 +10,6 @@ import Warehouses from './Components/Warehouse/Warehouses';
 import Vehicles from './Components/Vehicles/Vehicles';
 import AddAction from './Components/Add-Action/AddAction';
 import AddLocation from './Components/Add-Location/AddLocation';
-import Addwarehouse from './Components/Add-Warehouse/Addwarehouse';
 import Addvehicle from './Components/Add-Vehicle/Addvehicle';
 import MyComponent from './Components/MyComponent/MyComponent';
 import Login from './Components/Login/Login';
@@ -31,6 +30,7 @@ import AddRooms from './Components/Warehouse/AddRooms';
 import AddDgSet from './Components/AddDGSet/AddDgSet';
 import AddGrid from './Components/AddGrid/AddGrid';
 import AddSwitch from './Components/AddSwitch/AddSwitch';
+import AddWarehouse from './Components/Add-Warehouse/Addwarehouse';
 
 const Router = createBrowserRouter([
   {
@@ -111,10 +111,10 @@ const Router = createBrowserRouter([
         path: '/addLocation',
         element: <AddLocation />,
       },
-      {
-        path: '/addWarehouse',
-        element: <Addwarehouse />,
-      },
+      // {
+      //   path: '/addWarehouse',
+      //   element: <Addwarehouse />,
+      // },
       {
         path: '/addCustomer',
         element: <AddCustomer />,
@@ -142,6 +142,10 @@ const Router = createBrowserRouter([
       {
         path: '/warehouse/:warehouseid',
         element: <Warehouse />,
+      },
+      {
+        path: '/warehouse',
+        element: <AddWarehouse />,
       },
       {
         path: '/vehicle/:vehicleid',
