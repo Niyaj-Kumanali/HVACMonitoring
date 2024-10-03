@@ -67,6 +67,33 @@ router.put('/updatedgset/:dgset_id', async (req, res) => {
     }
 });
 
+router.put('/updatedgset', async (req, res) => {
+    const { id, dgsets} = req.body;
+    console.log(id, dgsets)
+
+    if (!id || !dgsets || dgsets.length === 0) {
+        return res.status(400).json({ error: 'Id and dgsets IDs are required' });
+    }
+    // console.log(req.body)
+
+    try {
+        dgsets.map(async (dgsetId) => {
+            const dgSetToUpdate = await dgsetModel.findOne({dgset_id : dgsetId})
+            if (!dgSetToUpdate){
+                console.warn(`grid not found for ID: ${gridId}`);
+                return;
+            }
+
+            dgSetToUpdate.warehouse_id = id;
+            dgSetToUpdate.save();
+        })
+        res.json({ message: 'DGSet updated successfully' });
+    } catch (error) {
+        console.error(error.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 
 router.delete('/deletedgset/:dgset_id', async (req, res) => {
     const { dgset_id } = req.params;  // Get the dgset_id from the request parameters

@@ -9,3 +9,8 @@ export const getAllGRID = async () => {
     const response = await mongoAPI.get(`/grid/getallgrids`)
     return response
 }
+
+export const AddWarehouseIdToGrid = async (body: any) => {
+    const response = await mongoAPI.put(`/grid/updategrids`, body)
+    return response
+}
