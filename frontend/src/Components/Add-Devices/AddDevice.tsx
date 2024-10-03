@@ -1,140 +1,158 @@
 import './AddDevice.css';
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Device, DeviceQueryParams } from '../../types/thingsboardTypes';
-import { saveDevice, getTenantDevices } from '../../api/deviceApi';
+import { saveDevice, getTenantDevices, getDeviceById } from '../../api/deviceApi';
 import Loader from '../Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
-// import { getCurrentUser } from '../../api/loginApi';
-// import { mongoAPI } from '../../api/MongoAPIInstance';
 import CustomSnackBar from '../SnackBar/SnackBar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Box, TextField } from '@mui/material';
 
-// interface Warehouse {
-//     warehouse_id: string;
-//     warehouse_name: string;
-// }
-
-// interface Vehicle {
-//     vehicle_id: string;
-//     vehicle_name: string;
-// }
-
 const AddDevice = () => {
+    const { deviceid } = useParams<{ deviceid: string }>();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [loading, setLoading] = useState(false);
-    // const [warehouse, setWarehouse] = useState<Warehouse[]>([]);
-    // const [vehicle, setVehicle] = useState<Vehicle[]>([]);
     const [loaders, setLoaders] = useState(true);
-    const deviceCountDispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-        'success'
-    );
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
 
     const [deviceInfo, setDeviceInfo] = useState<Device>({
         type: 'default',
-        // additionalInfo: {
-        //     labelType: 'warehouse',
-        // },
+        additionalInfo: {},
     });
 
-    // const fetchWarehousesAndVehicles = async () => {
-    //     try {
-    //         const currentUser = await getCurrentUser();
-    //         const warehouseResponse = await mongoAPI.get(
-    //             `/warehouse/getallwarehouse/${currentUser.data.id.id}`
-    //         );
-    //         setWarehouse(warehouseResponse.data.data);
+    const fetchDevice = useCallback(async () => {
+        if (!deviceid) return;
+        try {
+            const response = await getDeviceById(deviceid);
+            setDeviceInfo(response.data);
+        } catch (error) {
+            console.error('Error fetching device info:', error);
+            setMessage('Failed to fetch device information.');
+            setSnackbarType('error');
+            setOpen(true);
+        } finally {
+            setLoaders(false);
+        }
+    }, [deviceid]);
 
-    //         const vehicleResponse = await mongoAPI.get(
-    //             `/vehicle/getallvehicle/${currentUser.data.id.id}`
-    //         );
-    //         setVehicle(vehicleResponse.data.data);
-    //     } catch (error) {
-    //         console.error('Failed to fetch warehouses or vehicles:', error);
-    //     }
-    // };
+    useEffect(() => {
+        if (deviceid) {
+            fetchDevice();
+        } else {
+            setLoaders(false);
+        }
+    }, [deviceid, fetchDevice]);
 
-    // useEffect(() => {
-    //     fetchWarehousesAndVehicles();
-    // }, []);
-
-    // const handleLocationChange = async (event: SelectChangeEvent) => {
-    //     setDeviceInfo((prev) => ({
-    //         ...prev,
-    //         additionalInfo: {
-    //             ...prev.additionalInfo,
-    //             labelType: event.target.value,
-    //         },
-    //     }));
-    // };
-
-    setTimeout(() => {
-        setLoaders(false);
-    }, 700);
-
-    const fetchDevices = async (page: number): Promise<void> => {
+    const fetchDevices = useCallback(async (page: number = 0): Promise<void> => {
         try {
             const params: DeviceQueryParams = {
                 pageSize: 10,
-                page: page,
+                page,
             };
-
             const response = await getTenantDevices(params);
-            deviceCountDispatch(
-                set_DeviceCount(response.data.totalElements || 0)
-            );
+            dispatch(set_DeviceCount(response.data.totalElements || 0));
         } catch (error) {
             console.error('Failed to fetch devices', error);
-        }
-    };
-
-    const handleClick = async () => {
-        setLoading(true);
-        if (!deviceInfo.name || !deviceInfo.type || !deviceInfo.label) {
-            setLoading(false);
-            setMessage('Fill the requiered fields!');
+            setMessage('Failed to fetch device count.');
             setSnackbarType('error');
             setOpen(true);
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        fetchDevices();
+    }, [fetchDevices]);
+
+    // Handle input changes
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        field: keyof Device | string,
+        nestedField?: keyof Device['additionalInfo'] | keyof Device['additionalInfo']['placement']
+    ) => {
+        const value = e.target.value;
+        setDeviceInfo(prev => {
+            if (nestedField) {
+                if (field === 'additionalInfo') {
+                    if (nestedField === 'placement') {
+                        return {
+                            ...prev,
+                            additionalInfo: {
+                                ...prev.additionalInfo,
+                                placement: {
+                                    ...prev.additionalInfo?.placement,
+                                    ...(value !== '' ? { [nestedField]: Number(value) } : { [nestedField]: undefined }),
+                                },
+                            },
+                        };
+                    }
+                    return {
+                        ...prev,
+                        additionalInfo: {
+                            ...prev.additionalInfo,
+                            [nestedField]: value,
+                        },
+                    };
+                }
+                return prev;
+            }
+            return {
+                ...prev,
+                [field]: value,
+            };
+        });
+    };
+
+    const handleSubmit = useCallback(async () => {
+        setLoading(true);
+
+        if (!deviceInfo.name || !deviceInfo.type) {
+            setMessage('Please fill in all required fields.');
+            setSnackbarType('error');
+            setOpen(true);
+            setLoading(false);
             return;
         }
 
         try {
             await saveDevice(deviceInfo);
-            await fetchDevices(0);
+            await fetchDevices();
 
-            setDeviceInfo({
-                type: 'default',
-                additionalInfo: {
-                    labelType: 'warehouse',
-                },
-            });
-            setMessage('Device added successfully!');
+            setMessage(deviceid ? 'Device updated successfully!' : 'Device added successfully!');
             setSnackbarType('success');
-        } catch (error: any) {
-            setSnackbarType('error');
-            if (error.status === 400) {
-                setMessage('Device Already Exist');
-            } else if (error.status === 401) {
-                setMessage('Session has expired navigating to login page');
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
-            } else {
-                setMessage('Error Adding Device');
+            setOpen(true);
+
+            if (!deviceid) {
+                setDeviceInfo({
+                    type: 'default',
+                    additionalInfo: {},
+                });
             }
+        } catch (error: any) {
+            console.error('Error saving device:', error);
+            setSnackbarType('error');
+            if (error?.status === 400) {
+                setMessage('Device already exists.');
+            } else if (error?.status === 401) {
+                setMessage('Session expired. Redirecting to login...');
+                setTimeout(() => navigate('/login'), 2000);
+            } else {
+                setMessage('Error adding/updating device.');
+            }
+            setOpen(true);
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-                setOpen(true);
-            }, 500);
+            setLoading(false);
+            if (deviceid) {
+                setTimeout(() => navigate(`/device/${deviceid}`), 600);
+            }
         }
-    };
+    }, [deviceInfo, deviceid, fetchDevices, navigate]);
 
     return (
         <>
@@ -145,115 +163,74 @@ const AddDevice = () => {
             ) : (
                 <div className="menu-data">
                     <div className="add-device">
-                        <form>
-                            <label htmlFor="" className="label">
-                                Add Device
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSubmit();
+                            }}
+                        >
+                            <label htmlFor="device-name" className="label">
+                                {deviceid ? 'Update Device' : 'Add Device'}
                             </label>
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-name"
                                     fullWidth
                                     label="Name"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            name: e.target.value,
-                                        }))
-                                    }
+                                    onChange={(e) => handleInputChange(e, 'name')}
                                     value={deviceInfo.name || ''}
                                     required
                                 />
                             </Box>
-                            {/* <label htmlFor="" className="label">
-                                Type
-                            </label> */}
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-type"
                                     fullWidth
                                     label="Select Type"
                                     name="type"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            type: e.target.value,
-                                        }))
-                                    }
+                                    onChange={(e) => handleInputChange(e, 'type')}
                                     value={deviceInfo.type || ''}
                                     required
                                 />
                             </Box>
-                            {/* <label htmlFor="" className="label">
-                                Add Device
-                            </label> */}
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-make"
                                     fullWidth
                                     label="Make"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            additionalInfo: {
-                                                ...prev.additionalInfo,
-                                                make: e.target.value,
-                                            },
-                                        }))
-                                    }
-                                    value={deviceInfo?.additionalInfo?.make}
+                                    onChange={(e) => handleInputChange(e, 'additionalInfo', 'make')}
+                                    value={deviceInfo.additionalInfo?.make || ''}
                                     required
                                 />
                             </Box>
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-sensitivity"
                                     fullWidth
                                     label="Sensitivity"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            additionalInfo: {
-                                                ...prev.additionalInfo,
-                                                sensitivity: e.target.value,
-                                            },
-                                        }))
-                                    }
-                                    value={
-                                        deviceInfo?.additionalInfo?.sensitivity
-                                    }
+                                    onChange={(e) => handleInputChange(e, 'additionalInfo', 'sensitivity')}
+                                    value={deviceInfo.additionalInfo?.sensitivity || ''}
                                     required
                                 />
                             </Box>
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-accuracy"
                                     fullWidth
                                     label="Accuracy"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            additionalInfo: {
-                                                ...prev.additionalInfo,
-                                                accuracy: e.target.value,
-                                            },
-                                        }))
-                                    }
-                                    value={deviceInfo?.additionalInfo?.accuracy}
+                                    onChange={(e) => handleInputChange(e, 'additionalInfo', 'accuracy')}
+                                    value={deviceInfo.additionalInfo?.accuracy || ''}
                                     required
                                 />
                             </Box>
                             <Box className="text-field-box">
                                 <TextField
+                                    id="device-min-sampling-time"
                                     fullWidth
                                     type="number"
-                                    label="Min. Sampling time(In seconds)"
-                                    onChange={(e) =>
-                                        setDeviceInfo((prev) => ({
-                                            ...prev,
-                                            additionalInfo: {
-                                                ...prev.additionalInfo,
-                                                minSamplingTime: e.target.value,
-                                            },
-                                        }))
-                                    }
-                                    value={
-                                        deviceInfo?.additionalInfo?.minSamplingTime
-                                    }
+                                    label="Min. Sampling Time (In seconds)"
+                                    onChange={(e) => handleInputChange(e, 'additionalInfo', 'minSamplingTime')}
+                                    value={deviceInfo.additionalInfo?.minSamplingTime || ''}
                                     required
                                 />
                             </Box>
@@ -341,96 +318,11 @@ const AddDevice = () => {
                                     />
                                 </Box>
                             </Box>
-                            {/* <label htmlFor="" className="label">
-                                Location
-                            </label>
-                            <div></div>
-                            <FormControl className="form-control" required>
-                                <InputLabel id="location-label">
-                                    Select Location
-                                </InputLabel>
-                                <Select
-                                    labelId="location-label"
-                                    id="location-select"
-                                    value={
-                                        deviceInfo.additionalInfo?.labelType ||
-                                        'warehouse'
-                                    }
-                                    label="Select Location"
-                                    onChange={handleLocationChange}
-                                    className="form-control-inner"
-                                >
-                                    <MenuItem value="warehouse">
-                                        Warehouse
-                                    </MenuItem>
-                                    <MenuItem value="vehicle">Vehicle</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {deviceInfo.additionalInfo?.labelType ===
-                                'warehouse' && (
-                                <FormControl className="form-control" required>
-                                    <InputLabel id="warehouse-label">
-                                        Select Warehouse
-                                    </InputLabel>
-                                    <Select
-                                        labelId="warehouse-label"
-                                        id="warehouse-select"
-                                        value={deviceInfo.label}
-                                        label="Select Warehouse"
-                                        onChange={(e) =>
-                                            setDeviceInfo((prev) => ({
-                                                ...prev,
-                                                label: e.target.value,
-                                            }))
-                                        }
-                                        className="form-control-inner"
-                                    >
-                                        {warehouse.map((wh, index) => (
-                                            <MenuItem
-                                                key={index}
-                                                value={wh.warehouse_id}
-                                            >
-                                                {wh.warehouse_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            )}
-                            {deviceInfo.additionalInfo?.labelType ===
-                                'vehicle' && (
-                                <FormControl className="form-control" required>
-                                    <InputLabel id="vehicle-label">
-                                        Select Vehicle
-                                    </InputLabel>
-                                    <Select
-                                        labelId="vehicle-label"
-                                        id="vehicle-select"
-                                        value={deviceInfo.label}
-                                        label="Select Vehicle"
-                                        onChange={(e) =>
-                                            setDeviceInfo((prev) => ({
-                                                ...prev,
-                                                label: e.target.value,
-                                            }))
-                                        }
-                                        className="form-control-inner"
-                                    >
-                                        {vehicle.map((veh, index) => (
-                                            <MenuItem
-                                                key={index}
-                                                value={veh.vehicle_id}
-                                            >
-                                                {veh.vehicle_name}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            )} */}
-                            <div className="accountinfo-savebtn">
+                            <div className="accountinfo-savebtn-delete-btn">
                                 <LoadingButton
                                     size="small"
                                     color="secondary"
-                                    onClick={handleClick}
+                                    type="submit"
                                     loading={loading}
                                     loadingPosition="start"
                                     startIcon={<SaveIcon />}
@@ -438,8 +330,22 @@ const AddDevice = () => {
                                     disabled={loading}
                                     className="btn-save"
                                 >
-                                    <span>Save</span>
+                                    <span>{deviceid ? 'Update' : 'Save'}</span>
                                 </LoadingButton>
+                                {deviceid && (
+                                    <LoadingButton
+                                        size="small"
+                                        color="primary"
+                                        onClick={() => navigate(`/device/${deviceid}`)}
+                                        disabled={loading}
+                                        loadingPosition="start"
+                                        startIcon={<SaveIcon />}
+                                        variant="contained"
+                                        className="btn-save"
+                                    >
+                                        <span>Cancel</span>
+                                    </LoadingButton>
+                                )}
                             </div>
                         </form>
                     </div>

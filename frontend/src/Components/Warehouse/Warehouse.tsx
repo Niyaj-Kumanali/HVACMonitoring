@@ -181,28 +181,26 @@ const Warehouse: React.FC = () => {
                                             </p>
                                         </h3>
                                     </div>
-                                    <div>
+                                    <div className="del-btn-warehouse">
                                         <Link to={`/Editwarehouse/${warehouseid}`}>
                                             <LoadingButton
                                                 variant="contained"
-                                                size="small"
+                                                size="large"
                                                 color="primary"
-                                                loading={loadingg}
+                                                disabled={loadingg}
                                                 loadingPosition="start"
                                                 startIcon={<EditIcon />}
-                                                className="btn-save"
                                             >
                                                 EDIT
                                             </LoadingButton>
                                         </Link>
                                         <LoadingButton
-                                            size="small"
+                                            size="large"
                                             color="error"
                                             loading={loadingg}
                                             loadingPosition="start"
                                             startIcon={<DeleteIcon />}
                                             variant="contained"
-                                            className="btn-save"
                                             onClick={handleDeleteWarehouse}
                                         >
                                             <span>Delete</span>

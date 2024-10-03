@@ -32,152 +32,162 @@ import AddGrid from './Components/AddGrid/AddGrid';
 import AddSwitch from './Components/AddSwitch/AddSwitch';
 import AddWarehouse from './Components/Add-Warehouse/Addwarehouse';
 import EditWarehouse from './Components/Warehouse/EditWarehouse';
+import EditVehicle from './Components/Vehicles/EditVehicle';
+import EditDevice from './Components/Devices/EditDevice';
 
 const Router = createBrowserRouter([
-  {
-    path: '/login',
-    element: <Login />,
-  },
+    {
+        path: '/login',
+        element: <Login />,
+    },
 
-  {
-    path: '/login/resetpassword',
-    element: <ResetPassword />,
-  },
-  {
-    path: '/signup',
-    element: <Signup />,
-  },
-  {
-    path: '/',
-    element: <App />,
-    children: [
-      {
-        path: '/dashboards',
-        element: <Dashboards />,
-      },
-      {
-        path: '/dashboard/:dashboardId',
-        element: <Dashboard />,
-      },
-      {
-        path: '/charts',
-        element: <Charts />,
-      },
-      {
-        path: '/actions',
-        element: <Actions />,
-      },
-      {
-        path: '/devices',
-        element: <Devices />,
-      },
-      {
-        path: '/device/:deviceId',
-        element: <DeviceInfo />,
-      },
-      {
-        path: '/locations',
-        element: <Locations />,
-      },
-      {
-        path: '/users',
-        element: <Users />,
-      },
-      {
-        path: '/addDevice',
-        element: <AddDevice />,
-      },
-      {
-        path: '/dashboard',
-        element: <AddDashboard />,
-      },
-      {
-        path: 'dashboard/edit/:dashboardId',
-        element: <AddDashboard />,
-      },
+    {
+        path: '/login/resetpassword',
+        element: <ResetPassword />,
+    },
+    {
+        path: '/signup',
+        element: <Signup />,
+    },
+    {
+        path: '/',
+        element: <App />,
+        children: [
+            {
+                path: '/dashboards',
+                element: <Dashboards />,
+            },
+            {
+                path: '/dashboard/:dashboardId',
+                element: <Dashboard />,
+            },
+            {
+                path: '/charts',
+                element: <Charts />,
+            },
+            {
+                path: '/actions',
+                element: <Actions />,
+            },
+            {
+                path: '/devices',
+                element: <Devices />,
+            },
+            {
+                path: '/device/:deviceId',
+                element: <DeviceInfo />,
+            },
+            {
+                path: '/locations',
+                element: <Locations />,
+            },
+            {
+                path: '/users',
+                element: <Users />,
+            },
+            {
+                path: '/addDevice',
+                element: <AddDevice />,
+            },
+            {
+                path: '/dashboard',
+                element: <AddDashboard />,
+            },
+            {
+                path: 'dashboard/edit/:dashboardId',
+                element: <AddDashboard />,
+            },
 
-      {
-        path: '/warehouses',
-        element: <Warehouses />,
-      },
-      {
-        path: '/vehicles',
-        element: <Vehicles />,
-      },
-      {
-        path: '/addAction',
-        element: <AddAction />,
-      },
-      {
-        path: '/addLocation',
-        element: <AddLocation />,
-      },
-      // {
-      //   path: '/addWarehouse',
-      //   element: <Addwarehouse />,
-      // },
-      {
-        path: '/addCustomer',
-        element: <AddCustomer />,
-      },
-      {
-        path: '/addVehicle',
-        element: <Addvehicle />,
-      },
-      {
-        path: '/testComponent',
-        element: <MyComponent />,
-      },
-      {
-        path: '/accountinfo',
-        element: <Accountinfo />,
-      },
-      {
-        path: '/addSupervisor',
-        element: <AddSupervisor />,
-      },
-      {
-        path: '/user/:email',
-        element: <User />,
-      },
-      {
-        path: '/warehouse/:warehouseid',
-        element: <Warehouse />,
-      },
-      {
-        path: '/warehouse',
-        element: <AddWarehouse />,
-      },
-      {
-        path: '/vehicle/:vehicleid',
-        element: <Vehicleinfo />,
-      },
-      {
-        path: '/addRoom',
-        element: <AddRooms />,
-      },
-      {
-        path: '/addDgset',
-        element: <AddDgSet />,
-      },
-      {
-        path: '/addGrid',
-        element: <AddGrid />,
-      },
-      {
-        path:'/addSwitch',
-        element: <AddSwitch />,
-      },
-      {
-        path:'/Editwarehouse/:warehouseid',
-        element: <EditWarehouse />,
-      }
-    ],
-  },
-  {
-    path: '*', 
-    element: <PageNotFound />,
-  },
+            {
+                path: '/warehouses',
+                element: <Warehouses />,
+            },
+            {
+                path: '/vehicles',
+                element: <Vehicles />,
+            },
+            {
+                path: '/addAction',
+                element: <AddAction />,
+            },
+            {
+                path: '/addLocation',
+                element: <AddLocation />,
+            },
+            // {
+            //   path: '/addWarehouse',
+            //   element: <Addwarehouse />,
+            // },
+            {
+                path: '/addCustomer',
+                element: <AddCustomer />,
+            },
+            {
+                path: '/vehicle',
+                element: <Addvehicle />,
+            },
+            {
+                path: '/testComponent',
+                element: <MyComponent />,
+            },
+            {
+                path: '/accountinfo',
+                element: <Accountinfo />,
+            },
+            {
+                path: '/addSupervisor',
+                element: <AddSupervisor />,
+            },
+            {
+                path: '/user/:email',
+                element: <User />,
+            },
+            {
+                path: '/warehouse/:warehouseid',
+                element: <Warehouse />,
+            },
+            {
+                path: '/warehouse',
+                element: <AddWarehouse />,
+            },
+            {
+                path: '/vehicle/:vehicleid',
+                element: <Vehicleinfo />,
+            },
+            {
+                path: '/addRoom',
+                element: <AddRooms />,
+            },
+            {
+                path: '/addDgset',
+                element: <AddDgSet />,
+            },
+            {
+                path: '/addGrid',
+                element: <AddGrid />,
+            },
+            {
+                path: '/addSwitch',
+                element: <AddSwitch />,
+            },
+            {
+                path: '/Editwarehouse/:warehouseid',
+                element: <EditWarehouse />,
+            },
+            {
+                path: '/Editvehicle/:vehicleid',
+                element: <EditVehicle />,
+            },
+            {
+                path: '/editDevice/:deviceid',
+                element: <EditDevice />,
+            }
+        ],
+    },
+    {
+        path: '*',
+        element: <PageNotFound />,
+    },
 ]);
 
 export default Router;
