@@ -279,12 +279,14 @@ const Warehouse: React.FC = () => {
                                             </h3>
                                         </div>
                                         <div>
+                                           <Link to="/Editwarehouse">
                                             <Button
                                                 variant="contained"
-                                                onClick={handleButtonVisible}
+                                                // onClick={handleButtonVisible}
                                             >
                                                 EDIT
                                             </Button>
+                                        </Link>
                                             <Button
                                                 variant="contained"
                                                 color="error"

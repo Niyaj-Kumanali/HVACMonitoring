@@ -31,6 +31,7 @@ import AddDgSet from './Components/AddDGSet/AddDgSet';
 import AddGrid from './Components/AddGrid/AddGrid';
 import AddSwitch from './Components/AddSwitch/AddSwitch';
 import AddWarehouse from './Components/Add-Warehouse/Addwarehouse';
+import EditWarehouse from './Components/Warehouse/EditWarehouse';
 
 const Router = createBrowserRouter([
   {
@@ -166,6 +167,10 @@ const Router = createBrowserRouter([
       {
         path:'/addSwitch',
         element: <AddSwitch />,
+      },
+      {
+        path:'/Editwarehouse',
+        element: <EditWarehouse />,
       }
     ],
   },
