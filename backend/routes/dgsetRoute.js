@@ -80,7 +80,7 @@ router.put('/updatedgset', async (req, res) => {
         dgsets.map(async (dgsetId) => {
             const dgSetToUpdate = await dgsetModel.findOne({dgset_id : dgsetId})
             if (!dgSetToUpdate){
-                console.warn(`grid not found for ID: ${gridId}`);
+                console.warn(`grid not found for ID: ${dgsetId}`);
                 return;
             }
 
