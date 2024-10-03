@@ -284,8 +284,8 @@ router.get('/getallwarehousetest', async (req, res) => {
         return {
           ...warehouseWithoutDetails,
           rooms: roomsWithDetails,
-          grids : gridWithDetails,
-          dgsets : dgsetWithDetails,
+          grids: gridWithDetails,
+          dgsets: dgsetWithDetails,
         };
       })
     );
@@ -413,11 +413,11 @@ router.get('/getallwarehousetest', async (req, res) => {
 
 router.get('/getallwarehouse/:userId', async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // Get the userId from the route parameters
 
+    // Pagination parameters
     const page = parseInt(req.query.page) || 0;
     const pageSize = parseInt(req.query.pageSize) || 12;
-    console.log(page, pageSize);
 
     // Calculate the skip value (how many records to skip)
     const skip = page * pageSize;
@@ -438,33 +438,8 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
       });
     }
 
-    // Get the paginated warehouses
-    const getAllWarehouse = await warehouse
-      .find({ userId })
-      .skip(skip)
-      .limit(pageSize);
-
-    // Check if there is a next page
-    const hasNext = page < totalPages - 1;
-
-    // Respond with warehouses, pagination metadata, and hasNext flag
-    res.status(200).json({
-      data: getAllWarehouse,
-      hasNext,
-      totalElements,
-      totalPages,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving warehouse data', error });
-  }
-});
-
-router.get('/getallwarehousetest/:userId', async (req, res) => {
-  try {
-    const { userId } = req.params; // Get the userId from the route parameters
-
-    // Fetch all warehouses for the specific userId
-    const getAllWarehouse = await warehouse.find({ userId }); 
+    // Fetch all warehouses for the specific userId with pagination
+    const getAllWarehouse = await warehouse.find({ userId }).skip(skip).limit(pageSize);
 
     if (getAllWarehouse.length === 0) { // Check if there are no warehouses for this user
       return res.status(404).json({ message: 'No warehouses found for this user' });
@@ -515,12 +490,22 @@ router.get('/getallwarehousetest/:userId', async (req, res) => {
       })
     );
 
-    return res.status(200).json(warehousesWithDetails);
+    // Check if there is a next page
+    const hasNext = page < totalPages - 1;
+
+    // Respond with warehouses, pagination metadata, and hasNext flag
+    res.status(200).json({
+      data: warehousesWithDetails,
+      hasNext,
+      totalElements,
+      totalPages,
+    });
   } catch (error) {
     console.error(error); // Log the error for debugging
     res.status(500).json({ message: 'Error retrieving warehouse data', error });
   }
 });
+
 
 
 // rooms in use
@@ -531,34 +516,19 @@ router.get('/roomsinuse/:userId', async (req, res) => {
     // Fetch all warehouses for the specific userId
     const getAllWarehouse = await warehouse.find({ userId });
 
-    if (getAllWarehouse.length === 0) { // Check if there are no warehouses for this user
-      return res.status(404).json({ message: 'No warehouses found for this user' });
-    }
-
-    // Initialize an array to collect all room_ids
     let roomIds = [];
+    getAllWarehouse.map((warehouse) => {
+      roomIds = [...roomIds, ...warehouse.rooms]
+    })
 
-    // Iterate over each warehouse to collect room_ids
-    getAllWarehouse.forEach((warehouse) => {
-      if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
-        // Collect room_id from each room in the warehouse
-        const ids = warehouse.rooms.map(room => room.room_id);
-        roomIds = [...roomIds, ...ids];
-      }
-    });
 
-    // If no room_ids found
-    if (roomIds.length === 0) {
-      return res.status(404).json({ message: 'No rooms in use for this user' });
-    }
-
-    // Return the list of room_ids
-    return res.status(200).json({ room_ids: roomIds });
+    return res.status(200).json(roomIds); // Return the array of room IDs
   } catch (error) {
     console.error(error); // Log the error for debugging
-    res.status(500).json({ message: 'Error retrieving room data', error });
+    res.status(500).json({ message: 'Error retrieving room IDs', error });
   }
 });
+
 
 
 
@@ -604,7 +574,7 @@ router.get('/getwarehousetest/:warehouseId', async (req, res) => {
     const { warehouseId } = req.params; // Get warehouseId from the route parameters
 
     // Fetch the warehouse by warehouseId
-    const warehouseData = await warehouse.findOne({ warehouse_id : warehouseId });
+    const warehouseData = await warehouse.findOne({ warehouse_id: warehouseId });
 
     if (!warehouseData) { // If no warehouse is found
       return res.status(404).json({ message: 'Warehouse not found' });

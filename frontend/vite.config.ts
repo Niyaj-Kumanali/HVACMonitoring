@@ -7,10 +7,6 @@ export default defineConfig({
     react(),
     inspect(),
   ],
-  build: {
-    sourcemap: false, // Disable sourcemaps for production
-    chunkSizeWarningLimit: 600, // Adjust for chunk sizes
-  },
   optimizeDeps: {
     include: ['react', 'react-dom'], // Include essential dependencies
   },

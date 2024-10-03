@@ -20,7 +20,7 @@ import {
     Device,
     dgset,
     grid,
-    rooms,
+    RoomType,
     WarehouseData,
     WarehouseDimensions,
 } from '../../types/thingsboardTypes';
@@ -28,13 +28,14 @@ import CustomSnackBar from '../SnackBar/SnackBar';
 import { getCurrentUser } from '../../api/loginApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+    addWarehouse,
     getAllWarehouseByUserId,
     getWarehouseByWarehouseId,
     updateWarehouseByWarehouseId,
 } from '../../api/warehouseAPIs';
-import { getAllRooms } from '../../api/roomAPIs';
-import { getAllDGSET } from '../../api/dgsetAPIs';
-import { getAllGRID } from '../../api/gridAPIs';
+import { AddWarehouseIdToRooms, getAllRooms } from '../../api/roomAPIs';
+import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
+import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
 
 const defaultWarehouse = {
@@ -223,6 +224,9 @@ const AddWarehouse: React.FC = () => {
             };
             if (warehouseid) {
                 await updateDeviceLabels(updateDeviceBody);
+                await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
+                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
+                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
                 setTimeout(() => {
                     setLoading(false);
                     setMessage('Warehouse Updated Successfully');
@@ -234,16 +238,18 @@ const AddWarehouse: React.FC = () => {
                 }, 600);
             } else {
                 await updateDeviceLabels(updateDeviceBody);
+                await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
+                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
+                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
                 setTimeout(() => {
                     setLoading(false);
-                    setMessage('Warehouse Updated Successfully');
+                    setMessage('Warehouse Added Successfully');
                     setOpen(true);
                     setSnackbarType('success');
                     setTimeout(() => {
                         navigate(`/Warehouse/${warehouseid}`)
                     }, 700)
                 }, 600);
-                setMessage('Warehouse Added Successfully');
             }
             setTimeout(() => {
                 handleReset();
@@ -446,7 +452,7 @@ const AddWarehouse: React.FC = () => {
                                 required
                                 multiple
                             >
-                                {allRooms.map((item: rooms, index: number) => (
+                                {allRooms.map((item: RoomType, index: number) => (
                                     <MenuItem key={index} value={item.room_id}>
                                         {item.room_name}
                                     </MenuItem>
@@ -541,9 +547,7 @@ const AddWarehouse: React.FC = () => {
                                     variant="contained"
                                     disabled={loading}
                                     className="btn-save"
-                                    onClick={() => {
-                                        navigate(`/warehouse/${warehouseid}`);
-                                    }}
+                                    onClick={() => { navigate(`/warehouse/${warehouseid}`) }}
                                 >
                                     <span>Cancel</span>
                                 </LoadingButton>

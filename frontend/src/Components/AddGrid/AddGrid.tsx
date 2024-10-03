@@ -5,13 +5,17 @@ import { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 import CustomSnackBar from "../SnackBar/SnackBar";
 import { addGRID } from "../../api/gridAPIs";
+import { RootState } from "../../Redux/Reducer";
+import { useSelector } from 'react-redux';
+import { grid } from "../../types/thingsboardTypes";
 
-interface FormData {
-    grid_name: String ,
-    output_voltage: String ,
-    max_output_current: String,
-    output_connector_type: String ,
-}
+
+// interface FormData {
+//     grid_name: String,
+//     output_voltage: String,
+//     max_output_current: String,
+//     output_connector_type: String,
+// }
 
 const AddGrid = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -19,12 +23,16 @@ const AddGrid = () => {
     const [message, setMessage] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [addbuttonloader, setAddButtonLoader] = useState<boolean>(false);
-    const [formData, setFormdata] = useState<FormData>({
+    const [formData, setFormdata] = useState<grid>({
         grid_name: '',
-        output_voltage: '',
-        max_output_current: '',
+        max_output_current: 0,
         output_connector_type: '',
+        output_voltage: 0,
+        userId: '',
     });
+
+    const currentUser = useSelector((state: RootState) => state.user.user);
+
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -39,9 +47,10 @@ const AddGrid = () => {
     const handleReset = () => {
         setFormdata({
             grid_name: '',
-            output_voltage: '',
-            max_output_current: '',
+            output_voltage: 0,
+            max_output_current: 0,
             output_connector_type: '',
+            userId: '',
         });
     };
 
@@ -53,6 +62,7 @@ const AddGrid = () => {
             ...formData,
             output_voltage: Number(formData.output_voltage),
             max_output_current: Number(formData.max_output_current),
+            userId : currentUser.id?.id,
         };
 
 

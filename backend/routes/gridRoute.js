@@ -61,6 +61,34 @@ router.put('/updategrid/:grid_id', async (req, res) => {
     }
 });
 
+router.put('/updategrids', async (req, res) => {
+    const { id, grids} = req.body;
+    console.log(id, grids)
+
+    if (!id || !grids || grids.length === 0) {
+        return res.status(400).json({ error: 'Id and grid IDs are required' });
+    }
+    console.log(req.body)
+
+    try {
+        grids.map(async (gridId) => {
+            console.log(gridId)
+            const gridToUpdate = await gridModel.findOne({grid_id : gridId})
+            if (!gridToUpdate){
+                console.warn(`grid not found for ID: ${gridId}`);
+                return;
+            }
+
+            gridToUpdate.warehouse_id = id;
+            gridToUpdate.save();
+        })
+        res.json({ message: 'Grid updated successfully' });
+    } catch (error) {
+        console.error(error.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 
 router.delete('/deletegrid/:grid_id', async (req, res) => {
     const { grid_id } = req.params;

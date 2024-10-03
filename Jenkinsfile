@@ -69,8 +69,9 @@ pipeline {
 
                         echo "PM2 process list after restarting:"
                         pm2 list
-
+                        sleep 10
                         pm2 restart hvac_backend
+                        pm2 list
                     '''
                 }
             }

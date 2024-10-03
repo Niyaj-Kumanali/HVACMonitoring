@@ -12,25 +12,23 @@ import ErrorIcon from '@mui/icons-material/Error';
 import SaveIcon from '@mui/icons-material/Save';
 import CheckIcon from '@mui/icons-material/Check';
 import { addRoom } from '../../api/roomAPIs';
-interface Roomtypes {
-    room_no: string;
-    room_name: string;
-    racks: string;
-    power_point: string;
-    slot: string;
-    level_slots: {}
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Reducer';
+import { RoomType } from '../../types/thingsboardTypes';
+
 
 const AddRooms: React.FC = () => {
-    const [formData, setFormData] = useState<Roomtypes>({
+    const [formData, setFormData] = useState<RoomType>({
         room_no: '',
         room_name: '',
-        racks: '',
+        racks: 0,
         power_point: '',
-        slot: '',
-        level_slots: {}
+        slot: 0,
+        level_slots: {},
+        userId: '',
     });
 
+    const currentUser = useSelector((state: RootState) => state.user.user);
 
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
@@ -40,12 +38,13 @@ const AddRooms: React.FC = () => {
 
     const handleReset = () => {
         setFormData({
-            room_no:'',
+            room_no: '',
             room_name: '',
-            racks: '',
+            racks: 0,
             power_point: '',
-            slot: '',
-            level_slots: {}
+            slot: 0,
+            level_slots: {},
+            userId: '',
         });
         setSubmitted(false);
     };
@@ -64,16 +63,16 @@ const AddRooms: React.FC = () => {
 
         const convertedData = {
             ...formData,
-            room_no: Number(formData.room_no),  
-            room_name: formData.room_name,
             racks: Number(formData.racks),
             power_point: Number(formData.power_point),
             slot: Number(formData.slot),
             level_slots: Array.from({ length: Number(formData.racks), }, (_, i) => i + 1)
-                .reduce((acc:any, rack:any) => {
+                .reduce((acc: any, rack: any) => {
                     acc[rack] = Array.from({ length: Number(formData.slot), }, (_, j) => j + 1);
                     return acc;
-                }, {})
+                }, {}),
+            userId: currentUser.id?.id || "",
+
         };
 
         try {
@@ -138,7 +137,7 @@ const AddRooms: React.FC = () => {
                             label="Racks"
                             name="racks"
                             type="number"
-                            value={formData.racks}
+                            value={formData.racks || ''}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
@@ -160,7 +159,7 @@ const AddRooms: React.FC = () => {
                             label="Slots"
                             name="slot"
                             type="number"
-                            value={formData.slot}
+                            value={formData.slot || ''}
                             onChange={handleChange}
                             disabled={submitted}
                             className="textfieldss"
