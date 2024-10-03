@@ -1,7 +1,8 @@
 import express from 'express';
 import warehouse from '../schemas/warehouse_metadata.js';
 import { roomModel } from '../schemas/room_metadata.js';
-import { powerswitchModel } from '../schemas/powerswitch_metadata.js';
+import { gridModel } from '../schemas/grid_metadata.js';
+import { dgsetModel } from '../schemas/dgset_meatadata.js';
 
 const router = express.Router();
 
@@ -234,58 +235,67 @@ router.get('/getallwarehouse', async (req, res) => {
 });
 
 
-// router.get('/getallwarehouse', async (req, res) => {
-//   try {
-//       const getAllWarehouse = await warehouse.find(); // Fetch all warehouses
+router.get('/getallwarehousetest', async (req, res) => {
+  try {
+    const getAllWarehouse = await warehouse.find(); // Fetch all warehouses
 
-//       if (getAllWarehouse.length === 0) { // Check if there are no warehouses
-//           return res.status(404).json({ message: 'No warehouses found' });
-//       }
+    if (getAllWarehouse.length === 0) { // Check if there are no warehouses
+      return res.status(404).json({ message: 'No warehouses found' });
+    }
 
-//       // Initialize arrays to hold the results
-//       let warehousesWithDetails = await Promise.all(
-//           getAllWarehouse.map(async (warehouse) => {
-//               // Populate room data using the room_id
-//               let roomsWithDetails = [];
-//               if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
-//                   roomsWithDetails = await Promise.all(
-//                       warehouse.rooms.map(async (room) => {
-//                           const roomData = await roomModel.findOne({ room_id: room.room_id }).select('room_name racks power_point slot level_slots room_id');
-//                           return roomData; // Return the room details
-//                       })
-//                   );
-//               }
+    // Initialize arrays to hold the results
+    let warehousesWithDetails = await Promise.all(
+      getAllWarehouse.map(async (warehouse) => {
+        // Populate room data using the room_id
+        let roomsWithDetails = [];
+        if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
+          roomsWithDetails = await Promise.all(
+            warehouse.rooms.map(async (roomId) => {
+              const roomData = await roomModel.findOne({ room_id: roomId }).select('room_name racks power_point slot level_slots room_id');
+              return roomData;
+            })
+          );
+        }
 
-//               // Populate power source data using powerSource_id
-//               let powerStatusWithDetails = [];
-//               if (Array.isArray(warehouse.powerSource) && warehouse.powerSource.length > 0) {
-//                   powerStatusWithDetails = await Promise.all(
-//                       warehouse.powerSource.map(async (power) => {
-//                           const powerDetails = await powerswitchModel.findOne({ powerSource_id: power.powerSource_id }).select('powerSource_id powerSource_status power_source');
-//                           return powerDetails;
-//                       })
-//                   );
-//               }
+        let gridWithDetails = [];
+        if (Array.isArray(warehouse.grid) && warehouse.grid.length > 0) {
+          gridWithDetails = await Promise.all(
+            warehouse.grid.map(async (gridId) => {
+              const gridData = await gridModel.findOne({ grid_id: gridId }).select('grid_name output_voltage max_output_current output_connector_type grid_id');
+              return gridData;
+            })
+          );
+        }
 
-//               // Return the warehouse data with populated rooms and power sources
-//               const { rooms, powerSource, ...warehouseWithoutDetails } = warehouse.toObject(); // Convert to plain object
-//               return {
-//                   ...warehouseWithoutDetails,
-//                   rooms: roomsWithDetails,
-//                   powerStatus: powerStatusWithDetails
-//               };
-//           })
-//       );
+        let dgsetWithDetails = [];
+        if (Array.isArray(warehouse.dgset) && warehouse.dgset.length > 0) {
+          dgsetWithDetails = await Promise.all(
+            warehouse.dgset.map(async (dgsetId) => {
+              const dgsetData = await dgsetModel.findOne({ dgset_id: dgsetId }).select('dgset_name output_voltage max_output_current fuel_type fuel_capacity output_connector_type motor_type dgset_id');
+              return dgsetData;
+            })
+          );
+        }
 
-//       return res.status(200).json({
-//           message: 'Warehouse, room, and power source details fetched successfully',
-//           warehouses: warehousesWithDetails,
-//       });
-//   } catch (error) {
-//       console.error(error); // Log the error for debugging
-//       res.status(500).json({ message: 'Error retrieving warehouse data', error });
-//   }
-// });
+
+
+        // Return the warehouse data with populated rooms and power sources
+        const { rooms, grid, dgset, ...warehouseWithoutDetails } = warehouse.toObject(); // Convert to plain object
+        return {
+          ...warehouseWithoutDetails,
+          rooms: roomsWithDetails,
+          grids : gridWithDetails,
+          dgsets : dgsetWithDetails,
+        };
+      })
+    );
+
+    return res.status(200).json(warehousesWithDetails);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
+});
 
 
 /**
@@ -406,7 +416,7 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
     const { userId } = req.params;
 
     const page = parseInt(req.query.page) || 0;
-    const pageSize = parseInt(req.query.pageSize) ||  12;
+    const pageSize = parseInt(req.query.pageSize) || 12;
     console.log(page, pageSize);
 
     // Calculate the skip value (how many records to skip)
@@ -449,6 +459,108 @@ router.get('/getallwarehouse/:userId', async (req, res) => {
   }
 });
 
+router.get('/getallwarehousetest/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params; // Get the userId from the route parameters
+
+    // Fetch all warehouses for the specific userId
+    const getAllWarehouse = await warehouse.find({ userId }); 
+
+    if (getAllWarehouse.length === 0) { // Check if there are no warehouses for this user
+      return res.status(404).json({ message: 'No warehouses found for this user' });
+    }
+
+    // Initialize arrays to hold the results
+    let warehousesWithDetails = await Promise.all(
+      getAllWarehouse.map(async (warehouse) => {
+        // Populate room data using the room_id
+        let roomsWithDetails = [];
+        if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
+          roomsWithDetails = await Promise.all(
+            warehouse.rooms.map(async (roomId) => {
+              const roomData = await roomModel.findOne({ room_id: roomId }).select('room_name racks power_point slot level_slots room_id');
+              return roomData;
+            })
+          );
+        }
+
+        let gridWithDetails = [];
+        if (Array.isArray(warehouse.grid) && warehouse.grid.length > 0) {
+          gridWithDetails = await Promise.all(
+            warehouse.grid.map(async (gridId) => {
+              const gridData = await gridModel.findOne({ grid_id: gridId }).select('grid_name output_voltage max_output_current output_connector_type grid_id');
+              return gridData;
+            })
+          );
+        }
+
+        let dgsetWithDetails = [];
+        if (Array.isArray(warehouse.dgset) && warehouse.dgset.length > 0) {
+          dgsetWithDetails = await Promise.all(
+            warehouse.dgset.map(async (dgsetId) => {
+              const dgsetData = await dgsetModel.findOne({ dgset_id: dgsetId }).select('dgset_name output_voltage max_output_current fuel_type fuel_capacity output_connector_type motor_type dgset_id');
+              return dgsetData;
+            })
+          );
+        }
+
+        // Return the warehouse data with populated rooms and power sources
+        const { rooms, grid, dgset, ...warehouseWithoutDetails } = warehouse.toObject(); // Convert to plain object
+        return {
+          ...warehouseWithoutDetails,
+          rooms: roomsWithDetails,
+          grids: gridWithDetails,
+          dgsets: dgsetWithDetails,
+        };
+      })
+    );
+
+    return res.status(200).json(warehousesWithDetails);
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
+});
+
+
+// rooms in use
+router.get('/roomsinuse/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params; // Get the userId from the route parameters
+
+    // Fetch all warehouses for the specific userId
+    const getAllWarehouse = await warehouse.find({ userId });
+
+    if (getAllWarehouse.length === 0) { // Check if there are no warehouses for this user
+      return res.status(404).json({ message: 'No warehouses found for this user' });
+    }
+
+    // Initialize an array to collect all room_ids
+    let roomIds = [];
+
+    // Iterate over each warehouse to collect room_ids
+    getAllWarehouse.forEach((warehouse) => {
+      if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
+        // Collect room_id from each room in the warehouse
+        const ids = warehouse.rooms.map(room => room.room_id);
+        roomIds = [...roomIds, ...ids];
+      }
+    });
+
+    // If no room_ids found
+    if (roomIds.length === 0) {
+      return res.status(404).json({ message: 'No rooms in use for this user' });
+    }
+
+    // Return the list of room_ids
+    return res.status(200).json({ room_ids: roomIds });
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: 'Error retrieving room data', error });
+  }
+});
+
+
 
 
 // /**
@@ -486,6 +598,68 @@ router.get('/getwarehouse/:warehouse_id', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving warehouse data', error });
   }
 });
+
+router.get('/getwarehousetest/:warehouseId', async (req, res) => {
+  try {
+    const { warehouseId } = req.params; // Get warehouseId from the route parameters
+
+    // Fetch the warehouse by warehouseId
+    const warehouseData = await warehouse.findOne({ warehouse_id : warehouseId });
+
+    if (!warehouseData) { // If no warehouse is found
+      return res.status(404).json({ message: 'Warehouse not found' });
+    }
+
+    // Populate room data using the room_id
+    let roomsWithDetails = [];
+    if (Array.isArray(warehouseData.rooms) && warehouseData.rooms.length > 0) {
+      roomsWithDetails = await Promise.all(
+        warehouseData.rooms.map(async (roomId) => {
+          const roomData = await roomModel.findOne({ room_id: roomId }).select('room_name racks power_point slot level_slots room_id');
+          return roomData;
+        })
+      );
+    }
+
+    // Populate grid data using the grid_id
+    let gridWithDetails = [];
+    if (Array.isArray(warehouseData.grid) && warehouseData.grid.length > 0) {
+      gridWithDetails = await Promise.all(
+        warehouseData.grid.map(async (gridId) => {
+          const gridData = await gridModel.findOne({ grid_id: gridId }).select('grid_name output_voltage max_output_current output_connector_type grid_id');
+          return gridData;
+        })
+      );
+    }
+
+    // Populate DGSet data using the dgset_id
+    let dgsetWithDetails = [];
+    if (Array.isArray(warehouseData.dgset) && warehouseData.dgset.length > 0) {
+      dgsetWithDetails = await Promise.all(
+        warehouseData.dgset.map(async (dgsetId) => {
+          const dgsetData = await dgsetModel.findOne({ dgset_id: dgsetId }).select('dgset_name output_voltage max_output_current fuel_type fuel_capacity output_connector_type motor_type dgset_id');
+          return dgsetData;
+        })
+      );
+    }
+
+    // Return the warehouse data with populated rooms and power sources
+    const { rooms, grid, dgset, ...warehouseWithoutDetails } = warehouseData.toObject(); // Convert to plain object
+    return res.status(200).json({
+      message: 'Warehouse details fetched successfully',
+      warehouse: {
+        ...warehouseWithoutDetails,
+        rooms: roomsWithDetails,
+        grids: gridWithDetails,
+        dgsets: dgsetWithDetails,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching warehouse by ID:', error); // Log the error for debugging
+    res.status(500).json({ message: 'Error retrieving warehouse data', error });
+  }
+});
+
 
 /**
  * @swagger
