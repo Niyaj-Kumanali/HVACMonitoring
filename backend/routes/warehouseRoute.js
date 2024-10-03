@@ -520,7 +520,7 @@ router.get('/roomsinuse/:userId', async (req, res) => {
     getAllWarehouse.map((warehouse) => {
       roomIds = [...roomIds, ...warehouse.rooms]
     })
-
+ 
 
     return res.status(200).json(roomIds); // Return the array of room IDs
   } catch (error) {
