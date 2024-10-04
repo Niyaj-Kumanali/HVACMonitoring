@@ -104,10 +104,10 @@ const Warehouses = () => {
                                 Warehouses
                             </h2>
                         </div>
-                        <div className="warehouses">
+                        <div className="info-display-cont">
                             {allWarehouses.map((warehouse) => (
-                                <Link to={`/warehouse/${warehouse.warehouse_id}`} className="userinfo" key={warehouse._id} onClick={(e) => handleWarehouseClick(e, warehouse)}>
-                                    <div className="user-img-info">
+                                <Link to={`/warehouse/${warehouse.warehouse_id}`} className="info-display-body" key={warehouse._id} onClick={(e) => handleWarehouseClick(e, warehouse)}>
+                                    <div className="img-info">
                                         <div className="img">
                                             <img src={warehouseimg} className="personicon" />
                                         </div>

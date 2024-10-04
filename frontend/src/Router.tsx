@@ -1,15 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Dashboards from './Components/Dashboards/Dashboards';
 import Charts from './Components/Charts/Charts';
-import Actions from './Components/Actions/Actions';
 import Devices from './Components/Devices/Devices';
 import Locations from './Components/Locations/Locations';
 import Users from './Components/Users/Users';
 import AddDevice from './Components/Add-Devices/AddDevice';
 import Warehouses from './Components/Warehouse/Warehouses';
 import Vehicles from './Components/Vehicles/Vehicles';
-import AddAction from './Components/Add-Action/AddAction';
-import AddLocation from './Components/Add-Location/AddLocation';
 import Addvehicle from './Components/Add-Vehicle/Addvehicle';
 import MyComponent from './Components/MyComponent/MyComponent';
 import Login from './Components/Login/Login';
@@ -29,7 +26,6 @@ import ResetPassword from './Components/ResetPassword/ResetPassword';
 import AddRooms from './Components/Warehouse/AddRooms';
 import AddDgSet from './Components/AddDGSet/AddDgSet';
 import AddGrid from './Components/AddGrid/AddGrid';
-import AddSwitch from './Components/AddSwitch/AddSwitch';
 import AddWarehouse from './Components/Add-Warehouse/Addwarehouse';
 import EditWarehouse from './Components/Warehouse/EditWarehouse';
 import EditVehicle from './Components/Vehicles/EditVehicle';
@@ -65,10 +61,6 @@ const Router = createBrowserRouter([
             {
                 path: '/charts',
                 element: <Charts />,
-            },
-            {
-                path: '/actions',
-                element: <Actions />,
             },
             {
                 path: '/devices',
@@ -107,18 +99,6 @@ const Router = createBrowserRouter([
                 path: '/vehicles',
                 element: <Vehicles />,
             },
-            {
-                path: '/addAction',
-                element: <AddAction />,
-            },
-            {
-                path: '/addLocation',
-                element: <AddLocation />,
-            },
-            // {
-            //   path: '/addWarehouse',
-            //   element: <Addwarehouse />,
-            // },
             {
                 path: '/addCustomer',
                 element: <AddCustomer />,
@@ -166,10 +146,6 @@ const Router = createBrowserRouter([
             {
                 path: '/addGrid',
                 element: <AddGrid />,
-            },
-            {
-                path: '/addSwitch',
-                element: <AddSwitch />,
             },
             {
                 path: '/Editwarehouse/:warehouseid',

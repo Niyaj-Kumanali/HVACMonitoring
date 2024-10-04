@@ -8,6 +8,7 @@ import {
     Switch,
     TextField,
     FormControlLabel,
+    Box,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -133,10 +134,10 @@ const AddWarehouse: React.FC = () => {
         };
 
         fetchRoomsGridDg();
-        avaliableRooms(currentUser?.id?.id );
+        avaliableRooms(currentUser?.id?.id);
     }, [warehouseid]);
 
-    
+
 
     const [allRooms, setAllRooms] = useState([]);
     const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
@@ -216,8 +217,8 @@ const AddWarehouse: React.FC = () => {
                 userId: currentUser.id?.id,
                 email: currentUser.email,
             };
-            
-            
+
+
             if (warehouseid) {
 
                 const response = await updateWarehouseByWarehouseId(
@@ -232,8 +233,8 @@ const AddWarehouse: React.FC = () => {
 
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
-                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
-                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
+                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || [] });
+                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || [] });
                 setTimeout(() => {
                     setLoading(false);
                     setMessage('Warehouse Updated Successfully');
@@ -252,11 +253,11 @@ const AddWarehouse: React.FC = () => {
                     id: response.data.warehouse_id,
                     devices: formData.devices || [],
                 };
-                
+
                 await updateDeviceLabels(updateDeviceBody);
                 await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
-                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || []});
-                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || []});
+                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || [] });
+                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || [] });
                 setTimeout(() => {
                     setLoading(false);
                     setMessage('Warehouse Added Successfully');
@@ -312,14 +313,14 @@ const AddWarehouse: React.FC = () => {
     return (
         <>
             <div className="menu-data">
-                <div className="warehouse">
+                <div className="form-container">
                     {warehouseid ? (
                         <h3>Warehouse: {formData.warehouse_name}</h3>
                     ) : (
                         <h3>Add Warehouse</h3>
                     )}
 
-                    <form className="warehouse-form" onSubmit={handleSubmit}>
+                    <form className="form-body" onSubmit={handleSubmit}>
                         <FormControl fullWidth margin="normal">
                             <TextField
                                 label="Warehouse Name"
@@ -330,61 +331,78 @@ const AddWarehouse: React.FC = () => {
                                 className="textfieldss"
                             />
                         </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Latitude"
-                                name="latitude"
-                                type="number"
-                                value={formData.latitude}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Longitude"
-                                name="longitude"
-                                type="number"
-                                value={formData.longitude}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Length"
-                                name="warehouse_dimensions.length"
-                                type="number"
-                                value={formData.warehouse_dimensions.length}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Width"
-                                name="warehouse_dimensions.width"
-                                type="number"
-                                value={formData.warehouse_dimensions.width}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Height"
-                                name="warehouse_dimensions.height"
-                                type="number"
-                                value={formData.warehouse_dimensions.height}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '5px',
+                            }}
+                        >
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Latitude"
+                                    name="latitude"
+                                    type="number"
+                                    value={formData.latitude}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Longitude"
+                                    name="longitude"
+                                    type="number"
+                                    value={formData.longitude}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: '5px',
+                            }}
+                        >
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Length"
+                                    name="warehouse_dimensions.length"
+                                    type="number"
+                                    value={formData.warehouse_dimensions.length}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Width"
+                                    name="warehouse_dimensions.width"
+                                    type="number"
+                                    value={formData.warehouse_dimensions.width}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Height"
+                                    name="warehouse_dimensions.height"
+                                    type="number"
+                                    value={formData.warehouse_dimensions.height}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                        </Box>
                         <FormControl fullWidth margin="normal">
                             <TextField
                                 label="Energy Resource"
@@ -542,7 +560,7 @@ const AddWarehouse: React.FC = () => {
                         />
 
                         {warehouseid ? (
-                            <div className="del-btn-warehouse">
+                            <div className="btn-cont">
                                 <LoadingButton
                                     size="small"
                                     type="submit"
@@ -551,7 +569,7 @@ const AddWarehouse: React.FC = () => {
                                     loadingPosition="start"
                                     startIcon={<SaveIcon />}
                                     variant="contained"
-                                    className="btn-save"
+                                    className="btn-all"
                                 >
                                     <span>Update</span>
                                 </LoadingButton>
@@ -562,14 +580,14 @@ const AddWarehouse: React.FC = () => {
                                     startIcon={<DeleteIcon />}
                                     variant="contained"
                                     disabled={loading}
-                                    className="btn-save"
+                                    className="btn-all"
                                     onClick={() => { navigate(`/warehouse/${warehouseid}`) }}
                                 >
                                     <span>Cancel</span>
                                 </LoadingButton>
                             </div>
                         ) : (
-                            <div className="sub-btn">
+                            <div className="btn-cont">
                                 <LoadingButton
                                     size="small"
                                     type="submit"
@@ -579,7 +597,7 @@ const AddWarehouse: React.FC = () => {
                                     startIcon={<SaveIcon />}
                                     variant="contained"
                                     disabled={loading}
-                                    className="btn-save"
+                                    className="btn-all"
                                 >
                                     <span>Save</span>
                                 </LoadingButton>

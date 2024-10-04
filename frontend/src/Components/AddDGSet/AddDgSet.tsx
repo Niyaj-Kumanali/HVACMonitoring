@@ -104,9 +104,9 @@ const AddDgSet: React.FC = () => {
                     </div>
                 ) : (
                     <div className="menu-data">
-                        <div className="warehouse">
+                        <div className="form-container">
                             <h3>Add DG Set</h3>
-                            <form className="warehouse-form" onSubmit={handleSubmit}>
+                            <form className="form-body" onSubmit={handleSubmit}>
                                 <FormControl fullWidth margin="normal">
                                     <TextField
                                         label="Name"
@@ -179,7 +179,7 @@ const AddDgSet: React.FC = () => {
                                         <MenuItem value={"PMSM (Permanent Magnet Synchronous Motors)"}>PMSM (Permanent Magnet Synchronous Motors)</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <div className="sub-btn">
+                                <div className="btn-cont">
                                     <LoadingButton
                                         size="small"
                                         type="submit"
@@ -189,7 +189,7 @@ const AddDgSet: React.FC = () => {
                                         startIcon={<SaveIcon />}
                                         variant="contained"
                                         disabled={addbuttonloader}
-                                        className="btn-save"
+                                        className="btn-all"
                                     >
                                         <span>Save</span>
                                     </LoadingButton>

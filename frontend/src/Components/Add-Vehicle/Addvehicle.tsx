@@ -211,9 +211,9 @@ const AddVehicle: React.FC = () => {
     return (
         <>
             <div className="menu-data">
-                <div className="warehouse">
+                <div className="form-container">
                     <h3>Add Vehicle</h3>
-                    <form className="warehouse-form" onSubmit={handleSubmit}>
+                    <form className="form-body" onSubmit={handleSubmit}>
                         <FormControl fullWidth margin="normal">
                             <TextField
                                 label="Vehicle Number"
@@ -321,7 +321,7 @@ const AddVehicle: React.FC = () => {
                             />
                         </FormControl>
 
-                        <div className="del-btn-warehouse">
+                        <div className="btn-cont">
                             {
                                 vehicleid ? (<>
                                     <LoadingButton
@@ -333,7 +333,7 @@ const AddVehicle: React.FC = () => {
                                         startIcon={<SaveIcon />}
                                         variant="contained"
                                         disabled={loading}
-                                        className="btn-save"
+                                        className="btn-all"
                                     >
                                         <span>Update</span>
                                     </LoadingButton>
@@ -344,7 +344,7 @@ const AddVehicle: React.FC = () => {
                                         startIcon={<SaveIcon />}
                                         variant="contained"
                                         disabled={loading}
-                                        className="btn-save"
+                                        className="btn-all"
                                         onClick={() => navigate(`/vehicle/${vehicleid}`)}
                                     >
                                         <span>Cancel</span>
@@ -360,7 +360,7 @@ const AddVehicle: React.FC = () => {
                                             startIcon={<SaveIcon />}
                                             variant="contained"
                                             disabled={loading}
-                                            className="btn-save"
+                                            className="btn-all"
                                         >
                                             <span>Save</span>
                                         </LoadingButton>

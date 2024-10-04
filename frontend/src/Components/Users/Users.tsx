@@ -79,7 +79,7 @@ const AddCustomer: React.FC = () => {
 
         return (
             <div className="menu-data">
-                <div className="user-cont">
+                <div className="warehouses-cont">
                     <div>
                         <div >
                             <h2 className="pageHeaders">
@@ -87,10 +87,10 @@ const AddCustomer: React.FC = () => {
                                 Users
                             </h2>
                         </div>
-                        <div className="warehouses">
+                        <div className="info-display-cont">
                             {userdata.map((user, index) => (
-                                <Link to={`/user/${user.id?.id}`} className="userinfo" key={index} state={user}>
-                                    <div className="user-img-info">
+                                <Link to={`/user/${user.id?.id}`} className="info-display-body" key={index} state={user}>
+                                    <div className="img-info">
                                         <div className="img">
                                             <img src={userimage} className="personicon static-img" alt="User Static" />
                                             <img src={userimage} className="personicon animated-img" alt="User Animated" />

@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { Device } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
-import { Button } from '@mui/material';
+import { Button, FormControl } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './DeviceInfo.css';
 import CustomSnackBar from '../SnackBar/SnackBar';
@@ -151,12 +151,12 @@ const DeviceInfo: React.FC = () => {
                 </div>
             ) : (
                 <div className="menu-data">
-                    <div className="add-device">
-                        <form>
+                    <div className="form-container">
+                        <form className="form-body">
                             <div className="header-container">
                                 <label className="label">
                                     <KeyboardBackspaceIcon onClick={goBack} />
-                                    Device Info
+                                    <h2>Device Info</h2>
                                 </label>
                                 <div className="buttons">
                                     <Button
@@ -199,7 +199,7 @@ const DeviceInfo: React.FC = () => {
                                     </Button>
                                 </div>
                             </div>
-                            <Box className="text-field-box">
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="Name"
@@ -208,9 +208,10 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.name || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="Type"
@@ -219,9 +220,10 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.type || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="Make"
@@ -230,9 +232,10 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.additionalInfo.make || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="Sensitivity"
@@ -241,9 +244,10 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.additionalInfo.sensitivity || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="Accuracy"
@@ -252,9 +256,10 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.additionalInfo.accuracy || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     fullWidth
                                     label="MinSamplingTime "
@@ -263,8 +268,9 @@ const DeviceInfo: React.FC = () => {
                                     value={deviceInfo.additionalInfo.minSamplingTime || ''}
                                     required
                                     inputProps={{ readOnly: isEdit }}
+                                    className="textfieldss"
                                 />
-                            </Box>
+                            </FormControl>
                             <Box
                                 sx={{
                                     display: 'grid',
@@ -272,7 +278,7 @@ const DeviceInfo: React.FC = () => {
                                     gap: '5px',
                                 }}
                             >
-                                <Box className="text-field-box">
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
                                         label="X "
@@ -281,9 +287,10 @@ const DeviceInfo: React.FC = () => {
                                         value={deviceInfo.additionalInfo.placement?.x || ''}
                                         required
                                         inputProps={{ readOnly: isEdit }}
+                                        className="textfieldss"
                                     />
-                                </Box>
-                                <Box className="text-field-box">
+                                </FormControl>
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
                                         label="Y "
@@ -292,9 +299,10 @@ const DeviceInfo: React.FC = () => {
                                         value={deviceInfo.additionalInfo.placement?.y || ''}
                                         required
                                         inputProps={{ readOnly: isEdit }}
+                                        className="textfieldss"
                                     />
-                                </Box>
-                                <Box className="text-field-box">
+                                    </FormControl>
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
                                         label="Z "
@@ -303,13 +311,14 @@ const DeviceInfo: React.FC = () => {
                                         value={deviceInfo.additionalInfo.placement?.z || ''}
                                         required
                                         inputProps={{ readOnly: isEdit }}
+                                        className="textfieldss"
                                     />
-                                </Box>
+                                </FormControl>
                             </Box>
-                            <div className="accountinfo-savebtn-delete-btn">
+                                <div className="btn-cont">
 
                                 <LoadingButton
-                                    className="btn-save"
+                                    className="btn-all"
                                     variant="contained"
                                     onClick={() => navigate(`/editDevice/${deviceId}`)}
                                     size="small"
@@ -328,7 +337,7 @@ const DeviceInfo: React.FC = () => {
                                     startIcon={<DeleteIcon />}
                                     variant="contained"
                                     disabled={loadingSave}
-                                    className="btn-save"
+                                    className="btn-all"
                                 >
                                     <span>Delete</span>
                                 </LoadingButton>
