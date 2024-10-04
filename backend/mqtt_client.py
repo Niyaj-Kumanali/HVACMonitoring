@@ -173,6 +173,8 @@ if __name__ == "__main__":
         # Create a thread for each device to simulate concurrent telemetry data sending
         threads = []
         for access_token in access_tokens:
+            if access_token in ["nDdu1s4zFvWJCmTf0BlU"]:
+                continue
             t = threading.Thread(target=simulate_device, args=(access_token,))
             threads.append(t)
             t.start()

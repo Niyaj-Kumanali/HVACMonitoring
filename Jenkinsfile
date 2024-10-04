@@ -1,19 +1,34 @@
 pipeline {
     agent any
 
+    environment {
+        CACHE_DIR = '.npm'
+    }
+
     stages {
         stage('Install Frontend Dependencies') {
             steps {
                 script {
                     sh '''
                         cd frontend
-                        npm ci
+                        npm ci --cache $CACHE_DIR
                     '''
                 }
             }
         }
 
-        stage('Build') {
+        stage('Install Backend Dependencies') {
+            steps {
+                script {
+                    sh '''
+                        cd backend
+                        npm ci --cache $CACHE_DIR
+                    '''
+                }
+            }
+        }
+
+        stage('Build Frontend') {
             steps {
                 script {
                     sh '''
@@ -24,7 +39,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Frontend') {
             steps {
                 script {
                     sh '''
@@ -45,32 +60,16 @@ pipeline {
             }
         }
 
-        stage('Install Backend Dependencies') {
+        stage('Restart Backend') {
             steps {
                 script {
                     sh '''
                         cd backend
-                        npm install
-                    '''
-                }
-            }
-        }
-        
-        stage('Restart backend') {
-            steps {
-                script {
-                    sh '''
-                        cd backend
-
-                        echo "Force restarting hvac_backend..."
-                        pm2 delete hvac_backend || true
-                        pm2 start index.js --name hvac_backend --update-env
+                        echo "Restarting hvac_backend..."
+                        pm2 restart hvac_backend --update-env || pm2 start index.js --name hvac_backend --update-env
                         pm2 save
 
                         echo "PM2 process list after restarting:"
-                        pm2 list
-                        sleep 10
-                        pm2 restart hvac_backend
                         pm2 list
                     '''
                 }
