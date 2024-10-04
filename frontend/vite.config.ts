@@ -6,8 +6,5 @@ export default defineConfig({
   plugins: [
     react(),
     inspect(),
-  ],
-  optimizeDeps: {
-    include: ['react', 'react-dom'], // Include essential dependencies
-  },
+  ]
 });
