@@ -10,4 +10,8 @@ export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: mode === 'development', // Source maps only in development
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom'], // Add critical dependencies
+    exclude: ['large-unused-lib'], // Exclude any unnecessary libs
+  },
 }));
