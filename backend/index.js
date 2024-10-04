@@ -59,6 +59,7 @@ import finalWarehouseRoute from './routes/finalWarehouseRoute.js'
 import dgsetRoute from './routes/dgsetRoute.js'
 import gridRoute from './routes/gridRoute.js'
 import powerswitchRoute from './routes/powerswitchRoute.js'
+import refrigeratorRoute from './routes/refrigeratorRoute.js'
 
 
 app.use('/warehouse', warehouseRouter);
@@ -74,6 +75,8 @@ app.use('/finalwarhouse', finalWarehouseRoute);
 app.use('/dgset', dgsetRoute);
 app.use('/grid', gridRoute);
 app.use('/powerswitch', powerswitchRoute);
+app.use('/refrigerator', refrigeratorRoute)
+
 
 
 
