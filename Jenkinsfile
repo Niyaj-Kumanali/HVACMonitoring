@@ -7,7 +7,7 @@ pipeline {
                 script {
                     sh '''
                         cd frontend
-                        npm ci
+                        npm install
                     '''
                 }
             }
