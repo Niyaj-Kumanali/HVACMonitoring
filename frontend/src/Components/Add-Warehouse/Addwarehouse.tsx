@@ -21,6 +21,7 @@ import {
     Device,
     dgset,
     grid,
+    refrigerator,
     RoomType,
     WarehouseData,
     WarehouseDimensions,
@@ -34,10 +35,11 @@ import {
     getWarehouseByWarehouseId,
     updateWarehouseByWarehouseId,
 } from '../../api/warehouseAPIs';
-import { AddWarehouseIdToRooms, avaliableRooms, getAllRooms } from '../../api/roomAPIs';
+import { AddWarehouseIdToRooms, avaliableRooms, getAllRoomsByUserId } from '../../api/roomAPIs';
 import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
 import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
+import { getAllRefrigeratorbyUserId } from '../../api/refrigeratorAPI';
 
 const defaultWarehouse = {
     warehouse_name: '',
@@ -54,6 +56,7 @@ const defaultWarehouse = {
     rooms: [],
     dgset: [],
     grid: [],
+    refrigerator: [],
     devices: [],
     powerSource: false,
     userId: '',
@@ -69,7 +72,14 @@ const AddWarehouse: React.FC = () => {
 
     const getAllRoomsfunc = async () => {
         try {
-            const response = await getAllRooms();
+            const body = {
+                userId: currentUser.id?.id || "",
+                warehouseId: warehouseid || ""
+            }
+            console.log(currentUser.id?.id)
+            const response = await getAllRoomsByUserId(body);
+            console.log(response);
+
             setAllRooms(response.data);
         } catch (error) {
             console.error('Error fetching rooms:', error);
@@ -89,7 +99,15 @@ const AddWarehouse: React.FC = () => {
         try {
             const response = await getAllGRID();
             setAllGrids(response.data);
-            // console.log(response);
+        } catch (error) {
+            console.error('Error fetching Grids:', error);
+        }
+    };
+
+    const getAllRefrigeratorsfunc = async () => {
+        try {
+            const response = await getAllRefrigeratorbyUserId(currentUser.id?.id);
+            setAllRefrigeraators(response.data);
         } catch (error) {
             console.error('Error fetching Grids:', error);
         }
@@ -122,19 +140,20 @@ const AddWarehouse: React.FC = () => {
         }
     };
 
+
     useEffect(() => {
         const fetchRoomsGridDg = async () => {
             await Promise.all([
                 getAllRoomsfunc(),
                 getAllDGsetsfunc(),
                 getAllGridsfunc(),
+                getAllRefrigeratorsfunc(),
                 fetchDevices(),
                 fetchWarehouseById(),
             ]);
         };
 
         fetchRoomsGridDg();
-        avaliableRooms(currentUser?.id?.id);
     }, [warehouseid]);
 
 
@@ -142,6 +161,7 @@ const AddWarehouse: React.FC = () => {
     const [allRooms, setAllRooms] = useState([]);
     const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
     const [allGrids, setAllGrids] = useState<grid[]>([]);
+    const [allRefrigeraators, setAllRefrigeraators] = useState<refrigerator[]>([]);
     const [devices, setDevices] = useState<Device[]>([]);
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
@@ -545,6 +565,34 @@ const AddWarehouse: React.FC = () => {
                                 ))}
                             </Select>
                         </FormControl>
+
+
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel
+                                className="input-label-select"
+                                id="switch-label"
+                            >
+                                Available Refrigerators
+                            </InputLabel>
+                            <Select
+                                labelId="Refrigerators-label"
+                                id="Refrigerators-select"
+                                name="refrigerators"
+                                value={formData.refrigerator}
+                                label={'Available Refrigerators'}
+                                onChange={handleChange}
+                                className="textfieldss"
+                                required
+                                multiple
+                            >
+                                {allRefrigeraators.map((item: refrigerator, index: number) => (
+                                    <MenuItem key={index} value={item.refrigerator_id}>
+                                        {item.refrigerator_name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
 
                         <FormControlLabel
                             control={

@@ -1,5 +1,7 @@
 import express from 'express';
 import { roomModel } from '../schemas/room_metadata.js';
+import warehouse from '../schemas/warehouse_metadata.js';
+
 const router = express.Router();
 
 router.post('/addroom', async (req, res) => {
@@ -42,11 +44,22 @@ router.get('/getallrooms', async (req, res) => {
     }
 });
 
-router.get('/getallrooms/:userId', async (req, res) => {
+router.post('/getallrooms/:userId', async (req, res) => {
     try {
-        const {userId} = req.params;
-        // Fetch all rooms from the database
-        const rooms = await roomModel.find({userId : userId});
+        const { userId } = req.params;
+        const { warehouseId } = req.body;
+
+        const rooms = []; // Initialize the rooms array
+
+        // If a warehouseId is provided, fetch rooms assigned to that warehouse
+        if (warehouseId) {
+            const roomsAssigned = await roomModel.find({ userId: userId, warehouse_id: warehouseId });
+            rooms.push(...roomsAssigned); // Use push to add roomsAssigned to rooms
+        }
+
+        // Fetch rooms not assigned to any warehouse
+        const roomsNotAssigned = await roomModel.find({ userId: userId, warehouse_id: "" });
+        rooms.push(...roomsNotAssigned); // Use push to add roomsNotAssigned to rooms
 
         // Send the rooms in the response
         res.status(200).json(rooms);
@@ -54,6 +67,7 @@ router.get('/getallrooms/:userId', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch rooms', details: error.message });
     }
 });
+
 
 router.put('/updatelevelslots/:roomId', async (req, res) => {
     try {

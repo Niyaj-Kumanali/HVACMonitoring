@@ -529,6 +529,29 @@ router.get('/roomsinuse/:userId', async (req, res) => {
   }
 });
 
+router.get('/roomsinuse/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params; // Get the userId from the route parameters
+    const {warehouseId} = req.body;
+    
+    
+
+    // Fetch all warehouses for the specific userId
+    const getAllWarehouse = await warehouse.find({ userId });
+
+    let roomIds = [];
+    getAllWarehouse.map((warehouse) => {
+      roomIds = [...roomIds, ...warehouse.rooms]
+    })
+ 
+
+    return res.status(200).json(roomIds); // Return the array of room IDs
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: 'Error retrieving room IDs', error });
+  }
+});
+
 
 
 
