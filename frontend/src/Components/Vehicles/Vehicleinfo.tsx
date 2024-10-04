@@ -243,9 +243,9 @@ const AddVehicle: React.FC = () => {
                 <VehicleLoader />
             ) : (
                 <div className="menu-data">
-                    <div className="warehouse">
+                    <div className="form-container">
                         <h3>{vehicleid ? 'Edit Vehicle' : 'Add Vehicle'}</h3>
-                        <form className="warehouse-form" onSubmit={handleSubmit}>
+                        <form className="form-body" onSubmit={handleSubmit}>
                             <FormControl fullWidth margin="normal">
                                 <TextField
                                     label="Vehicle Number"
@@ -380,7 +380,7 @@ const AddVehicle: React.FC = () => {
                                 />
                             </FormControl>
 
-                            <div className="sub-btn-flex">
+                            <div className="btn-cont">
                                 <LoadingButton
                                     size="small"
                                     color="primary"
@@ -389,7 +389,7 @@ const AddVehicle: React.FC = () => {
                                     startIcon={<EditIcon />}
                                     variant="contained"
                                     disabled={deleteloading}
-                                    className="btn-save"
+                                    className="btn-all"
                                     onClick={() => navigate(`/Editvehicle/${vehicleid}`)}
                                 >
                                     <span>Edit</span>
@@ -402,7 +402,7 @@ const AddVehicle: React.FC = () => {
                                     startIcon={<DeleteIcon />}
                                     variant="contained"
                                     disabled={loading}
-                                    className="btn-save"
+                                    className="btn-all"
                                     onClick={handleVehicleDelete}
                                 >
                                     <span>Delete</span>

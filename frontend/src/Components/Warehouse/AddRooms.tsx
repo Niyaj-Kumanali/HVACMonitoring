@@ -109,9 +109,9 @@ const AddRooms: React.FC = () => {
 
     return (
         <div className="menu-data">
-            <div className="warehouse">
+            <div className="form-container">
                 <h3>Add Rooms</h3>
-                <form className="warehouse-form" onSubmit={handleSubmit}>
+                <form className="form-body" onSubmit={handleSubmit}>
                     <FormControl fullWidth margin="normal">
                         <TextField
                             label="Room Number"
@@ -136,7 +136,7 @@ const AddRooms: React.FC = () => {
                         <TextField
                             label="Racks"
                             name="racks"
-                            type="number"
+                            type="numbtnber"
                             value={formData.racks || ''}
                             onChange={handleChange}
                             disabled={submitted}
@@ -166,7 +166,7 @@ const AddRooms: React.FC = () => {
                         />
                     </FormControl>
 
-                    <div className="sub-btn">
+                    <div className="btn-cont">
                         <LoadingButton
                             size="small"
                             type="submit"
@@ -176,7 +176,7 @@ const AddRooms: React.FC = () => {
                             startIcon={<SaveIcon />}
                             variant="contained"
                             disabled={loading}
-                            className="btn-save"
+                            className="btn-all"
                         >
                             <span>Save</span>
                         </LoadingButton>

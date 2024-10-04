@@ -1,55 +1,190 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Outfit", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
 }
-body{
-    background-color: #ebebeb;
+body {
+  background-color: #ebebeb;
 }
-
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
-.pageHeaders{
-    padding: 10px;
-    margin:10px;
-    background-color: white;
-    display: grid;
-    align-items: center;
-    grid-template-columns: 0fr 0fr;
-    grid-gap: 30px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+.pageHeaders {
+  padding: 10px;
+  margin: 10px;
+  background-color: white;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 0fr 0fr;
+  grid-gap: 30px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 .textfieldss {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
-.warehouse {
-    min-width: 400px;
-    max-width: 55%;
-    height: auto;
-    padding: 20px;
-    background-color: white;
-    margin: 20px;
-    height: max-content;
+.form-container {
+  padding: 20px;
+  background-color: white;
+  margin: 10px !important;
+  height: max-content;
+  border-radius: 10px;
+  min-width: 430px !important;
+  max-width: 50%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
-
-.warehouse-form {
-    margin: 20px 0;
+.form-body {
+  margin: 20px 0;
+  width: 100%;
+  opacity: 1;
+  transform: translateY(0);
+}
+.btn-cont {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn-all {
+  width: 150px !important;
+  height: 50px !important;
+}
+.warehouses-cont {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100% !important;
+}
+.info-display-cont {
+  margin: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+}
+.info-display-body {
+  min-width: 100%;
+  width: 32%;
+  height: 150px;
+  background-color: white;
+  border-radius: 10px;
+}
+.img-info {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+.img-info .img {
+  width: 30%;
+  height: 100%;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.personicon {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  color: rgba(0, 0, 0, 0.776) !important;
+}
+.img-info .img img {
+  object-fit: contain;
+}
+.img-info:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: scale(1.005);
+}
+.info-display-body .img-info .status {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+@media screen and (max-width: 500px) {
+  .pageHeaders {
+    margin: 5px;
+  }
+  .MuiSnackbar-root {
+    margin-top: 10px !important;
+  }
+  .form-container {
+    margin: 0 0 50px 0 !important;
+    min-width: 340px !important;
+    max-width: 100%;
+  }
+  .info-display-body {
     width: 100%;
-    opacity: 1;
-    transform: translateY(0);
-    height: max-height;
+    height: 130px;
+  }
+  .username {
+    font-size: 1.1em !important;
+  }
+  .status {
+    gap: 8px;
+  }
 }
-
-@media screen and (max-width:500px) {
-    .pageHeaders {
-        margin: 5px;
-    }
-    .MuiSnackbar-root{
-        margin-top:10px !important;
-    }
+@media screen and (max-width: 700px) {
+  .form-container {
+    max-width: 100%;
+  }
+  .info-display-cont {
+    grid-template-columns: 1fr;
+  }
+  .img-info {
+    height: 15vh !important;
+  }
+  .info-display-body {
+    width: 100%;
+    height: 16vh;
+  }
+  .status {
+    padding: 0 0 0 30px;
+    gap: 8px;
+  }
+  .user {
+    padding: 10px;
+    gap: 10px;
+  }
+  .user-cont {
+    min-height: 100%;
+    max-height: 100%;
+  }
+}
+@media screen and (max-width: 1330px) {
+  .info-display-body {
+    width: 48.9%;
+  }
+}
+@media screen and (max-width: 1250px) {
+  .info-display-body {
+    width: 48.5%;
+  }
+}
+@media screen and (max-width: 980px) {
+  .info-display-body {
+    width: 100%;
+    height: 14vh;
+  }
+  .status {
+    padding: 0 0 0 20px;
+    gap: 10px;
+  }
+  .user {
+    gap: 10px;
+  }
+  .personicon {
+    width: 100px !important;
+  }
+  .img-info .img{
+    display: block;
+  }
 }

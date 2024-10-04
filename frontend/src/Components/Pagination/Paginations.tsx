@@ -4,19 +4,17 @@ import Stack from '@mui/material/Stack';
 import "./Pagination.css";
 
 interface PaginationProps {
-    pageCount: number;  // Total number of pages
-    onPageChange: (page: number) => void;  // Function to call when page changes
+    pageCount: number;
+    onPageChange: (page: number) => void;
 }
 
 const Paginations: React.FC<PaginationProps> = ({ pageCount, onPageChange }) => {
-    // Use state to keep track of the current page
-    const [currentPage, setCurrentPage] = useState(1);  // Default page is 1
+    const [currentPage, setCurrentPage] = useState(1);
 
-    // Handle page change
     const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
         event.preventDefault();
-        setCurrentPage(page);  // Update the current page in the state
-        onPageChange(page);    // Notify the parent about the page change
+        setCurrentPage(page);
+        onPageChange(page);
     };
 
     return (

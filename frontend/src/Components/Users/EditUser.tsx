@@ -84,7 +84,7 @@ const EditUser = () => {
                     setTimeout(() => {
                         setOpen(false);
                         setLoading(false);
-                        setTimeout(()=>{},900)
+                        setTimeout(() => { }, 900)
                         navigate(-1)
                     }, 700);
                 } else {
@@ -232,32 +232,32 @@ const EditUser = () => {
                                     disabled={true}
                                 />
                             </Box>
-                            <div className="accountinfo-savebtn-delt-btn">
-                                
-                                        <LoadingButton
-                                            size="small"
-                                            color="secondary"
-                                            onClick={handleClick}
-                                            loading={loading}
-                                            loadingPosition="start"
-                                            startIcon={<SaveIcon />}
-                                            variant="contained"
-                                            sx={{ width: '150px', height: '50px' }}
-                                        >
-                                            <span>Update</span>
-                                        </LoadingButton>
-                                        <LoadingButton
-                                            size="small"
-                                            color="primary"
-                                            onClick={()=>navigate(-1)}
-                                            loadingPosition="start"
-                                            startIcon={<CloseIcon />}
-                                            variant="contained"
-                                            disabled={loading}
-                                            sx={{ width: '150px', height: '50px' }}
-                                        >
-                                            <span>Cancel</span>
-                                        </LoadingButton>
+                            <div className="btn-cont">
+
+                                <LoadingButton
+                                    size="small"
+                                    color="secondary"
+                                    onClick={handleClick}
+                                    loading={loading}
+                                    loadingPosition="start"
+                                    startIcon={<SaveIcon />}
+                                    variant="contained"
+                                    className='btn-all'
+                                >
+                                    <span>Update</span>
+                                </LoadingButton>
+                                <LoadingButton
+                                    size="small"
+                                    color="primary"
+                                    onClick={() => navigate(-1)}
+                                    loadingPosition="start"
+                                    startIcon={<CloseIcon />}
+                                    variant="contained"
+                                    disabled={loading}
+                                    className='btn-all'
+                                >
+                                    <span>Cancel</span>
+                                </LoadingButton>
                             </div>
                         </main>
                     </div>

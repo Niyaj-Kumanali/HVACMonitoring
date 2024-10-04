@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, TextField } from '@mui/material';
+import { Box, FormControl, TextField } from '@mui/material';
 
 const AddDevice = () => {
     const { deviceid } = useParams<{ deviceid: string }>();
@@ -162,17 +162,18 @@ const AddDevice = () => {
                 </div>
             ) : (
                 <div className="menu-data">
-                    <div className="add-device">
+                        <div className="form-container">
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 handleSubmit();
                             }}
+                            className='form-body'
                         >
                             <label htmlFor="device-name" className="label">
                                 {deviceid ? 'Update Device' : 'Add Device'}
                             </label>
-                            <Box className="text-field-box">
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-name"
                                     fullWidth
@@ -180,9 +181,10 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'name')}
                                     value={deviceInfo.name || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-type"
                                     fullWidth
@@ -191,9 +193,10 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'type')}
                                     value={deviceInfo.type || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-make"
                                     fullWidth
@@ -201,9 +204,10 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'additionalInfo', 'make')}
                                     value={deviceInfo.additionalInfo?.make || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-sensitivity"
                                     fullWidth
@@ -211,9 +215,10 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'additionalInfo', 'sensitivity')}
                                     value={deviceInfo.additionalInfo?.sensitivity || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-accuracy"
                                     fullWidth
@@ -221,9 +226,10 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'additionalInfo', 'accuracy')}
                                     value={deviceInfo.additionalInfo?.accuracy || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
-                            <Box className="text-field-box">
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-min-sampling-time"
                                     fullWidth
@@ -232,8 +238,9 @@ const AddDevice = () => {
                                     onChange={(e) => handleInputChange(e, 'additionalInfo', 'minSamplingTime')}
                                     value={deviceInfo.additionalInfo?.minSamplingTime || ''}
                                     required
+                                    className="textfieldss"
                                 />
-                            </Box>
+                            </FormControl>
                             <Box
                                 sx={{
                                     display: 'grid',
@@ -241,9 +248,10 @@ const AddDevice = () => {
                                     gap: '5px',
                                 }}
                             >
-                                <Box className="text-field-box">
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
+                                        className="textfieldss"
                                         label="x"
                                         name="x"
                                         type="number"
@@ -266,10 +274,11 @@ const AddDevice = () => {
                                         }
                                         required
                                     />
-                                </Box>
-                                <Box className="text-field-box">
+                                </FormControl>
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
+                                        className="textfieldss"
                                         label="y"
                                         type="number"
                                         onChange={(e) =>
@@ -291,10 +300,11 @@ const AddDevice = () => {
                                         }
                                         required
                                     />
-                                </Box>
-                                <Box className="text-field-box">
+                                </FormControl>
+                                <FormControl fullWidth margin="normal">
                                     <TextField
                                         fullWidth
+                                        className="textfieldss"
                                         label="z"
                                         type="number"
                                         onChange={(e) =>
@@ -316,9 +326,9 @@ const AddDevice = () => {
                                         }
                                         required
                                     />
-                                </Box>
+                                </FormControl>
                             </Box>
-                            <div className="accountinfo-savebtn-delete-btn">
+                            <div className="btn-cont">
                                 <LoadingButton
                                     size="small"
                                     color="secondary"
@@ -328,7 +338,7 @@ const AddDevice = () => {
                                     startIcon={<SaveIcon />}
                                     variant="contained"
                                     disabled={loading}
-                                    className="btn-save"
+                                    className="btn-all"
                                 >
                                     <span>{deviceid ? 'Update' : 'Save'}</span>
                                 </LoadingButton>
