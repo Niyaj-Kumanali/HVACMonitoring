@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { set_DeviceCount } from '../../Redux/Action/Action';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, FormControl, TextField } from '@mui/material';
+import { Box, FormControl, InputLabel, TextField } from '@mui/material';
 
 const AddDevice = () => {
     const { deviceid } = useParams<{ deviceid: string }>();
@@ -170,9 +170,9 @@ const AddDevice = () => {
                             }}
                             className='form-body'
                         >
-                            <label htmlFor="device-name" className="label">
+                            <h3 className="label">
                                 {deviceid ? 'Update Device' : 'Add Device'}
-                            </label>
+                            </h3>
                             <FormControl fullWidth margin="normal">
                                 <TextField
                                     id="device-name"

@@ -10,12 +10,7 @@ import { useSelector } from 'react-redux';
 import { grid } from "../../types/thingsboardTypes";
 
 
-// interface FormData {
-//     grid_name: String,
-//     output_voltage: String,
-//     max_output_current: String,
-//     output_connector_type: String,
-// }
+
 
 const AddGrid = () => {
     const [open, setOpen] = useState<boolean>(false);

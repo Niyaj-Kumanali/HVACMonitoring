@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../Add-Warehouse/Addwarehouse.css';
 import {
+    Box,
     FormControl,
     TextField,
 } from '@mui/material';
@@ -18,7 +19,7 @@ import {
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCurrentUser } from '../../api/loginApi';
-import { addVehicle, getAllVehiclesByUserId, getVehicleByVehicleId} from '../../api/vehicleAPIs';
+import { addVehicle, getAllVehiclesByUserId, getVehicleByVehicleId } from '../../api/vehicleAPIs';
 import { mongoAPI } from '../../api/MongoAPIInstance';
 
 const AddVehicle: React.FC = () => {
@@ -119,9 +120,8 @@ const AddVehicle: React.FC = () => {
             userId: currentUser.id?.id,
             email: currentUser.email,
         };
-        if(vehicleid)
-        {
-            try{
+        if (vehicleid) {
+            try {
                 await mongoAPI.put(`vehicle/updatevehicle/${vehicleid}`, convertedData);
                 setTimeout(() => {
                     setLoading(false);
@@ -129,12 +129,12 @@ const AddVehicle: React.FC = () => {
                     setSnackbarType('success');
                     setMessage('Vehicle Updated Successfully');
                     fetchAllVehicles();
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         navigate(-1)
-                    },800)
+                    }, 800)
                 }, 700);
-                
-            }catch(error){
+
+            } catch (error) {
                 console.log(error)
                 setTimeout(() => {
                     setLoading(false);
@@ -144,7 +144,7 @@ const AddVehicle: React.FC = () => {
                 }, 700);
             }
         }
-        else{
+        else {
             try {
                 await getCurrentUser()
                 await addVehicle(JSON.stringify(convertedData));
@@ -234,39 +234,48 @@ const AddVehicle: React.FC = () => {
                                 className="textfieldss"
                             />
                         </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Length"
-                                name="vehicle_dimensions.length"
-                                type="number"
-                                value={formData.vehicle_dimensions.length}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Width"
-                                name="vehicle_dimensions.width"
-                                type="number"
-                                value={formData.vehicle_dimensions.width}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                label="Height"
-                                name="vehicle_dimensions.height"
-                                type="number"
-                                value={formData.vehicle_dimensions.height}
-                                onChange={handleChange}
-                                disabled={submitted}
-                                className="textfieldss"
-                            />
-                        </FormControl>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: '5px',
+                            }}
+                        >
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Length"
+                                    name="vehicle_dimensions.length"
+                                    type="number"
+                                    value={formData.vehicle_dimensions.length}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Width"
+                                    name="vehicle_dimensions.width"
+                                    type="number"
+                                    value={formData.vehicle_dimensions.width}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth margin="normal">
+                                <TextField
+                                    label="Height"
+                                    name="vehicle_dimensions.height"
+                                    type="number"
+                                    value={formData.vehicle_dimensions.height}
+                                    onChange={handleChange}
+                                    disabled={submitted}
+                                    className="textfieldss"
+                                />
+                            </FormControl>
+                        </Box>
+
                         <FormControl fullWidth margin="normal">
                             <TextField
                                 label="Driver Name"
