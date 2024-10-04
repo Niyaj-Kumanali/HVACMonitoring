@@ -18,6 +18,26 @@ export interface Device {
 
 }
 
+export interface refrigerator{
+    refrigerator_name: string,
+    roomId?: string,
+    make: string,
+    capability: string,
+    star_rating: string,
+    type: string,
+    placement: {
+        x: number,
+        y: number,
+        z: number
+    },
+    registered_location: {
+        x: number,
+        y: number
+    },
+    userId: string,
+    warehouse_id?: string
+}
+
 // Device Profile types
 export interface DeviceProfile {
   id?: { id: string, entityType: string };

@@ -31,6 +31,7 @@ import EditWarehouse from './Components/Warehouse/EditWarehouse';
 import EditVehicle from './Components/Vehicles/EditVehicle';
 import EditDevice from './Components/Devices/EditDevice';
 import EditUser from './Components/Users/EditUser';
+import AddRefrigerator from './Components/AddRefrigerator/AddRefrigeratoe';
 
 const Router = createBrowserRouter([
     {
@@ -146,6 +147,10 @@ const Router = createBrowserRouter([
             {
                 path: '/addGrid',
                 element: <AddGrid />,
+            },
+            {
+                path: '/refrigerator',
+                element: <AddRefrigerator />,
             },
             {
                 path: '/Editwarehouse/:warehouseid',
