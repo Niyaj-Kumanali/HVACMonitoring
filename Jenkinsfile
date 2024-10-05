@@ -35,26 +35,26 @@ pipeline {
         //     }
         // }
 
-        stage('Reload Nginx') {
-            steps {
-                script {
-                    sh '''
-                        sudo systemctl reload nginx
-                    '''
-                }
-            }
-        }
+        // stage('Reload Nginx') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 sudo systemctl reload nginx
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Install Backend Dependencies') {
-            steps {
-                script {
-                    sh '''
-                        cd backend
-                        npm install
-                    '''
-                }
-            }
-        }
+        // stage('Install Backend Dependencies') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 cd backend
+        //                 npm install
+        //             '''
+        //         }
+        //     }
+        // }
         
         stage('Restart backend') {
             steps {
