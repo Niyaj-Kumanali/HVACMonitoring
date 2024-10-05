@@ -59,7 +59,8 @@ pipeline {
         stage('Restart backend') {
             steps {
                 script {
-                    sh '''                      
+                    sh '''  
+                        sudo -u ubuntu pm2 list                    
                         pm2 list
 
                     '''
