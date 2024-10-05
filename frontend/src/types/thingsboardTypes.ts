@@ -18,24 +18,25 @@ export interface Device {
 
 }
 
-export interface refrigerator{
-    refrigerator_name: string,
-    roomId?: string,
-    make: string,
-    capability: string,
-    star_rating: string,
-    type: string,
-    placement: {
-        x: number,
-        y: number,
-        z: number
-    },
-    registered_location: {
-        x: number,
-        y: number
-    },
-    userId: string,
-    warehouse_id?: string
+export interface refrigerator {
+  refrigerator_id?: string,
+  refrigerator_name: string,
+  roomId: string,
+  make: string,
+  capability: string,
+  star_rating: string,
+  type: string,
+  placement: {
+    x: number,
+    y: number,
+    z: number
+  },
+  registered_location: {
+    x: number,
+    y: number
+  },
+  userId: string,
+  warehouse_id: string
 }
 
 // Device Profile types
@@ -219,7 +220,7 @@ export interface WarehouseDimensions {
 
 
 export interface dgset {
-  dgset_id ?: string;
+  dgset_id?: string;
   dgset_name: string;
   fuel_capacity: string;
   fuel_type: string;
@@ -232,7 +233,7 @@ export interface dgset {
 }
 
 export interface grid {
-  grid_id ?: string;               // Unique identifier for the grid
+  grid_id?: string;               // Unique identifier for the grid
   grid_name: string;             // Name of the grid
   max_output_current: number;     // Maximum output current (e.g., 200)
   output_connector_type: string;  // Type of output connector (e.g., "Type 1")
@@ -254,7 +255,7 @@ export interface RoomType {
   slot: number;
   level_slots: LevelSlots;
   userId: string,
-  warehouseId ?: string
+  warehouseId?: string
 }
 
 
@@ -269,6 +270,7 @@ export interface WarehouseData {
   rooms: RoomType[];
   dgset: dgset[];
   grid: grid[];
+  refrigerator: refrigerator[];
   powerSource: boolean;
   userId: string;
   email: string;

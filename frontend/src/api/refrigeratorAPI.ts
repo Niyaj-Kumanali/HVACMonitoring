@@ -6,7 +6,7 @@ export const AddRefrigerators = async (body : any) => {
 };
 
 
-export const getRefrigeratorbyUserId= async (userId : any) => {
+export const getAllRefrigeratorbyUserId= async (userId : any) => {
     const response = await mongoAPI.get(`/refrigerator/getallrefrigerator/${userId}`);
     return response;
 };

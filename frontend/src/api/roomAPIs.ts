@@ -11,13 +11,13 @@ export const getAllRooms = async () => {
     return response
 }
 
-export const getAllRoomsByUserId = async (userId: string) => {
-    const response = await mongoAPI.get(`/room/getallrooms/${userId}`)
-    let roomIds: any[] = []
-    response.data.map(async (room: any) => {
-        roomIds = [...roomIds, room.room_id]
-    });
-    return roomIds;
+export const getAllRoomsByUserId = async (body: {
+    userId: string,
+    warehouseId: string
+}) => {
+    console.log(body.userId)
+    const response = await mongoAPI.post(`/room/getallrooms/${body.userId}`, body)
+    return response;
 }
 
 export const updateLevelSlots = async (body: any) => {

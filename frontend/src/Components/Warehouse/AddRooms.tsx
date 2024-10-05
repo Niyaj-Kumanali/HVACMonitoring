@@ -72,7 +72,7 @@ const AddRooms: React.FC = () => {
                     return acc;
                 }, {}),
             userId: currentUser.id?.id || "",
-
+            warehouse_id: ""
         };
 
         try {
