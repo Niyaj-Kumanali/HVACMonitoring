@@ -60,9 +60,8 @@ pipeline {
             steps {
                 script {
                     sh '''  
+                        sudo -u ubuntu pm2 restart hvac_backend
                         sudo -u ubuntu pm2 list                    
-                        pm2 list
-
                     '''
                 }
             }
