@@ -59,9 +59,8 @@ pipeline {
         stage('Restart backend') {
             steps {
                 script {
-                    sh '''
-                        cd backend
-                        pm2 restart hvac_backend || pm2 start index.js --name hvac_backend --update-env
+                    sh '''                      
+                        pm2 list
 
                     '''
                 }
@@ -69,3 +68,14 @@ pipeline {
         }
     }
 }
+
+// echo "Force restarting hvac_backend..."
+// pm2 delete hvac_backend || true
+// pm2 start index.js --name hvac_backend --update-env
+// pm2 save
+
+// echo "PM2 process list after restarting:"
+// pm2 list
+// sleep 10
+// pm2 restart hvac_backend --update-env
+// pm2 list
