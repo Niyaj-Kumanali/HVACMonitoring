@@ -13,27 +13,27 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                script {
-                    sh '''
-                        cd frontend
-                        npm run build
-                    '''
-                }
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 cd frontend
+        //                 npm run build
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    sh '''
-                        cd frontend
-                        sudo cp -r dist/* /var/www/hvac/
-                    '''
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 cd frontend
+        //                 sudo cp -r dist/* /var/www/hvac/
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Reload Nginx') {
             steps {
@@ -70,7 +70,7 @@ pipeline {
                         echo "PM2 process list after restarting:"
                         pm2 list
                         sleep 10
-                        pm2 restart hvac_backend
+                        pm2 restart hvac_backend --update-env
                         pm2 list
                     '''
                 }
