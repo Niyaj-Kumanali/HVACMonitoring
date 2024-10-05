@@ -25,6 +25,29 @@ router.get('/getallgrids', async (req, res) => {
     }
 });
 
+
+router.post('/getallgrids/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { warehouseId } = req.body;
+
+        const grids = []; // Initialize the rooms array
+
+        // If a warehouseId is provided, fetch rooms assigned to that warehouse
+        if (warehouseId) {
+            const assigned = await gridModel.find({ userId: userId, warehouse_id: warehouseId });
+            grids.push(...assigned); // Use push to add roomsAssigned to rooms
+        }
+
+        // Fetch rooms not assigned to any warehouse
+        const notAssigned = await gridModel.find({ userId: userId, warehouse_id: "" });
+        grids.push(...notAssigned); // Use push to add roomsNotAssigned to rooms
+        res.status(200).json(grids);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch grids', details: error.message });
+    }
+});
+
 router.get('/getgrid/:grid_id', async (req, res) => {
     const { grid_id } = req.params;
 
@@ -63,16 +86,10 @@ router.put('/updategrid/:grid_id', async (req, res) => {
 
 router.put('/updategrids', async (req, res) => {
     const { id, grids} = req.body;
-    console.log(id, grids)
-
-    if (!id || !grids || grids.length === 0) {
-        return res.status(400).json({ error: 'Id and grid IDs are required' });
-    }
-    console.log(req.body)
+    // console.log("grids", id, grids);
 
     try {
         grids.map(async (gridId) => {
-            console.log(gridId)
             const gridToUpdate = await gridModel.findOne({grid_id : gridId})
             if (!gridToUpdate){
                 console.warn(`grid not found for ID: ${gridId}`);

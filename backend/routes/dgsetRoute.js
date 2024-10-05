@@ -28,6 +28,27 @@ router.get('/getalldgsets', async (req, res) => {
     }
 });
 
+router.post('/getalldgsets/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { warehouseId } = req.body;
+
+        const dgsets = []; // Initialize the rooms array
+
+        // If a warehouseId is provided, fetch rooms assigned to that warehouse
+        if (warehouseId) {
+            const assigned = await dgsetModel.find({ userId: userId, warehouse_id: warehouseId });
+            dgsets.push(...assigned); // Use push to add roomsAssigned to rooms
+        }
+        // Fetch rooms not assigned to any warehouse
+        const notAssigned = await dgsetModel.find({ userId: userId, warehouse_id: "" });
+        dgsets.push(...notAssigned); // Use push to add roomsNotAssigned to rooms
+        res.status(200).json(dgsets);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch DGSets', details: error.message });
+    }
+});
+
 router.get('/getdgset/:dgset_id', async (req, res) => {
     const { dgset_id } = req.params;
 
@@ -67,14 +88,9 @@ router.put('/updatedgset/:dgset_id', async (req, res) => {
     }
 });
 
-router.put('/updatedgset', async (req, res) => {
+router.put('/updatedgsets', async (req, res) => {
     const { id, dgsets} = req.body;
-    console.log(id, dgsets)
-
-    if (!id || !dgsets || dgsets.length === 0) {
-        return res.status(400).json({ error: 'Id and dgsets IDs are required' });
-    }
-    // console.log(req.body)
+    // console.log("dgsets", id, dgsets);
 
     try {
         dgsets.map(async (dgsetId) => {

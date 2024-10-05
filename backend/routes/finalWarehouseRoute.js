@@ -31,15 +31,12 @@ router.get('/getwarehouses/:warehouse_id', async (req, res) => {
             return res.status(404).json({ message: 'Warehouse not found' });
         }
 
-        console.log({ warehouse_id: warehouse });
-
         // Check if rooms array exists and is not empty
         let roomsWithDetails = [];
         if (Array.isArray(warehouse.rooms) && warehouse.rooms.length > 0) {
             // Populate room data using the room_id
             roomsWithDetails = await Promise.all(
                 warehouse.rooms.map(async (room) => {
-                    console.log({ rooms: room });
                     const roomData = await roomModel.findOne({ room_id: room }).select('room_name racks power_point slot level_slots room_id');
                     return roomData; // Return the room details directly
                 })
@@ -51,7 +48,6 @@ router.get('/getwarehouses/:warehouse_id', async (req, res) => {
             //populate power source using powerSource_id
             powerStatusWithDetails = await Promise.all(
                 warehouse.powerSource.map(async (power) => {
-                    console.log({power : power});
                     const powerDetails = await powerswitchModel.findOne({powerSource_id : power}).select('powerSource_id powerSource_status power_source')
                     return powerDetails;
                 })

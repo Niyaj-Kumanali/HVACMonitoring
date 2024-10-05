@@ -575,11 +575,6 @@ router.post('/warehouse_violations', async (req, res) => {
 router.post('/updatedevices', async (req, res) => {
   const { id, devices } = req.body;
 
-  // Validate required fields
-  if (!id || !devices || devices.length === 0) {
-      return res.status(400).json({ error: 'Id and device IDs are required' });
-  }
-
   const client = createClient();
 
   try {

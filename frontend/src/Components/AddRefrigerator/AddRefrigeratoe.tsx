@@ -63,8 +63,7 @@ const AddRefrigerator = () => {
         };
 
         try {
-            const response = await AddRefrigerators(finalData);
-            console.log(response.data);
+            await AddRefrigerators(finalData);
             setTimeout(() => {
                 handleReset();
                 setAddButtonLoader(false);

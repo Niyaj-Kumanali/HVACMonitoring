@@ -25,6 +25,7 @@ const AddDgSet: React.FC = () => {
         output_connector_type: '',
         motor_type: '',
         userId: '',
+        warehouse_id: '',
     });
 
     const currentUser = useSelector((state: RootState) => state.user.user);
@@ -49,6 +50,7 @@ const AddDgSet: React.FC = () => {
             output_connector_type: '',
             motor_type: '',
             userId: '',
+            warehouse_id: '',
         });
     };
 
@@ -62,13 +64,9 @@ const AddDgSet: React.FC = () => {
             userId : currentUser.id?.id,
         };
 
-        console.log(finalData);
-
-        
 
         try {
-            const response = await addDGSET(finalData);
-            console.log(response.data);
+            await addDGSET(finalData);
             setTimeout(() => {
                 handleReset();
                 setAddButtonLoader(false);

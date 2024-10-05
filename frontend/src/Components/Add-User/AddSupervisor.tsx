@@ -8,11 +8,9 @@ import { saveUser, getActivationLink, getUsers } from '../../api/userApi';
 import { useDispatch } from 'react-redux';
 import { set_usersCount } from '../../Redux/Action/Action';
 import CustomSnackBar from '../SnackBar/SnackBar';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AddSupervisor = () => {
-    const { emailid } = useParams<{ emailid: string }>();
-    console.log(emailid)
     const navigate = useNavigate()
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);

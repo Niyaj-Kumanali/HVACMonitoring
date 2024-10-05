@@ -28,9 +28,7 @@ const EditUser = () => {
         'success'
     );
     const { emailid } = useParams();
-    console.log(emailid)
     const [user, setUser] = useState<UserType | undefined>();
-
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -42,7 +40,6 @@ const EditUser = () => {
                         const response = await getCustomerById(userData.customerId.id);
                         setOrganization(response.data?.title);
                     }
-                    console.log(userData)
                     setUsername(userData.email || '');
                     setFirstname(userData.firstName || '');
                     setLastname(userData.lastName || '');

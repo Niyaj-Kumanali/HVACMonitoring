@@ -4,14 +4,17 @@ import { WarehouseData } from '../../types/thingsboardTypes';
 import Loader from '../Loader/Loader';
 import CustomSnackBar from '../SnackBar/SnackBar';
 import { getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
-import { deleteWarehouseByWarehouseId, getAllWarehouseByUserId, getWarehouseByWarehouseId } from '../../api/warehouseAPIs';
+import {
+    deleteWarehouseByWarehouseId,
+    getAllWarehouseByUserId,
+    getWarehouseByWarehouseId,
+} from '../../api/warehouseAPIs';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
 import { set_warehouse_count } from '../../Redux/Action/Action';
-
 
 const Warehouse: React.FC = () => {
     const { warehouseid } = useParams();
@@ -21,19 +24,21 @@ const Warehouse: React.FC = () => {
         latitude: '',
         longitude: '',
         warehouse_dimensions: {
-            length: '0',
-            width: '0',
-            height: '0',
+            length: '',
+            width: '',
+            height: '',
         },
         energy_resource: '',
-        cooling_units: '',
-        sensors: '',
-        userId: '',
-        email: '',
+        cooling_units: null,
+        sensors: null,
         rooms: [],
         dgset: [],
         grid: [],
+        refrigerator: [],
+        devices: [],
         powerSource: false,
+        userId: '',
+        email: '',
     });
 
     const [open, setOpen] = useState(false);
@@ -41,7 +46,7 @@ const Warehouse: React.FC = () => {
     const [locationInfo, setLocationInfo] = useState<any>({});
     const [loadingg, setLoadingg] = useState(false);
     const warehousecountDispatch = useDispatch();
-    
+
     useEffect(() => {
         const fetchWarehouseById = async () => {
             try {
@@ -60,8 +65,6 @@ const Warehouse: React.FC = () => {
         };
         fetchWarehouseById();
     }, [warehouseid]);
-
-
 
     useEffect(() => {
         const fetchLocationInfo = async (
@@ -102,7 +105,7 @@ const Warehouse: React.FC = () => {
     );
     const [message, setMessage] = useState('');
     const currentUser = useSelector((state: RootState) => state.user.user);
-    
+
     const fetchAllWarehouses = async () => {
         try {
             const response = await getAllWarehouseByUserId(
@@ -144,45 +147,37 @@ const Warehouse: React.FC = () => {
 
     return (
         <>
-
             <div className="menu-data">
                 {loader ? (
                     <Loader />
                 ) : (
                     <div className="cont">
-                        <div
-                            className={'warehouse-widgets'}
-                        >
+                        <div className={'warehouse-widgets'}>
                             <div className="warehouse-widgets-info">
                                 <div className="warehouse-widgets-info-data">
                                     <div>
                                         <h3>
                                             Name
-                                            <p>
-                                                {' '}
-                                                : {formData.warehouse_name}
-                                            </p>
+                                            <p> : {formData.warehouse_name}</p>
                                         </h3>
                                         <h3>
                                             Sensors
-                                            <p>
-                                                {' '}
-                                                : {formData.sensors ?? ''}
-                                            </p>
+                                            <p> : {formData.sensors ?? ''}</p>
                                         </h3>
                                         <h3>
                                             Location
                                             <p>
                                                 :
-                                                {locationInfo[
-                                                    warehouseid || ''
-                                                ]?.display_name ||
+                                                {locationInfo[warehouseid || '']
+                                                    ?.display_name ||
                                                     'Loading location...'}
                                             </p>
                                         </h3>
                                     </div>
                                     <div className="del-btn-warehouse">
-                                        <Link to={`/Editwarehouse/${warehouseid}`}>
+                                        <Link
+                                            to={`/Editwarehouse/${warehouseid}`}
+                                        >
                                             <LoadingButton
                                                 variant="contained"
                                                 size="large"
@@ -224,9 +219,7 @@ const Warehouse: React.FC = () => {
                                         <h3>No of Violation : {10}</h3>
                                     </div>
                                     <div className="warehouse-widgets-info-data">
-                                        <p>
-                                            No of Times Doors opened : {19}
-                                        </p>
+                                        <p>No of Times Doors opened : {19}</p>
                                     </div>
                                 </div>
                             </div>
@@ -240,7 +233,6 @@ const Warehouse: React.FC = () => {
                     message={message}
                 />
             </div>
-
         </>
     );
 };

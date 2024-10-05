@@ -24,13 +24,23 @@ router.get('/getallrefrigerator', async (req, res) => {
 });
 
 
-router.get('/getallrefrigerator/:userId', async (req, res) => {
+router.post('/getallrefrigerator/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const userRefrigerators = await refrigeratorModel.find({ userId });
-        if (userRefrigerators.length === 0) {
-            return res.status(404).json({ message: 'No refrigerators found for this user' });
+        const { warehouseId } = req.body;
+
+        const userRefrigerators = []; // Initialize the rooms array
+
+        // If a warehouseId is provided, fetch rooms assigned to that warehouse
+        if (warehouseId) {
+            const assigned = await refrigeratorModel.find({ userId: userId, warehouse_id: warehouseId });
+            userRefrigerators.push(...assigned); // Use push to add roomsAssigned to rooms
         }
+
+        // Fetch rooms not assigned to any warehouse
+        const notAssigned = await refrigeratorModel.find({ userId: userId, warehouse_id: "" });
+        userRefrigerators.push(...notAssigned); // Use push to add roomsNotAssigned to rooms
+
         res.status(200).json(userRefrigerators);
     } catch (error) {
         res.status(500).json({ error: "Failed to retrieve user's refrigerators", details: error.message });
@@ -79,6 +89,29 @@ router.put('/updaterefrigerator/:refrigerator_id', async (req, res) => {
         res.status(400).json({ error: "Failed to update refrigerator", details: error.message });
     }
 });
+
+router.post('/updaterefrigerators', async (req, res) => {
+    const { id, refrigerators} = req.body;
+    // console.log("refs", id, refrigerators);
+
+
+    try {
+        refrigerators.map(async (refrigeratorId) => {
+            const refrigeratorToUpdate = await refrigeratorModel.findOne({refrigerator_id : refrigeratorId})
+            if (!refrigeratorToUpdate){
+                console.warn(`refrigerator not found for ID: ${refrigeratorId}`);
+                return;
+            }
+
+            refrigeratorToUpdate.warehouse_id = id;
+            refrigeratorToUpdate.save();
+        })
+        res.json({ message: 'Refrigerator updated successfully' });
+    } catch (error) {
+        console.error(error.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
 
 router.delete('/delleterefrigerator/:refrigerator_id', async (req, res) => {
     try {

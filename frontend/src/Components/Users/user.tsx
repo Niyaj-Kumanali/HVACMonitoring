@@ -54,7 +54,6 @@ const User = () => {
                         const response = await getCustomerById(userData.customerId.id);
                         setOrganization(response.data?.title);
                     }
-                    console.log(userData)
                     setUsername(userData.email || '');
                     setFirstname(userData.firstName || '');
                     setLastname(userData.lastName || '');

@@ -105,7 +105,7 @@ const Devices: React.FC = () => {
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         size="small"
-                                        className='textfieldss'
+                                        // className='textfieldss'
                                         sx={{
                                             minWidth: '200px',
                                         }}

@@ -142,7 +142,7 @@ li {
 }
 
 /* Small devices (phones) */
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 968px) {
     .logo {
         width: 120px !important;
         height: 45px;

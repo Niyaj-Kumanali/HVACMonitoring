@@ -4,9 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster';
 import './Locations.css';
-import {
-    getLocationByLatsAndLongs,
-} from '../../api/MongoAPIInstance';
+import { getLocationByLatsAndLongs } from '../../api/MongoAPIInstance';
 import Loader from '../Loader/Loader';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Reducer';
@@ -71,7 +69,10 @@ const Locations = () => {
 
     const fetchLocationInfo = async (latitude: string, longitude: string) => {
         try {
-            const response = await getLocationByLatsAndLongs(latitude, longitude);
+            const response = await getLocationByLatsAndLongs(
+                latitude,
+                longitude
+            );
             if (!response.ok) throw new Error('Failed to fetch location data');
             const data: LocationInfo = await response.json();
             setLocationInfo((prevState) => ({
@@ -139,8 +140,8 @@ const Locations = () => {
 
                 await fetchLocationInfo(lat.toString(), lng.toString());
                 const location =
-                    locationInfo[`${lat.toString()},${lng.toString()}`]?.display_name ||
-                    'Unknown location';
+                    locationInfo[`${lat.toString()},${lng.toString()}`]
+                        ?.display_name || 'Unknown location';
 
                 const newMarker = L.marker([lat, lng])
                     .bindPopup(
@@ -160,16 +161,9 @@ const Locations = () => {
 
                 navigator.clipboard
                     .writeText(`${lat.toFixed(6)}, ${lng.toFixed(6)}`)
-                    .then(
-                        () => {
-                            console.log(
-                                `Coordinates copied: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
-                            );
-                        },
-                        (err) => {
-                            console.error('Failed to copy coordinates:', err);
-                        }
-                    );
+                    .then((err) => {
+                        console.error('Failed to copy coordinates:', err);
+                    });
             });
 
             setMap(mapInstance);
@@ -194,16 +188,18 @@ const Locations = () => {
                         ?.display_name || 'Unknown location';
 
                 const marker = L.marker([latitude, longitude])
-                    .bindPopup(`<b>Warehouse Location</b><br>${name}<br>${locationName}`)
+                    .bindPopup(
+                        `<b>Warehouse Location</b><br>${name}<br>${locationName}`
+                    )
                     .on('click', () => {
-                        navigator.clipboard.writeText(`${latitude}, ${longitude}`).then(
-                            () => {
-                                console.log(`Coordinates copied: ${latitude}, ${longitude}`);
-                            },
-                            (err) => {
-                                console.error('Failed to copy coordinates:', err);
-                            }
-                        );
+                        navigator.clipboard
+                            .writeText(`${latitude}, ${longitude}`)
+                            .then((err) => {
+                                console.error(
+                                    'Failed to copy coordinates:',
+                                    err
+                                );
+                            });
                     });
 
                 markers.addLayer(marker);
@@ -221,7 +217,9 @@ const Locations = () => {
                     if (userMarker) {
                         map.removeLayer(userMarker);
                     }
-                    const newUserMarker = L.marker([latitude, longitude]).addTo(map);
+                    const newUserMarker = L.marker([latitude, longitude]).addTo(
+                        map
+                    );
                     newUserMarker.bindPopup(
                         `<b>Your Current Location</b><br/>${latitude}, ${longitude}`
                     );
@@ -246,7 +244,13 @@ const Locations = () => {
                             <h2>Locations of warehouses</h2>
                         </div>
                         <div className="locations-searchbar">
-                            <Tooltip open={open} arrow onClose={handleClose} onOpen={handleOpen} title="Get Current Location">
+                            <Tooltip
+                                open={open}
+                                arrow
+                                onClose={handleClose}
+                                onOpen={handleOpen}
+                                title="Get Current Location"
+                            >
                                 <IconButton
                                     onClick={centerOnUserLocation}
                                     sx={{

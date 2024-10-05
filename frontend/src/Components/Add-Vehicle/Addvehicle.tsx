@@ -96,7 +96,6 @@ const AddVehicle: React.FC = () => {
             }
         }
     };
-    console.log(formData)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -135,7 +134,6 @@ const AddVehicle: React.FC = () => {
                 }, 700);
 
             } catch (error) {
-                console.log(error)
                 setTimeout(() => {
                     setLoading(false);
                     setOpen(true);

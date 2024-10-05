@@ -75,8 +75,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     );
     const [telemetryData, setTelemetryData] = useState<TelemetryData>({});
     const [devices, setDevices] = useState<Device[]>([]);
-
-    console.log('first');
+    const [thresholds, setThresholds] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -112,6 +111,10 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                 ) {
                     setDateRange(response.data?.dateRange);
                 }
+
+                if (currentWidget.thresholds) {
+                    setThresholds(currentWidget.thresholds);
+                }
                 dispatch(setLayout(dashboardId, response.data));
             } catch (error: any) {
                 console.error('Failed to fetch widget', error);
@@ -120,6 +123,23 @@ const DashboardLayout: React.FC<WidgetProps> = ({
 
         fetchInitialData();
     }, [dashboardId, deviceId, dispatch, widgetId]);
+
+    useEffect(() => {
+        const { startDate, endDate } = storedLayout.dateRange || {};
+        if (startDate && endDate) {
+            setDateRange((prev) => ({
+                ...prev,
+                startDate: new Date(startDate).getTime(),
+                endDate: new Date(endDate).getTime(),
+            }));
+        }
+
+        (storedLayout.layout || []).forEach((item: WidgetLayout) => {
+            if (item.i === widgetId) {
+                setSelectedChart(item?.chart || 'Line');
+            }
+        });
+    }, [storedLayout, widgetId]);
 
     const fetchTimeseriesKeys = async (deviceId: string) => {
         const response = await getTimeseriesKeys('DEVICE', deviceId);
@@ -152,6 +172,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                 setTelemetryData(response.data);
             } catch (error) {
                 console.error('Failed to fetch telemetry data', error);
+                setTelemetryData({});
             }
         };
         fetchTelemetryData();
@@ -166,27 +187,11 @@ const DashboardLayout: React.FC<WidgetProps> = ({
     ]);
 
     useEffect(() => {
-        const { startDate, endDate } = storedLayout.dateRange || {};
-        if (startDate && endDate) {
-            setDateRange((prev) => ({
-                ...prev,
-                startDate: new Date(startDate).getTime(),
-                endDate: new Date(endDate).getTime(),
-            }));
-        }
-
-        (storedLayout.layout || []).forEach((item: WidgetLayout) => {
-            if (item.i === widgetId) {
-                setSelectedChart(item?.chart || 'Line');
-            }
-        });
-    }, [storedLayout, widgetId]);
-
-    useEffect(() => {
         const fetchLatestTelemetryData = async () => {
             if (!selectedDevice) return;
             try {
                 const keys = await fetchTimeseriesKeys(selectedDevice);
+                if(selectedSensors.length == 0 || keys.length == 0) return;
                 const response = await getLatestTimeseries(
                     'DEVICE',
                     deviceId,
@@ -209,6 +214,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                 setTelemetryData(updatedTelemetryData);
             } catch (error) {
                 console.error('Failed to fetch latest telemetry data', error);
+                setTelemetryData({});
             }
         };
         const intervalId = setInterval(fetchLatestTelemetryData, 1000);
@@ -235,7 +241,7 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             <Chart
                 data={filteredTelemetryData}
                 chartType={selectedChart}
-                thresholds={{ temperature: 24, humidity: 50 }}
+                thresholds={thresholds}
             />
         );
     }, [filteredTelemetryData, selectedChart]);

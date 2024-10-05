@@ -102,9 +102,17 @@ a {
   }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 968px) {
   .menu-data {
     transform: translateX(-275px);
     width: 100%;
   }
+}
+
+
+/* for select size dialog box added this you can change you if want based on your preference */
+.css-1xomo8h-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  max-height: 200px !important;
+  overflow-y: auto  !important;
+  border-radius: 10px !important;
 }

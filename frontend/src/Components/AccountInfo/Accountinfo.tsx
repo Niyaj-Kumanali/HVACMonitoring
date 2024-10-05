@@ -53,7 +53,6 @@ const Accountinfo = () => {
             setMessage('User updated successfully');
             setSnackbarType('success');
         } catch (error: any) {
-            console.log(error);
             setSnackbarType('error');
             if (error.response) {
                 const { status } = error.response;

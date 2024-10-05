@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { useState, useEffect } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
+import * as THREE from 'three';
 
 // Define the props for the Warehouse component
 interface WarehouseProps {
@@ -12,17 +13,22 @@ interface WarehouseProps {
 }
 
 // Component to generate the warehouse model based on user input
-const Warehouse: React.FC<WarehouseProps> = ({ width, height, depth, onMarkerClick }) => {
+const Warehouse: React.FC<WarehouseProps> = ({
+    width,
+    height,
+    depth,
+    onMarkerClick,
+}) => {
     const wallThickness = 0.1; // Thickness of the walls
     const doorWidth = 2; // Width of the door
     const doorHeight = 3; // Height of the door
 
     return (
         <group>
-            {/* Bottom (Ground Plane) */}
-            <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[50, 50]} />
-                <meshStandardMaterial color="gray" />
+            {/* Bottom (Ground Plane) - Change to a solid box */}
+            <mesh position={[0, -wallThickness / 2, 0]}>
+                <boxGeometry args={[50, wallThickness, 50]} /> {/* Solid box instead of plane */}
+                <meshStandardMaterial color="gray" /> {/* Solid color for the ground */}
             </mesh>
 
             {/* Walls */}
@@ -34,11 +40,17 @@ const Warehouse: React.FC<WarehouseProps> = ({ width, height, depth, onMarkerCli
                 <boxGeometry args={[width, height, wallThickness]} />
                 <meshStandardMaterial color="lightgray" />
             </mesh>
-            <mesh position={[width / 2, height / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <mesh
+                position={[width / 2, height / 2, 0]}
+                rotation={[0, Math.PI / 2, 0]}
+            >
                 <boxGeometry args={[depth, height, wallThickness]} />
                 <meshStandardMaterial color="lightgray" />
             </mesh>
-            <mesh position={[-width / 2, height / 2, 0]} rotation={[0, Math.PI / 2, 0]}>
+            <mesh
+                position={[-width / 2, height / 2, 0]}
+                rotation={[0, Math.PI / 2, 0]}
+            >
                 <boxGeometry args={[depth, height, wallThickness]} />
                 <meshStandardMaterial color="lightgray" />
             </mesh>
@@ -50,51 +62,47 @@ const Warehouse: React.FC<WarehouseProps> = ({ width, height, depth, onMarkerCli
             </mesh>
 
             {/* Door */}
-            <mesh 
-                position={[0, doorHeight / 2, depth / 2 + wallThickness / 2]} 
+            <mesh
+                position={[0, doorHeight / 2, depth / 2]} // Adjust door position to align with wall
                 onClick={onMarkerClick} // Add click event handler
             >
-                <boxGeometry args={[doorWidth, doorHeight, wallThickness + 0.01]} />
-                <meshStandardMaterial color="saddlebrown" />
-            </mesh>
-
-            {/* Marker (Location Indicator) */}
-            <mesh 
-                position={[0, doorHeight + 0.5, depth / 2 + wallThickness / 2]} 
-                onClick={onMarkerClick} // Add click event handler to the marker
-            >
-                <coneGeometry args={[0.5, 1, 32]} />
-                <meshStandardMaterial color="red" />
+                <boxGeometry
+                    args={[doorWidth, doorHeight, wallThickness * 1.1]}
+                />
+                {/* Render door visible from both sides */}
+                <meshStandardMaterial
+                    color="saddlebrown"
+                    side={THREE.DoubleSide}
+                />
             </mesh>
         </group>
     );
 };
 
-// Define the state type for the WarehousePlatform component
-interface WarehouseData {
-    width: number;
-    height: number;
-    depth: number;
-}
+// Custom hook to update camera position
+const CameraUpdater: React.FC<{ position: [number, number, number] }> = ({
+    position,
+}) => {
+    const { camera } = useThree();
 
-const WarehousePlatform: React.FC = () => {
+    useEffect(() => {
+        camera.position.set(...position); // Update the camera position
+    }, [position, camera]);
+
+    return null;
+};
+
+const MyComponent: React.FC = () => {
     // State to hold user input for warehouse dimensions
-    const [warehouseData, setWarehouseData] = useState<WarehouseData>({
+    const warehouseData = {
         width: 40,
         height: 10,
         depth: 40,
-    });
-
-    const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 50, 50]); // Set initial camera position outside the warehouse
-
-    // Handle user input for changing warehouse parameters
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setWarehouseData((prev) => ({
-            ...prev,
-            [name]: Math.max(0.1, parseFloat(value)), // Prevent negative or zero values
-        }));
     };
+
+    const [cameraPosition, setCameraPosition] = useState<
+        [number, number, number]
+    >([0, 10, 40]); // Set initial camera position outside the warehouse
 
     // Function to handle marker click
     const handleMarkerClick = () => {
@@ -110,55 +118,22 @@ const WarehousePlatform: React.FC = () => {
                 padding: '20px',
             }}
         >
-            {/* Form for user input */}
-            <div style={{ width: '300px', paddingRight: '20px' }}>
-                <h3>Warehouse Configuration</h3>
-                <form>
-                    <label>
-                        Width (m):
-                        <input
-                            type="number"
-                            name="width"
-                            value={warehouseData.width}
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Height (m):
-                        <input
-                            type="number"
-                            name="height"
-                            value={warehouseData.height}
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Depth (m):
-                        <input
-                            type="number"
-                            name="depth"
-                            value={warehouseData.depth}
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                </form>
-            </div>
-
             {/* 3D Canvas for warehouse rendering */}
             <Canvas style={{ position: 'relative' }}>
                 <Suspense fallback={null}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[0, 10, 5]} intensity={1} />
-                    <Warehouse {...warehouseData} onMarkerClick={handleMarkerClick} />
+                    <Warehouse
+                        {...warehouseData}
+                        onMarkerClick={handleMarkerClick}
+                    />
                     <gridHelper args={[50, 50]} />
+                    <CameraUpdater position={cameraPosition} />
                 </Suspense>
                 <OrbitControls />
-                <perspectiveCamera position={cameraPosition} />
             </Canvas>
         </div>
     );
 };
 
-export default WarehousePlatform;
+export default MyComponent;

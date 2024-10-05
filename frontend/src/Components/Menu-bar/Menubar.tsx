@@ -37,14 +37,14 @@ const Menubar = () => {
 
 
     function getClassName(width: number) {
-        return width <= 700 ? 'sidebar2' : 'side-bar';
+        return width <= 968 ? 'sidebar2' : 'side-bar';
     }
 
     const handleResize = () => {
         const width = window.innerWidth;
         setClassName(getClassName(width));
 
-        if (width <= 700 && menubaropen) {
+        if (width <= 968 && menubaropen) {
             dispatch(set_Menubaropen(false));
         }
     };

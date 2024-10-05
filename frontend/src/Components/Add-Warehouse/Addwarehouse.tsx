@@ -35,11 +35,17 @@ import {
     getWarehouseByWarehouseId,
     updateWarehouseByWarehouseId,
 } from '../../api/warehouseAPIs';
-import { AddWarehouseIdToRooms, avaliableRooms, getAllRoomsByUserId } from '../../api/roomAPIs';
+import {
+    AddWarehouseIdToRooms,
+    getAllRoomsByUserId,
+} from '../../api/roomAPIs';
 import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
 import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
-import { getAllRefrigeratorbyUserId } from '../../api/refrigeratorAPI';
+import {
+    AddWarehouseIdToRefrigerator,
+    getAllRefrigeratorbyUserId,
+} from '../../api/refrigeratorAPI';
 
 const defaultWarehouse = {
     warehouse_name: '',
@@ -67,19 +73,34 @@ const AddWarehouse: React.FC = () => {
     const { warehouseid } = useParams();
 
     const navigate = useNavigate();
+    const [prevformData, setPrevFormData] =
+        useState<WarehouseData>(defaultWarehouse);
     const [formData, setFormData] = useState<WarehouseData>(defaultWarehouse);
     const currentUser = useSelector((state: RootState) => state.user.user);
+
+    const [allRooms, setAllRooms] = useState([]);
+    const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
+    const [allGrids, setAllGrids] = useState<grid[]>([]);
+    const [allRefrigeraators, setAllRefrigeraators] = useState<refrigerator[]>(
+        []
+    );
+    const [devices, setDevices] = useState<Device[]>([]);
+    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+        'success'
+    );
+    const [message, setMessage] = useState('');
 
     const getAllRoomsfunc = async () => {
         try {
             const body = {
-                userId: currentUser.id?.id || "",
-                warehouseId: warehouseid || ""
-            }
-            console.log(currentUser.id?.id)
+                userId: currentUser.id?.id || '',
+                warehouseId: warehouseid || '',
+            };
             const response = await getAllRoomsByUserId(body);
-            console.log(response);
-
             setAllRooms(response.data);
         } catch (error) {
             console.error('Error fetching rooms:', error);
@@ -89,6 +110,7 @@ const AddWarehouse: React.FC = () => {
     const getAllDGsetsfunc = async () => {
         try {
             const response = await getAllDGSET();
+            console.log(response.data)
             setAllDGsets(response.data);
         } catch (error) {
             console.error('Error fetching DGsets:', error);
@@ -106,7 +128,12 @@ const AddWarehouse: React.FC = () => {
 
     const getAllRefrigeratorsfunc = async () => {
         try {
-            const response = await getAllRefrigeratorbyUserId(currentUser.id?.id);
+            const body = {
+                userId: currentUser.id?.id || '',
+                warehouseId: warehouseid || '',
+            };
+            const response = await getAllRefrigeratorbyUserId(body);
+
             setAllRefrigeraators(response.data);
         } catch (error) {
             console.error('Error fetching Grids:', error);
@@ -118,28 +145,45 @@ const AddWarehouse: React.FC = () => {
             try {
                 const response = await getWarehouseByWarehouseId(warehouseid);
                 setFormData(response.data);
+                setPrevFormData(response.data);
             } catch (err) {
                 console.error('Failed to fetch warehouse', err);
             }
         }
     };
 
+    const getDevices = async (): Promise<Device[]> => {
+        const params = {
+            pageSize: 1000,
+            page: 0,
+            sortProperty: 'name',
+            sortOrder: 'ASC',
+        };
+        const devices: Device[] = [];
+        const response = await getTenantDeviceInfos(params);
+        if (warehouseid) {
+            devices.push(
+                ...response.data.data.filter(
+                    (device: Device) => device.label === warehouseid
+                )
+            );
+        }
+        devices.push(
+            ...response.data.data.filter(
+                (device: Device) => device.label === ''
+            )
+        );
+        return devices;
+    };
+
     const fetchDevices = async () => {
         try {
-            const params = {
-                pageSize: 1000,
-                page: 0,
-                sortProperty: 'name',
-                sortOrder: 'ASC',
-            };
-
-            const response = await getTenantDeviceInfos(params);
-            setDevices(response.data.data || []);
+            const devices = await getDevices();
+            setDevices(devices || []);
         } catch (error) {
             console.error('Failed to fetch devices', error);
         }
     };
-
 
     useEffect(() => {
         const fetchRoomsGridDg = async () => {
@@ -156,22 +200,6 @@ const AddWarehouse: React.FC = () => {
         fetchRoomsGridDg();
     }, [warehouseid]);
 
-
-
-    const [allRooms, setAllRooms] = useState([]);
-    const [allDGsets, setAllDGsets] = useState<dgset[]>([]);
-    const [allGrids, setAllGrids] = useState<grid[]>([]);
-    const [allRefrigeraators, setAllRefrigeraators] = useState<refrigerator[]>([]);
-    const [devices, setDevices] = useState<Device[]>([]);
-    const [submitted, setSubmitted] = useState<boolean>(false);
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-        'success'
-    );
-    const [message, setMessage] = useState('');
-
     const handleReset = () => {
         if (!warehouseid) {
             setFormData(defaultWarehouse);
@@ -182,7 +210,9 @@ const AddWarehouse: React.FC = () => {
     const handleChange = (e: any) => {
         const { name, value } = e.target;
         if (name.startsWith('warehouse_dimensions.')) {
-            const dimensionKey = name.split('.')[1] as keyof WarehouseDimensions;
+            const dimensionKey = name.split(
+                '.'
+            )[1] as keyof WarehouseDimensions;
             setFormData({
                 ...formData,
                 warehouse_dimensions: {
@@ -217,6 +247,55 @@ const AddWarehouse: React.FC = () => {
         }));
     };
 
+    const RemoveFields = async () => {
+        const updateDeviceBody = {
+            id: '',
+            devices: prevformData.devices || [],
+        };
+
+        await updateDeviceLabels(updateDeviceBody);
+        await AddWarehouseIdToRooms({
+            id: '',
+            rooms: prevformData.rooms || [],
+        });
+        await AddWarehouseIdToGrid({
+            id: '',
+            grids: prevformData.grid || [],
+        });
+        await AddWarehouseIdToDGSet({
+            id: '',
+            dgsets: prevformData.dgset || [],
+        });
+        await AddWarehouseIdToRefrigerator({
+            id: '',
+            refrigerators: prevformData.refrigerator || [],
+        });
+    };
+    const updateFields = async (response: any) => {
+        const updateDeviceBody = {
+            id: response.data.warehouse_id || '',
+            devices: formData.devices || [],
+        };
+
+        await updateDeviceLabels(updateDeviceBody);
+        await AddWarehouseIdToRooms({
+            id: response.data.warehouse_id || '',
+            rooms: formData.rooms || [],
+        });
+        await AddWarehouseIdToGrid({
+            id: response.data.warehouse_id || '',
+            grids: formData.grid || [],
+        });
+        await AddWarehouseIdToDGSet({
+            id: response.data.warehouse_id || '',
+            dgsets: formData.dgset || [],
+        });
+        await AddWarehouseIdToRefrigerator({
+            id: response.data.warehouse_id || '',
+            refrigerators: formData.refrigerator || [],
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -238,54 +317,39 @@ const AddWarehouse: React.FC = () => {
                 email: currentUser.email,
             };
 
-
             if (warehouseid) {
-
                 const response = await updateWarehouseByWarehouseId(
                     warehouseid,
                     JSON.stringify(convertedData)
                 );
+                await RemoveFields();
+                await updateFields(response);
 
-                const updateDeviceBody = {
-                    id: response.data.warehouse_id,
-                    devices: formData.devices || [],
-                };
-
-                await updateDeviceLabels(updateDeviceBody);
-                await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
-                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || [] });
-                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || [] });
                 setTimeout(() => {
                     setLoading(false);
                     setMessage('Warehouse Updated Successfully');
                     setOpen(true);
                     setSnackbarType('success');
                     setTimeout(() => {
-                        navigate(`/Warehouse/${warehouseid}`)
-                    }, 700)
+                        navigate(`/Warehouse/${warehouseid}`);
+                    }, 700);
                 }, 600);
             } else {
                 const response = await addWarehouse(
                     JSON.stringify(convertedData)
                 );
 
-                const updateDeviceBody = {
-                    id: response.data.warehouse_id,
-                    devices: formData.devices || [],
-                };
+                await RemoveFields();
+                await updateFields(response);
 
-                await updateDeviceLabels(updateDeviceBody);
-                await AddWarehouseIdToRooms({ id: response.data.warehouse_id || "", rooms: formData.rooms || [] });
-                await AddWarehouseIdToGrid({ id: response.data.warehouse_id || "", grids: formData.grid || [] });
-                await AddWarehouseIdToDGSet({ id: response.data.warehouse_id || "", dgsets: formData.dgset || [] });
                 setTimeout(() => {
                     setLoading(false);
                     setMessage('Warehouse Added Successfully');
                     setOpen(true);
                     setSnackbarType('success');
                     setTimeout(() => {
-                        navigate(`/Warehouse/${warehouseid}`)
-                    }, 700)
+                        navigate(`/Warehouse/${warehouseid}`);
+                    }, 700);
                 }, 600);
             }
             setTimeout(() => {
@@ -306,7 +370,11 @@ const AddWarehouse: React.FC = () => {
                 }, 2000);
             } else {
                 setTimeout(() => {
-                    setMessage(warehouseid ? 'Failed to Update Warehouse' : 'Failed to Add Warehouse');
+                    setMessage(
+                        warehouseid
+                            ? 'Failed to Update Warehouse'
+                            : 'Failed to Add Warehouse'
+                    );
                     setLoading(false);
                     setOpen(true);
                 }, 1000);
@@ -325,7 +393,7 @@ const AddWarehouse: React.FC = () => {
             warehousecountDispatch(
                 set_warehouse_count(response.data.totalElements)
             );
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to fetch warehouses:', error);
         }
     };
@@ -477,7 +545,6 @@ const AddWarehouse: React.FC = () => {
                                     }))
                                 }
                                 className="textfieldss"
-                                required
                                 multiple
                             >
                                 {devices.map((item: Device, index: number) => (
@@ -503,14 +570,18 @@ const AddWarehouse: React.FC = () => {
                                 label={'Available rooms'}
                                 onChange={handleChange}
                                 className="textfieldss"
-                                required
                                 multiple
                             >
-                                {allRooms.map((item: RoomType, index: number) => (
-                                    <MenuItem key={index} value={item.room_id}>
-                                        {item.room_name}
-                                    </MenuItem>
-                                ))}
+                                {allRooms.map(
+                                    (item: RoomType, index: number) => (
+                                        <MenuItem
+                                            key={index}
+                                            value={item.room_id}
+                                        >
+                                            {item.room_name}
+                                        </MenuItem>
+                                    )
+                                )}
                             </Select>
                         </FormControl>
 
@@ -529,7 +600,6 @@ const AddWarehouse: React.FC = () => {
                                 label={'Available DGset'}
                                 onChange={handleChange}
                                 className="textfieldss"
-                                required
                                 multiple
                             >
                                 {allDGsets.map((item: dgset, index: number) => (
@@ -555,7 +625,6 @@ const AddWarehouse: React.FC = () => {
                                 label={'Available Grid'}
                                 onChange={handleChange}
                                 className="textfieldss"
-                                required
                                 multiple
                             >
                                 {allGrids.map((item: grid, index: number) => (
@@ -565,7 +634,6 @@ const AddWarehouse: React.FC = () => {
                                 ))}
                             </Select>
                         </FormControl>
-
 
                         <FormControl fullWidth margin="normal">
                             <InputLabel
@@ -577,22 +645,25 @@ const AddWarehouse: React.FC = () => {
                             <Select
                                 labelId="Refrigerators-label"
                                 id="Refrigerators-select"
-                                name="refrigerators"
+                                name="refrigerator"
                                 value={formData.refrigerator}
                                 label={'Available Refrigerators'}
                                 onChange={handleChange}
                                 className="textfieldss"
-                                required
                                 multiple
                             >
-                                {allRefrigeraators.map((item: refrigerator, index: number) => (
-                                    <MenuItem key={index} value={item.refrigerator_id}>
-                                        {item.refrigerator_name}
-                                    </MenuItem>
-                                ))}
+                                {allRefrigeraators.map(
+                                    (item: refrigerator, index: number) => (
+                                        <MenuItem
+                                            key={index}
+                                            value={item.refrigerator_id}
+                                        >
+                                            {item.refrigerator_name}
+                                        </MenuItem>
+                                    )
+                                )}
                             </Select>
                         </FormControl>
-
 
                         <FormControlLabel
                             control={
@@ -603,8 +674,9 @@ const AddWarehouse: React.FC = () => {
                                     color="primary"
                                 />
                             }
-                            label={`Power Source: ${formData.powerSource ? 'DGSET' : 'GRID'
-                                }`}
+                            label={`Power Source: ${
+                                formData.powerSource ? 'DGSET' : 'GRID'
+                            }`}
                         />
 
                         {warehouseid ? (
@@ -629,7 +701,9 @@ const AddWarehouse: React.FC = () => {
                                     variant="contained"
                                     disabled={loading}
                                     className="btn-all"
-                                    onClick={() => { navigate(`/warehouse/${warehouseid}`) }}
+                                    onClick={() => {
+                                        navigate(`/warehouse/${warehouseid}`);
+                                    }}
                                 >
                                     <span>Cancel</span>
                                 </LoadingButton>

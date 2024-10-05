@@ -76,9 +76,7 @@ const AddRooms: React.FC = () => {
         };
 
         try {
-            const response = await addRoom(convertedData);
-
-            console.log('Warehouse added:', response.data);
+            await addRoom(convertedData);
 
             setTimeout(() => {
                 handleReset();
