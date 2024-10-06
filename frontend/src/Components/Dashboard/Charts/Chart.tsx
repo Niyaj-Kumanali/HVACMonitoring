@@ -193,6 +193,7 @@ const Chart: React.FC<ChartProps> = ({
                                 dataKey={key}
                                 fill={getColor(index)} // Use fixed color
                                 stackId="stack"
+                                isAnimationActive={false} // Disable animations for faster rendering
                             />
                         ))}
                     </BarChart>
@@ -210,6 +211,7 @@ const Chart: React.FC<ChartProps> = ({
                                 stroke={getColor(index)} // Use fixed color
                                 fill={getColor(index)} // Use fixed color
                                 fillOpacity={0.3}
+                                isAnimationActive={false} // Disable animations for faster rendering
                             />
                         ))}
                     </AreaChart>

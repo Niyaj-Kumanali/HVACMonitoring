@@ -1,4 +1,4 @@
-.add-widget-dialog {
+/* .add-widget-dialog {
     background-color: rgba(255, 255, 255, 0.137);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -12,7 +12,25 @@
     height: calc(100vh - 65px);
     display: flex;
     justify-content: flex-start;
-}
+} */
+
+/* @media  screen and (max-width: 968px) {
+    .add-widget-dialog {
+        background-color: rgba(255, 255, 255, 0.137);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    
+        position: absolute;
+        left: 275px;
+        width: 100vw !important;
+        top: 61px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        height: calc(100vh - 65px);
+        display: flex;
+        justify-content: flex-start;
+    }
+} */
 
 .add-widget-dialog .MuiDialogTitle-root {
     font-size: 24px;
