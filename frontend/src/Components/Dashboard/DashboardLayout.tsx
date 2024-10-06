@@ -100,12 +100,12 @@ const DashboardLayout: React.FC<WidgetProps> = ({
             if (!selectedDevice) return;
 
             try {
-                await fetchTimeseriesKeys(selectedDevice);
+                const keys = await fetchTimeseriesKeys(selectedDevice);
                 const params: TelemetryQueryParams = {
                     keys:
                         selectedSensors.length > 0
                             ? selectedSensors.join(',')
-                            : sensors.join(','),
+                            : keys?.join(','),
                     startTs:
                         storedLayout?.dateRange?.startDate ||
                         Date.now() - 300000,
