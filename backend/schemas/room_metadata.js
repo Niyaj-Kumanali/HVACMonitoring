@@ -13,6 +13,34 @@ const roomSchema = new mongoose.Schema({
     power_point: { type: Number, required: true },
     slot: { type: Number, required: true },
     level_slots: { type: Map, of: [Number] },
+    room_dimension: {
+        height: {
+            type: Number,
+            required: false
+        },
+        width: {
+            type: Number,
+            required: false
+        },
+        depth: {
+            type: Number,
+            required: false
+        },
+    },
+    placement: {
+        x: {
+            type: Number,
+            required: false
+        },
+        y: {
+            type: Number,
+            required: false
+        },
+        z: {
+            type: Number,
+            required: false
+        },
+    },
     userId: { type: String, required: true },
     warehouse_id: { type: String, required: false },
 })
