@@ -233,6 +233,8 @@ export interface dgset {
     motor_type: string;
     output_connector_type: string;
     output_voltage: number;
+    room_dimension : room_dimension;
+    placement : Placement;
     userId: string;
     warehouse_id: string;
 }
@@ -251,6 +253,18 @@ export interface LevelSlots {
     [level: number]: number[]; // Dynamic keys for levels with an array of numbers
 }
 
+export interface Placement {
+  x: number;  
+  y: number;  
+  z: number;  
+}
+
+export interface room_dimension {
+  height: number;
+  width: number;
+  depth: number;
+}
+
 export interface RoomType {
     room_id?: string;
     room_no: string;
@@ -259,6 +273,8 @@ export interface RoomType {
     power_point: string;
     slot: number;
     level_slots: LevelSlots;
+    placement: Placement;
+    room_dimension : room_dimension
     userId: string;
     warehouseId?: string;
 }

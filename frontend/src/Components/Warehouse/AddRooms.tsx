@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../Add-Warehouse/Addwarehouse.css';
 import {
+    Box,
     FormControl,
     Snackbar,
     SnackbarCloseReason,
@@ -25,6 +26,16 @@ const AddRooms: React.FC = () => {
         power_point: '',
         slot: 0,
         level_slots: {},
+        placement: {
+            x: 0,
+            y: 0,
+            z: 0
+        },
+        room_dimension: {
+            height: 0,
+            width: 0,
+            depth: 0
+        },
         userId: '',
     });
 
@@ -44,6 +55,16 @@ const AddRooms: React.FC = () => {
             power_point: '',
             slot: 0,
             level_slots: {},
+            placement: {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            room_dimension: {
+                height: 0,
+                width: 0,
+                depth: 0
+            },
             userId: '',
         });
         setSubmitted(false);
@@ -163,6 +184,122 @@ const AddRooms: React.FC = () => {
                             className="textfieldss"
                         />
                     </FormControl>
+
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr',
+                            gap: '5px',
+                        }}
+                    >
+
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="height"
+                                name="height"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    room_dimension: {
+                                        ...formData.room_dimension,
+                                        height: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.room_dimension.height || ""}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="width"
+                                name="width"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    room_dimension: {
+                                        ...formData.room_dimension,
+                                        width: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.room_dimension.width || ""}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="depth"
+                                name="depth"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    room_dimension: {
+                                        ...formData.room_dimension,
+                                        depth: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.room_dimension.depth || ""}
+                            />
+                        </FormControl>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr',
+                            gap: '5px',
+                        }}
+                    >
+
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="Placement X"
+                                name="placement_x"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    placement: {
+                                        ...formData.placement,
+                                        x: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.placement.x || ""}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="Placement Y"
+                                name="placement_y"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    placement: {
+                                        ...formData.placement,
+                                        y: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.placement.y || ""}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                label="Placement Z"
+                                name="placement_z"
+                                type="number"
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    placement: {
+                                        ...formData.placement,
+                                        z: Number(e.target.value)
+                                    }
+                                })}
+                                className="textfieldss"
+                                value={formData.placement.z || ""}
+                            />
+                        </FormControl>
+                    </Box>
 
                     <div className="btn-cont">
                         <LoadingButton
