@@ -126,6 +126,11 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
                                     setSelectedDevice(e.target.value as string)
                                 }
                                 label="Select Device"
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {devices.map((device: Device) => (
                                     <MenuItem
@@ -150,6 +155,11 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
                                     )
                                 }
                                 label="Select Chart"
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {charts.map(
                                     (chart: chartTypes, index: number) => (
@@ -173,6 +183,11 @@ const AddWidget: React.FC<AddWidgetProps> = ({ onAdd, onClose }) => {
                                     (selected as string[]).join(', ')
                                 }
                                 label="Select Sensors"
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {sensors.map((sensor: string) => (
                                     <MenuItem key={sensor} value={sensor}>

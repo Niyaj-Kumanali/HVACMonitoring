@@ -1,44 +1,44 @@
 :root {
-  --slide-in-duration: 0.3s;
-  --slide-out-duration: 0.3s;
-  --slide-in-distance: 20%;
-  --slide-out-distance: -70%;
-  --scrollbar-width: 1px;
-  --scrollbar-bg: #f4f6f9;
-  --scrollbar-thumb-bg: rgba(0, 0, 0, 0.1);
-  --scrollbar-thumb-hover-bg: rgba(0, 0, 0, 0.1);
-  --menu-left: 275px;
-  --menu-top: 61px;
-  --menu-height: calc(100vh - 65px);
-  --menu-width: calc(100% - 275px);
-  --menu-width-small: calc(100% - 250px);
-  --menu-width-mobile: 100%;
-  --transform-x-medium: -25px;
-  --transform-x-large: -276px;
+    --slide-in-duration: 0.3s;
+    --slide-out-duration: 0.3s;
+    --slide-in-distance: 20%;
+    --slide-out-distance: -70%;
+    --scrollbar-width: 1px;
+    --scrollbar-bg: #f4f6f9;
+    --scrollbar-thumb-bg: rgba(0, 0, 0, 0.1);
+    --scrollbar-thumb-hover-bg: rgba(0, 0, 0, 0.1);
+    --menu-left: 275px;
+    --menu-top: 61px;
+    --menu-height: calc(100vh - 65px);
+    --menu-width: calc(100% - 275px);
+    --menu-width-small: calc(100% - 250px);
+    --menu-width-mobile: 100%;
+    --transform-x-medium: -25px;
+    --transform-x-large: -276px;
 }
 
 @keyframes slideIn {
-  from {
-    transform: translateX(var(--slide-in-distance));
-    opacity: 0;
-  }
+    from {
+        transform: translateX(var(--slide-in-distance));
+        opacity: 0;
+    }
 
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 @keyframes slideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
 
-  to {
-    transform: translateX(var(--slide-out-distance));
-    opacity: 0;
-  }
+    to {
+        transform: translateX(var(--slide-out-distance));
+        opacity: 0;
+    }
 }
 
 /* .page-enter {
@@ -50,70 +50,66 @@
 } */
 
 .App {
-  display: flex;
-  width: 100vw;
+    display: flex;
+    width: 100vw;
 }
 
 .menu-data::-webkit-scrollbar {
-  width: var(--scrollbar-width);
+    width: var(--scrollbar-width);
 }
 
 .menu-data::-webkit-scrollbar-track {
-  background: var(--scrollbar-bg);
+    background: var(--scrollbar-bg);
 }
 
 .menu-data::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-bg);
-  border-radius: 10px;
+    background-color: var(--scrollbar-thumb-bg);
+    border-radius: 10px;
 }
 
 .menu-data::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-hover-bg);
+    background-color: var(--scrollbar-thumb-hover-bg);
 }
 
 /* For Firefox */
 .menu-data {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-bg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-bg);
 }
 
 .menu-data {
-  position: absolute !important;
-  left: var(--menu-left) !important;
-  width: var(--menu-width);
-  top: var(--menu-top) !important;
-  overflow-y: auto;
-  box-sizing: border-box;
-  height: var(--menu-height);
-  display: inline-flex;
-  justify-content: flex-start;
-  background-image: url("./assets/Backgroundimg.jpg");
-  background-size: fit;
+    position: absolute !important;
+    left: var(--menu-left) !important;
+    width: var(--menu-width);
+    top: var(--menu-top) !important;
+    overflow-y: auto;
+    box-sizing: border-box;
+    height: var(--menu-height);
+    display: inline-flex;
+    justify-content: flex-start;
+    background-image: url('./assets/Backgroundimg.jpg');
+    background-size: fit;
     flex-direction: column;
 }
 a {
-  outline: none !important;
+    outline: none !important;
 }
 
 @media screen and (max-width: 1200px) {
-  .menu-data {
-    transform: translateX(var(--transform-x-medium));
-    width: var(--menu-width-small);
-  }
+    .menu-data {
+        transform: translateX(var(--transform-x-medium));
+        width: var(--menu-width-small);
+    }
 }
 
 @media screen and (max-width: 968px) {
-  .menu-data {
-    transform: translateX(-275px);
-    width: 100%;
-  }
+    .menu-data {
+        transform: translateX(-275px);
+        width: 100%;
+    }
 }
 
-
 /* for select size dialog box added this you can change you if want based on your preference */
-.css-1xomo8h-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
-  max-height: 200px !important;
-  overflow-y: auto  !important;
-  border-radius: 10px !important;
-  border: 1px solid #ccc !important;
+.select_dialog_size {
+    max-height: 200px !important;
 }

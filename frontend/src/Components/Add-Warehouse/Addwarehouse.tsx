@@ -544,11 +544,16 @@ const AddWarehouse: React.FC = () => {
                                         devices: e.target.value,
                                     }))
                                 }
-                                className="textfieldss"
+                                className="textfieldss "
                                 multiple
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {devices.map((item: Device, index: number) => (
-                                    <MenuItem key={index} value={item.id?.id}>
+                                    <MenuItem key={index} value={item.id?.id} >
                                         {item.name}
                                     </MenuItem>
                                 ))}
@@ -571,6 +576,11 @@ const AddWarehouse: React.FC = () => {
                                 onChange={handleChange}
                                 className="textfieldss"
                                 multiple
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {allRooms.map(
                                     (item: RoomType, index: number) => (
@@ -601,6 +611,11 @@ const AddWarehouse: React.FC = () => {
                                 onChange={handleChange}
                                 className="textfieldss"
                                 multiple
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {allDGsets.map((item: dgset, index: number) => (
                                     <MenuItem key={index} value={item.dgset_id}>
@@ -626,6 +641,11 @@ const AddWarehouse: React.FC = () => {
                                 onChange={handleChange}
                                 className="textfieldss"
                                 multiple
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {allGrids.map((item: grid, index: number) => (
                                     <MenuItem key={index} value={item.grid_id}>
@@ -651,6 +671,11 @@ const AddWarehouse: React.FC = () => {
                                 onChange={handleChange}
                                 className="textfieldss"
                                 multiple
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {allRefrigeraators.map(
                                     (item: refrigerator, index: number) => (

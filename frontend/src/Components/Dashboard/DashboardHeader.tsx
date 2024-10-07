@@ -328,6 +328,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                                             borderColor: 'blue',
                                         },
                                 }}
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 <MenuItem value="last-1-minute">
                                     Last 1 Minute

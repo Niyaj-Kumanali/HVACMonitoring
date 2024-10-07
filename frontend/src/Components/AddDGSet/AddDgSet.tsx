@@ -171,6 +171,11 @@ const AddDgSet: React.FC = () => {
                                         className="textfieldss"
                                         label={"Select Motor Type"}
                                         value={formData.motor_type}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                className: 'select_dialog_size', // Add your custom class here
+                                            },
+                                        }}
                                     >
                                         <MenuItem value={"BLDC (Brushless DC) Motors"}>BLDC (Brushless DC) Motors</MenuItem>
                                         <MenuItem value={"SRM (Switched Reluctance Motors)"}>SRM (Switched Reluctance Motors)</MenuItem>

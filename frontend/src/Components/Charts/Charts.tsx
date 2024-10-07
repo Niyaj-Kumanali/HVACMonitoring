@@ -224,6 +224,11 @@ const Charts = () => {
                                 label="Select Warehouse"
                                 onChange={handleWarehouseChange}
                                 className="form-control-inner"
+                                MenuProps={{
+                                    PaperProps: {
+                                        className: 'select_dialog_size', // Add your custom class here
+                                    },
+                                }}
                             >
                                 {warehouse.map((wh) => (
                                     <MenuItem  key={wh.warehouse_id} value={wh.warehouse_id}>

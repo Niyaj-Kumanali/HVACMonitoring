@@ -278,6 +278,11 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                         sx={{
                             width: '50px',
                         }}
+                        MenuProps={{
+                            PaperProps: {
+                                className: 'select_dialog_size', // Add your custom class here
+                            },
+                        }}
                     >
                         {charts.map((chart: chartTypes, index: number) => (
                             <MenuItem key={index} value={chart}>
@@ -296,6 +301,11 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                         size="small"
                         sx={{
                             width: '70px',
+                        }}
+                        MenuProps={{
+                            PaperProps: {
+                                className: 'select_dialog_size', // Add your custom class here
+                            },
                         }}
                     >
                         {devices.map((device: Device) => (
@@ -319,6 +329,11 @@ const DashboardLayout: React.FC<WidgetProps> = ({
                         }
                         label="Sensors"
                         size="small"
+                        MenuProps={{
+                            PaperProps: {
+                                className: 'select_dialog_size', // Add your custom class here
+                            },
+                        }}
                     >
                         {sensors.map((sensor: string) => (
                             <MenuItem key={sensor} value={sensor}>
