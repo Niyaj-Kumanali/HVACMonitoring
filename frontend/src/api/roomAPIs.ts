@@ -36,6 +36,7 @@ export const AddWarehouseIdToRooms = async (body: any) => {
     return response;
 };
 
+
 export const getRoomByWarehouseId = async (warehouse_id: string) => {
     const response = await mongoAPI.get(`/room/rooms/${warehouse_id}`);
     return response;

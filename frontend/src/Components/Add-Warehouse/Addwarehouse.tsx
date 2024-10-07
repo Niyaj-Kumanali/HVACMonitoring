@@ -35,10 +35,7 @@ import {
     getWarehouseByWarehouseId,
     updateWarehouseByWarehouseId,
 } from '../../api/warehouseAPIs';
-import {
-    AddWarehouseIdToRooms,
-    getAllRoomsByUserId,
-} from '../../api/roomAPIs';
+import { AddWarehouseIdToRooms, getAllRoomsByUserId } from '../../api/roomAPIs';
 import { AddWarehouseIdToDGSet, getAllDGSET } from '../../api/dgsetAPIs';
 import { AddWarehouseIdToGrid, getAllGRID } from '../../api/gridAPIs';
 import { getTenantDeviceInfos, updateDeviceLabels } from '../../api/deviceApi';
@@ -110,7 +107,7 @@ const AddWarehouse: React.FC = () => {
     const getAllDGsetsfunc = async () => {
         try {
             const response = await getAllDGSET();
-            console.log(response.data)
+            console.log(response.data);
             setAllDGsets(response.data);
         } catch (error) {
             console.error('Error fetching DGsets:', error);
@@ -322,6 +319,9 @@ const AddWarehouse: React.FC = () => {
                     warehouseid,
                     JSON.stringify(convertedData)
                 );
+                console.log(prevformData);
+                console.log(formData);
+
                 await RemoveFields();
                 await updateFields(response);
 
@@ -553,7 +553,7 @@ const AddWarehouse: React.FC = () => {
                                 }}
                             >
                                 {devices.map((item: Device, index: number) => (
-                                    <MenuItem key={index} value={item.id?.id} >
+                                    <MenuItem key={index} value={item.id?.id}>
                                         {item.name}
                                     </MenuItem>
                                 ))}

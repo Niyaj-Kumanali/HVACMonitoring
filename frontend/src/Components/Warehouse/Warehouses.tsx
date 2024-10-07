@@ -10,7 +10,7 @@ import { RootState } from "../../Redux/Reducer";
 import Paginations from "../Pagination/Paginations";
 import { Warehouse, LocationInfo } from "../../types/thingsboardTypes";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { getAllWarehouseByUserId } from "../../api/warehouseAPIs";
+import { getAllWarehouseByUserId, updateWarehouseByWarehouseId } from "../../api/warehouseAPIs";
 
 
 const Warehouses = () => {
@@ -30,6 +30,7 @@ const Warehouses = () => {
                 page: page,
               };
             const response = await getAllWarehouseByUserId(currentUser.id?.id || '', params);
+            
             setTimeout(() => {
                 if (response.data.data.length === 0) {
                     setMessage("No Warehouse Found");
