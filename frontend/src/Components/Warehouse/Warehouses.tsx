@@ -10,7 +10,7 @@ import { RootState } from "../../Redux/Reducer";
 import Paginations from "../Pagination/Paginations";
 import { Warehouse, LocationInfo } from "../../types/thingsboardTypes";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { getAllWarehouseByUserId, updateWarehouseByWarehouseId } from "../../api/warehouseAPIs";
+import { getAllWarehouseByUserId } from "../../api/warehouseAPIs";
 
 
 const Warehouses = () => {
