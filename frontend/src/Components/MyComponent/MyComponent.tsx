@@ -1,6 +1,134 @@
 import React, { useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { PointerLockControls, Box, Plane } from '@react-three/drei';
+import { PointerLockControls, Plane, Box } from '@react-three/drei'; // Import Box from drei
+import { Vector3 } from 'three';
+
+const Room: React.FC<{
+    position: [number, number, number];
+    width: number;
+    height: number;
+    depth: number;
+}> = ({ position, width, height, depth }) => {
+
+    return (
+        <>
+            {/* Floor */}
+            <Plane
+                position={[position[0], position[1] - height / 2, position[2]]}
+                args={[width, depth]}
+                rotation={[-Math.PI / 2, 0, 0]} // Rotate to be flat on the ground
+            >
+                <meshStandardMaterial color="lightgray" />
+            </Plane>
+
+            {/* Ceiling */}
+            <Plane
+                position={[position[0], position[1] + height / 2, position[2]]}
+                args={[width, depth]}
+                rotation={[Math.PI / 2, 0, 0]} // Rotate to be flat as the ceiling
+            >
+                <meshStandardMaterial color="lightgray" />
+            </Plane>
+
+            {/* Back Wall */}
+            <Plane
+                position={[position[0], position[1], position[2] - depth / 2]}
+                args={[width, height]}
+                rotation={[0, 0, 0]} // No rotation
+            >
+                <meshStandardMaterial color="lightblue" />
+            </Plane>
+
+            {/* Front Wall */}
+            <Plane
+                position={[position[0], position[1], position[2] + depth / 2]}
+                args={[width, height]}
+                rotation={[0, Math.PI, 0]} // Rotate to face inward
+            >
+                <meshStandardMaterial color="lightblue" />
+            </Plane>
+
+            {/* Left Wall */}
+            <Plane
+                position={[position[0] - width / 2, position[1], position[2]]}
+                args={[depth, height]}
+                rotation={[0, Math.PI / 2, 0]} // Rotate to be vertical as left wall
+            >
+                <meshStandardMaterial color="lightblue" />
+            </Plane>
+
+            {/* Right Wall */}
+            <Plane
+                position={[position[0] + width / 2, position[1], position[2]]}
+                args={[depth, height]}
+                rotation={[0, -Math.PI / 2, 0]} // Rotate to be vertical as right wall
+            >
+                <meshStandardMaterial color="lightblue" />
+            </Plane>
+        </>
+    );
+};
+
+const Refrigerator: React.FC<{
+    position: [number, number, number];
+    width: number;
+    height: number;
+    depth: number;
+}> = ({ position, width, height, depth }) => (
+    <Box position={position} args={[width, height, depth]}>
+        <meshStandardMaterial color="white" />
+    </Box>
+);
+const DGSet: React.FC<{
+    position: [number, number, number];
+}> = ({ position }) => (
+    <Box position={position} args={[2, 1.5, 1]}>
+        <meshStandardMaterial color="black" />
+    </Box>
+);
+const Grid: React.FC<{
+    position: [number, number, number];
+}> = ({ position }) => (
+    <Box position={position} args={[2, 1.5, 1]}>
+        <meshStandardMaterial color="blue" />
+    </Box>
+);
+
+const Door: React.FC<{
+    height: number;
+    width: number;
+    depth: number;
+    wallThickness: number;
+    onEnterClick: () => void;
+    onExitClick: () => void;
+}> = ({ height, width, depth, wallThickness, onEnterClick, onExitClick }) => {
+    const [hovered, setHovered] = useState(false);
+
+    return (
+        <>
+            <Box
+                position={[0, height / 2, depth / 2 + wallThickness / 2]}
+                args={[width, height, wallThickness]}
+                onClick={onEnterClick}
+                onPointerOver={() => setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+            >
+                <meshStandardMaterial
+                    color={hovered ? 'lightgreen' : 'green'}
+                />
+            </Box>
+            <Box
+                position={[0, height / 2, depth / 2 - wallThickness / 2]}
+                args={[width, height, wallThickness]}
+                onClick={onExitClick}
+                onPointerOver={() => setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+            >
+                <meshStandardMaterial color={hovered ? 'orange' : 'red'} />
+            </Box>
+        </>
+    );
+};
 
 // Define the props for the Warehouse component
 interface WarehouseProps {
@@ -25,46 +153,96 @@ const Warehouse: React.FC<WarehouseProps> = ({
 
     // Define room dimensions and positions
     const rooms = [
-        { position: [10, height / 2, 10], width: 15, height: height, depth: 15 },
-        { position: [-10, height / 2, -10], width: 15, height: height, depth: 15 },
-        { position: [10, height / 2, -10], width: 15, height: height, depth: 15 },
-        { position: [-10, height / 2, 10], width: 15, height: height, depth: 15 },
-    ];
-
-    // Define desk dimensions and positions
-    const desks = [
-        { position: [5, 0.75, 5], width: 4, height: 1.5, depth: 2 },
-        { position: [-5, 0.75, -5], width: 4, height: 1.5, depth: 2 },
+        {
+            position: [10, height / 2, 10] as [number, number, number],
+            width: 10,
+            height: height,
+            depth: 15,
+        },
+        {
+            position: [-10, height / 2, -10] as [number, number, number],
+            width: 10,
+            height: height,
+            depth: 15,
+        },
+        {
+            position: [10, height / 2, -10] as [number, number, number],
+            width: 10,
+            height: height,
+            depth: 15,
+        },
+        {
+            position: [-10, height / 2, 10] as [number, number, number],
+            width: 10,
+            height: height,
+            depth: 15,
+        },
     ];
 
     // Define refrigerator dimensions and positions within rooms
     const refrigerators = [
-        { position: [10, 1.5, 10], width: 1, height: 3, depth: 1 }, // In first room
-        { position: [-10, 1.5, -10], width: 1, height: 3, depth: 1 }, // In second room
+        {
+            position: [10, 1.5, 10] as [number, number, number],
+            width: 1,
+            height: 3,
+            depth: 1,
+        }, // In first room
+        {
+            position: [-10, 1.5, -10] as [number, number, number],
+            width: 1,
+            height: 3,
+            depth: 1,
+        }, // In second room
     ];
 
     // Define generator and grid locations
-    const generatorPosition = [(width/2)-1, 1.5, (depth/2)-1]; // Position for the diesel generator
-    const gridPosition = [(-width/2)+1, 1.5, (depth/2)-1]; // Position for the grid
+    const generatorPosition = [width / 2 - 1, 1.5, depth / 2 - 1] as [
+        number,
+        number,
+        number
+    ]; // Position for the diesel generator
+    const gridPosition = [-width / 2 + 1, 1.5, depth / 2 - 1] as [
+        number,
+        number,
+        number
+    ]; // Position for the grid
 
     return (
         <>
             {/* Ground Plane */}
-            <Plane args={[50, 50]} position={[0, -wallThickness / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <Plane
+                args={[50, 50]}
+                position={[0, -wallThickness / 2, 0]}
+                rotation={[-Math.PI / 2, 0, 0]}
+            >
                 <meshStandardMaterial color="gray" />
             </Plane>
 
             {/* Walls */}
-            <Box position={[0, height / 2, depth / 2]} args={[width, height, wallThickness]}>
+            <Box
+                position={[0, height / 2, depth / 2]}
+                args={[width, height, wallThickness]}
+            >
                 <meshStandardMaterial color="lightgray" />
             </Box>
-            <Box position={[0, height / 2, -depth / 2]} args={[width, height, wallThickness]}>
+            <Box
+                position={[0, height / 2, -depth / 2]}
+                args={[width, height, wallThickness]}
+            >
                 <meshStandardMaterial color="lightgray" />
             </Box>
-            <Box position={[width / 2, height / 2, 0]} args={[depth, height, wallThickness]} rotation={[0, Math.PI / 2, 0]}>
+            <Box
+                position={[width / 2, height / 2, 0]}
+                args={[depth, height, wallThickness]}
+                rotation={[0, Math.PI / 2, 0]}
+            >
                 <meshStandardMaterial color="lightgray" />
             </Box>
-            <Box position={[-width / 2, height / 2, 0]} args={[depth, height, wallThickness]} rotation={[0, Math.PI / 2, 0]}>
+            <Box
+                position={[-width / 2, height / 2, 0]}
+                args={[depth, height, wallThickness]}
+                rotation={[0, Math.PI / 2, 0]}
+            >
                 <meshStandardMaterial color="lightgray" />
             </Box>
 
@@ -74,49 +252,40 @@ const Warehouse: React.FC<WarehouseProps> = ({
             </Box> */}
 
             {/* Doors */}
-            <Box position={[0, doorHeight / 2, depth / 2 + wallThickness / 2]} args={[doorWidth, doorHeight, wallThickness]} onClick={onEnterClick}>
-                <meshStandardMaterial color="green" />
-            </Box>
-            <Box position={[0, doorHeight / 2, depth / 2 - wallThickness / 2]} args={[doorWidth, doorHeight, wallThickness]} onClick={onExitClick}>
-                <meshStandardMaterial color="red" />
-            </Box>
+            <Door
+                height={doorHeight}
+                width={doorWidth}
+                depth={depth}
+                wallThickness={wallThickness}
+                onEnterClick={onEnterClick}
+                onExitClick={onExitClick}
+            />
 
             {/* Rooms */}
             {rooms.map((room, index) => (
-                <Box key={index} position={room.position} args={[room.width, room.height, room.depth]}>
-                    <meshStandardMaterial color="lightblue" />
-                </Box>
-            ))}
-
-            {/* Desks */}
-            {desks.map((desk, index) => (
-                <Box key={index} position={desk.position} args={[desk.width, desk.height, desk.depth]}>
-                    <meshStandardMaterial color="saddlebrown" />
-                </Box>
+                <Room key={index} {...room} />
             ))}
 
             {/* Refrigerators */}
             {refrigerators.map((fridge, index) => (
-                <Box key={index} position={fridge.position} args={[fridge.width, fridge.height, fridge.depth]}>
-                    <meshStandardMaterial color="white" />
-                </Box>
+                <Refrigerator key={index} {...fridge} />
             ))}
 
             {/* Diesel Generator */}
-            <Box position={generatorPosition} args={[2, 1.5, 1]}>
-                <meshStandardMaterial color="black" />
-            </Box>
+            <DGSet position={generatorPosition} />
 
             {/* Grid Representation */}
-            <Box position={gridPosition} args={[2, 1.5, 1]}>
-                <meshStandardMaterial color="blue" />
-            </Box>
+            <Grid position={gridPosition} />
         </>
     );
 };
 
 // Custom hook to update camera position
-const CameraUpdater: React.FC<{ position: [number, number, number] }> = ({ position }) => {
+interface CameraUpdaterProps {
+    position: [number, number, number];
+}
+
+const CameraUpdater: React.FC<CameraUpdaterProps> = ({ position }) => {
     const { camera } = useThree();
 
     useEffect(() => {
@@ -128,23 +297,39 @@ const CameraUpdater: React.FC<{ position: [number, number, number] }> = ({ posit
 };
 
 // Component to handle camera movement
-const CameraMovement: React.FC<{ movement: any }> = ({ movement }) => {
+interface CameraMovementProps {
+    movement: {
+        forward: boolean;
+        backward: boolean;
+        left: boolean;
+        right: boolean;
+    };
+}
+
+const CameraMovement: React.FC<CameraMovementProps> = ({ movement }) => {
     const { camera } = useThree();
-    
+
     useFrame(() => {
         const moveSpeed = 0.1; // Speed of movement
+        const direction = new Vector3();
 
         if (movement.forward) {
-            camera.position.z -= moveSpeed;
+            camera.getWorldDirection(direction);
+            camera.position.addScaledVector(direction, moveSpeed);
         }
         if (movement.backward) {
-            camera.position.z += moveSpeed;
+            camera.getWorldDirection(direction);
+            camera.position.addScaledVector(direction, -moveSpeed);
         }
         if (movement.left) {
-            camera.position.x -= moveSpeed;
+            camera.getWorldDirection(direction);
+            direction.crossVectors(camera.up, direction).normalize();
+            camera.position.addScaledVector(direction, -moveSpeed);
         }
         if (movement.right) {
-            camera.position.x += moveSpeed;
+            camera.getWorldDirection(direction);
+            direction.crossVectors(camera.up, direction).normalize();
+            camera.position.addScaledVector(direction, moveSpeed);
         }
     });
 
@@ -159,23 +344,35 @@ const MyComponent: React.FC = () => {
         depth: 40,
     };
 
-    const [cameraPosition, setCameraPosition] = useState<[number, number, number]>([0, 5, 15]);
-    const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
+    const [cameraPosition, setCameraPosition] = useState<
+        [number, number, number]
+    >([0, 0, 50]);
+    const [movement, setMovement] = useState<{
+        forward: boolean;
+        backward: boolean;
+        left: boolean;
+        right: boolean;
+    }>({
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+    });
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             switch (event.key) {
                 case 'w':
-                    setMovement(prev => ({ ...prev, forward: true }));
+                    setMovement((prev) => ({ ...prev, forward: true }));
                     break;
                 case 's':
-                    setMovement(prev => ({ ...prev, backward: true }));
+                    setMovement((prev) => ({ ...prev, backward: true }));
                     break;
                 case 'a':
-                    setMovement(prev => ({ ...prev, left: true }));
+                    setMovement((prev) => ({ ...prev, right: true }));
                     break;
                 case 'd':
-                    setMovement(prev => ({ ...prev, right: true }));
+                    setMovement((prev) => ({ ...prev, left: true }));
                     break;
                 default:
                     break;
@@ -185,16 +382,16 @@ const MyComponent: React.FC = () => {
         const handleKeyUp = (event: KeyboardEvent) => {
             switch (event.key) {
                 case 'w':
-                    setMovement(prev => ({ ...prev, forward: false }));
+                    setMovement((prev) => ({ ...prev, forward: false }));
                     break;
                 case 's':
-                    setMovement(prev => ({ ...prev, backward: false }));
+                    setMovement((prev) => ({ ...prev, backward: false }));
                     break;
                 case 'a':
-                    setMovement(prev => ({ ...prev, left: false }));
+                    setMovement((prev) => ({ ...prev, right: false }));
                     break;
                 case 'd':
-                    setMovement(prev => ({ ...prev, right: false }));
+                    setMovement((prev) => ({ ...prev, left: false }));
                     break;
                 default:
                     break;
